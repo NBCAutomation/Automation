@@ -6,10 +6,10 @@
 // Optional; To export to file --xunit="[filename.xml]"
 
 
-// Variables
 var siteUrl = casper.cli.get("url");
+
+// URL variables
 var visitedUrls = [], pendingUrls = [];
-var fs = require("fs");
 
 // Create instances
 // var casper = require('casper').create({ /*verbose: true, logLevel: 'debug'*/ });
@@ -41,17 +41,13 @@ function spider(url) {
 		}
 
 		// Display the spidered URL and status
-		if ( !status || status != 200 ) {
-			this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
-		}
+		this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
 
 		// Find links present on this page
 		var links = this.evaluate(function() {
 			var links = [];
 			Array.prototype.forEach.call(__utils__.findAll('a'), function(e) {
-				if ( e.getAttribute('href') != 'javascript' ) {
-					links.push(e.getAttribute('href'));
-				};
+				links.push(e.getAttribute('href'));
 			});
 			return links;
 		});
@@ -59,11 +55,11 @@ function spider(url) {
 		// Add newly found URLs to the stack
 		var baseUrl = this.getGlobal('location').origin;
 
-		Array.prototype.forEach.call(links, function(link) {
+		Array.prototype.forEach.call(links, function(link) {			
 			
 			var newUrl = helpers.absoluteUri(baseUrl, link);
 
-			if ( pendingUrls.indexOf(newUrl) == -1 && visitedUrls.indexOf(newUrl) == -1) {
+			if ( pendingUrls.indexOf(newUrl) == -1 && visitedUrls.indexOf(newUrl) == -1 && pendingUrls.indexOf(newUrl) != "javascript" ) {
 				// casper.echo(casper.colorizer.format('-> Pushed ' + newUrl + ' onto the stack', { fg: 'magenta' }));
 				pendingUrls.push(newUrl);
 			}
