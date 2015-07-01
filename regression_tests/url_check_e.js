@@ -1,23 +1,25 @@
 // --xunit="[filename.xml]"
 // Set the start URL
 // var startUrl = 'http://www.nbcmiami.com';
-var startUrl = casper.cli.get("url");
+
 
 // URL variables
 var visitedUrls = [], pendingUrls = [];
 
 // Create instances
 // var casper = require('casper').create({ /*verbose: true, logLevel: 'debug'*/ });
+var startUrl = casper.cli.get("url");
+var checkMethod = casper.cli.get("method");
 var utils = require('utils')
 var helpers = require('helper')
+
 var didFirstPass = false;
 var t = 0;
 var saveLoc = ('screenshots/');
 
-// Spider from the given URL
-function spider(url) {
 
-	var urlPath = url.replace(/[^a-zA-Z0-9]/gi, '-').replace(/^https?-+/, '');
+// Spider from the given URL
+function spider(url, method) {
 
 	// Add the URL to the visited stack
 	visitedUrls.push(url);
@@ -36,22 +38,28 @@ function spider(url) {
 			case 404: var statusStyle = { fg: 'red', bold: true }; break;
 			case 500: var statusStyle = { fg: 'red', bold: true }; break;
 			case 503: var statusStyle = { fg: 'red', bold: true }; break;
-			 default: var statusStyle = { fg: 'magenta', bold: true }; break;
+			default: var statusStyle = { fg: 'magenta', bold: true }; break;
 		}
 
 		// Display the spidered URL and status
 		this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
 
 		// If error, grab and save screenshot.
+		// var urlPath = url.replace(/[^a-zA-Z0-9]/gi, '-').replace(/^https?-+/, '');
 		// if (!status || status > 404) {
-		// 	casper.capture(saveLoc + status + "_" + urlPath + "-" + t + "_screenshot.png");
+		// 	casper.capture(saveLoc + status + "_" + urlPath + "-" + "_screenshot.png");
 		// 	t++;
 		// };
 
 		// Find links present on this page
+		switch(method) {
+			case nav: var queryParam = '#nav a';
+			default: var queryParam = 'a';
+		}
+
 		var links = this.evaluate(function() {
 			var links = [];
-			Array.prototype.forEach.call(__utils__.findAll('a'), function(e) {
+			Array.prototype.forEach.call(__utils__.findAll( queryParam ), function(e) {
 				links.push(e.getAttribute('href'));
 			});
 			return links;
@@ -81,8 +89,8 @@ function spider(url) {
 }
 
 // Start spidering
-casper.start(startUrl, function() {
-	spider(startUrl);
+casper.start(startUrl function() {
+	spider(startUrl, checkMethod);
 });
 
 // Start the run
