@@ -1,23 +1,25 @@
 // --xunit="[filename.xml]"
 // Set the start URL
 // var startUrl = 'http://www.nbcmiami.com';
-var startUrl = casper.cli.get("url");
+
 
 // URL variables
 var visitedUrls = [], pendingUrls = [];
 
 // Create instances
 // var casper = require('casper').create({ /*verbose: true, logLevel: 'debug'*/ });
+var startUrl = casper.cli.get("url");
+var checkMethod = casper.cli.get("method");
 var utils = require('utils')
 var helpers = require('helper')
+
 var didFirstPass = false;
 var t = 0;
 var saveLoc = ('screenshots/');
 
-// Spider from the given URL
-function spider(url) {
 
-	var urlPath = url.replace(/[^a-zA-Z0-9]/gi, '-').replace(/^https?-+/, '');
+// Spider from the given URL
+function spider(url, method) {
 
 	// Add the URL to the visited stack
 	visitedUrls.push(url);
