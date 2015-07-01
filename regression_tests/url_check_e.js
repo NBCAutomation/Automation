@@ -1,6 +1,6 @@
 // --xunit="[filename.xml]"
 // Set the start URL
-// var startUrl = 'http://www.nbcmiami.com';
+// var siteUrl = 'http://www.nbcmiami.com';
 
 
 // URL variables
@@ -8,24 +8,22 @@ var visitedUrls = [], pendingUrls = [];
 
 // Create instances
 // var casper = require('casper').create({ /*verbose: true, logLevel: 'debug'*/ });
-var startUrl = casper.cli.get("url");
-var checkMethod = casper.cli.get("method");
+var siteUrl = casper.cli.get("url");
 var utils = require('utils')
 var helpers = require('helper')
 
+var checkMethod = casper.cli.get("method");
 var didFirstPass = false;
-var t = 0;
-var saveLoc = ('screenshots/');
+var didSecondPass = false;
 
 
 // Spider from the given URL
-function spider(url, method) {
+function spider(url, siteElement) {
 
 	// Add the URL to the visited stack
 	visitedUrls.push(url);
 
 	// Open the URL
-	// casper.open(url).then(function() {
 	casper.open(url, { method: didFirstPass ? 'head' : 'get' }).then(function() {
 
 		// Set the status style based on server status code
@@ -44,24 +42,17 @@ function spider(url, method) {
 		// Display the spidered URL and status
 		this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
 
-		// If error, grab and save screenshot.
-		// var urlPath = url.replace(/[^a-zA-Z0-9]/gi, '-').replace(/^https?-+/, '');
-		// if (!status || status > 404) {
-		// 	casper.capture(saveLoc + status + "_" + urlPath + "-" + "_screenshot.png");
-		// 	t++;
-		// };
-
-		// Find links present on this page
-		switch(method) {
-			case nav: var queryParam = '#nav a';
-			default: var queryParam = 'a';
-		}
-
 		var links = this.evaluate(function() {
 			var links = [];
-			Array.prototype.forEach.call(__utils__.findAll( queryParam ), function(e) {
-				links.push(e.getAttribute('href'));
-			});
+			if( siteElement == 'nav') {
+				Array.prototype.forEach.call(__utils__.findAll( '#nav a' ), function(e) {
+					links.push(e.getAttribute('href'));
+				});
+			} else if (typeof siteElement === 'undefined' || siteElement == 'default' || siteElement == 'all' ) {
+				Array.prototype.forEach.call(__utils__.findAll( 'a' ), function(e) {
+					links.push(e.getAttribute('href'));
+				});
+			}
 			return links;
 		});
 
@@ -70,7 +61,7 @@ function spider(url, method) {
 		Array.prototype.forEach.call(links, function(link) {
 			var newUrl = helpers.absoluteUri(baseUrl, link);
 			if (pendingUrls.indexOf(newUrl) == -1 && visitedUrls.indexOf(newUrl) == -1) {
-				// casper.echo(casper.colorizer.format('-> Pushed ' + newUrl + ' onto the stack', { fg: 'magenta' }));
+				casper.echo(casper.colorizer.format('-> Collected: ' + newUrl + ' onto the stack', { fg: 'magenta' }));
 				pendingUrls.push(newUrl);
 			}
 		});
@@ -80,18 +71,49 @@ function spider(url, method) {
 		// If there are URLs to be processed
 		if (pendingUrls.length > 0) {
 			var nextUrl = pendingUrls.shift();
-			// this.echo(this.colorizer.format('<- Popped ' + nextUrl + ' from the stack', { fg: 'blue' }));
+			this.echo(this.colorizer.format(pendingUrls.length + '. -- Testing: ' + nextUrl + ' from the stack', { fg: 'yellow' }));
 			spider(nextUrl);
+		} else if (pendingUrls.length == 0) {
+			didSecondPass = true;
+			urlArray = pendingUrls;
+			return urlArray;
+			require('utils').dump(didSecondPass);
 		}
+
 
 	});
 
 }
 
-// Start spidering
-casper.start(startUrl function() {
-	spider(startUrl, checkMethod);
-});
+casper.test.begin('URL error checks', function suite(test) {
 
-// Start the run
-casper.run();
+    casper.start( siteUrl, function(response) {
+        
+        // require('utils').dump(response);
+
+        if ( response.status == 200 ) {
+            no_error = true;
+        } else {
+            this.echo('Page not loaded correctly. Response: ' + response.status).exit();
+        }
+
+        casper.then(function() {
+            if ( no_error ) {
+                spider(siteUrl, checkMethod);
+            }
+        });
+
+        casper.then(function() {
+            if ( didSecondPass ) {
+                this.echo('Step 2 - Nigga we made it!');
+                
+                spider(siteUrl);
+
+                // require('utils').dump(pendingUrls);
+            }
+        });
+
+    }).run(function() {
+        test.done();
+    });
+});

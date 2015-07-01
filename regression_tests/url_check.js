@@ -41,7 +41,9 @@ function spider(url) {
 		}
 
 		// Display the spidered URL and status
-		this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
+		// if ( !status || status !=200 ) {
+			this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
+		// };
 
 		// Find links present on this page
 		var links = this.evaluate(function() {
