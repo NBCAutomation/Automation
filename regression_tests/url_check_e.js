@@ -16,6 +16,8 @@ var checkMethod = casper.cli.get("method");
 var didFirstPass = false;
 var didSecondPass = false;
 
+var fileName = "url_log.txt";
+
 
 // Spider from the given URL
 function spider(url, siteElement) {
@@ -42,24 +44,29 @@ function spider(url, siteElement) {
 		// Display the spidered URL and status
 		this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
 
+		if( siteElement == 'nav') {
+			queryParam = '#nav a';
+		} else if (typeof siteElement === 'undefined' || siteElement == 'default' || siteElement == 'all' ) {
+			queryParam = 'a';
+		}
+
+		// require('utils').dump(queryParam);
+		// Find links present on this page
 		var links = this.evaluate(function() {
 			var links = [];
-			if( siteElement == 'nav') {
-				Array.prototype.forEach.call(__utils__.findAll( '#nav a' ), function(e) {
-					links.push(e.getAttribute('href'));
-				});
-			} else if (typeof siteElement === 'undefined' || siteElement == 'default' || siteElement == 'all' ) {
-				Array.prototype.forEach.call(__utils__.findAll( 'a' ), function(e) {
-					links.push(e.getAttribute('href'));
-				});
-			}
+			Array.prototype.forEach.call(__utils__.findAll('#nav a'), function(e) {
+				links.push(e.getAttribute('href'));
+			});
 			return links;
 		});
 
 		// Add newly found URLs to the stack
 		var baseUrl = this.getGlobal('location').origin;
+
 		Array.prototype.forEach.call(links, function(link) {
+
 			var newUrl = helpers.absoluteUri(baseUrl, link);
+
 			if (pendingUrls.indexOf(newUrl) == -1 && visitedUrls.indexOf(newUrl) == -1) {
 				casper.echo(casper.colorizer.format('-> Collected: ' + newUrl + ' onto the stack', { fg: 'magenta' }));
 				pendingUrls.push(newUrl);
@@ -73,11 +80,10 @@ function spider(url, siteElement) {
 			var nextUrl = pendingUrls.shift();
 			this.echo(this.colorizer.format(pendingUrls.length + '. -- Testing: ' + nextUrl + ' from the stack', { fg: 'yellow' }));
 			spider(nextUrl);
+		// }
 		} else if (pendingUrls.length == 0) {
 			didSecondPass = true;
-			urlArray = pendingUrls;
-			return urlArray;
-			require('utils').dump(didSecondPass);
+			this.echo(this.colorizer.format(pendingUrls.length + '. Remaining: ' + nextUrl + ' from the stack', { fg: 'yellow' }));
 		}
 
 
@@ -103,15 +109,15 @@ casper.test.begin('URL error checks', function suite(test) {
             }
         });
 
-        casper.then(function() {
-            if ( didSecondPass ) {
-                this.echo('Step 2 - Nigga we made it!');
+        // casper.then(function() {
+        //     if ( didSecondPass ) {
+        //         this.echo('Step 2 - Nigga we made it!');
                 
-                spider(siteUrl);
+        //         // spider(siteUrl);
 
-                // require('utils').dump(pendingUrls);
-            }
-        });
+        //         // require('utils').dump(links);
+        //     }
+        // });
 
     }).run(function() {
         test.done();

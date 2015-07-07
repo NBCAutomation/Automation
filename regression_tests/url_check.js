@@ -41,9 +41,9 @@ function spider(url) {
 		}
 
 		// Display the spidered URL and status
-		// if ( !status || status !=200 ) {
+		if ( !status || status !=200 ) {
 			this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
-		// };
+		};
 
 		// Find links present on this page
 		var links = this.evaluate(function() {
@@ -62,7 +62,7 @@ function spider(url) {
 			var newUrl = helpers.absoluteUri(baseUrl, link);
 
 			if ( pendingUrls.indexOf(newUrl) == -1 && visitedUrls.indexOf(newUrl) == -1 && pendingUrls.indexOf(newUrl) != "javascript" ) {
-				// casper.echo(casper.colorizer.format('-> Pushed ' + newUrl + ' onto the stack', { fg: 'magenta' }));
+				casper.echo(casper.colorizer.format('-> Collected: ' + newUrl + ' onto the stack', { fg: 'magenta' }));
 				pendingUrls.push(newUrl);
 			}
 		});
@@ -72,7 +72,7 @@ function spider(url) {
 		// If there are URLs to be processed
 		if ( pendingUrls.length > 0 ) {
 			var nextUrl = pendingUrls.shift();
-			// this.echo(this.colorizer.format('<- Popped ' + nextUrl + ' from the stack', { fg: 'blue' }));
+			this.echo(this.colorizer.format(pendingUrls.length + '. -- Testing: ' + nextUrl + ' from the stack', { fg: 'yellow' }));
 			spider(nextUrl);
 		}
 
