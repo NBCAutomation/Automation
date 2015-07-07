@@ -3,16 +3,13 @@
 // Version: 0.01
 // Case: Spider the current requested url and check all links.
 // Use: casperjs [file_name] --url="[site_url]"
-// Optional; To export to file --xunit="[filename.xml]"
-
-
-var siteUrl = casper.cli.get("url");
 
 // URL variables
 var visitedUrls = [], pendingUrls = [];
 
 // Create instances
 // var casper = require('casper').create({ /*verbose: true, logLevel: 'debug'*/ });
+var siteUrl = casper.cli.get("url");
 var utils = require('utils')
 var helpers = require('helper')
 var didFirstPass = false;
@@ -41,7 +38,7 @@ function spider(url) {
 		}
 
 		// Display the spidered URL and status
-		if ( !status || status !=200 ) {
+		if ( !status || status != 200 ) {
 			this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
 		};
 
@@ -81,9 +78,9 @@ function spider(url) {
 }
 
 // Start spidering
-casper.start(siteUrl, function() {
-	spider(siteUrl);
+casper.test.begin('Link checker', function suite(test) {
+    casper.start().then(function() {
+    	this.echo('Starting');
+    	spider(siteUrl);
+    }).run();
 });
-
-// Start the run
-casper.run();
