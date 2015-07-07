@@ -1,12 +1,13 @@
 // Author: Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Case: DFP check
+// Case: Check if Omniture is loaded and that the actual pixel request made to the Adobe server.
 // Use: casperjs [file_name] --url="[site_url]"
 
 // var casper = require('casper').create({ verbose: true, logLevel: 'debug' });
-// //http://stackoverflow.com/questions/22205323/is-there-a-method-within-omnitures-s-code-to-see-whether-a-pageview-has-fired
+// http://stackoverflow.com/questions/22205323/is-there-a-method-within-omnitures-s-code-to-see-whether-a-pageview-has-fired
 var utils = require('utils');
 var siteUrl = casper.cli.get("url");
+var omnitureLoaded = false;
 
 
 function OmniturePageViewHasFired() {
@@ -25,10 +26,10 @@ function OmniturePageViewHasFired() {
             && (!window[o].src.match(/[&?]pe=/))
         ) return true;
     }
-    return false;
+    omnitureLoaded = false;
 }
 
-casper.test.begin('Page laod/wrapper tests', function suite(test) {
+casper.test.begin('Testing Omniture', function suite(test) {
 
     casper.start( siteUrl, function(response) {
         
@@ -42,12 +43,12 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
         casper.then(function() {
             if ( no_error ) {
-                test.assertSelectorHasText('body', 'nbc', "NBC Property");
+                test.assertSelectorHasText('body', 'nbc');
 
                 if (OmniturePageViewHasFired() == false){
-                    this.echo('not loaded');
+                    this.echo('Nah Son');
                 } else {
-                    this.echo('loaded');
+                    this.echo('Omniture Pageview was fired');
                 }
             }
         });
