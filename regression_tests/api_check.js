@@ -71,7 +71,7 @@ casper.test.begin('OTS API Check', function suite(test) {
 
     casper.start( siteUrl, function(response) {
         
-        // require('utils').dump(response);
+        // require('utils').dump(this.page.framePlainText);
 
         if ( response.status == 200 ) {
             no_error = true;
@@ -79,25 +79,32 @@ casper.test.begin('OTS API Check', function suite(test) {
             this.echo('Page not loaded correctly. Response: ' + response.status).exit();
         }
 
-        casper.then(function() {
-            if ( no_error ) {
-                this.echo('URL loaded, attempting to parse JSON');
+        
+        if ( no_error ) {
+            this.echo('URL loaded, attempting to parse JSON');
 
-                casper.open(siteUrl, { method: 'get' }).then(function() {
-                    
-                    var rawData = this.getHTML('body');
-                    var htmlObject = rawData.replace(/[\n\t\r]/g,"");
+            var rawData = this.getPageContent();
+                var htmlObject = unescape( this.page.framePlainText.replace(/[\r\n]/g, '\\n') );
+                // var htmlObject = rawData.replace(/[\n\t\r]/g,"");
+                // Facebook Boyfriend\n" " It is horrific and unprecedented," Union County
 
-                    var apiObject = JSON.parse( htmlObject );
 
-                    // this.echo( json.breakingNews.contentID );
-                    // json = mapDOM( apiObject, true );
-                    require('utils').dump( htmlObject );
-                    
-                    this.echo( typeof apiObject );
-                });        
-            }
-        });
+                this.echo(htmlObject);
+
+                // this.echo(rawData);
+                var apiObject = JSON.parse( htmlObject );
+
+                // this.echo( json.breakingNews.contentID );
+                // json = mapDOM( apiObject, true );
+                // require('utils').dump( htmlObject );
+            // casper.open(siteUrl, { method: 'get', headers: { 'Accept': 'application/json' } }).then(function(page) {
+                
+                
+                
+            //     this.echo( typeof apiObject );
+            // });        
+        }
+        
 
     }).run(function() {
         test.done();
