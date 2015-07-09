@@ -3,8 +3,12 @@
 // Version: 0.01
 // Case: 
 // Use: casperjs [file_name] --url="[site_url]"
+// 
+// http://www.nbcnewyork.com/apps/news-app/home/modules/
 // http://stackoverflow.com/questions/12980648/map-html-to-json
 // http://stackoverflow.com/questions/18308148/trimming-n-s-t-from-javascript-string
+
+// *** Running into an error parsing the json string. currently no use cases on how to test or what to look for.
 
 var utils = require('utils');
 var siteUrl = casper.cli.get("url");
@@ -79,16 +83,18 @@ casper.test.begin('OTS API Check', function suite(test) {
             if ( no_error ) {
                 this.echo('URL loaded, attempting to parse JSON');
 
-                casper.open(siteUrl, { method: 'get', headers: {'Accept': 'application/json'} }).then(function() {
+                casper.open(siteUrl, { method: 'get' }).then(function() {
                     
-                    // var json = JSON.parse( this.page.content());
-                    var apiObject = this.getHTML('body');
+                    var rawData = this.getHTML('body');
+                    var htmlObject = rawData.replace(/[\n\t\r]/g,"");
 
-                    // var json = JSON.stringify(eval("(" + apiObject + ")"));
+                    var apiObject = JSON.parse( htmlObject );
 
                     // this.echo( json.breakingNews.contentID );
-                    json = mapDOM( apiObject, true );
-                    require('utils').dump(json);
+                    // json = mapDOM( apiObject, true );
+                    require('utils').dump( htmlObject );
+                    
+                    this.echo( typeof apiObject );
                 });        
             }
         });
