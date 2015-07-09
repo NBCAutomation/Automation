@@ -13,17 +13,15 @@ var omnitureLoaded = false;
 function OmniturePageViewHasFired() {
     var i = document.images;
 
-    for (var c=0,l=i.length;c<l;c++) {
-        if ( (i[c].src.indexOf('/b/ss/')>=0)
-            && (!i[c].src.match(/[&?]pe=/))
-        ) return true;
+    for ( var c = 0, l = i.length; c < l; c++ ) {
+        if ( (i[c].src.indexOf('/b/ss/') >= 0) && ( !i[c].src.match(/[&?]pe=/) ))return true;
     }
 
     for (var o in window) {
         if ( (o.substring(0,4)=='s_i_')
-            && (window[o].src)
-            && (window[o].src.indexOf('/b/ss/')>=0)
-            && (!window[o].src.match(/[&?]pe=/))
+            && ( window[o].src )
+            && ( window[o].src.indexOf('/b/ss/') >= 0 )
+            && ( !window[o].src.match(/[&?]pe=/) )
         ) return true;
     }
     omnitureLoaded = false;
@@ -43,12 +41,12 @@ casper.test.begin('Testing Omniture', function suite(test) {
 
         casper.then(function() {
             if ( no_error ) {
-                test.assertSelectorHasText('body', 'nbc');
-
-                if (OmniturePageViewHasFired() == false){
-                    this.echo('Nah Son');
+                // test.assertSelectorHasText('body', 'nbc');
+ 
+                if ( OmniturePageViewHasFired == false ){
+                    this.echo('Tracking pixel not requested.');
                 } else {
-                    this.echo('Omniture Pageview was fired');
+                    this.echo('Omniture tracking pixel requested.');
                 }
             }
         });
