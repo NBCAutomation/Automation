@@ -2,36 +2,23 @@
 // Contact: deltrie.allen@nbcuni.com
 // Case: Check if Omniture is loaded and that the actual pixel request made to the Adobe server.
 // Use: casperjs [file_name] --url="[site_url]"
+// 
+// NBC Test Sheet
+// https://docs.google.com/spreadsheets/d/1HUmXaLPKM5pqVBSJOdjP6jDdJXY78xW5DMyhQE3iNwc/edit#gid=631094814
+
 
 // var casper = require('casper').create({ verbose: true, logLevel: 'debug' });
 // http://stackoverflow.com/questions/22205323/is-there-a-method-within-omnitures-s-code-to-see-whether-a-pageview-has-fired
+// https://github.com/n1k0/casperjs/issues/968
 var utils = require('utils');
 var siteUrl = casper.cli.get("url");
 var omnitureLoaded = false;
 
-
-function OmniturePageViewHasFired() {
-    var i = document.images;
-
-    for ( var c = 0, l = i.length; c < l; c++ ) {
-        if ( (i[c].src.indexOf('/b/ss/') >= 0) && ( !i[c].src.match(/[&?]pe=/) ))return true;
-    }
-
-    for (var o in window) {
-        if ( (o.substring(0,4)=='s_i_')
-            && ( window[o].src )
-            && ( window[o].src.indexOf('/b/ss/') >= 0 )
-            && ( !window[o].src.match(/[&?]pe=/) )
-        ) return true;
-    }
-    omnitureLoaded = false;
-}
-
 casper.test.begin('Testing Omniture', function suite(test) {
 
-    casper.start( siteUrl, function(response) {
+    casper.start( siteUrl,'page.resource.requested', function( response, requestData, request ) {
         
-        // require('utils').dump(response);
+        // require('utils').dump(page);
 
         if ( response.status == 200 ) {
             no_error = true;
@@ -39,17 +26,12 @@ casper.test.begin('Testing Omniture', function suite(test) {
             this.echo('Page not loaded correctly. Response: ' + response.status).exit();
         }
 
-        casper.then(function() {
-            if ( no_error ) {
-                // test.assertSelectorHasText('body', 'nbc');
- 
-                if ( OmniturePageViewHasFired == false ){
-                    this.echo('Tracking pixel not requested.');
-                } else {
-                    this.echo('Omniture tracking pixel requested.');
-                }
-            }
-        });
+        if ( no_error ) {
+            require('utils').dump(this.page);
+            // if (requestData.url.indexOf('http://adserver.com') === 0) {
+            //     request.abort();
+            // }
+        }
 
     }).run(function() {
         test.done();
