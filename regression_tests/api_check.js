@@ -13,60 +13,6 @@
 var utils = require('utils');
 var siteUrl = casper.cli.get("url");
 
-
-// http://stackoverflow.com/questions/12980648/map-html-to-json
-function mapDOM(element, json) {
-    var treeObject = {};
-    
-    // If string convert to document Node
-    if (typeof element === "string") {
-        if (window.DOMParser)
-        {
-              parser = new DOMParser();
-              docNode = parser.parseFromString(element,"text/xml");
-        }
-        else // Microsoft strikes again
-        {
-              docNode = new ActiveXObject("Microsoft.XMLDOM");
-              docNode.async = false;
-              docNode.loadXML(element); 
-        } 
-        element = docNode.firstChild;
-    }
-    
-    //Recursively loop through DOM elements and assign properties to object
-    function treeHTML(element, object) {
-        object["type"] = element.nodeName;
-        var nodeList = element.childNodes;
-        if (nodeList != null) {
-            if (nodeList.length) {
-                object["content"] = [];
-                for (var i = 0; i < nodeList.length; i++) {
-                    if (nodeList[i].nodeType == 3) {
-                        object["content"].push(nodeList[i].nodeValue);
-                    } else {
-                        object["content"].push({});
-                        treeHTML(nodeList[i], object["content"][object["content"].length -1]);
-                    }
-                }
-            }
-        }
-        if (element.attributes != null) {
-            if (element.attributes.length) {
-                object["attributes"] = {};
-                for (var i = 0; i < element.attributes.length; i++) {
-                    object["attributes"][element.attributes[i].nodeName] = element.attributes[i].nodeValue;
-                }
-            }
-        }
-    }
-    treeHTML(element, treeObject);
-    
-    return (json) ? JSON.stringify(treeObject) : treeObject;
-}
-
-
-
 casper.test.begin('OTS API Check', function suite(test) {
 
     casper.start( siteUrl, function(response) {
@@ -84,15 +30,16 @@ casper.test.begin('OTS API Check', function suite(test) {
             this.echo('URL loaded, attempting to parse JSON');
 
             var rawData = this.getPageContent();
-                var htmlObject = unescape( this.page.framePlainText.replace(/[\r\n]/g, '\\n') );
+                var htmlObject = this.page.framePlainText.replace(/[\r\n]/g, '\\n');
                 // var htmlObject = rawData.replace(/[\n\t\r]/g,"");
                 // Facebook Boyfriend\n" " It is horrific and unprecedented," Union County
 
+                // var json = JSON.stringify( htmlObject );
 
-                this.echo(htmlObject);
+                this.echo( htmlObject );
 
                 // this.echo(rawData);
-                var apiObject = JSON.parse( htmlObject );
+                // var apiObject = JSON.parse( htmlObject );
 
                 // this.echo( json.breakingNews.contentID );
                 // json = mapDOM( apiObject, true );
