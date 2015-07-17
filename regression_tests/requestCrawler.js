@@ -1,3 +1,9 @@
+// Author: Deltrie Allen
+// Contact: deltrie.allen@nbcuni.com
+// Version: 0.01
+// Case: 
+// Use: casperjs [file_name] --url="[site_url]"
+
 var colorizer = require('colorizer').create('Colorizer');
 var casper = require('casper').create({
   verbose: true,
@@ -21,7 +27,6 @@ var headers = {
   }
 };
 
-// var url = "http://localhost/dump-headers.php";
 var siteUrl = casper.cli.get("url");
 
 var echoCurrentPage = function() {
@@ -52,3 +57,4 @@ casper.thenOpen(siteUrl).then(function(response) {
 });
 
 casper.run();
+
