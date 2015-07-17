@@ -16,22 +16,23 @@ var omnitureLoaded = false;
 
 casper.test.begin('Testing Omniture', function suite(test) {
 
-    casper.start( siteUrl,'page.resource.requested', function( response, requestData, request ) {
+    casper.start( siteUrl, function( response, requestData, request ) {
         
-        // require('utils').dump(page);
+        // require('utils').dump(casper.page);
 
-        if ( response.status == 200 ) {
-            no_error = true;
-        } else {
-            this.echo('Page not loaded correctly. Response: ' + response.status).exit();
-        }
+        casper.on('resource.requested', function(request) {
+          this.echo(colorizer.colorize("SENDING REQUEST #" + request.id + " TO " + request.url, "PARAMETER"));
+          this.echo(JSON.stringify(request, null, 4));
+        });
 
-        if ( no_error ) {
-            require('utils').dump(this.page);
-            // if (requestData.url.indexOf('http://adserver.com') === 0) {
-            //     request.abort();
-            // }
-        }
+
+            // casper.on('page.resource.requested', function(requestData, request) {
+            //     if (requestData.url.indexOf('http://oimg.nbcuni.com') === 0) {
+            //         casper.test.pass("Correct url requested");
+            //     } else {
+            //         casper.test.fail("Wrong url");
+            //     }
+            // });
 
     }).run(function() {
         test.done();
