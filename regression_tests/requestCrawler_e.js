@@ -7,19 +7,19 @@
 var siteUrl = casper.cli.get("url");
 
 var colorizer = require('colorizer').create('Colorizer');
-var casper = require('casper').create({
-    verbose: true,
-    logLevel: 'error',
-    pageSettings: {
-        loadImages: true,
-        loadPlugins: true,
-        userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0'
-    },
-    viewportSize: {
-        width: 1366,
-        height: 768
-    }
-});
+// var casper = require('casper').create({
+//     verbose: true,
+//     logLevel: 'error',
+//     pageSettings: {
+//         loadImages: true,
+//         loadPlugins: true,
+//         userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0'
+//     },
+//     viewportSize: {
+//         width: 1366,
+//         height: 768
+//     }
+// });
 
 var headers = {
     method: 'get',
@@ -60,7 +60,7 @@ casper.test.begin('', function suite(test) {
                 });
                 */
 
-                casper.open(siteUrl, headers).then(function(response) {
+                casper.thenOpen(siteUrl, headers).then(function(response) {
                   echoCurrentPage.call(this);
                   this.debugPage();
                 });
