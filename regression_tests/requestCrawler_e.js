@@ -49,9 +49,12 @@ casper.test.begin('', function suite(test) {
 
         casper.then(function() {
             if ( no_error ) {
-                casper.test.on('resource.requested', function(request) {
-                  this.echo(colorizer.colorize("SENDING REQUEST #" + request.id + " TO " + request.siteUrl, "PARAMETER"));
-                  this.echo(JSON.stringify(request, null, 4));
+                casper.on('resource.requested', function(request) {
+                    // this.echo(colorizer.colorize("SENDING REQUEST #" + request.id + " TO " + request.url, "PARAMETER"));
+                    // this.echo(JSON.stringify(request, null, 4));
+                    if ( request.url.indexOf('http://oimg.nbcuni.com') ) {
+                        this.echo( request.url );
+                    }
                 });
 
                 /*
@@ -60,15 +63,15 @@ casper.test.begin('', function suite(test) {
                 });
                 */
 
-                casper.thenOpen(siteUrl, headers).then(function(response) {
-                  echoCurrentPage.call(this);
-                  this.debugPage();
-                });
+                // casper.thenOpen(siteUrl, headers).then(function(response) {
+                //   echoCurrentPage.call(this);
+                //   this.debugPage();
+                // });
 
-                casper.thenOpen(siteUrl).then(function(response) {
-                  echoCurrentPage.call(this);
-                  this.debugPage();
-                });
+                // casper.thenOpen(siteUrl).then(function(response) {
+                //   echoCurrentPage.call(this);
+                //   this.debugPage();
+                // });
             }
         });
 
