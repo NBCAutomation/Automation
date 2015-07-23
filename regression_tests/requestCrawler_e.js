@@ -7,20 +7,6 @@
 var siteUrl = casper.cli.get("url");
 
 var colorizer = require('colorizer').create('Colorizer');
-// var casper = require('casper').create({
-//     verbose: true,
-//     logLevel: 'error',
-//     pageSettings: {
-//         loadImages: true,
-//         loadPlugins: true,
-//         userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0'
-//     },
-//     viewportSize: {
-//         width: 1366,
-//         height: 768
-//     }
-// });
-
 var headers = {
     method: 'get',
     headers: {
@@ -28,6 +14,8 @@ var headers = {
         'HEADER-XYZ': 'HEADER-XYZ-DATA'
     }
 };
+
+var resUrls = [];
 
 var echoCurrentPage = function() {
   this.echo(colorizer.colorize("[Current Page]", "INFO") + this.getTitle() + " : " + this.getCurrentUrl());  
@@ -47,32 +35,40 @@ casper.test.begin('', function suite(test) {
             this.echo('Page not loaded correctly. Response: ' + response.status).exit();
         }
 
+        if ( no_error ) {
+            casper.on('resource.requested', function(request) {
+                // Print out all of the current page requests
+                // this.echo(colorizer.colorize("SENDING REQUEST #" + request.id + " TO " + request.url, "PARAMETER"));
+                
+                if ( request.url.indexOf('oimg.nbcuni.com') >= 1 ) {
+                    // this.echo(colorizer.colorize("Pushing url into array: " + request.url));
+
+                    resUrls.push( request.url );
+                    this.echo("Omniture request url found...added to array");
+                } else if ( request.url.indexOf('google-analytics.com') >= 1 ) {
+                    resUrls.push( request.url );
+                    this.echo("Google request url found...added to array");
+                }
+            });
+            
+            casper.thenOpen(siteUrl).then(function(response) {
+                // echoCurrentPage.call(this);
+                // this.debugPage();
+            });
+        }
+
         casper.then(function() {
-            if ( no_error ) {
-                casper.on('resource.requested', function(request) {
-                    // this.echo(colorizer.colorize("SENDING REQUEST #" + request.id + " TO " + request.url, "PARAMETER"));
-                    // this.echo(JSON.stringify(request, null, 4));
-                    if ( request.url.indexOf('http://oimg.nbcuni.com') ) {
-                        this.echo( request.url );
-                    }
-                });
+            
+            this.echo("do shit below here");
 
-                /*
-                casper.test.on('resource.received', function(resource) {
-                  this.echo(JSON.stringify(resource, null, 4));
-                });
-                */
-
-                // casper.thenOpen(siteUrl, headers).then(function(response) {
-                //   echoCurrentPage.call(this);
-                //   this.debugPage();
-                // });
-
-                // casper.thenOpen(siteUrl).then(function(response) {
-                //   echoCurrentPage.call(this);
-                //   this.debugPage();
-                // });
-            }
+            if ( resUrls.length >= 1 ) {
+                for (var i = resUrls.length - 1; i >= 0; i--) {
+                    // this.echo( resUrls[i] );
+                    var urlObject = JSON.parse('{"' + decodeURI(resUrls[i].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+                    // this.echo( urlObject );
+                    require('utils').dump(urlObject);
+                };
+            };
         });
 
     }).run(function() {

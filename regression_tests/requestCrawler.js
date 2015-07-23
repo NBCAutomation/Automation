@@ -7,16 +7,16 @@
 var colorizer = require('colorizer').create('Colorizer');
 var casper = require('casper').create({
   verbose: true,
-  logLevel: 'error',
-  pageSettings: {
-    loadImages: true,
-    loadPlugins: true,
-    userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0'
-  },
-  viewportSize: {
-    width: 1366,
-    height: 768
-  }
+  logLevel: 'error'
+  // pageSettings: {
+  //   loadImages: true,
+  //   loadPlugins: true,
+  //   userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0'
+  // },
+  // viewportSize: {
+  //   width: 1366,
+  //   height: 768
+  // }
 });
 
 var headers = {
