@@ -58,13 +58,14 @@ casper.test.begin('', function suite(test) {
         }
 
         casper.then(function() {
-            
-            this.echo("do shit below here");
-
+            //Grab the collect request urls, decode them, then convert to a JSON array
             if ( resUrls.length >= 1 ) {
                 for (var i = resUrls.length - 1; i >= 0; i--) {
-                    // this.echo( resUrls[i] );
-                    var urlObject = JSON.parse('{"' + decodeURI(resUrls[i].replace(/&/g, "\",\"").replace(/=/g,"\":\"")) + '"}');
+                    var decodedUrl = decodeURIComponent( resUrls[i] );
+                    var urlObject = JSON.parse('{"' + resUrls[i].replace(/&/g, "\",\"").replace(/=/g,"\":\"") + '"}');
+                    for(var key in urlObject) {
+                        urlObject[key] = decodeURIComponent(urlObject[key]);
+                    }
                     // this.echo( urlObject );
                     require('utils').dump(urlObject);
                 };
