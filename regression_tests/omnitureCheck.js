@@ -1,8 +1,8 @@
 // Author: Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
 // Version: 0.01
-// Case: 
-// Use: casperjs [file_name] --url="[site_url]"
+// Case: Grab the tracking assets from the page, decode the url, and convert to a JSON object to be validated.
+// Use: casperjs test [file_name] --url="[site_url]"
 
 var siteUrl = casper.cli.get("url");
 
@@ -21,9 +21,7 @@ var echoCurrentPage = function() {
   this.echo(colorizer.colorize("[Current Page]", "INFO") + this.getTitle() + " : " + this.getCurrentUrl());  
 };
 
-/*  ##########   */
-
-casper.test.begin('', function suite(test) {
+casper.test.begin('Tracking testing suite.', function suite(test) {
 
     casper.start( siteUrl, function(response) {
         
@@ -42,7 +40,6 @@ casper.test.begin('', function suite(test) {
                 
                 if ( request.url.indexOf('oimg.nbcuni.com') >= 1 ) {
                     // this.echo(colorizer.colorize("Pushing url into array: " + request.url));
-
                     resUrls.push( request.url );
                     this.echo("Omniture request url found...added to array");
                 } else if ( request.url.indexOf('google-analytics.com') >= 1 ) {
@@ -54,6 +51,7 @@ casper.test.begin('', function suite(test) {
             casper.thenOpen(siteUrl).then(function(response) {
                 // echoCurrentPage.call(this);
                 // this.debugPage();
+                // require('utils').dump(response);
             });
         }
 
