@@ -5,25 +5,18 @@
 // Use: casperjs test [file_name] --url="[site_url]"
 
 var siteUrl = casper.cli.get("url");
+var printRequests = casper.cli.get("displayLog");
 
 var colorizer = require('colorizer').create('Colorizer');
-var headers = {
-    method: 'get',
-    headers: {
-        'Accept-Language': 'en-US,en;q=0.8',
-        'HEADER-XYZ': 'HEADER-XYZ-DATA'
-    }
-};
-
 var resUrls = [];
+
+var adobeKeys = new Array("c1","v1","c3","v3","c4","v4","v5","c6","v6","c8","v8","c9","v9","c10","v10","c11","c12","v12","c13","v13","c14","c15","v15","c16","v16","c17","v17","c23","v23","c49","v49","c52","c53","v53","c54","v54","c55","v55","c74","v74","c75","v75");
+// var adobeKeys = new Array("batman","superman");
+var missingKeys = false;
 
 var echoCurrentPage = function() {
   this.echo(colorizer.colorize("[Current Page]", "INFO") + this.getTitle() + " : " + this.getCurrentUrl());  
 };
-
-// var adobeKeys = new Array("v6","c8","v8","c9","v9","c10","v10","c11","c12","c13","v13","c14","c15","v15","c16","v16","c17","v17","c23","v23","c49","v49","c52","c53","v53","c54","v54","c55","v55","c74","v74","c75","v7");
-var adobeKeys = new Array("batman","superman");
-var missingKeys = false;
 
 casper.test.begin('Tracking testing suite.', function suite(test) {
 
@@ -38,7 +31,10 @@ casper.test.begin('Tracking testing suite.', function suite(test) {
         if ( no_error ) {
             casper.on('resource.requested', function(request) {
                 // Print out all of the current page requests
-                // this.echo(colorizer.colorize("SENDING REQUEST #" + request.id + " TO " + request.url, "PARAMETER"));
+                if ( printRequests ) {
+                    this.echo(colorizer.colorize("SENDING REQUEST #" + request.id + " TO " + request.url, "PARAMETER"));
+                };
+                // require('utils').dump(request);
                 
                 if ( request.url.indexOf('oimg.nbcuni.com') >= 1 ) {
                     // this.echo(colorizer.colorize("Pushing url into array: " + request.url));
@@ -48,9 +44,9 @@ casper.test.begin('Tracking testing suite.', function suite(test) {
                     resUrls.push( request.url );
                     this.echo("Google request url found...added to array");
                 }
-                // } else {
+                // else {
                 //     this.echo("No tracking url found. Exiting...");
-                //     casper.exit();
+                //     // casper.exit();
                 // }
             });
             
@@ -62,27 +58,48 @@ casper.test.begin('Tracking testing suite.', function suite(test) {
         }
 
         casper.then(function() {
-            //Grab the collect request urls, decode them, then convert to a JSON array
+            // Grab the collect request urls, decode them, then convert to a JSON array
             if ( resUrls.length >= 1 ) {
-                for (var i = resUrls.length - 1; i >= 0; i--) {
+
+                this.echo("Fetching request url..");
+
+                for ( var i = resUrls.length - 1; i >= 0; i-- ) {
+                    this.echo("Creating JSON object..");
                     var decodedUrl = decodeURIComponent( resUrls[i] );
                     var urlObject = JSON.parse('{"' + resUrls[i].replace(/&/g, "\",\"").replace(/=/g,"\":\"") + '"}');
-                    for(var key in urlObject) {
+
+                    this.echo("Verifying required keys..");
+                    for ( var key in urlObject ) {
+                        urlObject[key] = decodeURIComponent(urlObject[key]);
                         if ( !missingKeys ) {
+                            
+                            // var emptyKeys = [];
+
+                            // for ( var itm = adobeKeys.length - 1; itm >= 0; itm-- ) {
+                            //     if ( adobeKeys[itm] == key ){
+                            //         this.echo(key);
+                            //     } else {
+                            //         if ( !emptyKeys.indexOf(adobeKeys[itm]) ) {
+                            //             emptyKeys.push( adobeKeys[itm] );
+                            //         }
+                            //     }
+                            // }
+
+                            // if (emptyKeys.length > 0) {
+                            //     require('utils').dump(emptyKeys);
+                            // }
                             if ( adobeKeys.indexOf(key) > -1 ) {
-                                // continue;
-                                urlObject[key] = decodeURIComponent(urlObject[key]);
-                            } else {
-                                this.echo("Missing Adobe key in reguest.");
-                                missingKeys = true;
+                                this.echo( colorizer.colorize("Found: " + key + " value: " + decodeURIComponent(urlObject[key]), "INFO") );
+                            } else if ( key in adobeKeys ) {
+                                // this.echo( key );
+                                // missingKeys = true;
+                                // casper.test.fail('Missing required keys/segments in reguest.');
+                                // urlObject[key] = decodeURIComponent(urlObject[key]);
                             }
-                        } else {
-                            this.echo("Missing Adobe key in reguest.");
-                            casper.exit();
                         }
                     }
-                    // this.echo( urlObject );
-                    require('utils').dump(urlObject);
+                    
+                    // require('utils').dump(urlObject);
                 };
             };
         });
