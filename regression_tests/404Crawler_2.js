@@ -8,6 +8,8 @@
 // var casper = require('casper').create({ /*verbose: true, logLevel: 'debug'*/ });
 var siteUrl = casper.cli.get("url");
 var crawlReq = casper.cli.get("element");
+var printUrls = casper.cli.get("showlog");
+
 var utils = require('utils')
 var helpers = require('helper')
 var didFirstPass = false;
@@ -19,12 +21,17 @@ var links;
 
 // Spider from the given URL
 function spider(url, siteElement) {
+	// require('utils').dump(url);
+	
+	// Show the current url
+	if (printUrls) {
+		casper.echo("- " + url);
+	};
 
 	// Add the URL to the visited stack
 	visitedUrls.push(url);
 
 	// Open the URL
-	// casper.open(url).then(function() {
 	casper.open(url, { method: didFirstPass ? 'head' : 'get' }).then(function() {
 
 		// Set the status style based on server status code
@@ -42,12 +49,13 @@ function spider(url, siteElement) {
 
 		// Step note
 		if ( !status || status != 200 ) {
-			this.echo( "Spidered URL and status" );
-			this.echo(this.colorizer.format(status, statusStyle) + ' ' + url);
+			casper.echo( "Spidered URL and status" );
+			casper.echo( this.colorizer.format(status, statusStyle) + ' ' + url );
 		};
 
 		// Find links present on this page
 		if( siteElement == 'nav') {
+			casper.echo( casper.colorizer.format('Grabbing main nav links for testing...', { fg: 'green' }) );
 			var navLinks = this.evaluate(function() {
 				var navLinks = [];
 				Array.prototype.forEach.call(__utils__.findAll('#nav a'), function(e) {
@@ -57,23 +65,27 @@ function spider(url, siteElement) {
 			});
 
 			if ( navLinks ) {
-				var socialLinks = new Array("twitter","facebook","instagram");
+				casper.echo( casper.colorizer.format('Removing social links and crawling pages...', { fg: 'green' }) );
 
+				var socialLinks = new Array("twitter","facebook","instagram");
+				require('utils').dump(navLinks);
+				
 				for ( var i = navLinks.length - 1; i >= 0; i-- ) {
-					// require('utils').dump(navLinks);
-					this.echo('[i: ' + i + '] navLinks[i] = ' + navLinks[i]);
+					// casper.echo('[i: ' + i + '] navLinks[i] = ' + navLinks[i]);
 					var failed = false;
+
 					for( var i2 = 0; i2 < socialLinks.length; i2++ ) {
 						if ( navLinks[i].indexOf(socialLinks[i2]) != -1 ) {
 							failed = true;
 							break;
 						}
 					}
+
 					if (!failed) {
 						if (!/^(f|ht)tps?:\/\//i.test(navLinks[i])) {
 							navLinks[i] = url + navLinks[i];
-							this.echo("Crawling: " + navLinks[i]);
-							spider( siteUrl );
+							casper.echo("Crawling: " + i + " - " + navLinks[i]);
+							// spider( siteUrl );
 						}
 					}
 				};
@@ -88,8 +100,8 @@ function spider(url, siteElement) {
 			});	
 		}
 
-
 		!didFirstPass && (didFirstPass = true);
+
 
 		if (typeof siteElement === 'undefined' || siteElement == 'default' || siteElement == 'all' ) {
 
@@ -101,7 +113,7 @@ function spider(url, siteElement) {
 				var newUrl = helpers.absoluteUri(baseUrl, link);
 
 				if ( pendingUrls.indexOf(newUrl) == -1 && visitedUrls.indexOf(newUrl) == -1 && pendingUrls.indexOf(newUrl) != "javascript" ) {
-					casper.echo(casper.colorizer.format('-> Collected: ' + newUrl + ' onto the stack', { fg: 'magenta' }));
+                    // casper.echo(casper.colorizer.format('-> Collected: ' + newUrl + ' onto the stack', { fg: 'magenta' }));
 					pendingUrls.push(newUrl);
 				}
 			});
@@ -109,7 +121,7 @@ function spider(url, siteElement) {
 			// If there are URLs to be processed
 			if ( pendingUrls.length > 0 ) {
 				var nextUrl = pendingUrls.shift();
-				this.echo(this.colorizer.format(pendingUrls.length + '. -- Testing: ' + nextUrl + ' from the stack', { fg: 'yellow' }));
+                // casper.echo(this.colorizer.format(pendingUrls.length + '. -- Testing: ' + nextUrl + ' from the stack', { fg: 'yellow' }));
 				spider(nextUrl);
 			}
 		}
@@ -121,7 +133,7 @@ function spider(url, siteElement) {
 // Start spidering
 casper.test.begin('Link checker', function suite(test) {
     casper.start().then(function() {
-    	this.echo('Starting');
+    	casper.echo('Starting');
     	spider(siteUrl, crawlReq);
 
     }).run();
