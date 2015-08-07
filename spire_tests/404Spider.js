@@ -1,3 +1,9 @@
+// Author: Seth Benjamin, Deltrie Allen
+// Contact: deltrie.allen@nbcuni.com
+// Version: 0.01
+// Case: Builds and array of links using the main nav as a starting point, then does a status check on each collected link.
+// Use: casperjs test [file_name] --url=[site_url]
+
 var SpiderSuite = function(url) {
   if (!url) {
     throw new Error('A URL is required!');
@@ -18,7 +24,9 @@ var SpiderSuite = function(url) {
     suite.checkHealth();
   }).then(function() {
     suite._finished.forEach(function(res) {
-      console.log(res.status + ' ~> ' + res.url);
+      if (res.status != 200) {
+        console.log(res.status + ' ~> ' + res.url);
+      };
     });
   }).run();
 };
