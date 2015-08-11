@@ -18,6 +18,8 @@ var SpiderSuite = function(url) {
 
   casper.start(url).then(function() {
     suite.evaluateAndPushUrls(this, '#nav a', destinations);
+
+    destinations = destinations.slice(2);
   }).then(function() {
     suite.collectFromDestinations(destinations);
   }).then(function() {
@@ -25,7 +27,7 @@ var SpiderSuite = function(url) {
   }).then(function() {
     suite._finished.forEach(function(res) {
       if (res.status != 200) {
-        console.log(res.status + ' ~> ' + res.url);
+        console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
       };
     });
   }).run();
@@ -34,15 +36,15 @@ var SpiderSuite = function(url) {
 
 SpiderSuite.prototype.collectFromDestinations = function(destinations) {
   if (!this._destinations) {
-    this._destinations = destinations.slice();
+    this._destinations = [].slice.call(destinations);
   }
 
   var suite = this;
   var current = this._destinations.shift();
 
   if (current) {
-    casper.open(current).then(function() {
-      suite.evaluateAndPushUrls(this, 'a', suite._collected);
+    casper.open(current.url).then(function() {
+      suite.evaluateAndPushUrls(this, 'a', suite._collected, current.url);
       suite.collectFromDestinations();
     });
   } else {
@@ -50,7 +52,7 @@ SpiderSuite.prototype.collectFromDestinations = function(destinations) {
   }
 };
 
-SpiderSuite.prototype.evaluateAndPushUrls = function(page, selector, append) {
+SpiderSuite.prototype.evaluateAndPushUrls = function(page, selector, append, from) {
   var evaluatedUrls = page.evaluate(function(baseUrl, selector) {
     var socialRegex = /(twitter|facebook|instagram|javascript:|mailto:)/;
     var protocolRegex = /:\/\//;
@@ -70,25 +72,29 @@ SpiderSuite.prototype.evaluateAndPushUrls = function(page, selector, append) {
 
   evaluatedUrls.forEach(function(url) {
     if (append.indexOf(url) === -1) {
-      append.push(url);
+      append.push({
+        url: url,
+        from: from
+      });
     }
   });
 };
 
 SpiderSuite.prototype.checkHealth = function() {
   if (!this._tmp_collected) {
-    this._tmp_collected = this._collected.slice();
+    this._tmp_collected = [].slice.call(this._collected);
   }
 
   var suite = this;
   var current = this._tmp_collected.shift();
 
   if (current) {
-    casper.open(current, {
+    casper.open(current.url, {
       method: 'head'
     }).then(function(resp) {
       suite._finished.push({
-        url: current,
+        from: current.from,
+        url: current.url,
         status: this.status().currentHTTPStatus
       });
 
@@ -98,5 +104,7 @@ SpiderSuite.prototype.checkHealth = function() {
     delete this._tmp_collected;
   }
 };
+
+SpiderSuite.prototype.filterUrls = function() {};
 
 new SpiderSuite(casper.cli.get('url'));
