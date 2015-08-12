@@ -4,6 +4,8 @@
 // Case: Builds and array of links using the main nav as a starting point, then does a status check on each collected link.
 // Use: casperjs test [file_name] --url=[site_url]
 
+var helpers = require('helper')
+
 var SpiderSuite = function(url) {
   if (!url) {
     throw new Error('A URL is required!');
@@ -43,9 +45,21 @@ SpiderSuite.prototype.collectFromDestinations = function(destinations) {
   var current = this._destinations.shift();
 
   if (current) {
+	casper.on('resource.requested', function(request) {
+		// utils.dump(request);
+    	if (request.url.indexOf('nbc') >= 1) {
+    		var newUrl = helpers.absoluteUri(request.url);
+	    	casper.echo(newUrl);
+	    	// suite.evaluateAndPushUrls(this, 'a', suite._collected, request.url);
+      		//suite.collectFromDestinations();
+    	}
+    	// casper.echo(request.url);
+	});
+
     casper.open(current.url).then(function() {
-      suite.evaluateAndPushUrls(this, 'a', suite._collected, current.url);
-      suite.collectFromDestinations();
+      		// suite.evaluateAndPushUrls(this, 'a', suite._collected, current.url);
+      		// suite.collectFromDestinations();
+      	
     });
   } else {
     delete this._destinations;
@@ -89,22 +103,31 @@ SpiderSuite.prototype.checkHealth = function() {
   var current = this._tmp_collected.shift();
 
   if (current) {
-    casper.open(current.url, {
-      method: 'head'
-    }).then(function(resp) {
-      suite._finished.push({
-        from: current.from,
-        url: current.url,
-        status: this.status().currentHTTPStatus
-      });
+    // if ( (current.url.indexOf('nbc') > -1) || (current.url.indexOf('telemundo') > -1) ) {
+      casper.open(current.url, {
+        method: 'head'
+      }).then(function(resp) {
+        suite._finished.push({
+          from: current.from,
+          url: current.url,
+          status: this.status().currentHTTPStatus
+        });
 
-      suite.checkHealth();
-    });
+        suite.checkHealth();
+      });
+    // }
   } else {
     delete this._tmp_collected;
   }
 };
 
-SpiderSuite.prototype.filterUrls = function() {};
+SpiderSuite.prototype.filterUrls = function( urlData ) {
+casper.on('resource.requested', function(requestData, request) {
+if ( (requestData.url.indexOf('nbc') > -1) || (requestData.url.indexOf('telemundo') > -1) ) {
+// casper.log('Skipped: ' + requestData.url, 'info');
+// request.abort();
+}
+});
+};
 
 new SpiderSuite(casper.cli.get('url'));
