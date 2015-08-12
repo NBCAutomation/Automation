@@ -1,11 +1,19 @@
 <?php
+	// $page = $_SERVER['PHP_SELF'];
+	// $user_input = $_POST['user_input'];
 
-// $user_input = $_POST['user_input'];
+	// putenv("PHANTOMJS_EXECUTABLE=/usr/local/bin/phantomjs");
 
-putenv("PHANTOMJS_EXECUTABLE=/usr/local/bin/phantomjs");
+    // echo "Running PhantomJS version: ";
 
-exec('~/Documents/Repositories/Applications/SpireTests/spire_tests/casperjs test 404Spider.js --url="http://www.nbcmiami.com"',$output);
+    passthru('casperjs test dev_tests/test_file.js --url=http://telemundo51.com', $ret);
 
-print_r($output);
+    die($ret);
 
+    // $casperVar = 'PATH=$PATH:/usr/local/bin/phantomjs; --version 2>&1';  
+    // echo exec($casperVar);
+    // echo "<br />";
+    // echo "Running CasperJS version: ";
+    // echo exec('/usr/local/bin/casperjs --version');
 ?>
+

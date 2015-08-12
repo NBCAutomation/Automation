@@ -25,7 +25,7 @@ app.on('ready', function() {
 
   // and load the index.html of the app.
   // mainWindow.loadUrl('file://' + __dirname + '/index.html');
-  mainWindow.loadUrl('http://deltrieallen.com');
+  mainWindow.loadUrl('http://spire.app/test.php');
 
   // Open the devtools.
   // mainWindow.openDevTools();
