@@ -90,21 +90,20 @@ SpiderSuite.prototype.checkHealth = function() {
 
   if (current) {
     casper.open(current.url, {
-      method: 'head'
-    }).then(function(resp) {
-      suite._finished.push({
-        from: current.from,
-        url: current.url,
-        status: this.status().currentHTTPStatus
-      });
+        method: 'head'
+      }).then(function(resp) {
+        suite._finished.push({
+          from: current.from,
+          url: current.url,
+          status: this.status().currentHTTPStatus
+        });
 
-      suite.checkHealth();
-    });
+        suite.checkHealth();
+      });
   } else {
     delete this._tmp_collected;
   }
 };
 
-SpiderSuite.prototype.filterUrls = function() {};
 
 new SpiderSuite(casper.cli.get('url'));
