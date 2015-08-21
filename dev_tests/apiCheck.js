@@ -12,10 +12,11 @@
 
 var utils = require('utils');
 var siteUrl = casper.cli.get("url");
+var manifestUrl = siteUrl + "/apps/news-app/manifest/?apiVersion=2";
 
 casper.test.begin('OTS API Check', function suite(test) {
 
-    casper.start( siteUrl, function(response) {
+    casper.start( manifestUrl, function(response) {
         
         // require('utils').dump(this.page.framePlainText);
 
@@ -24,20 +25,21 @@ casper.test.begin('OTS API Check', function suite(test) {
         } else {
             this.echo('Page not loaded correctly. Response: ' + response.status).exit();
         }
-
-        
+    }).then(function() {
         if ( no_error ) {
-            this.echo('URL loaded, attempting to parse JSON');
 
             var rawData = this.getPageContent();
-                var htmlObject = this.page.framePlainText.replace(/[\r\n]/g, '\\n');
-                // var htmlObject = rawData.replace(/[\n\t\r]/g,"");
-                // Facebook Boyfriend\n" " It is horrific and unprecedented," Union County
+                // var htmlObject = this.page.framePlainText.replace(/[\r\n]/g, '\\n');
+                var htmlObject = rawData.replace(/[\n\t\r]/g,"");
 
-                // var json = JSON.stringify( htmlObject );
+                var __json = JSON.stringify( rawData );
 
-                this.echo( htmlObject );
+            this.echo( rawData );
+            // var urlObject = JSON.parse(__json);
 
+            // for ( var key in urlObject ) {
+            //     this.echo(urlObject[key] + ' ~ ' + urlObject[key]);
+            // }
                 // this.echo(rawData);
                 // var apiObject = JSON.parse( htmlObject );
 
@@ -51,9 +53,5 @@ casper.test.begin('OTS API Check', function suite(test) {
             //     this.echo( typeof apiObject );
             // });        
         }
-        
-
-    }).run(function() {
-        test.done();
-    });
+    }).run();
 });
