@@ -111,64 +111,54 @@ apiSuite.prototype.getPageContent = function(url) {
         var xmlNode = xmlDoc.firstChild;
         var childNodes = xmlNode.childNodes;
         var innerNodes = xmlDoc.getElementsByTagName("dict")[0];
-        
-        // var getKeys = function(obj){
-        //    var keys = [];
-        //    for(var key in obj){
-        //       keys.push(key);
-        //    }
-        //    return keys;
-        // }
-        
-        // console.log( innerNodes.childNodes.length );
 
         // require('utils').dump( getKeys(childNodes) );
         // require('utils').dump( childNodes.item );
 
-        // if ( xmlNode.hasChildNodes() ) {
-        //     console.log("has children");
-            
-        //     var children = xmlNode.childNodes;
-
-        //     for (var i = 0; i < innerNodes.length; i++) {
-        //        console.log(innerNodes[i].nodeName);
-        //     }
+        if ( innerNodes ) {
 
             var node;
             var __nodes = [];
-            
             var arr = [];
-            for (var key in innerNodes){
-                arr.push([]);
-                var nodes = innerNodes[key].childNodes;
-                for (var ele in nodes){  
-                    if(nodes[ele]){
-                      arr[key].push(nodes[ele]);
+
+            for(var i = 0; i < innerNodes.childNodes.length; i++) {
+                node = innerNodes.childNodes[i];
+                console.log("type: " + node.nodeType + " : " + node.nodeName + " : " + node.textContent);
+
+                if (node.childNodes.length > -1) {
+                    for (var key in node){
+                        // arr.push([]);
+                        console.log(node[key].length);
+                        // var nodes = node[key].childNodes;
+
+                        // for (var ele in nodes){  
+                        //     if(nodes[ele]){
+                        //       arr[key].push(nodes[ele]);
+                        //     }
+                        // }
                     }
                 }
+
+                // console.log(arr);
+
+                // if (node.nodeName == 'key') {   
+                //     // __nodes.push({
+                //     //     node.nodeName: node.textContent
+                //     // })
+                // }
+                // if (node.childNodes.length > -1 && node.nodeType == 1 && node.nodeName == 'dict') {
+                //     var __currentNode = node;
+
+                //     for(var i = 0; i < __currentNode.childNodes.length; i++) {
+                //         __node = __currentNode.childNodes[i];
+                //         console.log(">> type: " + __node.nodeType + " : " + __node.nodeName + " : " + __node.textContent);
+                //     }
+                // }
+              // if(node.nodeType !== Node.TEXT_NODE) console.log(node.getElementsByTagName('child1')[0].textContent);
             }
-            console.log(arr);
-            
-            // for(var i = 0; i < innerNodes.childNodes.length; i++) {
-            //     node = innerNodes.childNodes[i];
-            //     console.log("type: " + node.nodeType + " : " + node.nodeName + " : " + node.textContent);
-
-            //     if (node.nodeName == 'key') {   
-            //         // __nodes.push({
-            //         //     node.nodeName: node.textContent
-            //         // })
-            //     }
-            //     if (node.childNodes.length > -1 && node.nodeType == 1 && node.nodeName == 'dict') {
-            //         var __currentNode = node;
-
-            //         for(var i = 0; i < __currentNode.childNodes.length; i++) {
-            //             __node = __currentNode.childNodes[i];
-            //             console.log(">> type: " + __node.nodeType + " : " + __node.nodeName + " : " + __node.textContent);
-            //         }
-            //     }
-            //   // if(node.nodeType !== Node.TEXT_NODE) console.log(node.getElementsByTagName('child1')[0].textContent);
-            // }
-        // }
+        } else {
+            throw new Error('Missing XML elements!');
+        }
     });
 };
 
