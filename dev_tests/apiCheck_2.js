@@ -4,6 +4,8 @@
 // Case: Builds and array of links using the main nav as a starting point, then does a status check on each collected link.
 // Use: casperjs test [file_name] --url=[site_url]
 
+// http://stackoverflow.com/questions/21407578/accessing-xml-dom-child-nodes-by-name
+
 var apiSuite = function(url) {
     if (!url) {
         throw new Error('A URL is required!');
@@ -25,8 +27,7 @@ var apiSuite = function(url) {
 
         }
     }).then(function() {
-        suite.xmlToJson(manifestUrl);
-        // var jsonText = JSON.stringify(xmlToJson(xmlDoc));
+        suite.getPageContent(manifestUrl);
         // require('utils').dump(jsonText);
     }).then(function() {
         // suite._finished.forEach(function(res) {
@@ -36,117 +37,6 @@ var apiSuite = function(url) {
         // });
     }).run();
 };
-
-function xml2json(xml) {
-    try {
-    var obj = {};
-    if (xmlUrl.children.length > 0) {
-        for (var i = 0; i < xmlUrl.children.length; i++) {
-            var item = xmlUrl.children.item(i);
-            var nodeName = item.nodeName;
-
-            if (typeof (obj[nodeName]) == "undefined") {
-                obj[nodeName] = xml2json(item);
-            } else {
-                if (typeof (obj[nodeName].push) == "undefined") {
-                var old = obj[nodeName];
-
-                obj[nodeName] = [];
-                obj[nodeName].push(old);
-            }
-                obj[nodeName].push(xml2json(item));
-            }
-        }
-    } else {
-        obj = xmlUrl.textContent;
-    }
-    return obj;
-    } catch (e) {
-        console.log(e.message);
-    }
-}
-
-apiSuite.prototype.xmlToJson = function(xmlUrl) {
-    // Create the return object
-    var suite = this;
-    // var obj = {};
-    
-    var page = require('webpage').create();
-    page.open(xmlUrl, function() {
-    // casper.open(xmlUrl, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
-
-        var rawContent = this.getPageContent();
-        var __content = JSON.stringify(rawContent);
-
-        parser = new DOMParser();
-        xmlDoc = parser.parseFromString(__content,'text/xml');
-        var loc = xmlDoc.getElementsByTagName('plist');s
-        
-        // var rawData = content.getPageContent();
-        // var htmlObject = this.page.framePlainText.replace(/[\r\n]/g, '\\n');
-        
-        require('utils').dump( this.content );
-
-    });
-};
-
-apiSuite.prototype.XML2jsobj = function(node) {
-
-    // var page = require('webpage').create();
-    // page.open(node, function() {
-    casper.open(node, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
-
-        var rawContent = this.getPageContent();
-        var __json = JSON.stringify( rawContent );
-
-        // require('utils').dump( rawContent.attributes );
-        // require('utils').dump(JSON.parse( __json ));
-        var pageObject = JSON.parse(__json);
-
-        require('utils').dump( rawContent );
-
-
-        var data = {};
-
-        // append a value
-        function Add(name, value) {
-            if (data[name]) {
-                if (data[name].constructor != Array) {
-                    data[name] = [data[name]];
-                }
-                data[name][data[name].length] = value;
-            }
-            else {
-                data[name] = value;
-            }
-        };
-
-        // element attributes
-        // var c, cn;
-        // for (c = 0; cn = node.attributes[c]; c++) {
-        //     Add(cn.name, cn.value);
-        // }
-        
-        // // child elements
-        // for (c = 0; cn = node.childNodes[c]; c++) {
-        //     if (cn.nodeType == 1) {
-        //         if (cn.childNodes.length == 1 && cn.firstChild.nodeType == 3) {
-        //             // text value
-        //             Add(cn.nodeName, cn.firstChild.nodeValue);
-        //         }
-        //         else {
-        //             // sub-object
-        //             Add(cn.nodeName, XML2jsobj(cn));
-        //         }
-        //     }
-        // }
-
-        // return data;
-
-    });
-
-}
-
 
 apiSuite.prototype.checkHealth = function() {
 
@@ -171,5 +61,115 @@ apiSuite.prototype.checkHealth = function() {
   }
 };
 
+
+apiSuite.prototype.xmlToJson = function(xml) {
+    var suite = this; 
+    
+    var obj = {};
+
+    if (xml.nodeType == 1) {                
+        if (xml.attributes.length > 0) {
+            obj["@attributes"] = {};
+            for (var j = 0; j < xml.attributes.length; j++) {
+                var attribute = xml.attributes.item(j);
+                obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+            }
+        }
+    } else if (xml.nodeType == 3) { 
+        obj = xml.nodeValue;
+    }            
+    if (xml.hasChildNodes()) {
+        for (var i = 0; i < xml.childNodes.length; i++) {
+            var item = xml.childNodes.item(i);
+            var nodeName = item.nodeName;
+            if (typeof (obj[nodeName]) == "undefined") {
+                obj[nodeName] = xmlToJson(item);
+            } else {
+                if (typeof (obj[nodeName].push) == "undefined") {
+                    var old = obj[nodeName];
+                    obj[nodeName] = [];
+                    obj[nodeName].push(old);
+                }
+                obj[nodeName].push(xmlToJson(item));
+            }
+        }
+    }
+    return obj;
+}
+
+apiSuite.prototype.getPageContent = function(url) {
+    var suite = this;
+
+    casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
+        var rawContent = this.getPageContent();
+
+        parser = new DOMParser();
+        xmlDoc = parser.parseFromString(rawContent,'text/xml');
+
+        // var jsonObj = suite.xmlToJson();
+        
+        var xmlNode = xmlDoc.firstChild;
+        var childNodes = xmlNode.childNodes;
+        var innerNodes = xmlDoc.getElementsByTagName("dict")[0];
+        
+        // var getKeys = function(obj){
+        //    var keys = [];
+        //    for(var key in obj){
+        //       keys.push(key);
+        //    }
+        //    return keys;
+        // }
+        
+        // console.log( innerNodes.childNodes.length );
+
+        // require('utils').dump( getKeys(childNodes) );
+        // require('utils').dump( childNodes.item );
+
+        // if ( xmlNode.hasChildNodes() ) {
+        //     console.log("has children");
+            
+        //     var children = xmlNode.childNodes;
+
+        //     for (var i = 0; i < innerNodes.length; i++) {
+        //        console.log(innerNodes[i].nodeName);
+        //     }
+
+            var node;
+            var __nodes = [];
+            
+            var arr = [];
+            for (var key in innerNodes){
+                arr.push([]);
+                var nodes = innerNodes[key].childNodes;
+                for (var ele in nodes){  
+                    if(nodes[ele]){
+                      arr[key].push(nodes[ele]);
+                    }
+                }
+            }
+            console.log(arr);
+            
+            // for(var i = 0; i < innerNodes.childNodes.length; i++) {
+            //     node = innerNodes.childNodes[i];
+            //     console.log("type: " + node.nodeType + " : " + node.nodeName + " : " + node.textContent);
+
+            //     if (node.nodeName == 'key') {   
+            //         // __nodes.push({
+            //         //     node.nodeName: node.textContent
+            //         // })
+            //     }
+            //     if (node.childNodes.length > -1 && node.nodeType == 1 && node.nodeName == 'dict') {
+            //         var __currentNode = node;
+
+            //         for(var i = 0; i < __currentNode.childNodes.length; i++) {
+            //             __node = __currentNode.childNodes[i];
+            //             console.log(">> type: " + __node.nodeType + " : " + __node.nodeName + " : " + __node.textContent);
+            //         }
+            //     }
+            //   // if(node.nodeType !== Node.TEXT_NODE) console.log(node.getElementsByTagName('child1')[0].textContent);
+            // }
+        // }
+    });
+};
 
 new apiSuite(casper.cli.get('url'));
