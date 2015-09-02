@@ -15,7 +15,7 @@
  limitations under the License.
  */
 
-function X2JS(config) {
+module.exports = function X2JS(config) {
 	'use strict';
 		
 	var VERSION = "1.1.5";
