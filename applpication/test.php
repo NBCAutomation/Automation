@@ -6,7 +6,7 @@
 
     // echo "Running PhantomJS version: ";
 
-    passthru('casperjs test dev_tests/test_file.js --url=http://telemundo51.com', $ret);
+    passthru('casperjs test ../dev_tests/test_file.js --url=http://telemundo51.com', $ret);
 
     die($ret);
 
