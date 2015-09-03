@@ -14,31 +14,37 @@ var x2js = new xmlLib();
 // var sax = require('./sax');
 // var PlistParser = require('./plist-parser');
 
+var colorizer = require('colorizer').create('Colorizer');
+
 var apiSuite = function(url) {
 
     if (!url) {
         throw new Error('A URL is required!');
     }
 
-    this._finished = [];
+    this.__passed = [];
     this.__collected = [];
+
     var suite = this;
-    var manifestUrl = url + "/apps/news-app/manifest/?apiVersion=2";
     var no_error = false;
 
+    var type = casper.cli.get('type');
 
-    casper.start( manifestUrl ).then(function(response) {
+    if (type === 'manifest') {
+        var url = url + "/apps/news-app/manifest/?apiVersion=2";
+    }
 
+    casper.start( url ).then(function(response) {
         if ( response.status == 200 ) {
             no_error = true;
         } else {
             throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
         }
     }).then(function() {
-        suite.getPageContent(manifestUrl);
+        suite.getPageContent(url, type);
         // require('utils').dump(jsonText);
     }).then(function() {
-        // suite._finished.forEach(function(res) {
+        // suite.__finished.forEach(function(res) {
         //     if (res.status != 200) {
         //         console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
         //     };
@@ -46,92 +52,126 @@ var apiSuite = function(url) {
     }).run();
 };
 
-apiSuite.prototype.checkHealth = function(endpoint) {
-
-  var suite = this;
-  // var current = this.__collected.shift();
-
-    // require('utils').dump( this.__collected );
-
-  if (endpoint) {
-      casper.open(endpoint, {
-        method: 'head'
-      }).then(function(resp) {
-        // suite._finished.push({
-        //   from: current.from,
-        //   url: current.url,
-        //   status: this.status().currentHTTPStatus
-        // });
-
-        // suite.checkHealth();
-        console.log('endpoint ~ ' + endpoint + ' || status ~ ' + this.status().currentHTTPStatus)
-      });
-    // }
-  } else {
-    delete this.__collected;
-  }
-};
-
-apiSuite.prototype.getPageContent = function(manifestUrl) {
+apiSuite.prototype.getPageContent = function(url, type) {
     
     var suite = this;
-    var __collected = [];
-    var __endpoints = [];
 
-    casper.open(manifestUrl, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
-        var rawContent = this.getPageContent();
+    if (type === 'manifest') {
+        casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
+            var rawContent = this.getPageContent();
 
-        parser = new DOMParser();
-        xmlDoc = parser.parseFromString(rawContent,'text/xml');
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(rawContent,'text/xml');
 
-        // var plist = new plistLib( rawContent );
-        // var plist = new PlistParser( rawContent );
-        
-        // if(plist.validate()){
-        //     // Parse the input, returning a JS object
-        //     console.log('validated');
-        // }
-
-        // require('utils').dump( plist.validate() );
-        
-        if ( rawContent ) {
-
-            var __jsonObj = x2js.xml_str2json( rawContent );
-
-            // require('utils').dump( __jsonObj.plist.dict.key[0] );
-            // require('utils').dump( __jsonObj );
-            // console.log( __jsonObj.plist.dict.key[0] + " : " + __jsonObj.plist.dict.string[0] );
-            // console.log( __jsonObj.plist.dict.key.length );
-            // 
-            // require('utils').dump( __jsonObj );
             
-            var __baseKeys = __jsonObj.plist.dict.key;
-            var __baseVals = __jsonObj.plist.dict.string;
-            var __moduleKeys = __jsonObj.plist.dict.dict[0].key;
-            var __moduleVals = __jsonObj.plist.dict.dict[0].string;
+            if ( rawContent ) {
 
-            for (var i = __moduleKeys.length - 1; i >= 0; i--) {
-                __collected.push({
-                    key: __moduleKeys[i],
-                    url: __moduleVals[i].toString()
-                });
-            };
-
-            for (var i = __collected.length - 1; i >= 0; i--) {
+                var __jsonObj = x2js.xml_str2json( rawContent );
                 
-                var __endpoint = __collected[i].url;
+                var __baseKeys = __jsonObj.plist.dict.key;
+                var __baseVals = __jsonObj.plist.dict.string;
+                var __moduleKeys = __jsonObj.plist.dict.dict[0].key;
+                var __moduleVals = __jsonObj.plist.dict.dict[0].string;
 
-                if ( !__endpoint.indexOf('/apps') ) {
-                    suite.checkHealth( casper.cli.get('url') + __endpoint );
-                    // console.log( casper.cli.get('url') + __endpoint );
-                }
-            };
-            
-        } else {
-            throw new Error('Missing XML elements!');
-        }
-    });
+                for (var i = __moduleKeys.length - 1; i >= 0; i--) {
+                    var key = __moduleKeys[i];
+                    var url = __moduleVals[i].toString();
+
+                    if ( ! url.indexOf('/apps') ) {
+                        url = casper.cli.get('url') + url;
+                  
+                        suite.__collected.push({
+                            key: key,
+                            url: url
+                        });
+                    }
+                };
+
+                // require('utils').dump( suite.__collected );
+                this.echo('endpoint health check...');
+
+                for (var i = suite.__collected.length - 1; i >= 0; i--) {
+                    suite.checkHealth();
+                };
+                
+            } else {
+                throw new Error('Missing XML elements!');
+            }
+        })
+    } else {
+        console.log('other type of url');
+    }
 };
+
+apiSuite.prototype.checkHealth = function() {
+
+    var suite = this;
+    var current = suite.__collected.shift();
+
+    if (current.url) {
+        casper.open(current.url, {
+            method: 'head'
+        }).then(function(resp) {
+            var status = this.status().currentHTTPStatus;
+
+            if ( status == 200) {
+                this.echo("- " + current.key + ' : ' + current.url + colorizer.colorize(" Status: " + status, "INFO") );
+
+                suite.__passed.push({
+                    from: current.key,
+                    url: current.url,
+                    status: status
+                });
+
+                for (var i = suite.__passed.length - 1; i >= 0; i--) {
+                    if ( suite.validateJson() ) {
+                        console.log('JSON validated');
+                    } else {
+                        throw new Error('JSON error!');
+                    }
+                };
+            }
+
+            // suite.checkHealth();
+        });
+    } else {
+        // delete this.__collected;
+    }
+};
+
+apiSuite.prototype.validateJson = function() {
+    var suite = this;
+    var current = suite.__passed.shift();
+
+    if (current.url) {
+        casper.open(current.url, { method: 'get', headers:{ 'Accept': 'application/json' } }).then(function() {
+            
+            var rawContent = this.getPageContent();
+            // require('utils').dump( rawContent );
+
+            var __str = JSON.stringify( rawContent );
+
+            require('utils').dump( JSON.parse(__str) );
+
+            // try {
+            //     JSON.parse(__str);
+            // } catch (e) {
+            //     return false;
+            // }
+            // return true;
+
+            // suite.__passed.push({
+            //     from: current.key,
+            //     url: current.url,
+            //     status: this.status().currentHTTPStatus
+            // });
+
+            // suite.checkHealth();
+        });
+    } else {
+        delete this.__collected;
+    }
+}
 
 
 new apiSuite(casper.cli.get('url'));
