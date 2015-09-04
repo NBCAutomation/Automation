@@ -127,7 +127,7 @@ apiSuite.prototype.checkHealth = function() {
                     if ( suite.validateJson() ) {
                         console.log('JSON validated');
                     } else {
-                        throw new Error('JSON error!');
+                        // throw new Error('JSON error!');
                     }
                 };
             }
@@ -144,29 +144,16 @@ apiSuite.prototype.validateJson = function() {
     var current = suite.__passed.shift();
 
     if (current.url) {
-        casper.open(current.url, { method: 'get', headers:{ 'Accept': 'application/json' } }).then(function() {
-            
-            var rawContent = this.getPageContent();
-            // require('utils').dump( rawContent );
-
-            var __str = JSON.stringify( rawContent );
-
-            require('utils').dump( JSON.parse(__str) );
-
-            // try {
-            //     JSON.parse(__str);
-            // } catch (e) {
-            //     return false;
-            // }
-            // return true;
-
-            // suite.__passed.push({
-            //     from: current.key,
-            //     url: current.url,
-            //     status: this.status().currentHTTPStatus
-            // });
-
-            // suite.checkHealth();
+        casper.open(current.url).then(function() {
+            var output = this.page.evaluate(function() { return(document.body.innerHTML); });
+            // var rawContent = this.getPageContent();
+            // console.log( output );
+            // check for class="\&quot; and string replace
+            console.log('======================== Regular Output ================================');
+            console.log( output );
+            console.log('======================== JSON Parse ================================');
+            require('utils').dump( JSON.parse(output) );
+            console.log('========================================================');
         });
     } else {
         delete this.__collected;
