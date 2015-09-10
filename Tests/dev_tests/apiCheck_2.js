@@ -41,7 +41,7 @@ var apiSuite = function(url) {
             throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
         }
     }).then(function() {
-        suite.getPageContent(url, type);
+        suite.getContent(url, type);
         // require('utils').dump(jsonText);
     }).then(function() {
         // suite.__finished.forEach(function(res) {
@@ -52,7 +52,7 @@ var apiSuite = function(url) {
     }).run();
 };
 
-apiSuite.prototype.getPageContent = function(url, type) {
+apiSuite.prototype.getContent = function(url, type) {
     
     var suite = this;
 
@@ -139,21 +139,50 @@ apiSuite.prototype.checkHealth = function() {
     }
 };
 
+apiSuite.prototype.escapeSpecialChars = function() {
+    var suite = this;
+    return this.replace(/\\/g, "\\\\").
+        replace(/\n/g, "\\n").
+        replace(/\r/g, "\\r").
+        replace(/\t/g, "\\t").
+        replace(/\f/g, "\\f").
+        replace(/"/g,"\\\"").
+        replace(/'/g,"\\\'").
+        replace(/\&/g, "\\&");
+}
+
 apiSuite.prototype.validateJson = function() {
     var suite = this;
     var current = suite.__passed.shift();
 
     if (current.url) {
+        // var rec = casper.page.onResourceReceived;
+
+        // casper.page.onResourceReceived = function(resp) {
+        //     require('utils').dump( this.content );
+        //     rec.call(casper.page, resp);
+        // };
+
         casper.open(current.url).then(function() {
             var output = this.page.evaluate(function() { return(document.body.innerHTML); });
-            // var rawContent = this.getPageContent();
-            // console.log( output );
-            // check for class="\&quot; and string replace
-            console.log('======================== Regular Output ================================');
-            console.log( output );
-            console.log('======================== JSON Parse ================================');
-            require('utils').dump( JSON.parse(output) );
-            console.log('========================================================');
+            // var output = this.currentResponse;
+            // // console.log( output );
+            // // check for class="\&quot; and string replace
+            // console.log('======================== Regular Output ================================');
+            // // console.log( output );
+            // console.log('======================== JSON Parse ================================');
+            var __json = JSON.stringify(output);
+            var __escapeChars = __json.replace(/\\/g, "\\\\").
+        replace(/\n/g, "\\n").
+        replace(/\r/g, "\\r").
+        replace(/\t/g, "\\t").
+        replace(/\f/g, "\\f").
+        replace(/"/g,"\\\"").
+        replace(/'/g,"\\\'").
+        replace(/\&/g, "\\&");;
+
+            require('utils').dump( output.replace(/[\r\n]/g, '\\n') );
+            // console.log('========================================================');
         });
     } else {
         delete this.__collected;
