@@ -5,6 +5,7 @@ NBC OTS “SPIRE”
 CasperJS / SPIRE Tests
 	Verify Content pages
 		Verify page loads - 200 status/page wrapper check. (load_check.js)
+			Verify visual elemnets are loaded and visible
 		404 Link check (url_check.js)
 		Share -  one share bar
 		Gallery w/ PreRoll & Interstitial
@@ -43,4 +44,5 @@ CasperJS / SPIRE Tests
 	Status pages/reports
 
 
-
+Mandrill email
+http://stackoverflow.com/questions/16716006/send-template-mandrill-javascript
