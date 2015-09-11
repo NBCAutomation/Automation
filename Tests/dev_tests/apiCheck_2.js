@@ -7,6 +7,7 @@
 // Dev Notes:
 // Add a schema check for the plist/sml files
 //  -- parser returning false, appears that the XML object is mising
+//  var contentType = utils.getPropertyPath(this, 'currentResponse.contentType'); -- get current doc content type
 
 var xmlLib = require('./xml2json');
 var x2js = new xmlLib();
@@ -93,7 +94,7 @@ apiSuite.prototype.getContent = function(url, type) {
                 for (var i = suite.__collected.length - 1; i >= 0; i--) {
                     suite.checkHealth();
                 };
-                
+
             } else {
                 throw new Error('Missing XML elements!');
             }
@@ -122,14 +123,15 @@ apiSuite.prototype.checkHealth = function() {
                     url: current.url,
                     status: status
                 });
+                console.log( ' -- array length: ' + suite.__passed.length );
 
-                for (var i = suite.__passed.length - 1; i >= 0; i--) {
-                    if ( suite.validateJson() ) {
-                        console.log('JSON validated');
-                    } else {
+                // for (var i = suite.__passed.length - 1; i >= 0; i--) {
+                //     if ( suite.validateJson() ) {
+                //         console.log('JSON validated');
+                //     } else {
                         // throw new Error('JSON error!');
-                    }
-                };
+                //     }
+                // };
             }
 
             // suite.checkHealth();
@@ -139,17 +141,41 @@ apiSuite.prototype.checkHealth = function() {
     }
 };
 
-apiSuite.prototype.escapeSpecialChars = function() {
+apiSuite.prototype.checkNavigation = function() {
+
     var suite = this;
-    return this.replace(/\\/g, "\\\\").
-        replace(/\n/g, "\\n").
-        replace(/\r/g, "\\r").
-        replace(/\t/g, "\\t").
-        replace(/\f/g, "\\f").
-        replace(/"/g,"\\\"").
-        replace(/'/g,"\\\'").
-        replace(/\&/g, "\\&");
-}
+    var current = suite.__collected.shift();
+
+    if (current.url) {
+        casper.open(current.url, {
+            method: 'head'
+        }).then(function(resp) {
+            var status = this.status().currentHTTPStatus;
+
+            if ( status == 200) {
+                this.echo("- " + current.key + ' : ' + current.url + colorizer.colorize(" Status: " + status, "INFO") );
+
+                suite.__passed.push({
+                    from: current.key,
+                    url: current.url,
+                    status: status
+                });
+
+                // for (var i = suite.__passed.length - 1; i >= 0; i--) {
+                //     if ( suite.validateJson() ) {
+                //         console.log('JSON validated');
+                //     } else {
+                        // throw new Error('JSON error!');
+                //     }
+                // };
+            }
+
+            // suite.checkHealth();
+        });
+    } else {
+        // delete this.__collected;
+    }
+};
 
 apiSuite.prototype.validateJson = function() {
     var suite = this;
@@ -163,26 +189,13 @@ apiSuite.prototype.validateJson = function() {
         //     rec.call(casper.page, resp);
         // };
 
-        casper.open(current.url).then(function() {
-            var output = this.page.evaluate(function() { return(document.body.innerHTML); });
-            // var output = this.currentResponse;
-            // // console.log( output );
-            // // check for class="\&quot; and string replace
-            // console.log('======================== Regular Output ================================');
-            // // console.log( output );
-            // console.log('======================== JSON Parse ================================');
-            var __json = JSON.stringify(output);
-            var __escapeChars = __json.replace(/\\/g, "\\\\").
-        replace(/\n/g, "\\n").
-        replace(/\r/g, "\\r").
-        replace(/\t/g, "\\t").
-        replace(/\f/g, "\\f").
-        replace(/"/g,"\\\"").
-        replace(/'/g,"\\\'").
-        replace(/\&/g, "\\&");;
+        casper.open(current.url).then(function(resp) {
+            // var output = this.page.evaluate(function() { return(document.body.innerText); });
+            var output = this.page.framePlainText;
 
-            require('utils').dump( output.replace(/[\r\n]/g, '\\n') );
-            // console.log('========================================================');
+            require('utils').dump( output.replace(/[\n\t\r]/g,"") );
+            console.log('========================================================');
+            require('utils').dump( resp );
         });
     } else {
         delete this.__collected;
