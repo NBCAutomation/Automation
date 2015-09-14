@@ -1,12 +1,11 @@
-# README #
+# NBC OTS SPIRE #
+* A regression & automation testing suite *
 
-This README would normally document whatever steps are necessary to get your application up and running.
+** Description **
 
-### What is this repository for? ###
+Spire is in-house testing suite of automation tools and scripted utilities used for regression and smoke tests for NBC OTS. The testing suite is currently being developed using the PhantomJS and CasperJS Javascript libraries. Both of these libraries function as headless WebKit scriptable libraries with a built in JavaScript API.
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+Spire’s core purpose is to speed up regression testing, automate site health checks, as well as provide testing utilities to ensure product overall stability.
 
 ### How do I get set up? ###
 
