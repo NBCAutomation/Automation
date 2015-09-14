@@ -1,3 +1,4 @@
+/* globals casper, require, console */
 // Author: Seth Benjamin, Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
 // Version: 0.01
@@ -32,7 +33,7 @@ var apiSuite = function(url) {
     var type = casper.cli.get('type');
 
     if (type === 'manifest') {
-        var url = url + "/apps/news-app/manifest/?apiVersion=2";
+        url = url + '/apps/news-app/manifest/?apiVersion=2';
     }
 
     casper.start( url ).then(function(response) {
@@ -61,20 +62,23 @@ apiSuite.prototype.getContent = function(url, type) {
         casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
             var rawContent = this.getPageContent();
 
-            parser = new DOMParser();
-            xmlDoc = parser.parseFromString(rawContent,'text/xml');
+            // var parser = new DOMParser();
+            // xmlDoc = parser.parseFromString(rawContent,'text/xml');
 
             
             if ( rawContent ) {
 
                 var __jsonObj = x2js.xml_str2json( rawContent );
                 
-                var __baseKeys = __jsonObj.plist.dict.key;
-                var __baseVals = __jsonObj.plist.dict.string;
+                // var __baseKeys = __jsonObj.plist.dict.key;
+                // var __baseVals = __jsonObj.plist.dict.string;
                 var __moduleKeys = __jsonObj.plist.dict.dict[0].key;
                 var __moduleVals = __jsonObj.plist.dict.dict[0].string;
 
-                for (var i = __moduleKeys.length - 1; i >= 0; i--) {
+                // initialize iterator
+                var i;
+
+                for (i = __moduleKeys.length - 1; i >= 0; i--) {
                     var key = __moduleKeys[i];
                     var url = __moduleVals[i].toString();
 
@@ -86,19 +90,20 @@ apiSuite.prototype.getContent = function(url, type) {
                             url: url
                         });
                     }
-                };
+                }
 
                 // require('utils').dump( suite.__collected );
                 this.echo('endpoint health check...');
 
-                for (var i = suite.__collected.length - 1; i >= 0; i--) {
+                for (i = suite.__collected.length - 1; i >= 0; i--) {
                     suite.checkHealth();
-                };
+                    // break;
+                }
 
             } else {
                 throw new Error('Missing XML elements!');
             }
-        })
+        });
     } else {
         console.log('other type of url');
     }
@@ -109,29 +114,28 @@ apiSuite.prototype.checkHealth = function() {
     var suite = this;
     var current = suite.__collected.shift();
 
-    if (current.url) {
+    // require('utils').dump( current );
+
+    if (current) {
         casper.open(current.url, {
             method: 'head'
         }).then(function(resp) {
+            resp = resp;
             var status = this.status().currentHTTPStatus;
 
             if ( status == 200) {
-                this.echo("- " + current.key + ' : ' + current.url + colorizer.colorize(" Status: " + status, "INFO") );
+                this.echo('- ' + current.key + ' : ' + current.url + colorizer.colorize(' Status: ' + status, 'INFO') );
 
                 suite.__passed.push({
                     from: current.key,
                     url: current.url,
                     status: status
                 });
-                console.log( ' -- array length: ' + suite.__passed.length );
+                // console.log( ' -- array length: ' + suite.__passed.length );
 
-                // for (var i = suite.__passed.length - 1; i >= 0; i--) {
-                //     if ( suite.validateJson() ) {
-                //         console.log('JSON validated');
-                //     } else {
-                        // throw new Error('JSON error!');
-                //     }
-                // };
+                for (var i = suite.__passed.length - 1; i >= 0; i--) {
+                    suite.validateJson();
+                }
             }
 
             // suite.checkHealth();
@@ -150,10 +154,11 @@ apiSuite.prototype.checkNavigation = function() {
         casper.open(current.url, {
             method: 'head'
         }).then(function(resp) {
+            resp = resp;
             var status = this.status().currentHTTPStatus;
 
             if ( status == 200) {
-                this.echo("- " + current.key + ' : ' + current.url + colorizer.colorize(" Status: " + status, "INFO") );
+                this.echo('- ' + current.key + ' : ' + current.url + colorizer.colorize(' Status: ' + status, 'INFO') );
 
                 suite.__passed.push({
                     from: current.key,
@@ -182,25 +187,31 @@ apiSuite.prototype.validateJson = function() {
     var current = suite.__passed.shift();
 
     if (current.url) {
-        // var rec = casper.page.onResourceReceived;
+        casper.open(current.url+'?cachebust='+Math.random()).then(function(resp) {
+            resp = resp;
+            var validated = false;
+            var output = this.getPageContent();
 
-        // casper.page.onResourceReceived = function(resp) {
-        //     require('utils').dump( this.content );
-        //     rec.call(casper.page, resp);
-        // };
+            try {
+                output = JSON.parse(output);
+                if( output instanceof Object ) {
+                    validated = true;
+                 }
+            } catch (e) {
+                // ...
+            }
 
-        casper.open(current.url).then(function(resp) {
-            // var output = this.page.evaluate(function() { return(document.body.innerText); });
-            var output = this.page.framePlainText;
+            if (validated) {
+                console.log('\033[0;32mJSON VALIDATED\x1b[0m');
+            } else {
+                console.log('\033[0;31mFAILED\x1b[0m');
+            }
 
-            require('utils').dump( output.replace(/[\n\t\r]/g,"") );
-            console.log('========================================================');
-            require('utils').dump( resp );
         });
     } else {
         delete this.__collected;
     }
-}
+};
 
 
 new apiSuite(casper.cli.get('url'));
