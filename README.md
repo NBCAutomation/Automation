@@ -1,5 +1,5 @@
 # NBC OTS SPIRE #
-* A regression & automation testing suite *
+## A regression & automation testing suite ##
 
 ** Description **
 
