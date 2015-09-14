@@ -1,5 +1,5 @@
 # NBC OTS SPIRE
-## A regression & automation testing suite
+*A regression & automation testing suite*
 
 **Description**
 
@@ -8,7 +8,7 @@ Spire is in-house testing suite of automation tools and scripted utilities used 
 Spire’s core purpose is to speed up regression testing, automate site health checks, as well as provide testing utilities to ensure product overall stability.
 
 
-## Current proposed tests (in development) ##
+### Current proposed tests (in development) ###
 *	CasperJS / SPIRE Tests
 	+ Verify Content pages
 		*	Verify page loads - 200 status/page wrapper check.(load_check.js) 
@@ -46,10 +46,10 @@ Spire’s core purpose is to speed up regression testing, automate site health c
 		*	Verify Omniture calls and events
 
 
-**Misc Spire related tasks**
-*	Desktop app - Electron
-*	Documentation
-*	Mandrill email notifications/reports
-*	Google Sheets API Integration
-*	Internal Status Pages
+### Misc Spire related tasks ###
++ Desktop app - Electron
++ Documentation
++ Mandrill email notifications/reports
++ Google Sheets API Integration
++ Internal Status Pages
 	*	NBC OTS status page - This page will connect to every 3rd party API endpoint to allow for easy and up-to-date reliable hub of information. Ideally these pages can/will be use for communication on outages and/or announcements.
