@@ -204,7 +204,7 @@ apiSuite.prototype.validateJson = function() {
             if (validated) {
                 console.log('\033[0;32mJSON VALIDATED\x1b[0m');
             } else {
-                console.log('\033[0;31mFAILED\x1b[0m');
+                throw new Error('JSON error!');
             }
 
         });
