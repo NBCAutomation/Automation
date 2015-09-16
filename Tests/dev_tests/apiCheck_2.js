@@ -104,6 +104,8 @@ apiSuite.prototype.getContent = function(url, type) {
                 throw new Error('Missing XML elements!');
             }
         });
+    } else if (type === 'navigation') {
+
     } else {
         console.log('other type of url');
     }
@@ -135,6 +137,13 @@ apiSuite.prototype.checkHealth = function() {
 
                 for (var i = suite.__passed.length - 1; i >= 0; i--) {
                     suite.validateJson();
+
+                    var passedEndpoint = suite.__passed.shift();
+
+                    if ( passedEndpoint.from == current.key && current.key == 'navigation' ) {
+                    //     console.log('~~  ' + suite.__passed[i].from);
+                        suite.validateJson(passedEndpoint.url, passedEndpoint.from);
+                    }
                 }
             }
 
@@ -166,19 +175,25 @@ apiSuite.prototype.checkNavigation = function() {
                     status: status
                 });
 
-                // for (var i = suite.__passed.length - 1; i >= 0; i--) {
-                //     if ( suite.validateJson() ) {
-                //         console.log('JSON validated');
-                //     } else {
-                        // throw new Error('JSON error!');
-                //     }
-                // };
+                for (var i = suite.__passed.length - 1; i >= 0; i--) {
+                    if ( suite.validateJson() ) {
+                        console.log('Deltrie');
+                        
+                        var passedEndpoint = suite.__passed.shift();
+
+                        if ( passedEndpoint.from.indexOf('navigation') ) {
+                            console.log('navigation' + passedEndpoint.url);
+                        }
+                    } else {
+                        throw new Error('JSON error!');
+                    }
+                };
             }
 
             // suite.checkHealth();
         });
     } else {
-        // delete this.__collected;
+        // delete this.__collected; 
     }
 };
 
