@@ -139,11 +139,11 @@ apiSuite.prototype.checkHealth = function() {
                     suite.validateJson();
 
                     var passedEndpoint = suite.__passed.shift();
-
-                    if ( passedEndpoint.from == current.key && current.key == 'navigation' ) {
-                    //     console.log('~~  ' + suite.__passed[i].from);
-                        suite.validateJson(passedEndpoint.url, passedEndpoint.from);
-                    }
+                    console.log(passedEndpoint);
+                    //if ( passedEndpoint.from == current.key && current.key == 'navigation' ) {
+                      //  console.log('~~  ' + suite.__passed[i].from);
+                        //suite.validateJson(passedEndpoint.url, passedEndpoint.from);
+                    //}
                 }
             }
 
