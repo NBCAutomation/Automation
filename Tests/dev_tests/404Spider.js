@@ -5,32 +5,58 @@
 // Use: casperjs test [file_name] --url=[site_url]
 
 var SpiderSuite = function(url) {
-  if (!url) {
-    throw new Error('A URL is required!');
-  }
+    if (!url) {
+        throw new Error('A URL is required!');
+    }
 
-  this._baseUrl = url.replace(/\/$/, '');
-  this._finished = [];
-  this._collected = [];
+    this._baseUrl = url.replace(/\/$/, '');
+    this._finished = [];
+    this._collected = [];
 
-  var suite = this;
-  var destinations = [];
+    var suite = this;
+    var destinations = [];
 
-  casper.start(url).then(function() {
+    casper.start(url).then(function() {
+
+    // Skip erreanous site requests
+    casper.options.onResourceRequested = function(casper, requestData, request) {
+
+        var parser = document.createElement('a');
+        parser.href = url;
+
+        newUrl = parser.href;
+        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').split(/[/?#]/)[0];
+
+        if (requestData.url.indexOf( sourceString ) == -1 ) {
+            request.abort();
+            console.log( 'skipping --  ' + requestData.url )
+        }
+    }
+
+    // Grab all links from the current navigation and add into an array of collected urls
     suite.evaluateAndPushUrls(this, '#nav a', destinations);
-
     destinations = destinations.slice(2);
-  }).then(function() {
-    suite.collectFromDestinations(destinations);
-  }).then(function() {
-    suite.checkHealth();
-  }).then(function() {
-    suite._finished.forEach(function(res) {
-      if (res.status != 200) {
-        console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
-      };
-    });
-  }).run();
+
+    }).then(function() {
+
+        // Grab collected urls and build links array
+        suite.collectFromDestinations(destinations);
+
+    }).then(function() {
+
+        // Attampt to load each url and test HTTP responses
+        suite.checkHealth();
+
+    }).then(function() {
+        
+        // Dump results
+        suite._finished.forEach(function(res) {
+            if (res.status != 200) {
+                console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
+            };
+        });
+
+    }).run();
 };
 
 
