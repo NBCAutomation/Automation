@@ -1,18 +1,10 @@
-/**
-* Add a listener for the phantomjs resource request.
-*
-* This allows us to abort requests for external resources that we don't need
-* like Google adwords tracking.
-* https://drupalize.me/blog/201509/speed-casperjs-tests-skipping-unnecessary-http-resources
-* casperjs test 404Spider.js --includes=urlBlacklist.js --url=http://www.nbcmiami.com/
-*/
-
-var helpers = require('helper')
+// Author: Deltrie Allen
+// Contact: deltrie.allen@nbcuni.com
+// Version: 0.01
+// Case: Add a listener for the phantomjs resource request, and skip any request that is not of the domain and/or submitte site.
 
 casper.options.onResourceRequested = function(casper, requestData, request) {
-    // If any of these strings are found in the requested resource's URL, skip
-    // this request. These are not required for running tests.
-    
+
     var parser = document.createElement('a');
     parser.href = casper.cli.get('url');
 
