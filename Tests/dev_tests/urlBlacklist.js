@@ -19,40 +19,6 @@ casper.options.onResourceRequested = function(casper, requestData, request) {
     newUrl = parser.href;
     var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').split(/[/?#]/)[0];
 
-    var skip = [
-        //Google exclusions
-        'google.com',
-        'googleads.g.doubleclick.net',
-        'cm.g.doubleclick.net',
-        'www.googleadservices.com',
-        'googleapis.com',
-        'partner.googleadservices.com',
-
-        'data:image/png',
-        'intellicast.com',
-        'chartbeat.com',
-        'static.chartbeat.com',
-        'ping.chartbeat.com',
-        'quantserve.com',
-        'sigalalert.com',
-        'krxd.com',
-        
-        //Othe rexclusions
-        'nbc.com',
-        'nbc.com/app_link/nbctve',
-        'nbcudigitaladops.com',
-        'tidaltv.com',
-        'tremormedia.com',
-        'services.intellicast.com',
-        'facebook.com',
-        'platform.twitter.com',
-        'taboola.com',
-        'betrad.com',
-        'adreadytractions.com',
-        'everesttech.net',
-        'scorecardresearch.com'
-    ];
-
     if (requestData.url.indexOf( sourceString ) == -1 ) {
         request.abort();
         // console.log( 'skipping --  ' + requestData.url )
