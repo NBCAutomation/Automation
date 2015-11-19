@@ -13,6 +13,6 @@ casper.options.onResourceRequested = function(casper, requestData, request) {
 
     if (requestData.url.indexOf( sourceString ) == -1 ) {
         request.abort();
-        // console.log( 'skipping --  ' + requestData.url )
+        console.log( 'skipping --  ' + requestData.url );
     }
 };
