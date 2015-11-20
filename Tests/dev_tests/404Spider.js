@@ -16,6 +16,14 @@ var SpiderSuite = function(url) {
 	var suite = this;
 	var destinations = [];
 
+   var fs = require('fs');
+   var fname = new Date().getTime() + '.csv';
+   var save = fs.pathJoin(fs.workingDirectory, 'test_results', fname);
+
+   // Write file headers
+   fs.write(save, 'Source page,HTTP Status,Bad Link,');
+
+
 	casper.start(url).then(function() {
 
 		// Skip erreanous site requests
@@ -57,10 +65,14 @@ var SpiderSuite = function(url) {
 	}).then(function() {
 		
 		// Dump results
-		casper.echo( '[Testing Complete]' + suite._finished.length + ' potential links with issues.', 'GREEN_BAR' );
+		casper.echo( '[Testing Complete] Links with potential issues.', 'GREEN_BAR' );
+
 		suite._finished.forEach(function(res) {
 			if (res.status != 200) {
 				console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
+
+				//Testing file writing
+				fs.write(save, res.from + ',' + res.status + ',' + res.url + ',', 'a+');
 			};
 		});
 
