@@ -21,7 +21,7 @@ var SpiderSuite = function(url) {
    var save = fs.pathJoin(fs.workingDirectory, 'test_results', fname);
 
    // Write file headers
-   fs.write(save, 'Source page,HTTP Status,Bad Link,');
+   fs.write(save, 'Source page,HTTP Status,Link');
 
 
 	casper.start(url).then(function() {
@@ -72,7 +72,7 @@ var SpiderSuite = function(url) {
 				console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
 
 				//Testing file writing
-				fs.write(save, res.from + ',' + res.status + ',' + res.url + ',', 'a+');
+				fs.write(save, ',\n' + res.from + ',' + res.status + ',' + res.url, 'a+');
 			};
 		});
 
