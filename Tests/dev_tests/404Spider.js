@@ -16,9 +16,17 @@ var SpiderSuite = function(url) {
 	var suite = this;
 	var destinations = [];
 
-   var fs = require('fs');
-   var fname = new Date().getTime() + '.csv';
-   var save = fs.pathJoin(fs.workingDirectory, 'test_results', fname);
+	var parser = document.createElement('a');
+	parser.href = url;
+
+	newUrl = parser.href;
+	var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').split(/[/?#]/)[0];
+	var urlUri = sourceString.replace('.','_');
+
+	var fs = require('fs');
+	var fname = urlUri + '_' + new Date().getTime() + '.csv';
+	var save = fs.pathJoin(fs.workingDirectory, 'test_results', fname);
+
 
    // Write file headers
    fs.write(save, 'Source page,HTTP Status,Link');
@@ -29,12 +37,6 @@ var SpiderSuite = function(url) {
 		// Skip erreanous site requests
 		casper.echo( '[Step] Skipping erreanous requests...', 'PARAMETER' );
 		casper.options.onResourceRequested = function(casper, requestData, request) {
-
-			var parser = document.createElement('a');
-			parser.href = url;
-
-			newUrl = parser.href;
-			var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').split(/[/?#]/)[0];
 
 			// If the outgoing request doesn't equal [site_url], end and skip the request
 			if (requestData.url.indexOf( sourceString ) == -1 ) {
