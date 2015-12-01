@@ -47,7 +47,7 @@ Spire’s core purpose is to speed up regression testing, automate site health c
 
 
 ### Misc Spire related tasks ###
-+ Desktop app - Electron
++ Desktop app - Electron 
 + Documentation
 + Mandrill email notifications/reports
 + Google Sheets API Integration
