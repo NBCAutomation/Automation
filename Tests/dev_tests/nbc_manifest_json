@@ -1,0 +1,482 @@
+{
+    "plist": {
+        "dict": {
+            "key": [
+                "date-generated",
+                "domain",
+                "launch-image-name",
+                "ugc-partition-id",
+                "video-autoplay",
+                "push-notification-url-key",
+                "push-notification-flag-key",
+                "comscore-app-name",
+                "app-urls",
+                "app-base-urls",
+                "web-links",
+                "omniture",
+                "updateScreen",
+                "advertising",
+                "contact",
+                "more-app-ids",
+                "weather"
+            ],
+            "string": [
+                "Fri Aug 28 09:22:52 PDT 2015",
+                {
+                    "__cdata": "www.nbcmiami.com"
+                },
+                "LaunchImage-ami",
+                "602ef55f-b2e3-459e-b0b7-18db0a13d3cc",
+                "true",
+                "eid",
+                "vdo",
+                "NBC Miami (Mobile App)"
+            ],
+            "dict": [
+                {
+                    "key": [
+                        "weather-branding",
+                        "alerts",
+                        "ugctemplets",
+                        "breaking",
+                        "home",
+                        "home-investigation",
+                        "facebook-comments-script",
+                        "navigation",
+                        "settings-terms-of-use",
+                        "settings-terms-of-service",
+                        "settings-closed-captioning-faq",
+                        "submit-media",
+                        "trending",
+                        "weather-forcast-video",
+                        "weather-forcast-story",
+                        "weather-maps"
+                    ],
+                    "string": [
+                        {
+                            "__cdata": "http://media.nbcnewyork.com/images/WeatherBrand_%@.png"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/alerts/"
+                        },
+                        {
+                            "__cdata": "/templates/CJUpload"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/breaking/modules/"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/home/modules/"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/investigations/modules/"
+                        },
+                        {
+                            "__cdata": "http://connect.facebook.net/en_US/all.js#xfbml=1"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/navigation/"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/modules/settings/terms-of-use/"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/modules/settings/terms-of-service/"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/modules/settings/closed-captioning-faq/"
+                        },
+                        {
+                            "__cdata": "http://api.celljournalist.com/Media/VendorUpload"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/trending/"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/modules/weather/video/"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/weather/forecast/modules/"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/content/gallery/weather-maps/"
+                        }
+                    ]
+                },
+                {
+                    "key": [
+                        "advertising-display",
+                        "advertising-video",
+                        "content",
+                        "gallery",
+                        "recommended",
+                        "related",
+                        "weather-conditions-icon",
+                        "weather-forcast",
+                        "weather-wsi-forcast",
+                        "weather-location-lookup"
+                    ],
+                    "string": [
+                        {
+                            "__cdata": "http://pubads.g.doubleclick.net/gampad/adx"
+                        },
+                        {
+                            "__cdata": "http://pubads.g.doubleclick.net/gampad"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/content/?contentId=%@"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/content/gallery/?contentId=%@"
+                        },
+                        {
+                            "__cdata": "http://odb.outbrain.com/utils/get?url=%@&widgetJSId=%@&key=%@&idx=%@&user=%@&format=vjnc"
+                        },
+                        {
+                            "__cdata": "/apps/news-app/content/related/?contentId=%@"
+                        },
+                        {
+                            "__cdata": "http://media.nbcmiami.com/designimages/new_wx_%@.png"
+                        },
+                        {
+                            "__cdata": "http://services.intellicast.com/200904-01/274135753/Weather/Report/%@?filter=1,3,4,9&Days=7&hours=24"
+                        },
+                        {
+                            "__cdata": "http://data-services.wsi.com/200904-01/274135753/Weather/Report/%@/%@?filter=1,3,4,9&Days=7&hours=24"
+                        },
+                        {
+                            "__cdata": "http://services.intellicast.com/200904-01/274135753/Locations/Cities/%@"
+                        }
+                    ]
+                },
+                {
+                    "key": [
+                        "facebook",
+                        "google-plus",
+                        "instagram",
+                        "search",
+                        "send-feedback",
+                        "settings-privacy-policy",
+                        "traffic",
+                        "tv-listings",
+                        "tve",
+                        "twitter",
+                        "weather-alerts",
+                        "weather-school-closings"
+                    ],
+                    "dict": [
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": "http://www.facebook.com/NBCMiami"
+                            }
+                        },
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": ""
+                            }
+                        },
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": "instagram.com/NBC6"
+                            }
+                        },
+                        {
+                            "key": [
+                                "title",
+                                "url"
+                            ],
+                            "string": [
+                                "Search",
+                                {
+                                    "__cdata": "/results/?disableHeader=true&disableDownloadApp=true"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": "/send-feedback/?disableHeader=true&disableDownloadApp=true"
+                            }
+                        },
+                        {
+                            "key": [
+                                "title",
+                                "url"
+                            ],
+                            "string": [
+                                "Privacy Policy",
+                                {
+                                    "__cdata": "/privacy/?disableHeader=true&disableDownloadApp=true"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": "/templates/mobilesite_web_traffic_gmap?app=y"
+                            }
+                        },
+                        {
+                            "key": [
+                                "title",
+                                "url"
+                            ],
+                            "string": [
+                                "TV Listings",
+                                {
+                                    "__cdata": "http://titantv.mobi/wtvj"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": "/templates/nbc_app"
+                            }
+                        },
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": "http://twitter.com/nbc6"
+                            }
+                        },
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": "/weather/severe-weather-alerts/?disableHeader=true&disableDownloadApp=true"
+                            }
+                        },
+                        {
+                            "key": "url",
+                            "string": {
+                                "__cdata": "/weather/school-closings/?disableHeader=true&disableDownloadApp=true"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "key": [
+                        "report-suite-ids",
+                        "tracking-server",
+                        "app-section-server-name",
+                        "page-view-event",
+                        "link-type",
+                        "station-division",
+                        "station-business-unit",
+                        "station-call-sign",
+                        "station-market"
+                    ],
+                    "string": [
+                        "nbcunbcotsappdivision,nbcunbcotsappmiami",
+                        "oimg.nbcuni.com",
+                        "nbcmiami",
+                        "event1",
+                        "o",
+                        "nbc",
+                        "AMI",
+                        "WTVJ",
+                        "AMI"
+                    ]
+                },
+                {
+                    "key": [
+                        "force-update",
+                        "update-screen-title",
+                        "update-screen-desc",
+                        "update-screen-appUrl",
+                        "update-screen-appversion"
+                    ],
+                    "string": [
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                    ]
+                },
+                {
+                    "key": [
+                        "ad-unit-level1",
+                        "fw_ssid",
+                        "adtest",
+                        "stage",
+                        "display",
+                        "splash",
+                        "article-interstitial",
+                        "gallery-interstitial",
+                        "video",
+                        "default-iab-category-tier1",
+                        "default-iab-category-tier2"
+                    ],
+                    "string": [
+                        "/ots_ami_newsapp",
+                        "ots_wtvj",
+                        "",
+                        "News",
+                        ""
+                    ],
+                    "false": "",
+                    "dict": [
+                        {
+                            "key": [
+                                "network-id",
+                                "echo-transition-delay"
+                            ],
+                            "string": "/2620",
+                            "real": "3.0"
+                        },
+                        {
+                            "key": [
+                                "enabled",
+                                "ad-unit-level2",
+                                "request-timeout",
+                                "display-duration",
+                                "target-width",
+                                "target-height",
+                                "scaling-x",
+                                "scaling-y"
+                            ],
+                            "true": "",
+                            "string": "/index",
+                            "real": [
+                                "1.5",
+                                "3.0",
+                                "0.5",
+                                "0.5"
+                            ],
+                            "integer": [
+                                "640",
+                                "1136"
+                            ]
+                        },
+                        {
+                            "key": [
+                                "network-id",
+                                "direct-sold-target-width",
+                                "direct-sold-target-height",
+                                "backfill-target-width",
+                                "backfill-target-height",
+                                "backfill-app-id"
+                            ],
+                            "string": [
+                                "/2620",
+                                "466574"
+                            ],
+                            "integer": [
+                                "384",
+                                "288",
+                                "320",
+                                "200"
+                            ]
+                        }
+                    ],
+                    "real": [
+                        "5",
+                        "5"
+                    ]
+                },
+                {
+                    "key": [
+                        "name",
+                        "address-line1",
+                        "address-line2",
+                        "phone",
+                        "contact-Info",
+                        "investigation-phone",
+                        "investigation-email"
+                    ],
+                    "string": [
+                        "WTVJ-TV - NBCMiami.com",
+                        "15000 SW 27th Street",
+                        "Miramar, FL 33027",
+                        "954-NBC-6000",
+                        {
+                            "__cdata": "1-954-424-0939"
+                        },
+                        {
+                            "__cdata": "team6investigators@nbc6.com"
+                        }
+                    ],
+                    "dict": {
+                        "key": [
+                            "phone1",
+                            "phone2",
+                            "phone3"
+                        ],
+                        "dict": [
+                            {
+                                "key": [
+                                    "contactInfoLabel",
+                                    "contactInfoNumber"
+                                ],
+                                "string": [
+                                    {
+                                        "__cdata": "Phone"
+                                    },
+                                    {
+                                        "__cdata": "954-NBC-6000"
+                                    }
+                                ]
+                            },
+                            {
+                                "key": [
+                                    "contactInfoLabel",
+                                    "contactInfoNumber"
+                                ],
+                                "string": [
+                                    {
+                                        "__cdata": "Phone"
+                                    },
+                                    {
+                                        "__cdata": "305-379-6666"
+                                    }
+                                ]
+                            },
+                            {
+                                "key": [
+                                    "contactInfoLabel",
+                                    "contactInfoNumber"
+                                ],
+                                "string": [
+                                    {
+                                        "__cdata": ""
+                                    },
+                                    {
+                                        "__cdata": ""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    "key": [
+                        "meteorologist-summary-disabled",
+                        "market-default-postal-code",
+                        "market-default-location-name",
+                        "market-default-dma",
+                        "market-default-lat",
+                        "market-default-long",
+                        "app-id"
+                    ],
+                    "true": "",
+                    "string": [
+                        "33133",
+                        "Miami, FL",
+                        "528",
+                        "25.78",
+                        "-80.21",
+                        ""
+                    ]
+                }
+            ],
+            "array": {
+                "string": ""
+            }
+        },
+        "_version": "1.0"
+    }
+}
