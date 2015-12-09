@@ -15,6 +15,7 @@ var SpiderSuite = function(url) {
 
 	var suite = this;
 	var destinations = [];
+	var __utils__ = require('clientutils').create();
 
 	var parser = document.createElement('a');
 	parser.href = url;
@@ -69,12 +70,20 @@ var SpiderSuite = function(url) {
 		// Dump results
 		casper.echo( '[Testing Complete] Links with potential issues.', 'GREEN_BAR' );
 
+		var wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
+
 		suite._finished.forEach(function(res) {
 			if (res.status != 200) {
 				console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
 
-				//Testing file writing
+				//Write text log
 				fs.write(save, ',\n' + res.from + ',' + res.status + ',' + res.url, 'a+');
+
+				//Write log to Google Sheets
+				var	gData = 'Source page=' + res.from + '&HTTP Status=' + res.status + '&Link=' + res.url;
+
+				// suite.logToGoogle(gData);
+				return JSON.parse(__utils__.sendAJAX(wsurl, 'POST', gData, false));
 			};
 		});
 
@@ -154,5 +163,40 @@ SpiderSuite.prototype.checkHealth = function() {
 	}
 };
 
+
+SpiderSuite.prototype.logToGoogle = function(resultsData) {
+	var wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
+	
+	return __utils__.sendAJAX(wsurl, 'POST', resultsData, false);
+
+	// request = $.ajax({
+	//     url: "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec",
+	//     type: "post",
+	//     data: resultsData
+	// });
+	
+	// callback handler that will be called on success
+	// request.done(function (response, textStatus, jqXHR){
+	    // log a message to the console
+	    // $('#result').html('<a href="https://docs.google.com/spreadsheets/d/1ILK0no9pWUKx5huPUVOnupRhVPFPKEujXDRKUdC0Vgs/edit?usp=sharing" target="_blank">Success - see Google Sheet</a>');
+	    console.log("Hooray, it worked!");
+	// });
+	
+	// callback handler that will be called on failure
+	// request.fail(function (jqXHR, textStatus, errorThrown){
+	    // log the error to the console
+	    // console.error(
+	        // "The following error occured: "+
+	        // textStatus, errorThrown
+	    // );
+	// });
+	
+	// callback handler that will be called regardless
+	// if the request failed or succeeded
+	// request.always(function () {
+	//     // reenable the inputs
+	//     $inputs.prop("disabled", false);
+	// });
+};
 
 new SpiderSuite(casper.cli.get('url'));
