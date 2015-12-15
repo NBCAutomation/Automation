@@ -70,7 +70,7 @@ var SpiderSuite = function(url) {
 		// Dump results
 		casper.echo( '[Testing Complete] Links with potential issues.', 'GREEN_BAR' );
 
-		var wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
+		var gdata, wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
 
 		suite._finished.forEach(function(res) {
 			if (res.status != 200) {
@@ -83,7 +83,22 @@ var SpiderSuite = function(url) {
 				var	gData = 'Source page=' + res.from + '&HTTP Status=' + res.status + '&Link=' + res.url;
 
 				// suite.logToGoogle(gData);
-				return JSON.parse(__utils__.sendAJAX(wsurl, 'POST', gData, false));
+				// return JSON.parse(__utils__.sendAJAX(wsurl, 'POST', gData, false));
+
+				var dataUrl = wsurl + '/?' + gData;
+
+				suite.logToGoogle(dataUrl);
+
+				// resp = this.evaluate(function(wsurl, data) {
+    //                     try {
+    //                         //return JSON.parse(utils.sendAJAX(wsurl, 'POST', null, false));
+    //                         return __utils__.sendAJAX(wsurl, 'POST', gData, false);
+    //                     } catch (e) {
+    //                         this.echo(e);
+    //                     }
+    //             }, {wsurl: wsurl, data: gData});
+
+    //             console.log(resp);
 			};
 		});
 
@@ -165,9 +180,13 @@ SpiderSuite.prototype.checkHealth = function() {
 
 
 SpiderSuite.prototype.logToGoogle = function(resultsData) {
-	var wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
+
+	casper.open(resultsData).then(function() {
+	    console.log('Logged to Google ~ ' + resultsData);
+	});
+	// var wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
 	
-	return __utils__.sendAJAX(wsurl, 'POST', resultsData, false);
+	// return __utils__.sendAJAX(wsurl, 'POST', resultsData, false);
 
 	// request = $.ajax({
 	//     url: "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec",

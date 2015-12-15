@@ -4,31 +4,17 @@
 // Case: PASS/FAIL Checks to see if a page is loaded as well as if the page elements are loaded and visible.
 // Use: casperjs [file_name] --url="[site_url]"
 
+console.log('pre-start...');
 
-var utils = require('utils');
-var siteUrl = casper.cli.get("url");
-var saveLoc = ('screenshots/');
+casper.start('http://google.com/', function() {
+    var data, wsurl = 'http://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec';
+    console.log('start...');
+    data = this.evaluate(function(wsurl) {
+        return JSON.parse(__utils__.sendAJAX(wsurl, 'POST', 'Source page=casperjs derp&HTTP Status=casperjs derp&Link=casperjs derp', false));
+        console.log('parse attempt...');
+    }, {wsurl: wsurl});
+});
 
-casper.test.begin('Page laod/wrapper tests', function suite(test) {
-
-    casper.start( siteUrl, function(response) {
-        
-        // require('utils').dump(response);
-
-        if ( response.status == 200 ) {
-            no_error = true;
-        } else {
-            this.echo('Page not loaded correctly. Response: ' + response.status).exit();
-        }
-
-        casper.then(function() {
-            if ( no_error ) {
-                casper.echo("This is a test message");
-                console.log("This is a console log message");
-            }
-        });
-
-    }).run(function() {
-        test.done();
-    });
+casper.then(function() {
+    require('utils').dump(data);
 });
