@@ -67,10 +67,12 @@ var SpiderSuite = function(url) {
 
 	}).then(function() {
 		
+		// this.evaluate(replaceXHR);
+
 		// Dump results
 		casper.echo( '[Testing Complete] Links with potential issues.', 'GREEN_BAR' );
 
-		var gdata, wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
+		var gData, wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
 
 		suite._finished.forEach(function(res) {
 			if (res.status != 200) {
@@ -87,18 +89,32 @@ var SpiderSuite = function(url) {
 
 				var dataUrl = wsurl + '/?' + gData;
 
-				suite.logToGoogle(dataUrl);
+				// suite.logToGoogle(dataUrl);
+				casper.open('http://deltrieallen.com/gtesting-live.php', {
+				    method: 'post',
+				    data:   {
+				        'Source page' : res.from,
+				        'HTTP Status' : res.status,
+				        'Link' : res.url
+				    }
+				});
 
-				// resp = this.evaluate(function(wsurl, data) {
-    //                     try {
-    //                         //return JSON.parse(utils.sendAJAX(wsurl, 'POST', null, false));
-    //                         return __utils__.sendAJAX(wsurl, 'POST', gData, false);
-    //                     } catch (e) {
-    //                         this.echo(e);
-    //                     }
-    //             }, {wsurl: wsurl, data: gData});
+				casper.then(function() {
+				    // require('utils').dump(data);
+				    console.log('here');
+				    
+				    casper.start('http://deltrieallen.com', function() {
+				        data = this.evaluate(function(wsurl) {
+				            return JSON.parse(__utils__.sendAJAX(wsurl, 'POST', gData, false));
+				        }, {wsurl: wsurl});
+				    });
+				});
 
-    //             console.log(resp);
+				// casper.waitFor(getAwesomeResponse, function then(){
+				//     var data = JSON.parse(getAwesomeResponse());
+				//     // Do something with data
+				//     console.log(data);
+				// });
 			};
 		});
 
@@ -108,7 +124,8 @@ var SpiderSuite = function(url) {
 
 SpiderSuite.prototype.collectFromDestinations = function(destinations) {
 	if (!this._destinations) {
-		this._destinations = [].slice.call(destinations);
+		// this._destinations = [].slice.call(destinations);
+		this._destinations = destinations.slice();
 	}
 
 	var suite = this;
@@ -154,8 +171,11 @@ SpiderSuite.prototype.evaluateAndPushUrls = function(page, selector, append, fro
 
 SpiderSuite.prototype.checkHealth = function() {
 	if (!this._tmp_collected) {
-		this._tmp_collected = [].slice.call(this._collected);
+		// this._tmp_collected = [].slice.call(this._collected);
+		this._tmp_collected = this._collected.slice();
 		console.log('~~ ' + this._collected.length + ' links collected.....testing HTTP responses...');
+		
+		
 	}
 
 	var suite = this;
@@ -180,42 +200,119 @@ SpiderSuite.prototype.checkHealth = function() {
 
 
 SpiderSuite.prototype.logToGoogle = function(resultsData) {
-
-	casper.open(resultsData).then(function() {
-	    console.log('Logged to Google ~ ' + resultsData);
-	});
-	// var wsurl = "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec";
-	
-	// return __utils__.sendAJAX(wsurl, 'POST', resultsData, false);
-
-	// request = $.ajax({
-	//     url: "https://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec",
-	//     type: "post",
-	//     data: resultsData
-	// });
-	
-	// callback handler that will be called on success
-	// request.done(function (response, textStatus, jqXHR){
-	    // log a message to the console
-	    // $('#result').html('<a href="https://docs.google.com/spreadsheets/d/1ILK0no9pWUKx5huPUVOnupRhVPFPKEujXDRKUdC0Vgs/edit?usp=sharing" target="_blank">Success - see Google Sheet</a>');
-	    console.log("Hooray, it worked!");
-	// });
-	
-	// callback handler that will be called on failure
-	// request.fail(function (jqXHR, textStatus, errorThrown){
-	    // log the error to the console
-	    // console.error(
-	        // "The following error occured: "+
-	        // textStatus, errorThrown
-	    // );
-	// });
-	
-	// callback handler that will be called regardless
-	// if the request failed or succeeded
-	// request.always(function () {
-	//     // reenable the inputs
-	//     $inputs.prop("disabled", false);
-	// });
+	casper.start(resultsData).then(function(){
+	    this.evaluate(function(){
+	        var oldInsert = insert;
+	        insert = function(json){
+	            window.myAwesomeResponse = json;
+	            oldInsert.apply(window, arguments);
+	        };
+	    });
+	}).waitFor(getAwesomeResponse, function then(){
+	    var data = JSON.parse(getAwesomeResponse());
+	    // Do something with data
+	}).run();
 };
+
+function replaceXHR(){
+    (function(window, debug){
+        function args(a){
+            var s = "";
+            for(var i = 0; i < a.length; i++) {
+                s += "\t\n[" + i + "] => " + a[i];
+            }
+            return s;
+        }
+        var _XMLHttpRequest = window.XMLHttpRequest;
+
+        window.XMLHttpRequest = function() {
+            this.xhr = new _XMLHttpRequest();
+        }
+
+        // proxy ALL methods/properties
+        var methods = [ 
+            "open", 
+            "abort", 
+            "setRequestHeader", 
+            "send", 
+            "addEventListener", 
+            "removeEventListener", 
+            "getResponseHeader", 
+            "getAllResponseHeaders", 
+            "dispatchEvent", 
+            "overrideMimeType"
+        ];
+        methods.forEach(function(method){
+            window.XMLHttpRequest.prototype[method] = function() {
+                if (debug) console.log("ARGUMENTS", method, args(arguments));
+                if (method == "open") {
+                    this._url = arguments[1];
+                }
+                return this.xhr[method].apply(this.xhr, arguments);
+            }
+        });
+
+        // proxy change event handler
+        Object.defineProperty(window.XMLHttpRequest.prototype, "onreadystatechange", {
+            get: function(){
+                // this will probably never called
+                return this.xhr.onreadystatechange;
+            },
+            set: function(onreadystatechange){
+                var that = this.xhr;
+                var realThis = this;
+                that.onreadystatechange = function(){
+                    // request is fully loaded
+                    if (that.readyState == 4) {
+                        if (debug) console.log("RESPONSE RECEIVED:", typeof that.responseText == "string" ? that.responseText.length : "none");
+                        // there is a response and filter execution based on url
+                        if (that.responseText && realThis._url.indexOf("whatever") != -1) {
+                            window.myAwesomeResponse = that.responseText;
+                        }
+                    }
+                    onreadystatechange.call(that);
+                };
+            }
+        });
+
+        var otherscalars = [
+            "onabort",
+            "onerror",
+            "onload",
+            "onloadstart",
+            "onloadend",
+            "onprogress",
+            "readyState",
+            "responseText",
+            "responseType",
+            "responseXML",
+            "status",
+            "statusText",
+            "upload",
+            "withCredentials",
+            "DONE",
+            "UNSENT",
+            "HEADERS_RECEIVED",
+            "LOADING",
+            "OPENED"
+        ];
+        otherscalars.forEach(function(scalar){
+            Object.defineProperty(window.XMLHttpRequest.prototype, scalar, {
+                get: function(){
+                    return this.xhr[scalar];
+                },
+                set: function(obj){
+                    this.xhr[scalar] = obj;
+                }
+            });
+        });
+    })(window, false);
+}
+
+function getAwesomeResponse(){
+    return this.evaluate(function(){
+        return window.innerText;
+    });
+}
 
 new SpiderSuite(casper.cli.get('url'));
