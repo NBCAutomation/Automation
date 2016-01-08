@@ -1,6 +1,6 @@
 // Author: Seth Benjamin, Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version: 1.0
+// Version: 1.1
 // Case: Builds and array of links using the main nav as a starting point, then does a status check on each collected link.
 // Use: casperjs test [file_name] --url=[site_url]
 
@@ -57,9 +57,8 @@ var SpiderSuite = function(url) {
 		var testInfo = 'Site tested: ' + url;
 		var testTime = month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
 
-		fs.write(save, testInfo + ',\n');
-		fs.write(save, testTime + ',\n');
-		fs.write(save, 'Source page,HTTP Status,Link,URL');
+		fs.write(save, ' ' + testInfo + ' - ' + testTime + ',\n');
+		fs.write(save, 'Source page,HTTP Status,Link,URL', 'a+');
 
 		// Skip erreanous site requests
 		casper.echo( '[Step] Skipping erreanous requests...', 'PARAMETER' );
@@ -95,14 +94,20 @@ var SpiderSuite = function(url) {
 
 		// Dump results
 		casper.echo( '[Testing Complete] Links with potential issues.', 'GREEN_BAR' );
-		consol.log(testInfo + ' - ' + testTime);
 
 		suite._finished.forEach(function(res) {
-			if (res.status == 404) {
-				console.log(res.from + ' - ' + res.status + ' // ' + res.linkName + ' ~> ' + res.url);
+			if (res.status != 200) {
+
+				if (res.linkName != null) {
+					var currentLink = res.linkName;
+				} else {
+					var currentLink = "[Possible image link]";
+				}
+
+				console.log(res.from + ' - ' + res.status + ' // ' + currentLink + ' ~> ' + res.url);
 
 				//Write text log
-				fs.write(save, ',\n' + res.from + ',' + res.status + ',' + res.linkName + ',' + res.url, 'a+');
+				fs.write(save, ',\n' + res.from + ',' + res.status + ',' + currentLink + ',' + res.url, 'a+');
 			};
 		});
 
@@ -172,8 +177,8 @@ SpiderSuite.prototype.checkHealth = function() {
 		// this._tmp_collected = [].slice.call(this._collected);
 		this._tmp_collected = this._collected.slice();
 
-		// console.log('~~ ' + this._collected.length + ' links collected.....testing HTTP responses...');
-		console.log('.....testing HTTP responses...');
+		console.log('~~ ' + this._collected.length + ' links collected.....testing HTTP responses...');
+		// console.log('.....testing HTTP responses...');
 	}
 
 	var suite = this;
