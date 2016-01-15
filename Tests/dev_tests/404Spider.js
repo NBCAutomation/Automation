@@ -1,6 +1,6 @@
 // Author: Seth Benjamin, Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version: 0.01 
+// Version: 1.1
 // Case: Builds and array of links using the main nav as a starting point, then does a status check on each collected link.
 // Use: casperjs test [file_name] --url=[site_url]
 
@@ -15,6 +15,7 @@ var SpiderSuite = function(url) {
 
 	var suite = this;
 	var destinations = [];
+	var __utils__ = require('clientutils').create();
 
 	var parser = document.createElement('a');
 	parser.href = url;
@@ -24,15 +25,40 @@ var SpiderSuite = function(url) {
 	var urlUri = sourceString.replace('.','_');
 
 	var fs = require('fs');
-	var fname = urlUri + '_' + new Date().getTime() + '.csv';
-	var save = fs.pathJoin(fs.workingDirectory, 'test_results', fname);
+	var logName = urlUri + '_' + new Date().getTime() + '.csv';
+	var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
 
+	var currentTime = new Date();
+	var month = currentTime.getMonth() + 1;
+	var day = currentTime.getDate();
+	var year = currentTime.getFullYear();
+	var hours = currentTime.getHours();
+	var minutes = currentTime.getMinutes();
+	
+	if (minutes < 10){
+	    minutes = "0" + minutes;
+	}
 
-   // Write file headers
-   fs.write(save, 'Source page,HTTP Status,Link');
+	if(hours > 11){
+	    var toD = "PM";
+	} else {
+	    var toD = "AM";
+	}
 
 
 	casper.start(url).then(function() {
+
+		if (this.currentHTTPStatus != 200) {
+			throw new Error('Failed to open the provided url.');
+			this.exit();
+		}
+	  	
+		// Write file headers
+		var testInfo = 'Site tested: ' + url;
+		var testTime = month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
+
+		fs.write(save, ' ' + testInfo + ' - ' + testTime + ',\n');
+		fs.write(save, 'Source page,HTTP Status,Link,URL', 'a+');
 
 		// Skip erreanous site requests
 		casper.echo( '[Step] Skipping erreanous requests...', 'PARAMETER' );
@@ -54,7 +80,7 @@ var SpiderSuite = function(url) {
 	}).then(function() {
 
 		// Grab collected urls and build links array
-		casper.echo( '[Step] Collecting in page links based on navigation links...', 'PARAMETER' );
+		casper.echo( '[Step] Collecting in page links based on navigation sections...', 'PARAMETER' );
 		suite.collectFromDestinations(destinations);
 
 	}).then(function() {
@@ -65,16 +91,23 @@ var SpiderSuite = function(url) {
 		suite.checkHealth();
 
 	}).then(function() {
-		
+
 		// Dump results
 		casper.echo( '[Testing Complete] Links with potential issues.', 'GREEN_BAR' );
 
 		suite._finished.forEach(function(res) {
 			if (res.status != 200) {
-				console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
 
-				//Testing file writing
-				fs.write(save, ',\n' + res.from + ',' + res.status + ',' + res.url, 'a+');
+				if (res.linkName != null) {
+					var currentLink = res.linkName;
+				} else {
+					var currentLink = "[Possible image link]";
+				}
+
+				console.log(res.from + ' - ' + res.status + ' // ' + currentLink + ' ~> ' + res.url);
+
+				//Write text log
+				fs.write(save, ',\n' + res.from + ',' + res.status + ',' + currentLink + ',' + res.url, 'a+');
 			};
 		});
 
@@ -84,7 +117,8 @@ var SpiderSuite = function(url) {
 
 SpiderSuite.prototype.collectFromDestinations = function(destinations) {
 	if (!this._destinations) {
-		this._destinations = [].slice.call(destinations);
+		// this._destinations = [].slice.call(destinations);
+		this._destinations = destinations.slice();
 	}
 
 	var suite = this;
@@ -101,27 +135,36 @@ SpiderSuite.prototype.collectFromDestinations = function(destinations) {
 };
 
 SpiderSuite.prototype.evaluateAndPushUrls = function(page, selector, append, from) {
-	var evaluatedUrls = page.evaluate(function(baseUrl, selector) {
-		var socialRegex = /(twitter|facebook|instagram|javascript:|mailto:)/;
-		var protocolRegex = /:\/\//;
+    var evaluatedUrls = page.evaluate(function(baseUrl, selector) {
+        var socialRegex = /(twitter|facebook|instagram|javascript:|mailto:)/;
+        var protocolRegex = /:\/\//;
 
-		return __utils__.findAll(selector).map(function(element) {
-			return element.getAttribute('href');
-		}).filter(function(url) {
-			return url && !socialRegex.test(url);
-		}).map(function(url) {
-			if (!protocolRegex.test(url)) {
-				url = baseUrl + ('/' + url).replace(/\/{2,}/g, '/');
-			}
+        // Grab the current url data, href and link text
+        return __utils__.findAll(selector).map(function(element) {
+            return {
+            	url: element.getAttribute('href'),
+            	innerText: element.innerText
+            };
+        }).filter(function(elementObj) {
+            return elementObj.url && !socialRegex.test(elementObj.url);
+        }).map(function(elementObj) {
+            if (!protocolRegex.test(elementObj.url)) {
+                elementObj.url = baseUrl + ('/' + elementObj.url).replace(/\/{2,}/g, '/');
+            }
 
-			return url;
-		});
-	}, this._baseUrl, selector);
+            return elementObj;
+        });
+    }, this._baseUrl, selector);
 
-	evaluatedUrls.forEach(function(url) {
+    // Add the link information to our testing array
+	evaluatedUrls.forEach(function(elementObj) {
+		var url = elementObj.url;
+		var innerText = elementObj.innerText;
+
 		if (append.indexOf(url) === -1) {
 			append.push({
 				url: url,
+				linkText: innerText,
 				from: from
 			});
 		}
@@ -130,8 +173,12 @@ SpiderSuite.prototype.evaluateAndPushUrls = function(page, selector, append, fro
 
 SpiderSuite.prototype.checkHealth = function() {
 	if (!this._tmp_collected) {
-		this._tmp_collected = [].slice.call(this._collected);
+		
+		// this._tmp_collected = [].slice.call(this._collected);
+		this._tmp_collected = this._collected.slice();
+
 		console.log('~~ ' + this._collected.length + ' links collected.....testing HTTP responses...');
+		// console.log('.....testing HTTP responses...');
 	}
 
 	var suite = this;
@@ -143,9 +190,13 @@ SpiderSuite.prototype.checkHealth = function() {
 		}).then(function(resp) {
 			suite._finished.push({
 				from: current.from,
+				linkName: current.linkText,
 				url: current.url,
 				status: this.status().currentHTTPStatus
 			});
+			
+			// Show current tested urls
+			// console.log(current.url);
 
 			suite.checkHealth();
 		});
@@ -153,6 +204,5 @@ SpiderSuite.prototype.checkHealth = function() {
 		delete this._tmp_collected;
 	}
 };
-
 
 new SpiderSuite(casper.cli.get('url'));

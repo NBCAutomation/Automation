@@ -4,31 +4,52 @@
 // Case: PASS/FAIL Checks to see if a page is loaded as well as if the page elements are loaded and visible.
 // Use: casperjs [file_name] --url="[site_url]"
 
+console.log('pre-start...');
 
-var utils = require('utils');
-var siteUrl = casper.cli.get("url");
-var saveLoc = ('screenshots/');
+// casper.start('http://google.com/', function() {
+//     // var data, wsurl = 'http://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec?Source page=casperjs derp&HTTP Status=casperjs derp&Link=casperjs derp';
+//     // console.log('start...');
+//     // data = this.evaluate(function(wsurl) {
+//     //     return JSON.parse(__utils__.sendAJAX(wsurl, 'POST', 'Source page=casperjs derp&HTTP Status=casperjs derp&Link=casperjs derp', false));
+//     //     console.log('parse attempt...');
+//     // }, {wsurl: wsurl});
+//     casper.open('http://testing.app/gtesting/gtesting2.html').then(function() {
+//         casper.waitForSelector("#foo", function() {
+//             this.fillSelectors('form#foo', {
+//                 'input[name = Source page ]' : res.from,
+//                 'input[name = HTTP Status ]' : res.status,
+//                 'input[name = Link ]' : res.url
+//             });
+//         }, true);
+//     });
+// });
 
-casper.test.begin('Page laod/wrapper tests', function suite(test) {
+var data, wsurl = 'http://script.google.com/macros/s/AKfycbwqtmyzavd0CYttVUtnGBEDXDCSOMbnH-AF3RouVO8vyemnzI1d/exec?Source page=casperjs derp&HTTP Status=casperjs derp&Link=casperjs derp';
+// var data, wsurl = 'http://deltrieallen.com/gtesting-live.php';
 
-    casper.start( siteUrl, function(response) {
-        
-        // require('utils').dump(response);
+// casper.start('http://deltrieallen.com', function() {
+//     console.log('start...');
+//     data = this.evaluate(function(wsurl) {
+//         // return JSON.parse(
+//             __utils__.sendAJAX(wsurl, 'POST', 'Source page=casper test file&HTTP Status=basic casperjs derp&Link=casperjs derp', false);
+//             // );
+//     }, {wsurl: wsurl});
+// });
+casper.start();
 
-        if ( response.status == 200 ) {
-            no_error = true;
-        } else {
-            this.echo('Page not loaded correctly. Response: ' + response.status).exit();
-        }
-
-        casper.then(function() {
-            if ( no_error ) {
-                casper.echo("This is a test message");
-                console.log("This is a console log message");
-            }
-        });
-
-    }).run(function() {
-        test.done();
-    });
+// casper.open('http://deltrieallen.com/gtesting-live.php', {
+casper.open(wsurl, {
+    method: 'post',
+    data:   {
+        'Source page' : 'Plop',
+        'HTTP Status' : 'Wow.',
+        'Link' : 'this is a link'
+    }
 });
+
+casper.then(function() {
+    // require('utils').dump(data);
+    console.log('here');
+});
+
+casper.run();
