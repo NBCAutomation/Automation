@@ -203,6 +203,6 @@ SpiderSuite.prototype.checkHealth = function() {
 	} else {
 		delete this._tmp_collected;
 	}
-};
+};  
 
 new SpiderSuite(casper.cli.get('url'));

@@ -1,6 +1,6 @@
 // Author: Seth Benjamin, Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version: 1.1
+// Version: 1.1  
 // Case: Builds and array of links using the main nav as a starting point, then does a status check on each collected link.
 // Use: casperjs test [file_name] --url=[site_url]
 

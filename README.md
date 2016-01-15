@@ -3,11 +3,7 @@
 
 **Description**
 
-<<<<<<< HEAD
-Spire is in-house testing suite of automation tools and scripted utilities used for regression and smoke tests for NBC OTS. The testing suite is currently being developed using the [ PhantomJS ](http://phantomjs.org/) and [ CasperJS ](http://casperjs.org/) Javascript libraries. Both of these libraries function as headless WebKit scriptable libraries with a built in JavaScript API.
-=======
 Spire is in-house testing suite of automation tools and scripted utilities used for regression and smoke tests for NBC OTS. The testing suite is currently being developed using the [ PhantomJS ](http://phantomjs.org/) and [ CasperJS ](http://casperjs.org/) Javascript libraries. Both of these libraries function as headless WebKit scriptable libraries with a built in JavaScript API. 
->>>>>>> develop
 
 Spire’s core purpose is to speed up regression testing, automate site health checks, as well as provide testing utilities to ensure product overall stability.
 
@@ -51,11 +47,7 @@ Spire’s core purpose is to speed up regression testing, automate site health c
 
 
 ### Misc Spire related tasks ###
-<<<<<<< HEAD
-+ Desktop app - Electron 
-=======
 + Desktop app - Electron
->>>>>>> develop
 + Documentation
 + Mandrill email notifications/reports
 + Google Sheets API Integration
