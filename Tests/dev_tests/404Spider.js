@@ -4,6 +4,45 @@
 // Case: Builds and array of links using the main nav as a starting point, then does a status check on each collected link.
 // Use: casperjs test [file_name] --url=[site_url]
 
+var siteURL = casper.cli.get('url');
+var crawlMethod = casper.cli.get('method');
+var siteManifest = [
+	"http://www.nbcnewyork.com",
+	"http://www.nbclosangeles.com",
+	"http://www.nbcchicago.com",
+	"http://www.nbcbayarea.com",
+	"http://www.nbcdfw.com",
+	"http://www.nbcmiami.com",
+	"http://www.nbcphiladelphia.com",
+	"http://www.nbcconnecticut.com",
+	"http://www.nbcwashington.com",
+	"http://www.nbcsandiego.com",
+	"http://www.necn.com",
+	"http://www.telemundo40.com",
+	"http://www.telemundo47.com",
+	"http://www.telemundo51.com",
+	"http://www.telemundo52.com",
+	"http://www.telemundo62.com",
+	"http://www.telemundoareadelabahia.com",
+	"http://www.telemundoarizona.com",
+	"http://www.telemundoboston.com",
+	"http://www.telemundochicago.com",
+	"http://www.telemundodallas.com",
+	"http://www.telemundodenver.com",
+	"http://www.telemundohouston.com",
+	"http://www.telemundolasvegas.com",
+	"http://www.telemundosanantonio.com",
+	"http://www.telemundopr.com"
+];
+
+if (crawlMethod == 'all') {
+	console.log(crawlMethod);
+	console.log(siteManifest.length);
+	for (var i = siteManifest.length - 1; i >= 0; i--) {
+		console.log(siteManifest[i]);
+	};
+};
+
 var SpiderSuite = function(url) {
 	if (!url) {
 		throw new Error('A URL is required!');
@@ -205,4 +244,4 @@ SpiderSuite.prototype.checkHealth = function() {
 	}
 };  
 
-new SpiderSuite(casper.cli.get('url'));
+// new SpiderSuite(siteURL);
