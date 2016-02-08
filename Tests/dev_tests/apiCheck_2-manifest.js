@@ -14,7 +14,9 @@
 
 
 var xmlLib = require('./xml2json');
-var x2js = new xmlLib();
+var x2js = new xmlLib({
+    attributePrefix : "<string>"
+});
 
 // var sax = require('./sax');
 // var PlistParser = require('./plist-parser');
@@ -73,35 +75,36 @@ apiSuite.prototype.getContent = function(url, type) {
 
                 var __jsonObj = x2js.xml_str2json( rawContent );
                 
-                // var __baseKeys = __jsonObj.plist.dict.key;
-                // var __baseVals = __jsonObj.plist.dict.string;
-                var __moduleKeys = __jsonObj.plist.dict.dict[0].key;
-                var __moduleVals = __jsonObj.plist.dict.dict[0].string;
+                var __baseKeys = __jsonObj.plist.dict.key;
+                var __baseVals = __jsonObj.plist.dict.string;
+
+                console.log( );
 
                 // initialize iterator
                 var i;
 
-                for (i = __moduleKeys.length - 1; i >= 0; i--) {
-                    var key = __moduleKeys[i];
-                    var url = __moduleVals[i].toString();
+                for (i = __baseKeys.length - 1; i >= 0; i--) {
+                    // var __key = __baseKeys[i];
+                    // var __val = __baseVals[i].toString();
 
-                    if ( ! url.indexOf('/apps') ) {
-                        url = casper.cli.get('url') + url;
+                    // console.log(__key + ' // ' + __val);
+
+                    // if ( ! url.indexOf('/apps') ) {
+                    //     url = casper.cli.get('url') + url;
                   
-                        suite.__collected.push({
-                            key: key,
-                            url: url
-                        });
-                    }
+                    //     suite.__collected.push({
+                    //         key: __key,
+                    //         val: url
+                    //     });
+                    // }
                 }
 
                 // require('utils').dump( suite.__collected );
-                this.echo('endpoint health check...');
 
-                for (i = suite.__collected.length - 1; i >= 0; i--) {
-                    suite.checkHealth();
-                    // break;
-                }
+                // for (i = suite.__collected.length - 1; i >= 0; i--) {
+                //     suite.checkHealth();
+                //     // break;
+                // }
 
             } else {
                 throw new Error('Missing XML elements!');
