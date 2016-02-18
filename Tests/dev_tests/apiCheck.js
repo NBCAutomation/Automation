@@ -34,24 +34,63 @@ casper.test.begin('OTS API Check', function suite(test) {
 
                 var __json = JSON.stringify( rawData );
 
-            this.echo( rawData );
-            // var urlObject = JSON.parse(__json);
+            // this.echo( rawData );
 
-            // for ( var key in urlObject ) {
-            //     this.echo(urlObject[key] + ' ~ ' + urlObject[key]);
-            // }
+            var urlObject = JSON.parse(__json);
+
+            for ( var key in urlObject ) {
+                this.echo(urlObject[key] + ' ~ ' + urlObject[key]);
+            }
                 // this.echo(rawData);
                 // var apiObject = JSON.parse( htmlObject );
 
                 // this.echo( json.breakingNews.contentID );
                 // json = mapDOM( apiObject, true );
-                // require('utils').dump( htmlObject );
-            // casper.open(siteUrl, { method: 'get', headers: { 'Accept': 'application/json' } }).then(function(page) {
+// ****** from manifest check
+// for (var index = 0; index < nodeList.length; index++) {
+//     console.log(nodeList[index].attribute);
+// }
+
+// for (var i = 0; i < nodeList.length; ++i) {
+//   var item = nodeList[i];
+//   // Calling myNodeList.item(i) isn't necessary in JavaScript
+//   consol.log(item);
+// }
+
+// var arr = [];
+// for (var key in nodeList){
+//     arr.push([]);
+
+//     console.log(key);
+
+//     var nodes = nodeList[key].childNodes;
+
+//     for (var ele in nodes){  
+//         if(nodes[ele]){
+//           arr[key].push(nodes[ele]);
+//         }
+//     }
+// }
+
+// console.log(arr);
+
+// console.log(xmlDoc.documentElement.childNodes.length);
+
+// for (i = 0; i < nodeList.length; i++){
+   // for(var j = 0; j < nodeList[i].childNodes.length; j++){
+      // console.log(nodeList[i].childNodes[j].getAttribute('X'));
+      // console.log(nodeList[i].childNodes[j].getAttribute('Y'));
+   // }
+// }
+
+// for ( var key in nodeList ) {
+//     console.log(nodeList[key] + ' ~ ' + nodeList[key]);
+// }
+                require('utils').dump( htmlObject );
+            casper.open(siteUrl, { method: 'get', headers: { 'Accept': 'application/json' } }).then(function(page) {
                 
-                
-                
-            //     this.echo( typeof apiObject );
-            // });        
+                this.echo( typeof apiObject );
+            });        
         }
     }).run();
 });

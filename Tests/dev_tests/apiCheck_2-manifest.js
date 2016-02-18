@@ -21,25 +21,22 @@ var x2js = new xmlLib({
 // var sax = require('./sax');
 // var PlistParser = require('./plist-parser');
 
-var colorizer = require('colorizer').create('Colorizer');
-
 var apiSuite = function(url) {
 
     if (!url) {
         throw new Error('A URL is required!');
     }
 
-    this.__passed = [];
-    this.__collected = [];
+    __collected = [];
 
     var suite = this;
     var no_error = false;
 
     var type = casper.cli.get('type');
 
-    if (type === 'manifest') {
-        url = url + '/apps/news-app/manifest/?apiVersion=2';
-    }
+    // Add manifest url    
+    url = url + '/apps/news-app/manifest/?apiVersion=2';
+    
 
     casper.start( url ).then(function(response) {
         if ( response.status == 200 ) {
@@ -50,12 +47,6 @@ var apiSuite = function(url) {
     }).then(function() {
         suite.getContent(url, type);
         // require('utils').dump(jsonText);
-    }).then(function() {
-        // suite.__finished.forEach(function(res) {
-        //     if (res.status != 200) {
-        //         console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
-        //     };
-        // });
     }).run();
 };
 
@@ -63,176 +54,111 @@ apiSuite.prototype.getContent = function(url, type) {
     
     var suite = this;
 
-    if (type === 'manifest') {
+    casper.test.begin('OTS API Check', function suite(test) {
         casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
             var rawContent = this.getPageContent();
 
-            // var parser = new DOMParser();
-            // xmlDoc = parser.parseFromString(rawContent,'text/xml');
-
-            
             if ( rawContent ) {
 
-                var __jsonObj = x2js.xml_str2json( rawContent );
-                
-                var __baseKeys = __jsonObj.plist.dict.key;
-                var __baseVals = __jsonObj.plist.dict.string;
+                var parser = new DOMParser();
+                xmlDoc = parser.parseFromString(rawContent,'text/xml');
 
-                console.log( );
+                // var __json = JSON.stringify( rawContent );
 
-                // initialize iterator
-                var i;
+                // var urlObject = JSON.parse(__json);
 
-                for (i = __baseKeys.length - 1; i >= 0; i--) {
-                    // var __key = __baseKeys[i];
-                    // var __val = __baseVals[i].toString();
+                var nodeDicts = xmlDoc.getElementsByTagName("dict");
 
-                    // console.log(__key + ' // ' + __val);
+                // var nodeKeys = xmlDoc.getElementsByTagName("key");
+                // var nodeVals = xmlDoc.getElementsByTagName("string");
+                // var nodeInts = xmlDoc.getElementsByTagName("int");
 
-                    // if ( ! url.indexOf('/apps') ) {
-                    //     url = casper.cli.get('url') + url;
-                  
-                    //     suite.__collected.push({
-                    //         key: __key,
-                    //         val: url
-                    //     });
-                    // }
+                // console.log('nodes ' + nodeDicts.length);
+
+                for(var i = 0; i < nodeDicts.length; i++) {
+                    // console.log(i + ' || ' + nodeDicts[i].nodeName);
+
+                    var cNode = nodeDicts[i];
+                    // console.log(cNode.childNodes.length);
+
+                    if (cNode.hasChildNodes) {
+                        var children = cNode.childNodes;
+                        // console.log(children.length);
+
+                        for(var b = 0; b < children.length; b++) {
+                                
+                            // console.log(b + ' -- name: ' + children[b].nodeName + ' // ' + JSON.stringify(children[b].textContent) );
+
+                            if (children[b].nodeName == 'key') {
+                                // console.log('key // ' + children[b].textContent);
+                                var __key = children[b].textContent;
+                            }
+                            
+                            // nType = children[b].nodeName;
+                            
+                            // console.log('sub-children ' + children[b].childNodes.length);
+
+                            if (children[b].textContent.indexOf('$') >= 0 ) {
+                                throw new Error('Manifest invalid, variable found in key values; Search "$" on manifest file.');
+                            } else {
+                                if (children[b].childNodes.length > 1) {
+                                    var subChildren = children[b].childNodes;
+
+                                    for(var c = 0; c < subChildren.length; c++) {
+                                        // console.log(' -- sub-child ' + ' -- name: ' + subChildren[c].nodeName + ' // ' + ' -- content: ' + subChildren[c].textContent);
+                                        
+                                        // if (subChildren[c].nodeName == 'dict') {
+                                        //     console.log(' - key // ' + subChildren[c].textContent);
+                                        // }
+
+                                        if (subChildren[c].nodeName == 'dict') {
+                                            // console.log(' ** prev ** ' + subChildren[c].previousElementSibling.textContent);
+                                            // console.log(' ** dict **');
+
+                                            if (subChildren[c].childNodes.length > 1) {
+                                                var thirdChildren = subChildren[c].childNodes;
+
+                                                for(var d = 0; d < thirdChildren.length; d++) {
+                                                    // console.log(' ---- third-child ' + thirdChildren[d].nodeName + ' // ' + ' -- content: ' + thirdChildren[d].textContent);
+                                                                                                        
+                                                    if (thirdChildren[d].nodeName == 'key') {
+                                                        // console.log(' --> key // ' + thirdChildren[d].textContent);
+                                                        var __subKey = thirdChildren[d].textContent;
+                                                    }
+                                                    
+                                                    if (thirdChildren[d].nodeName == 'string' || thirdChildren[d].nodeName == 'integer' || thirdChildren[d].nodeName == 'real') {
+                                                        // console.log(' --> val // ' + thirdChildren[d].textContent + ' ** type ' + typeof(thirdChildren[d].textContent) );
+                                                        var __subVal = thirdChildren[d].textContent;
+                                                    } else if (thirdChildren[d].nodeName == 'false' || thirdChildren[d].nodeName == 'true') {
+                                                        // console.log(' --> val // ' + thirdChildren[d].nodeName);
+                                                        var __subVal = thirdChildren[d].nodeName;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real' || children[b].nodeName == 'false' || children[b].nodeName == 'true') {
+                                    // console.log(' -- val // ' + children[b].textContent);
+                                    
+                                    if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real') {
+                                        var __val = children[b].textContent;
+                                    } else if (children[b].nodeName == 'false' || children[b].nodeName == 'true') {
+                                        var __val = children[b].nodeName;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // console.log('-> // ' + nodeVal[i].nodeName + ' // ' + nodeVal[i].textContent);
+                    // console.log('--> // ' + nodeInts[i].nodeName + ' // ' + nodeInts[i].textContent);
                 }
-
-                // require('utils').dump( suite.__collected );
-
-                // for (i = suite.__collected.length - 1; i >= 0; i--) {
-                //     suite.checkHealth();
-                //     // break;
-                // }
 
             } else {
                 throw new Error('Missing XML elements!');
             }
-        });
-    } else if (type === 'navigation') {
-
-    } else {
-        console.log('other type of url');
-    }
+        })
+    });
 };
-
-apiSuite.prototype.checkHealth = function() {
-
-    var suite = this;
-    var current = suite.__collected.shift();
-
-    // require('utils').dump( current );
-
-    if (current) {
-        casper.open(current.url, {
-            method: 'head'
-        }).then(function(resp) {
-            resp = resp;
-            var status = this.status().currentHTTPStatus;
-
-            if ( status == 200) {
-                this.echo('- ' + current.key + ' : ' + current.url + colorizer.colorize(' Status: ' + status, 'INFO') );
-
-                suite.__passed.push({
-                    from: current.key,
-                    url: current.url,
-                    status: status
-                });
-                // console.log( ' -- array length: ' + suite.__passed.length );
-
-                for (var i = suite.__passed.length - 1; i >= 0; i--) {
-                    suite.validateJson();
-
-                    var passedEndpoint = suite.__passed.shift();
-                    console.log(passedEndpoint);
-                    //if ( passedEndpoint.from == current.key && current.key == 'navigation' ) {
-                      //  console.log('~~  ' + suite.__passed[i].from);
-                        //suite.validateJson(passedEndpoint.url, passedEndpoint.from);
-                    //}
-                }
-            }
-
-            // suite.checkHealth();
-        });
-    } else {
-        // delete this.__collected;
-    }
-};
-
-apiSuite.prototype.checkNavigation = function() {
-
-    var suite = this;
-    var current = suite.__collected.shift();
-
-    if (current.url) {
-        casper.open(current.url, {
-            method: 'head'
-        }).then(function(resp) {
-            resp = resp;
-            var status = this.status().currentHTTPStatus;
-
-            if ( status == 200) {
-                this.echo('- ' + current.key + ' : ' + current.url + colorizer.colorize(' Status: ' + status, 'INFO') );
-
-                suite.__passed.push({
-                    from: current.key,
-                    url: current.url,
-                    status: status
-                });
-
-                for (var i = suite.__passed.length - 1; i >= 0; i--) {
-                    if ( suite.validateJson() ) {
-                        console.log('Deltrie');
-                        
-                        var passedEndpoint = suite.__passed.shift();
-
-                        if ( passedEndpoint.from.indexOf('navigation') ) {
-                            console.log('navigation' + passedEndpoint.url);
-                        }
-                    } else {
-                        throw new Error('JSON error!');
-                    }
-                };
-            }
-
-            // suite.checkHealth();
-        });
-    } else {
-        // delete this.__collected; 
-    }
-};
-
-apiSuite.prototype.validateJson = function() {
-    var suite = this;
-    var current = suite.__passed.shift();
-
-    if (current.url) {
-        casper.open(current.url+'?cachebust='+Math.random()).then(function(resp) {
-            resp = resp;
-            var validated = false;
-            var output = this.getPageContent();
-
-            try {
-                output = JSON.parse(output);
-                if( output instanceof Object ) {
-                    validated = true;
-                 }
-            } catch (e) {
-                // ...
-            }
-
-            if (validated) {
-                console.log('\033[0;32mJSON VALIDATED\x1b[0m');
-            } else {
-                throw new Error('JSON error!');
-            }
-
-        });
-    } else {
-        delete this.__collected;
-    }
-};
-
 
 new apiSuite(casper.cli.get('url'));
