@@ -3,14 +3,8 @@
 // Contact: deltrie.allen@nbcuni.com
 // Version:
 // Case: Test API main manifest file to verify main key/values that allow the app to function correctly.
-// Use: casperjs test [file_name]
-
-// Dev Notes:
-// Add a schema check for the plist/sml files
-//  -- parser returning false, appears that the XML object is mising
-//  var contentType = utils.getPropertyPath(this, 'currentResponse.contentType'); -- get current doc content type
-//  
-//  Manifest Testing Requirements:
+// Use: casperjs test [file_name] --url=[site]
+// optional string params --type=debug to show logged key/val strings
 
 var apiSuite = function(url) {
 
@@ -42,8 +36,10 @@ apiSuite.prototype.getContent = function(url, type) {
     
     var suite = this;
 
+    var colorizer = require('colorizer').create('Colorizer');
+
     // Required API keys for app to function correctly.
-    var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast","facebook_url","instagram_url","twitter_url","search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
+    var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
     
     __collected = {};
 
@@ -86,87 +82,84 @@ apiSuite.prototype.getContent = function(url, type) {
                             
                             // console.log('sub-children ' + children[b].childNodes.length);
 
-                            if (children[b].textContent.indexOf('$') >= 0 ) {
-                                throw new Error('Manifest invalid, variable found in key values; Search "$" on manifest file.');
-                            } else {
-                                if (children[b].childNodes.length > 1) {
-                                    var subChildren = children[b].childNodes;
+                            if (children[b].childNodes.length > 1) {
+                                var subChildren = children[b].childNodes;
 
-                                    for(var c = 0; c < subChildren.length; c++) {
+                                for(var c = 0; c < subChildren.length; c++) {
 
-                                        if (subChildren[c].nodeName == 'dict') {
+                                    if (subChildren[c].nodeName == 'dict') {
 
-                                            if (showOutput) {console.log('=== [dict] ===')};
+                                        if (showOutput) {console.log('=== [dict] ===')};
 
-                                            var dictName = subChildren[c].previousElementSibling.textContent;
+                                        var dictName = subChildren[c].previousElementSibling.textContent;
+                                        if (showOutput) {console.log('** Dict Name: ' + dictName)};
 
-                                            if (subChildren[c].childNodes.length > 1) {
-                                                var thirdChildren = subChildren[c].childNodes;
+                                        if (subChildren[c].childNodes.length > 1) {
+                                            var thirdChildren = subChildren[c].childNodes;
 
-                                                for(var d = 0; d < thirdChildren.length; d++) {
-                                                    if (showOutput) {
-                                                            console.log(' ---- third-child ' + thirdChildren[d].nodeName + ' // ' + ' -- content: ' + thirdChildren[d].textContent);
-                                                                  
-                                                        if (thirdChildren[d].nodeName == 'dict') {
-                                                            console.log(' ** Subprev ** ' + thirdChildren[d].previousElementSibling.textContent);
-                                                        }
-                                                    }
-
-                                                    if (thirdChildren[d].nodeName == 'key') {
-
-                                                        if (showOutput) {console.log('** Dict Name: ' + dictName)};
-
-                                                        var __keyName = dictName + '_' + thirdChildren[d].textContent;
-                                                        var __subKey = thirdChildren[d].textContent;
-                                                    }
-                                                    
-                                                    if (thirdChildren[d].nodeName == 'string' || thirdChildren[d].nodeName == 'integer' || thirdChildren[d].nodeName == 'real') {
-                                                        
-                                                        // Push key/val into collection
-                                                        var __subVal = thirdChildren[d].textContent;
-                                                        __collected[__keyName] = __subVal;
-
-                                                        if (showOutput) {console.log(__keyName + ' : ' + __subVal)};
-
-                                                    } else if (thirdChildren[d].nodeName == 'false' || thirdChildren[d].nodeName == 'true') {
-                                                        
-                                                        // Push key/val into collection
-                                                        var __subVal = thirdChildren[d].nodeName;
-                                                        __collected[__keyName] = __subVal;
-
-                                                        if (showOutput) {console.log(__keyName + ' : ' + __subVal)};
+                                            for(var d = 0; d < thirdChildren.length; d++) {
+                                                if (showOutput) {
+                                                        console.log(' ---- third-child ' + thirdChildren[d].nodeName + ' // ' + ' -- content: ' + thirdChildren[d].textContent);
+                                                              
+                                                    if (thirdChildren[d].nodeName == 'dict') {
+                                                        console.log(' ** Subprev ** ' + thirdChildren[d].previousElementSibling.textContent);
                                                     }
                                                 }
 
-                                                // Push key/val into collection
-                                                __collected[__subKey] = __subVal;
+                                                if (thirdChildren[d].nodeName == 'key') {
 
-                                                if (showOutput) {console.log(__subKey + ' : ' + __subVal)};
+                                                    if (showOutput) {console.log('** Dict Name: ' + dictName)};
+
+                                                    var __keyName = dictName + '_' + thirdChildren[d].textContent;
+                                                    var __subKey = thirdChildren[d].textContent;
+                                                }
+                                                
+                                                if (thirdChildren[d].nodeName == 'string' || thirdChildren[d].nodeName == 'integer' || thirdChildren[d].nodeName == 'real') {
+                                                    
+                                                    // Push key/val into collection
+                                                    var __subVal = thirdChildren[d].textContent;
+                                                    __collected[__keyName] = __subVal;
+
+                                                    if (showOutput) {console.log(__keyName + ' : ' + __subVal)};
+
+                                                } else if (thirdChildren[d].nodeName == 'false' || thirdChildren[d].nodeName == 'true') {
+                                                    
+                                                    // Push key/val into collection
+                                                    var __subVal = thirdChildren[d].nodeName;
+                                                    __collected[__keyName] = __subVal;
+
+                                                    if (showOutput) {console.log(__keyName + ' : ' + __subVal)};
+                                                }
                                             }
+
+                                            // Push key/val into collection
+                                            __collected[__subKey] = __subVal;
+
+                                            if (showOutput) {console.log(__subKey + ' : ' + __subVal)};
                                         }
                                     }
-                                } else if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real' || children[b].nodeName == 'false' || children[b].nodeName == 'true') {
-                                    if (showOutput) {console.log(' -- val // ' + children[b].textContent)};
-                                    
-                                    if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real') {
-                                        // Push key/val into collection
-                                        var __topVal = children[b].textContent;
-
-                                        __collected[__topKey] = __topVal;
-
-                                        if (showOutput) {console.log(__topKey + ' : ' + __topVal)};
-
-                                        
-                                    } else if (children[b].nodeName == 'false' || children[b].nodeName == 'true') {
-                                        var __topVal = children[b].nodeName;
-                                        
-                                        __collected[__topKey] = __topVal;
-
-                                        if (showOutput) {console.log(__topKey + ' : ' + __topVal)};
-
-                                    }
                                 }
-                            }  
+                            } else if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real' || children[b].nodeName == 'false' || children[b].nodeName == 'true') {
+                                if (showOutput) {console.log(' -- val // ' + children[b].textContent)};
+                                
+                                if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real') {
+                                    // Push key/val into collection
+                                    var __topVal = children[b].textContent;
+
+                                    __collected[__topKey] = __topVal;
+
+                                    if (showOutput) {console.log(__topKey + ' : ' + __topVal)};
+
+                                    
+                                } else if (children[b].nodeName == 'false' || children[b].nodeName == 'true') {
+                                    var __topVal = children[b].nodeName;
+                                    
+                                    __collected[__topKey] = __topVal;
+
+                                    if (showOutput) {console.log(__topKey + ' : ' + __topVal)};
+
+                                }
+                            }
                         }
                     }
                 }
@@ -175,7 +168,7 @@ apiSuite.prototype.getContent = function(url, type) {
                     casper.echo( 'Testing surpressed due to debug.', 'PARAMETER' );
                 } else {
                     reqKeys.reverse();
-                    
+
                     for (var i = reqKeys.length - 1; i >= 0; i--) {
                        var __colData = reqKeys[i];
                        
@@ -184,7 +177,8 @@ apiSuite.prototype.getContent = function(url, type) {
                        }
 
                        if (!(reqKeys[i] in __collected)) {
-                           throw new Error('Missing required API key! ' + reqKeys[i]);
+                           // throw new Error('Missing required API key! ' + reqKeys[i]);
+                           console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'));
                        } else {
                             // console.log('found key:' + reqKeys[i]);
                             for (var key in __collected) {
@@ -193,10 +187,14 @@ apiSuite.prototype.getContent = function(url, type) {
 
                                 if ( reqKeys.indexOf(key) > -1 ) {
                                     if (reqKeys[i] == key) {
-                                        if(typeof val === 'undefined') {
-                                            throw new Error('Missing required API key value! No value for: ' + reqKeys[i]);
+                                        if (val.indexOf('$') >= 0 ) {
+                                            console.log(colorizer.colorize('FAIL: Variable found "' + val + '" in output for ' + key, 'ERROR'));
                                         } else {
-                                            console.log('Passed: ' + key + ':' + val);
+                                            if(typeof val === 'undefined' || typeof val === null || val == "" || val.length <= 0) {    
+                                                console.log(colorizer.colorize('FAIL:  API value missing for: ' + reqKeys[i], 'ERROR'));
+                                            } else {
+                                                console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
+                                            }
                                         }
                                     }
                                 }
