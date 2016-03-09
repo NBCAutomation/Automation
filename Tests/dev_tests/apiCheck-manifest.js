@@ -5,6 +5,10 @@
 // Case: Test API main manifest file to verify main key/values that allow the app to function correctly.
 // Use: casperjs test [file_name] --url=[site]
 // optional string params --type=debug to show logged key/val strings
+// Dictionary files:
+// - OTS Created 2/25/16
+// - TSG Pending..
+// -http://collaborative-tools-project.blogspot.com/2012/05/getting-csv-data-into-google.html
 
 var apiSuite = function(url) {
 
@@ -94,6 +98,7 @@ apiSuite.prototype.getContent = function(url, type) {
     var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
     
     __collected = {};
+    __dictionary = {};
 
     casper.test.begin('OTS API Check', function suite(test) {
         
@@ -103,7 +108,7 @@ apiSuite.prototype.getContent = function(url, type) {
             var testTime = month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
             
             if(createDictionary){
-                fs.write(save, 'Expected Key,Expected Value,Pass/Fail', 'a+');
+                fs.write(save, 'Expected Key,Expected Value', 'a+');
             } else {
                 fs.write(save, ' ' + testInfo + ' - ' + testTime + ',\n');
                 fs.write(save, 'Pass/Fail Messages', 'a+');
@@ -225,10 +230,38 @@ apiSuite.prototype.getContent = function(url, type) {
                         }
                     }
                 }
-                if (showOutput) {
+                if (showOutput) {                                                                               
                     console.log(__topKey + ' : ' + __topVal)
                     casper.echo( 'Testing surpressed due to debug.', 'PARAMETER' );
                 } else {
+                    // Grab manifest dictionay
+                    var dictionaryFile = urlUri + '_dictionary.csv';
+                    var dictionaryData = fs.read(fs.workingDirectory + '/manifest_dictionary/' + dictionaryFile);
+
+                    rows = dictionaryData.split("\n");
+                    rows.shift();
+                    rows.reverse();
+
+                    // console.log(rows);
+                    for (var i = rows.length - 1; i >= 0; i--) {
+                        console.log(rows[i].split(",", 1));
+
+                        console.log('>> ' + rows[i].match(/"([^']+)"/)[1]);
+                        // var dict_row = rows[i].split(",");
+
+                        // console.log('>> ' + rows[i].split(",", 2).reverse().join(""));
+                        
+                        // for (var dd in dict_row ) {
+                        //     console.log('>> ' + dict_row[2])
+                        // }
+
+
+                    }
+
+                    throw new Error('exiting');
+
+                    
+                    //Begin manifest key/val check
                     reqKeys.reverse();
 
                     for (var i = reqKeys.length - 1; i >= 0; i--) {
@@ -252,7 +285,6 @@ apiSuite.prototype.getContent = function(url, type) {
                                     if (reqKeys[i] == key) {
                                         if(createDictionary){
                                             fs.write(save, ',\n' + key + ',' + '"' + val + '"', 'a+');
-                                            console.log('Dictionary csv created.');
                                         } else {
                                             if (val.indexOf('$') >= 0 ) {
                                                 console.log(colorizer.colorize('FAIL: Variable found "' + val + '" in output for ' + key, 'ERROR'));
@@ -274,6 +306,9 @@ apiSuite.prototype.getContent = function(url, type) {
                                             }
                                         }
                                     }
+                                }
+                                if(createDictionary){
+                                    console.log('Dictionary csv created.');
                                 }
 
                             }
