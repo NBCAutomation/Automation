@@ -242,24 +242,27 @@ apiSuite.prototype.getContent = function(url, type) {
                     rows.shift();
                     rows.reverse();
 
-                    // console.log(rows);
                     for (var i = rows.length - 1; i >= 0; i--) {
-                        console.log(rows[i].split(",", 1));
 
-                        console.log('>> ' + rows[i].match(/"([^']+)"/)[1]);
-                        // var dict_row = rows[i].split(",");
-
-                        // console.log('>> ' + rows[i].split(",", 2).reverse().join(""));
+                        // console.log(rows[i].split(",")[0]);
+                        // console.log(rows[i].split(",")[1].replace(/"/g,''));
                         
-                        // for (var dd in dict_row ) {
-                        //     console.log('>> ' + dict_row[2])
-                        // }
+                        var __dictKey = rows[i].split(",")[0];
+                        var __dictVal = rows[i].split(",")[1].replace(/"/g,'');
 
+                        if (__dictKey.length <= 0) {
+                            __dictKey = "[No Key on manifest]";
+                        }
 
+                        if (__dictVal.length <= 0) {
+                            __dictVal = "[No Value on manifest]";
+                        }
+
+                        // console.log('dict_key: ' + __dictKey);
+                        // console.log('dict_val: ' + __dictVal);
+
+                        __dictionary[__dictKey] = __dictVal;
                     }
-
-                    throw new Error('exiting');
-
                     
                     //Begin manifest key/val check
                     reqKeys.reverse();
@@ -291,7 +294,6 @@ apiSuite.prototype.getContent = function(url, type) {
                                                 if (!showOutput) {fs.write(save, ',\n' + 'FAIL: Variable found "' + val + '" in output for ' + key, 'a+');};
                                             } else {
                                                 if(/* typeof val === 'undefined' || typeof val === null || val == "" ||*/ val.length <= 0) {
-                                                    
                                                     if (url.indexOf('necn.com') && key == 'tve_url' || url.indexOf('telemundo') && key == 'tve_url') {
                                                         console.log(colorizer.colorize('TVE not requred for property', 'COMMENT'));
                                                         if (!showOutput) {fs.write(save, ',\n' + 'TVE not requred for property', 'a+');};
@@ -300,13 +302,26 @@ apiSuite.prototype.getContent = function(url, type) {
                                                         if (!showOutput) {fs.write(save, ',\n' + 'FAIL:  API value missing for: ' + reqKeys[i], 'a+');};
                                                     }
                                                 } else {
-                                                    console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
+                                                    // console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
                                                     if (!showOutput) {fs.write(save, ',\n' + 'PASS: ' + key + ':' + val, 'a+');};
+
+                                                    for (var __key in __dictionary) {
+                                                        if (__key === key) {
+                                                            console.log(colorizer.colorize('- Key found: ', 'INFO') + key);
+                                                            // console.log(__dictionary[__key] + ' > ' + val);
+                                                            if (val === __dictionary[__key]) {
+                                                                console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
+                                                            } else {
+                                                                console.log(colorizer.colorize('FAIL: Current value does not match manifest ', 'ERROR') + 'dictionary val: ' + __dictionary[__key] + ' : ' + 'manifest val' + val);
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
+
                                 if(createDictionary){
                                     console.log('Dictionary csv created.');
                                 }
