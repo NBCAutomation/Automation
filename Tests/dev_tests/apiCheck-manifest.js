@@ -105,13 +105,14 @@ apiSuite.prototype.getContent = function(url, type) {
         if (!showOutput) {
             // Write file headers
             var testInfo = 'Manifest url tested: ' + url;
-            var testTime = month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
+            var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
             
             if(createDictionary){
                 fs.write(save, 'Expected Key,Expected Value', 'a+');
             } else {
-                fs.write(save, ' ' + testInfo + ' - ' + testTime + ',\n');
-                fs.write(save, 'Pass/Fail Messages', 'a+');
+                fs.write(save, ' ' + testInfo + ',\n' + ',\n');
+                fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
+                fs.write(save, 'Expected Key,Expected Value,Tested Key,Tested Value,Pass/Fail', 'a+');
             }
         }
 
@@ -243,12 +244,9 @@ apiSuite.prototype.getContent = function(url, type) {
                     rows.reverse();
 
                     for (var i = rows.length - 1; i >= 0; i--) {
-
-                        // console.log(rows[i].split(",")[0]);
-                        // console.log(rows[i].split(",")[1].replace(/"/g,''));
                         
-                        var __dictKey = rows[i].split(",")[0];
-                        var __dictVal = rows[i].split(",")[1].replace(/"/g,'');
+                        var __dictKey = rows[i].match(/^(.*?),(.*?)$/)[1];
+                        var __dictVal = rows[i].match(/^(.*?),(.*?)$/)[2].replace(/"/g,'').replace(/,(?=[^,]*$)/, '');
 
                         if (__dictKey.length <= 0) {
                             __dictKey = "[No Key on manifest]";
@@ -258,11 +256,15 @@ apiSuite.prototype.getContent = function(url, type) {
                             __dictVal = "[No Value on manifest]";
                         }
 
-                        // console.log('dict_key: ' + __dictKey);
-                        // console.log('dict_val: ' + __dictVal);
+                        if (showOutput) {
+                            console.log('dict_key: ' + __dictKey);
+                            console.log('dict_val: ' + __dictVal);
+                        }
 
                         __dictionary[__dictKey] = __dictVal;
                     }
+                    
+                    // throw new Error('quit');
                     
                     //Begin manifest key/val check
                     reqKeys.reverse();
@@ -293,26 +295,38 @@ apiSuite.prototype.getContent = function(url, type) {
                                                 console.log(colorizer.colorize('FAIL: Variable found "' + val + '" in output for ' + key, 'ERROR'));
                                                 if (!showOutput) {fs.write(save, ',\n' + 'FAIL: Variable found "' + val + '" in output for ' + key, 'a+');};
                                             } else {
+                                                //TVE key check
                                                 if(/* typeof val === 'undefined' || typeof val === null || val == "" ||*/ val.length <= 0) {
                                                     if (url.indexOf('necn.com') && key == 'tve_url' || url.indexOf('telemundo') && key == 'tve_url') {
                                                         console.log(colorizer.colorize('TVE not requred for property', 'COMMENT'));
-                                                        if (!showOutput) {fs.write(save, ',\n' + 'TVE not requred for property', 'a+');};
+                                                        if (!showOutput) {fs.write(save, ',\n' + 'TVE not requred for property. ', 'a+');};
                                                     } else {
                                                         console.log(colorizer.colorize('FAIL:  API value missing for: ' + reqKeys[i], 'ERROR'));
                                                         if (!showOutput) {fs.write(save, ',\n' + 'FAIL:  API value missing for: ' + reqKeys[i], 'a+');};
                                                     }
                                                 } else {
                                                     // console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
-                                                    if (!showOutput) {fs.write(save, ',\n' + 'PASS: ' + key + ':' + val, 'a+');};
 
                                                     for (var __key in __dictionary) {
+
                                                         if (__key === key) {
-                                                            console.log(colorizer.colorize('- Key found: ', 'INFO') + key);
-                                                            // console.log(__dictionary[__key] + ' > ' + val);
-                                                            if (val === __dictionary[__key]) {
-                                                                console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
-                                                            } else {
-                                                                console.log(colorizer.colorize('FAIL: Current value does not match manifest ', 'ERROR') + 'dictionary val: ' + __dictionary[__key] + ' : ' + 'manifest val' + val);
+                                                            if (showOutput) {
+                                                                console.log(colorizer.colorize('- Key found: ', 'INFO') + key);
+                                                                console.log(__dictionary[__key] + ' > ' + key);
+                                                            }
+                                                            if (!showOutput) {
+                                                                if (val === __dictionary[__key]) {
+                                                                    console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
+
+                                                                    //Write results to log
+                                                                    fs.write(save, ',\n' + __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Pass', 'a+');
+
+                                                                } else {
+                                                                    console.log(colorizer.colorize('FAIL: Current value does not match manifest ', 'ERROR') + colorizer.colorize('dictionary val: ', 'PARAMETER') + __dictionary[__key] + ' : ' + colorizer.colorize('manifest val: ', 'PARAMETER') + val);
+
+                                                                    //Write results to log
+                                                                    fs.write(save, ',\n' + __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Fail', 'a+');
+                                                                }
                                                             }
                                                         }
                                                     }
