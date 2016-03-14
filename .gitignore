@@ -1,2 +1,4 @@
 Tests/dev_tests/test_results
 Tests/prod_tests/test_results
+Tests/dev_tests/manifest_dictionary
+Tests/prod_tests/manifest_dictionary
