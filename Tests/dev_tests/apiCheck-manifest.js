@@ -79,7 +79,7 @@ apiSuite.prototype.getContent = function(url, type) {
         parser.href = url;
 
         newUrl = parser.href;
-        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').split(/[/?#]/)[0];
+        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
 
         var fs = require('fs');
@@ -96,6 +96,8 @@ apiSuite.prototype.getContent = function(url, type) {
 
     // Required API keys for app to function correctly.
     var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
+
+    var gdocSheetkeys = {nbcnewyork:"1237123522",nbclosangeles:"760525331",nbcchicago:"1368539190",nbcbayarea:"382654776",nbcdfw:"837130684",nbcmiami:"206819603",nbcphiladelphia:"1647241295",nbcconnecticut:"1053499483",nbcwashington:"52580851",nbcsandiego:"196020938",nbcboston:"1408094619",necn:"140276335",telemundo40:"618666866",telemundo47:"1440310357",telemundo51:"1586194994",telemundo52:"1528595265",telemundo62:"955449852",telemundoareadelabahia:"1873969221",telemundoarizona:"840179992",telemundoboston:"2081694699",telemundochicago:"803813981",telemundodallas:"1261394201",telemundodenver:"51923675",telemundohouston:"153235565",telemundolasvegas:"248723970",telemundosanantonio:"1675506119",telemundopr:"1689340443"}
     
     __collected = {};
     __dictionary = {};
@@ -235,9 +237,39 @@ apiSuite.prototype.getContent = function(url, type) {
                     console.log(__topKey + ' : ' + __topVal)
                     casper.echo( 'Testing surpressed due to debug.', 'PARAMETER' );
                 } else {
+                    var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
+                    var localDictName =  urlUri + '_dictionary.csv';
+
+                    console.log(urlUri);
+
                     // Grab manifest dictionay
-                    var dictionaryFile = urlUri + '_dictionary.csv';
-                    var dictionaryData = fs.read(fs.workingDirectory + '/manifest_dictionary/' + dictionaryFile);
+                    if (!fs.exists(dictionaryFile)) {
+                        console.log('not here');
+                        
+                        for (var __sheetKey in gdocSheetkeys) {
+                            // console.log(__sheetKey + ' : ' + gdocSheetkeys[__sheetKey]);
+                            if (urlUri == __sheetKey) {
+                                // console.log(gdocSheetkeys[__sheetKey]);
+                                var __cSheetKey = gdocSheetkeys[__sheetKey];
+                            }
+                        }
+
+                        try {
+                            console.log("Attempting to download dictionary file.....");
+                                
+                            var gdocDict = 'https://docs.google.com/spreadsheets/d/1xS9jGY_z0-h3Jl0HCfkQNYepxTe4sGsKY3Gj3SH723c/pub?gid=' + __cSheetKey + '&single=true&output=csv'
+                            
+                            casper.download(gdocDict, fs.workingDirectory + '/manifest_dictionary/' + localDictName);
+
+                        } catch (e) {
+                            this.echo(e);
+                        }
+
+                        throw new Error('quit');
+
+                    }
+
+                    var dictionaryData = fs.read(dictionaryFile);
 
                     rows = dictionaryData.split("\n");
                     rows.shift();
