@@ -1,12 +1,20 @@
 /* globals casper, require, console */
 // Author: Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version: 1.0
+// Version: 2.0
 // Case: Test API main manifest file to verify main key/values that allow the app to function correctly.
 // Use: casperjs test [file_name] --url=[site]
 // optional string params --type=debug to show logged key/val strings
 // Dictionary files:
 // - OTS Created 2/25/16
+
+/*
+* ==== Notes for future release - 3/15/16 === 
+* - Download dictionary data from GSheets
+* - Write log results to GSheets
+* - Cron/NPM process to run concurrent tests
+*/
+
 // - TSG Pending..
 // -http://collaborative-tools-project.blogspot.com/2012/05/getting-csv-data-into-google.html
 
@@ -240,34 +248,32 @@ apiSuite.prototype.getContent = function(url, type) {
                     var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
                     var localDictName =  urlUri + '_dictionary.csv';
 
-                    console.log(urlUri);
-
                     // Grab manifest dictionay
-                    if (!fs.exists(dictionaryFile)) {
-                        console.log('not here');
+                    // if (!fs.exists(dictionaryFile)) {
+                    //     console.log('not here');
                         
-                        for (var __sheetKey in gdocSheetkeys) {
-                            // console.log(__sheetKey + ' : ' + gdocSheetkeys[__sheetKey]);
-                            if (urlUri == __sheetKey) {
-                                // console.log(gdocSheetkeys[__sheetKey]);
-                                var __cSheetKey = gdocSheetkeys[__sheetKey];
-                            }
-                        }
+                    //     for (var __sheetKey in gdocSheetkeys) {
+                    //         // console.log(__sheetKey + ' : ' + gdocSheetkeys[__sheetKey]);
+                    //         if (urlUri == __sheetKey) {
+                    //             // console.log(gdocSheetkeys[__sheetKey]);
+                    //             var __cSheetKey = gdocSheetkeys[__sheetKey];
+                    //         }
+                    //     }
 
-                        try {
-                            console.log("Attempting to download dictionary file.....");
+                    //     try {
+                    //         console.log("Attempting to download dictionary file.....");
                                 
-                            var gdocDict = 'https://docs.google.com/spreadsheets/d/1xS9jGY_z0-h3Jl0HCfkQNYepxTe4sGsKY3Gj3SH723c/pub?gid=' + __cSheetKey + '&single=true&output=csv'
+                    //         var gdocDict = 'https://docs.google.com/spreadsheets/d/1xS9jGY_z0-h3Jl0HCfkQNYepxTe4sGsKY3Gj3SH723c/pub?gid=' + __cSheetKey + '&single=true&output=csv'
                             
-                            casper.download(gdocDict, fs.workingDirectory + '/manifest_dictionary/' + localDictName);
+                    //         casper.download(gdocDict, fs.workingDirectory + '/manifest_dictionary/' + localDictName);
 
-                        } catch (e) {
-                            this.echo(e);
-                        }
+                    //     } catch (e) {
+                    //         this.echo(e);
+                    //     }
 
-                        throw new Error('quit');
+                    //     throw new Error('quit');
 
-                    }
+                    // }
 
                     var dictionaryData = fs.read(dictionaryFile);
 
