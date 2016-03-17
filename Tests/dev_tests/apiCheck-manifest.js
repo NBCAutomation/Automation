@@ -17,6 +17,9 @@
 
 // - TSG Pending..
 // -http://collaborative-tools-project.blogspot.com/2012/05/getting-csv-data-into-google.html
+//
+// Phantom 1.1.0-beta3 and Phantom 1.9.8
+//
 
 var apiSuite = function(url) {
 
@@ -128,6 +131,8 @@ apiSuite.prototype.getContent = function(url, type) {
 
         casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function() {
             var rawContent = this.getPageContent();
+            
+            // console.log(rawContent);
 
             if ( rawContent ) {
 
