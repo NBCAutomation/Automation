@@ -132,7 +132,7 @@ apiSuite.prototype.getContent = function(url, type) {
         casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function() {
             var rawContent = this.getPageContent();
             
-            // console.log(rawContent);
+            if (showOutput) {console.log(rawContent)};
 
             if ( rawContent ) {
 
@@ -365,7 +365,7 @@ apiSuite.prototype.getContent = function(url, type) {
                                                                     fs.write(save, ',\n' + __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Pass', 'a+');
 
                                                                 } else {
-                                                                    console.log(colorizer.colorize('FAIL: Current value does not match manifest ', 'ERROR') + colorizer.colorize('dictionary val: ', 'PARAMETER') + __dictionary[__key] + ' : ' + colorizer.colorize('manifest val: ', 'PARAMETER') + val);
+                                                                    console.log(colorizer.colorize('FAIL: ' + key + ' value does not match manifest', 'ERROR') + colorizer.colorize(' dictionary val: ', 'PARAMETER') + __dictionary[__key] + ' : ' + colorizer.colorize('manifest val: ', 'PARAMETER') + val);
 
                                                                     //Write results to log
                                                                     fs.write(save, ',\n' + __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Fail', 'a+');
