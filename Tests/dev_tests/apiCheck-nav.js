@@ -28,7 +28,7 @@ var apiSuite = function(url) {
     }
 
     this.__passed = [];
-    this.__collected = [];
+    this.__collected = {};
 
     var suite = this;
     var no_error = false;
@@ -88,20 +88,30 @@ apiSuite.prototype.getContent = function(url, type) {
                     if ( ! url.indexOf('/apps') ) {
                         url = casper.cli.get('url') + url + '?apiVersion=2';
                   
-                        suite.__collected.push({
-                            key: key,
-                            url: url
-                        });
+                        suite.__collected[key] = url;
+                    }
+                }
+
+                var __urlSuite = suite.__collected;
+
+                for (var __prog in __urlSuite) {
+                    if (__prog === 'navigation') {
+                        // console.log(__prog + ' :: ' + __urlSuite[__prog]);
+                        suite.checkNavigation(__urlSuite[__prog]);
                     }
                 }
 
                 // require('utils').dump( suite.__collected );
-                this.echo('endpoint health check...');
 
-                for (i = suite.__collected.length - 1; i >= 0; i--) {
-                    suite.checkHealth();
-                    // break;
-                }
+                // for (i = suite.__collected.length - 1; i >= 0; i--) {
+                //     var __urlSuite = suite.__collected[i];
+                //     for (var __prog in __urlSuite) {
+                //         console.log(__prog + ' :: ' + __urlSuite[__prog]);
+                //     }
+
+                //     // suite.checkHealth();
+                //     // suite.checkNavigation();
+                // }
 
             } else {
                 throw new Error('Missing XML elements!');
@@ -114,40 +124,41 @@ apiSuite.prototype.getContent = function(url, type) {
     }
 };
 
-apiSuite.prototype.checkHealth = function() {
+apiSuite.prototype.checkHealth = function(__url) {
 
     var suite = this;
-    var current = suite.__collected.shift();
+    // var current = suite.__collected.shift();
 
     // require('utils').dump( current );
 
-    if (current) {
-        casper.open(current.url, {
+    if (__url) {
+        casper.open(__url, {
             method: 'head'
         }).then(function(resp) {
             resp = resp;
             var status = this.status().currentHTTPStatus;
 
             if ( status == 200) {
-                this.echo('- ' + current.key + ' : ' + current.url + colorizer.colorize(' Status: ' + status, 'INFO') );
-
-                suite.__passed.push({
-                    from: current.key,
-                    url: current.url,
-                    status: status
-                });
+                // this.echo(__url + colorizer.colorize(' Status: ' + status, 'INFO') );
+                console.log('json checking 1');
+                // suite.__passed.push({
+                //     from: current.key,
+                //     url: __url,
+                //     status: status
+                // });
                 // console.log( ' -- array length: ' + suite.__passed.length );
 
-                for (var i = suite.__passed.length - 1; i >= 0; i--) {
-                    suite.validateJson();
+                // for (var i = suite.__passed.length - 1; i >= 0; i--) {
+                    
+                    suite.validateJson(__url);
 
-                    var passedEndpoint = suite.__passed.shift();
-                    console.log(passedEndpoint);
+                    // var passedEndpoint = suite.__passed.shift();
+                    // console.log(passedEndpoint);
                     //if ( passedEndpoint.from == current.key && current.key == 'navigation' ) {
                       //  console.log('~~  ' + suite.__passed[i].from);
                         //suite.validateJson(passedEndpoint.url, passedEndpoint.from);
                     //}
-                }
+                // }
             }
 
             // suite.checkHealth();
@@ -157,79 +168,151 @@ apiSuite.prototype.checkHealth = function() {
     }
 };
 
-// apiSuite.prototype.checkNavigation = function() {
-
+// apiSuite.prototype.validateJson = function(__jUrl) {
 //     var suite = this;
-//     var current = suite.__collected.shift();
-
-//     if (current.url) {
-//         casper.open(current.url, {
-//             method: 'head'
-//         }).then(function(resp) {
+//     // var current = suite.__passed.shift();
+// console.log('json checking 2');
+//     if (__jUrl) {
+//         // casper.open(current.url+'?cachebust='+Math.random(),{ method: 'get', headers: { 'Accept': 'text/xml', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+//         casper.open(__jUrl,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
 //             resp = resp;
-//             var status = this.status().currentHTTPStatus;
+//             var validated = false;
+//             var output = this.getPageContent();
 
-//             if ( status == 200) {
-//                 this.echo('- ' + current.key + ' : ' + current.url + colorizer.colorize(' Status: ' + status, 'INFO') );
+//             // if (__output.indexOf('$')) {
+//             //     console.log(__output);
+//             // }
 
-//                 suite.__passed.push({
-//                     from: current.key,
-//                     url: current.url,
-//                     status: status
-//                 });
+//             try {
+//                 __output = JSON.parse(output);
 
-//                 for (var i = suite.__passed.length - 1; i >= 0; i--) {
-//                     if ( suite.validateJson() ) {
-//                         console.log('Deltrie');
-                        
-//                         var passedEndpoint = suite.__passed.shift();
-
-//                         if ( passedEndpoint.from.indexOf('navigation') ) {
-//                             console.log('navigation' + passedEndpoint.url);
-//                         }
-//                     } else {
-//                         throw new Error('JSON error!eafdvc');
-//                     }
-//                 };
+//                 if( __output instanceof Object ) {
+//                     var validated = true;
+//                  }
+//             } catch (e) {
+//                 // ...
+                
 //             }
 
-//             // suite.checkHealth();
+//             if (validated) {
+//                 console.log('JSON VALIDATED');
+//             } else {
+//                 throw new Error('JSON error!');
+//             }
+
 //         });
 //     } else {
-//         // delete this.__collected; 
+//         // delete this.__collected;
+//         console.log('here');
 //     }
 // };
 
-apiSuite.prototype.validateJson = function() {
+apiSuite.prototype.checkNavigation = function(__url) {
+
     var suite = this;
-    var current = suite.__passed.shift();
+    // var current = suite.__collected.shift();
 
-    if (current.url) {
-        casper.open(current.url+'?cachebust='+Math.random()).then(function(resp) {
+    var showOutput = true;
+
+    var reqKeys = new Array("appTitle","sectionMapping","location");
+
+    // if (current.url) {
+    if (__url) {
+        casper.open(__url, {method: 'head'}).then(function(resp) {
+            
             resp = resp;
-            var validated = false;
-            var output = this.getPageContent();
+            
+            var status = this.status().currentHTTPStatus;
 
-            try {
-                output = JSON.parse(output);
-                if( output instanceof Object ) {
-                    validated = true;
-                 }
-            } catch (e) {
-                // ...
+            if ( status == 200) {
+                this.echo(__url + colorizer.colorize(' Status: ' + status, 'INFO') );
+
+                casper.open(__url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    resp = resp;
+                    var validated = false;
+                    var output = this.getPageContent();
+
+                    // console.log(output);
+
+                    __output = JSON.parse(output);
+
+                    var mainItem = __output.items;
+
+                    var count = 0;
+                    
+                    for (var __item in mainItem) {
+                        
+                        if(mainItem.hasOwnProperty(__item)){
+                            count++;
+                        }
+
+                        var __thisItem = __output.items[count];
+
+                        for (var __i in __thisItem) {
+                            if (showOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+
+                            if (__i === '' && __i.length <= 0) {
+
+                            }
+
+                            // -------------------------------------
+
+                            if (__i === 'items') {
+                                
+                                var __subItem = __output.items[count].items;
+
+                                var __count = 0;
+
+                                for (var __item in __subItem) {
+                                    
+                                    if(__subItem.hasOwnProperty(__item)){
+                                        __count++;
+                                    }
+
+                                    var __lastItem = __output.items[count].items[__count];
+
+                                    for (var __b in __lastItem) {
+                                        if (showOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
+
+                                    }
+                                    if (showOutput) { console.log('    -----------------')};
+                                }
+                            }
+
+                        }
+
+                        console.log('-----------------');
+                    }
+
+                    // if (__output.indexOf('$')) {
+                    //     console.log(__output);
+                    // }
+
+                    // try {
+                    //     __output = JSON.parse(output);
+
+                    //     if( __output instanceof Object ) {
+                    //         var validated = true;
+                    //      }
+                    // } catch (e) {
+                    //     // ...
+                        
+                    // }
+
+                    // if (validated) {
+                    //     console.log('JSON VALIDATED');
+                    // } else {
+                    //     throw new Error('JSON error!');
+                    // }
+
+                });
             }
 
-            if (validated) {
-                console.log('\033[0;32mJSON VALIDATED\x1b[0m');
-            } else {
-                throw new Error('JSON error!');
-            }
-
+            suite.checkHealth();
         });
     } else {
-        delete this.__collected;
+        // delete this.__collected; 
     }
 };
-
 
 new apiSuite(casper.cli.get('url'));
