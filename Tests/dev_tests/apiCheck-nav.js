@@ -15,6 +15,7 @@
 
 var xmlLib = require('./xml2json');
 var x2js = new xmlLib();
+var showOutput = false;
 
 // var sax = require('./sax');
 // var PlistParser = require('./plist-parser');
@@ -34,6 +35,13 @@ var apiSuite = function(url) {
     var no_error = false;
 
     var type = casper.cli.get('type');
+
+    var parser = document.createElement('a');
+    parser.href = url;
+
+    newUrl = parser.href;
+    var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+    var urlUri = sourceString.replace('.','_');
 
     if (type === 'manifest') {
         url = url + '/apps/news-app/manifest/?apiVersion=2';
@@ -64,10 +72,6 @@ apiSuite.prototype.getContent = function(url, type) {
     if (type === 'manifest') {
         casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
             var rawContent = this.getPageContent();
-
-            // var parser = new DOMParser();
-            // xmlDoc = parser.parseFromString(rawContent,'text/xml');
-
             
             if ( rawContent ) {
 
@@ -96,8 +100,8 @@ apiSuite.prototype.getContent = function(url, type) {
 
                 for (var __prog in __urlSuite) {
                     if (__prog === 'navigation') {
-                        // console.log(__prog + ' :: ' + __urlSuite[__prog]);
-                        suite.checkNavigation(__urlSuite[__prog]);
+                        if (showOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
+                        suite.checkNavigation(url, __urlSuite[__prog]);
                     }
                 }
 
@@ -139,8 +143,10 @@ apiSuite.prototype.checkHealth = function(__url) {
             var status = this.status().currentHTTPStatus;
 
             if ( status == 200) {
-                // this.echo(__url + colorizer.colorize(' Status: ' + status, 'INFO') );
-                console.log('json checking 1');
+                console.log(__url + colorizer.colorize(' Status: ' + status, 'INFO') );
+
+                suite.validateJson(__url);
+
                 // suite.__passed.push({
                 //     from: current.key,
                 //     url: __url,
@@ -150,7 +156,7 @@ apiSuite.prototype.checkHealth = function(__url) {
 
                 // for (var i = suite.__passed.length - 1; i >= 0; i--) {
                     
-                    suite.validateJson(__url);
+                    // suite.validateJson(__url);
 
                     // var passedEndpoint = suite.__passed.shift();
                     // console.log(passedEndpoint);
@@ -168,53 +174,72 @@ apiSuite.prototype.checkHealth = function(__url) {
     }
 };
 
-// apiSuite.prototype.validateJson = function(__jUrl) {
-//     var suite = this;
-//     // var current = suite.__passed.shift();
-// console.log('json checking 2');
-//     if (__jUrl) {
-//         // casper.open(current.url+'?cachebust='+Math.random(),{ method: 'get', headers: { 'Accept': 'text/xml', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-//         casper.open(__jUrl,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-//             resp = resp;
-//             var validated = false;
-//             var output = this.getPageContent();
+apiSuite.prototype.validateJson = function(__jUrl) {
+    var suite = this;
 
-//             // if (__output.indexOf('$')) {
-//             //     console.log(__output);
-//             // }
+    if (__jUrl) {
+        casper.open(__jUrl,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+            resp = resp;
+            var validated = false;
+            var output = this.getPageContent();
 
-//             try {
-//                 __output = JSON.parse(output);
+            // if (__output.indexOf('$')) {
+            //     console.log(__output);
+            // }
 
-//                 if( __output instanceof Object ) {
-//                     var validated = true;
-//                  }
-//             } catch (e) {
-//                 // ...
+            try {
+                __output = JSON.parse(output);
+
+                if( __output instanceof Object ) {
+                    var validated = true;
+                 }
+            } catch (e) {
+                // ...
                 
-//             }
+            }
 
-//             if (validated) {
-//                 console.log('JSON VALIDATED');
-//             } else {
-//                 throw new Error('JSON error!');
-//             }
+            if (validated) {
+                console.log('JSON VALIDATED');
+            } else {
+                throw new Error('JSON error!');
+            }
+//--------------------
 
-//         });
-//     } else {
-//         // delete this.__collected;
-//         console.log('here');
-//     }
-// };
+            // if (__output.indexOf('$')) {
+            //     console.log(__output);
+            // }
 
-apiSuite.prototype.checkNavigation = function(__url) {
+            // try {
+            //     __output = JSON.parse(output);
+
+            //     if( __output instanceof Object ) {
+            //         var validated = true;
+            //      }
+            // } catch (e) {
+            //     // ...
+                
+            // }
+
+            // if (validated) {
+            //     console.log('JSON VALIDATED');
+            // } else {
+            //     throw new Error('JSON error!');
+            // }
+
+        });
+    } else {
+        console.log('here');
+    }
+};
+
+apiSuite.prototype.checkNavigation = function(url, __url) {
 
     var suite = this;
     // var current = suite.__collected.shift();
 
-    var showOutput = true;
-
     var reqKeys = new Array("appTitle","sectionMapping","location");
+
+    var __baseUrl = casper.cli.get('url');
 
     // if (current.url) {
     if (__url) {
@@ -228,7 +253,7 @@ apiSuite.prototype.checkNavigation = function(__url) {
                 this.echo(__url + colorizer.colorize(' Status: ' + status, 'INFO') );
 
                 casper.open(__url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    resp = resp;
+                    
                     var validated = false;
                     var output = this.getPageContent();
 
@@ -251,13 +276,44 @@ apiSuite.prototype.checkNavigation = function(__url) {
                         for (var __i in __thisItem) {
                             if (showOutput) {console.log(__i + ' : ' + __thisItem[__i])};
 
-                            if (__i === '' && __i.length <= 0) {
+                            if (reqKeys.indexOf(__i) > -1) {
+                                // console.log(__i + ' : ' + __thisItem[__i])
 
+                                if (__thisItem.length <= 0) {
+                                    throw new Error('key blank ' + __i);
+                                } else {
+                                    // console.log(__i + ' : ' + __thisItem[__i])
+
+                                    if (__i === 'location') {
+                                        
+                                        if (showOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+
+                                        if (__thisItem[__i].indexOf('/apps') > -1) {
+
+                                            if (__thisItem[__i].indexOf('?') > -1) {
+                                                var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=2'
+                                            } else {
+                                                var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=2'
+                                            }
+                                            
+                                            if (showOutput) {console.log(__keyUrl)};
+                                        }
+
+                                        suite.checkHealth(__keyUrl);
+                                    }
+                                }
                             }
 
                             // -------------------------------------
 
-                            if (__i === 'items') {
+                            if (__i === 'items' && typeof __thisItem[__i] === 'object') {
+
+                                var __parent = __output.items[count].title;
+
+                                if (showOutput) {
+                                    console.log('-----------------');
+                                    console.log(__parent + ' sub links');
+                                }
                                 
                                 var __subItem = __output.items[count].items;
 
@@ -267,12 +323,38 @@ apiSuite.prototype.checkNavigation = function(__url) {
                                     
                                     if(__subItem.hasOwnProperty(__item)){
                                         __count++;
+
+                                        __offset = (__count - 1);
+                                        // console.log(__offset);
                                     }
 
-                                    var __lastItem = __output.items[count].items[__count];
+                                    var __lastItem = __output.items[count].items[__offset];
 
                                     for (var __b in __lastItem) {
                                         if (showOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
+
+                                        if (reqKeys.indexOf(__b) > -1) {
+                                            // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
+                                            if (__b === 'location') {
+                                                
+                                                if (showOutput) {console.log(__b + ' : ' + __lastItem[__b])};
+
+                                                if (__lastItem[__b].indexOf('/apps') > -1) {
+
+                                                    if (__lastItem[__b].indexOf('?') > -1) {
+                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=2'
+                                                    } else {
+                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=2'
+                                                    }
+                                                    
+                                                    // if (showOutput) {
+                                                        // console.log('>> ' + __lastKeyUrl);
+                                                    // };
+                                                }
+
+                                                suite.checkHealth(__lastKeyUrl);
+                                            }
+                                        }
 
                                     }
                                     if (showOutput) { console.log('    -----------------')};
@@ -281,29 +363,8 @@ apiSuite.prototype.checkNavigation = function(__url) {
 
                         }
 
-                        console.log('-----------------');
+                        if (showOutput) {console.log('-----------------')};
                     }
-
-                    // if (__output.indexOf('$')) {
-                    //     console.log(__output);
-                    // }
-
-                    // try {
-                    //     __output = JSON.parse(output);
-
-                    //     if( __output instanceof Object ) {
-                    //         var validated = true;
-                    //      }
-                    // } catch (e) {
-                    //     // ...
-                        
-                    // }
-
-                    // if (validated) {
-                    //     console.log('JSON VALIDATED');
-                    // } else {
-                    //     throw new Error('JSON error!');
-                    // }
 
                 });
             }
