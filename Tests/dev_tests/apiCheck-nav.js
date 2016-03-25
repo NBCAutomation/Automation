@@ -201,7 +201,10 @@ apiSuite.prototype.validateJson = function(__jUrl) {
             if (validated) {
                 console.log('JSON VALIDATED');
             } else {
-                throw new Error('JSON error!');
+                // throw new Error('JSON error!');
+                console.log('Error');
+                // console.log(__output);
+                require('utils').dump(__output);
             }
 //--------------------
 
