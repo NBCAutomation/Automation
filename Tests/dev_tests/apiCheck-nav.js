@@ -188,23 +188,43 @@ apiSuite.prototype.validateJson = function(__jUrl) {
             // }
 
             try {
+                // __output = JSON.parse(output);
                 __output = JSON.parse(output);
+                // console.log(__output);
 
                 if( __output instanceof Object ) {
                     var validated = true;
                  }
             } catch (e) {
                 // ...
-                
+                console.log(e);
             }
 
             if (validated) {
-                console.log('JSON VALIDATED');
+                console.log(colorizer.colorize('PASSED: JSON Validated', 'INFO') );
             } else {
+                console.log('...re-testing JSON');
+                // var a = "<html><head></head><body>{'a': 123}</body></html>";
+                __catchJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
+                console.log(__catchJson);
+
                 // throw new Error('JSON error!');
-                console.log('Error');
-                // console.log(__output);
-                require('utils').dump(__output);
+                // var __catchJson = JSON.stringify(eval("(" + output + ")"));
+                // console.log(__catchJson);
+
+
+                try {
+                    __verifyOutput = JSON.parse(__catchJson);
+
+                    if( __verifyOutput instanceof Object ) {
+                        console.log('re-eval tested correctly');
+                     }
+                } catch (e) {
+                    // ...
+                    console.log('Error');
+                    // console.log(__output);
+                    // require('utils').dump(__output);
+                }
             }
 //--------------------
 
