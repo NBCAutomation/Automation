@@ -15,12 +15,46 @@
 
 var xmlLib = require('./xml2json');
 var x2js = new xmlLib();
-var showOutput = true;
 
-// var sax = require('./sax');
-// var PlistParser = require('./plist-parser');
+var type = casper.cli.get('type');
+if (type === 'debug') {
+    var showOutput = true;
+} 
+
+var currentTime = new Date();
+var timeStamp = currentTime.toISOString();
+
+var month = currentTime.getMonth() + 1;
+var day = currentTime.getDate();
+var year = currentTime.getFullYear();
+var hours = currentTime.getHours();
+var minutes = currentTime.getMinutes();
+
+if (minutes < 10){
+    minutes = "0" + minutes;
+}
+
+if(hours > 11){
+    var toD = "PM";
+} else {
+    var toD = "AM";
+}
+
+var parser = document.createElement('a');
+parser.href = casper.cli.get('url');
+
+newUrl = parser.href;
+var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+var urlUri = sourceString.replace('.','_');
+
+var fs = require('fs');
+var logName = urlUri + '_manifest-navigation_' + timeStamp + '.csv';
+
+var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
 
 var colorizer = require('colorizer').create('Colorizer');
+
+// ------------------------
 
 var apiSuite = function(url) {
 
@@ -28,13 +62,12 @@ var apiSuite = function(url) {
         throw new Error('A URL is required!');
     }
 
-    this.__passed = [];
     this.__collected = {};
 
     var suite = this;
     var no_error = false;
 
-    var type = casper.cli.get('type');
+    // var type = casper.cli.get('type');
 
     var parser = document.createElement('a');
     parser.href = url;
@@ -43,9 +76,8 @@ var apiSuite = function(url) {
     var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
     var urlUri = sourceString.replace('.','_');
 
-    if (type === 'manifest') {
-        url = url + '/apps/news-app/manifest/?apiVersion=2';
-    }
+    
+    url = url + '/apps/news-app/manifest/?apiVersion=2';
 
     casper.start( url ).then(function(response) {
         if ( response.status == 200 ) {
@@ -55,7 +87,6 @@ var apiSuite = function(url) {
         }
     }).then(function() {
         suite.getContent(url, type);
-        // require('utils').dump(jsonText);
     }).then(function() {
         // suite.__finished.forEach(function(res) {
         //     if (res.status != 200) {
@@ -67,169 +98,57 @@ var apiSuite = function(url) {
 
 apiSuite.prototype.getContent = function(url, type) {
     
-    var suite = this;
+    var suite = this;    
 
-    if (type === 'manifest') {
-        casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
-            var rawContent = this.getPageContent();
+    casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
+        var rawContent = this.getPageContent();
+        
+        if ( rawContent ) {
+
+            var __jsonObj = x2js.xml_str2json( rawContent );
             
-            if ( rawContent ) {
+            // var __baseKeys = __jsonObj.plist.dict.key;
+            // var __baseVals = __jsonObj.plist.dict.string;
+            var __moduleKeys = __jsonObj.plist.dict.dict[0].key;
+            var __moduleVals = __jsonObj.plist.dict.dict[0].string;
 
-                var __jsonObj = x2js.xml_str2json( rawContent );
-                
-                // var __baseKeys = __jsonObj.plist.dict.key;
-                // var __baseVals = __jsonObj.plist.dict.string;
-                var __moduleKeys = __jsonObj.plist.dict.dict[0].key;
-                var __moduleVals = __jsonObj.plist.dict.dict[0].string;
+            // initialize iterator
+            var i;
 
-                // initialize iterator
-                var i;
+            for (i = __moduleKeys.length - 1; i >= 0; i--) {
+                var key = __moduleKeys[i];
+                var url = __moduleVals[i].toString();
 
-                for (i = __moduleKeys.length - 1; i >= 0; i--) {
-                    var key = __moduleKeys[i];
-                    var url = __moduleVals[i].toString();
-
-                    if ( ! url.indexOf('/apps') ) {
-                        url = casper.cli.get('url') + url + '?apiVersion=2';
-                  
-                        suite.__collected[key] = url;
-                    }
+                if ( ! url.indexOf('/apps') ) {
+                    url = casper.cli.get('url') + url + '?apiVersion=2';
+              
+                    suite.__collected[key] = url;
                 }
-
-                var __urlSuite = suite.__collected;
-
-                for (var __prog in __urlSuite) {
-                    if (__prog === 'navigation') {
-                        if (showOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
-                        suite.checkNavigation(url, __urlSuite[__prog]);
-                    }
-                }
-
-                // require('utils').dump( suite.__collected );
-
-                // for (i = suite.__collected.length - 1; i >= 0; i--) {
-                //     var __urlSuite = suite.__collected[i];
-                //     for (var __prog in __urlSuite) {
-                //         console.log(__prog + ' :: ' + __urlSuite[__prog]);
-                //     }
-
-                //     // suite.checkHealth();
-                //     // suite.checkNavigation();
-                // }
-
-            } else {
-                throw new Error('Missing XML elements!');
             }
-        });
-    } else if (type === 'navigation') {
 
-    } else {
-        console.log('other type of url');
-    }
-};
+            var __urlSuite = suite.__collected;
 
-apiSuite.prototype.checkHealth = function(__url) {
+            for (var __prog in __urlSuite) {
+                if (__prog === 'navigation') {
+                    if (showOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
 
-    var suite = this;
-    // var current = suite.__collected.shift();
-
-    // require('utils').dump( current );
-
-    if (__url) {
-        casper.open(__url, {
-            method: 'head'
-        }).then(function(resp) {
-            resp = resp;
-            var status = this.status().currentHTTPStatus;
-
-            if ( status == 200) {
-                console.log(__url + colorizer.colorize(' Status: ' + status, 'INFO') );
-
-                if (__url.indexOf('submit-your-photos') > -1) {
-                    console.log('Skipping UGC url....');
-                } else {
-                    suite.validateJson(__url);
-                }
-
-                // suite.__passed.push({
-                //     from: current.key,
-                //     url: __url,
-                //     status: status
-                // });
-                // console.log( ' -- array length: ' + suite.__passed.length );
-
-                // for (var i = suite.__passed.length - 1; i >= 0; i--) {
+                    // Write file headers
+                    var testInfo = 'Navigation url tested: ' + __urlSuite[__prog];
+                    var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
                     
-                    // suite.validateJson(__url);
+                    
+                    fs.write(save, ' ' + testInfo + ',\n' + ',\n');
+                    fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
+                    fs.write(save, 'Link,URL,HTTP Status Code, JSON Status', 'a+');
 
-                    // var passedEndpoint = suite.__passed.shift();
-                    // console.log(passedEndpoint);
-                    //if ( passedEndpoint.from == current.key && current.key == 'navigation' ) {
-                      //  console.log('~~  ' + suite.__passed[i].from);
-                        //suite.validateJson(passedEndpoint.url, passedEndpoint.from);
-                    //}
-                // }
-            }
-
-            // suite.checkHealth();
-        });
-    } else {
-        // delete this.__collected;
-    }
-};
-
-apiSuite.prototype.validateJson = function(__jUrl) {
-    var suite = this;
-
-    if (__jUrl) {
-        casper.open(__jUrl,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-            resp = resp;
-            var validated = false;
-            var output = this.getPageContent();
-
-            if (showOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
-
-            try {
-                // __output = JSON.parse(output);
-                __output = JSON.parse(output);
-                // console.log(__output);
-
-                if( __output instanceof Object ) {
-                    var validated = true;
-                 }
-            } catch (e) {
-                // ...
-                console.log(e);
-            }
-
-            if (validated) {
-                console.log(colorizer.colorize('PASSED: JSON Validated', 'INFO') );
-            } else {
-                console.log('...re-testing JSON');
-                // var a = "<html><head></head><body>{'a': 123}</body></html>";
-                // __catchJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
-                
-                var reg = /\<body[^>]*\>([^]*)\<\/body/m;
-
-                __catchJson = output.match(reg)[1];
-
-                try {
-                    __verifyOutput = JSON.parse(__catchJson);
-
-                    if( __verifyOutput instanceof Object ) {
-                        console.log(colorizer.colorize('PASSED: Re-Eval Testing', 'INFO') );
-                    } else {
-                        console.log(__catchJson);
-                    }
-                } catch (e) {
-                    // ...
-                    console.log('Error, parse fail also with removing HTML tags');
+                    suite.checkNavigation(url, __urlSuite[__prog]);
                 }
             }
-        });
-    } else {
-        console.log('here');
-    }
+
+        } else {
+            throw new Error('Missing XML elements!');
+        }
+    });
 };
 
 apiSuite.prototype.checkNavigation = function(url, __url) {
@@ -277,12 +196,14 @@ apiSuite.prototype.checkNavigation = function(url, __url) {
                             if (showOutput) {console.log(__i + ' : ' + __thisItem[__i])};
 
                             if (reqKeys.indexOf(__i) > -1) {
-                                // console.log(__i + ' : ' + __thisItem[__i])
 
                                 if (__thisItem.length <= 0) {
                                     throw new Error('key blank ' + __i);
                                 } else {
-                                    // console.log(__i + ' : ' + __thisItem[__i])
+
+                                    if (__i === 'appTitle') {
+                                        var __keyName = __thisItem[__i];
+                                    }
 
                                     if (__i === 'location') {
                                         
@@ -299,7 +220,7 @@ apiSuite.prototype.checkNavigation = function(url, __url) {
                                             if (showOutput) {console.log(__keyUrl)};
                                         }
 
-                                        suite.checkHealth(__keyUrl);
+                                        suite.checkHealth(__keyName, __keyUrl);
                                     }
                                 }
                             }
@@ -335,6 +256,11 @@ apiSuite.prototype.checkNavigation = function(url, __url) {
 
                                         if (reqKeys.indexOf(__b) > -1) {
                                             // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
+                                            
+                                            if (__b === 'appTitle') {
+                                                var __lastKeyName = __lastItem[__b];
+                                            }
+
                                             if (__b === 'location') {
                                                 
                                                 if (showOutput) {console.log(__b + ' : ' + __lastItem[__b])};
@@ -352,7 +278,7 @@ apiSuite.prototype.checkNavigation = function(url, __url) {
                                                     // };
                                                 }
 
-                                                suite.checkHealth(__lastKeyUrl);
+                                                suite.checkHealth(__lastKeyName, __lastKeyUrl);
                                             }
                                         }
 
@@ -373,6 +299,94 @@ apiSuite.prototype.checkNavigation = function(url, __url) {
         });
     } else {
         // delete this.__collected; 
+    }
+};
+
+
+apiSuite.prototype.checkHealth = function(__urlName, __url) {
+
+    var suite = this;
+    // var current = suite.__collected.shift();
+
+    // require('utils').dump( current );
+
+    if (__url) {
+        casper.open(__url, {
+            method: 'head'
+        }).then(function(resp) {
+            resp = resp;
+            var status = this.status().currentHTTPStatus;
+
+            if ( status == 200) {
+                console.log(__urlName + ' : ' + __url + colorizer.colorize(' Status: ' + status, 'INFO') );
+
+                if (__url.indexOf('submit-your-photos') > -1) {
+                    console.log('Skipping UGC url....');
+                } else {
+                    suite.validateJson(__urlName, __url, status);
+                }
+            }
+        });
+    } else {
+        // delete this.__collected;
+    }
+};
+
+apiSuite.prototype.validateJson = function(__jurlName, __jUrl, __status) {
+    var suite = this;
+
+    if (__jUrl) {
+        casper.open(__jUrl,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+            resp = resp;
+            var validated = false;
+            var output = this.getPageContent();
+
+            if (showOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
+
+            try {
+                // __output = JSON.parse(output);
+                __output = JSON.parse(output);
+                // console.log(__output);
+
+                if( __output instanceof Object ) {
+                    var validated = true;
+                 }
+            } catch (e) {
+                // ...
+                console.log(e);
+            }
+
+            if (validated) {
+                console.log(colorizer.colorize('PASSED: JSON Validated', 'INFO') );
+                fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
+            } else {
+                console.log('...re-testing JSON');
+                // var a = "<html><head></head><body>{'a': 123}</body></html>";
+                // __catchJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
+                
+                var reg = /\<body[^>]*\>([^]*)\<\/body/m;
+
+                __catchJson = output.match(reg)[1];
+
+                try {
+                    __verifyOutput = JSON.parse(__catchJson);
+
+                    if( __verifyOutput instanceof Object ) {
+                        console.log(colorizer.colorize('PASSED: Re-Eval Testing', 'INFO') );
+                        fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
+                    } else {
+                        console.log(__catchJson);
+                    }
+                } catch (e) {
+                    // ...
+                    console.log('Error, parse fail also with removing HTML tags');
+                    fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'FAIL - Possible False/Positive,', 'a+');
+                }
+            }
+            console.log('-----------------');
+        });
+    } else {
+        console.log('here');
     }
 };
 
