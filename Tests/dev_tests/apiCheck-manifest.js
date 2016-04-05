@@ -250,35 +250,21 @@ apiSuite.prototype.getContent = function(url, type) {
                     console.log(__topKey + ' : ' + __topVal)
                     casper.echo( 'Testing surpressed due to debug.', 'PARAMETER' );
                 } else {
+                    var cwd = fs.absolute(".");
+
+                    var currentFile = require('system').args[3];
+                    var curFilePath = fs.absolute(currentFile).split('/');
+
+                    // I only bother to change the directory if we weren't already there when invoking casperjs
+                    if (curFilePath.length > 1) {
+                        curFilePath.pop(); // PhantomJS does not have an equivalent path.baseName()-like method
+                        fs.changeWorkingDirectory(curFilePath.join('/'));
+                    }
+
+
+                    // var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
                     var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
                     var localDictName =  urlUri + '_dictionary.csv';
-
-                    // Grab manifest dictionay
-                    // if (!fs.exists(dictionaryFile)) {
-                    //     console.log('not here');
-                        
-                    //     for (var __sheetKey in gdocSheetkeys) {
-                    //         // console.log(__sheetKey + ' : ' + gdocSheetkeys[__sheetKey]);
-                    //         if (urlUri == __sheetKey) {
-                    //             // console.log(gdocSheetkeys[__sheetKey]);
-                    //             var __cSheetKey = gdocSheetkeys[__sheetKey];
-                    //         }
-                    //     }
-
-                    //     try {
-                    //         console.log("Attempting to download dictionary file.....");
-                                
-                    //         var gdocDict = 'https://docs.google.com/spreadsheets/d/1xS9jGY_z0-h3Jl0HCfkQNYepxTe4sGsKY3Gj3SH723c/pub?gid=' + __cSheetKey + '&single=true&output=csv'
-                            
-                    //         casper.download(gdocDict, fs.workingDirectory + '/manifest_dictionary/' + localDictName);
-
-                    //     } catch (e) {
-                    //         this.echo(e);
-                    //     }
-
-                    //     throw new Error('quit');
-
-                    // }
 
                     var dictionaryData = fs.read(dictionaryFile);
 

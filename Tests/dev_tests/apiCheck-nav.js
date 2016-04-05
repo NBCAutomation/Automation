@@ -15,7 +15,7 @@
 
 var xmlLib = require('./xml2json');
 var x2js = new xmlLib();
-var showOutput = false;
+var showOutput = true;
 
 // var sax = require('./sax');
 // var PlistParser = require('./plist-parser');
@@ -145,7 +145,11 @@ apiSuite.prototype.checkHealth = function(__url) {
             if ( status == 200) {
                 console.log(__url + colorizer.colorize(' Status: ' + status, 'INFO') );
 
-                suite.validateJson(__url);
+                if (__url.indexOf('submit-your-photos') > -1) {
+                    console.log('Skipping UGC url....');
+                } else {
+                    suite.validateJson(__url);
+                }
 
                 // suite.__passed.push({
                 //     from: current.key,
@@ -183,9 +187,7 @@ apiSuite.prototype.validateJson = function(__jUrl) {
             var validated = false;
             var output = this.getPageContent();
 
-            // if (__output.indexOf('$')) {
-            //     console.log(__output);
-            // }
+            if (showOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
 
             try {
                 // __output = JSON.parse(output);
@@ -205,50 +207,25 @@ apiSuite.prototype.validateJson = function(__jUrl) {
             } else {
                 console.log('...re-testing JSON');
                 // var a = "<html><head></head><body>{'a': 123}</body></html>";
-                __catchJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
-                console.log(__catchJson);
+                // __catchJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
+                
+                var reg = /\<body[^>]*\>([^]*)\<\/body/m;
 
-                // throw new Error('JSON error!');
-                // var __catchJson = JSON.stringify(eval("(" + output + ")"));
-                // console.log(__catchJson);
-
+                __catchJson = output.match(reg)[1];
 
                 try {
                     __verifyOutput = JSON.parse(__catchJson);
 
                     if( __verifyOutput instanceof Object ) {
-                        console.log('re-eval tested correctly');
-                     }
+                        console.log(colorizer.colorize('PASSED: Re-Eval Testing', 'INFO') );
+                    } else {
+                        console.log(__catchJson);
+                    }
                 } catch (e) {
                     // ...
-                    console.log('Error');
-                    // console.log(__output);
-                    // require('utils').dump(__output);
+                    console.log('Error, parse fail also with removing HTML tags');
                 }
             }
-//--------------------
-
-            // if (__output.indexOf('$')) {
-            //     console.log(__output);
-            // }
-
-            // try {
-            //     __output = JSON.parse(output);
-
-            //     if( __output instanceof Object ) {
-            //         var validated = true;
-            //      }
-            // } catch (e) {
-            //     // ...
-                
-            // }
-
-            // if (validated) {
-            //     console.log('JSON VALIDATED');
-            // } else {
-            //     throw new Error('JSON error!');
-            // }
-
         });
     } else {
         console.log('here');
