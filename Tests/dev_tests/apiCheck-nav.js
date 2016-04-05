@@ -1,25 +1,18 @@
 /* globals casper, require, console */
 // Author: Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version:
-// Case: Test API main manifest file to verify main key/values that allow the app to function correctly.
-// Use: casperjs test [file_name]
+// Version: 1.0
+// Case: Grab the main app navigation url from the manifest, then test each link for correct response, if response, then validate JSON.
+// Use: casperjs test [file_name] --url=[url]
 
-// Dev Notes:
-// Add a schema check for the plist/sml files
-//  -- parser returning false, appears that the XML object is mising
-//  var contentType = utils.getPropertyPath(this, 'currentResponse.contentType'); -- get current doc content type
-//  
-//  Manifest Testing Requirements:
-
-
+// Global Vars
 var xmlLib = require('./xml2json');
 var x2js = new xmlLib();
 
 var type = casper.cli.get('type');
-if (type === 'debug') {
-    var showOutput = true;
-} 
+    if (type === 'debug') {
+        var showOutput = true;
+    } 
 
 var currentTime = new Date();
 var timeStamp = currentTime.toISOString();
@@ -30,15 +23,15 @@ var year = currentTime.getFullYear();
 var hours = currentTime.getHours();
 var minutes = currentTime.getMinutes();
 
-if (minutes < 10){
-    minutes = "0" + minutes;
-}
+    if (minutes < 10){
+        minutes = "0" + minutes;
+    }
 
-if(hours > 11){
-    var toD = "PM";
-} else {
-    var toD = "AM";
-}
+    if(hours > 11){
+        var toD = "PM";
+    } else {
+        var toD = "AM";
+    }
 
 var parser = document.createElement('a');
 parser.href = casper.cli.get('url');
@@ -54,8 +47,8 @@ var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
 
 var colorizer = require('colorizer').create('Colorizer');
 
-// ------------------------
 
+// Testing Suite Functions
 var apiSuite = function(url) {
 
     if (!url) {
@@ -87,12 +80,6 @@ var apiSuite = function(url) {
         }
     }).then(function() {
         suite.getContent(url, type);
-    }).then(function() {
-        // suite.__finished.forEach(function(res) {
-        //     if (res.status != 200) {
-        //         console.log(res.from + ' - ' + res.status + ' ~> ' + res.url);
-        //     };
-        // });
     }).run();
 };
 
