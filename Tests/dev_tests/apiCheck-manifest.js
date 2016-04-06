@@ -51,7 +51,9 @@ var apiSuite = function(url) {
     }).then(function() {
         suite.getContent(url, type);
         // require('utils').dump(jsonText);
-    }).run();
+    }).run(function() {
+        this.echo('Test Complete.').exit();
+    });
 };
 
 apiSuite.prototype.getContent = function(url, type) {

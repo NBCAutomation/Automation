@@ -80,7 +80,9 @@ var apiSuite = function(url) {
         }
     }).then(function() {
         suite.getContent(url, type);
-    }).run();
+    }).run(function() {
+        this.echo('Test Complete.').exit();
+    });
 };
 
 apiSuite.prototype.getContent = function(url, type) {
