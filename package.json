@@ -1,0 +1,10 @@
+{
+	"name": "testingshit",
+	"version": "1.0.0",
+	"scripts": {
+		"spiredeploy": "",
+		"runall": "npm run manifestcheck & npm run navcheck",
+		"manifestcheck": "casperjs test ./tests/dev_tests/apiCheck-manifest.js --url=http://www.nbcmiami.com",
+		"navcheck": "casperjs test ./tests/dev_tests/apiCheck-nav.js --url=http://www.nbcmiami.com"
+	}
+}
