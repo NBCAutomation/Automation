@@ -4,379 +4,390 @@
 // Version: 1.0
 // Case: Grab the main app navigation url from the manifest, then test each link for correct response, if response, then validate JSON.
 // Use: casperjs test [file_name] --url=[url]
+// optional string params --output=debug to show logged key/val strings
+// optional string params --output=console will show test results
 
-// Global Vars
-var xmlLib = require('./xml2json');
-var x2js = new xmlLib();
+casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
+    // Global Vars
+    var xmlLib = require('./xml2json');
+    var x2js = new xmlLib();
 
-var type = casper.cli.get('type');
-    if (type === 'debug') {
-        var showOutput = true;
-    } 
+    var type = casper.cli.get('output');
+        if (type === 'debug') {
+            var debugOutput = true;
+        } else if (type === 'console') {
+            var showOutput = true;
+        }
 
-var currentTime = new Date();
-var timeStamp = currentTime.toISOString();
+    var currentTime = new Date();
+    var timeStamp = currentTime.toISOString();
 
-var month = currentTime.getMonth() + 1;
-var day = currentTime.getDate();
-var year = currentTime.getFullYear();
-var hours = currentTime.getHours();
-var minutes = currentTime.getMinutes();
+    var month = currentTime.getMonth() + 1;
+    var day = currentTime.getDate();
+    var year = currentTime.getFullYear();
+    var hours = currentTime.getHours();
+    var minutes = currentTime.getMinutes();
 
-    if (minutes < 10){
-        minutes = "0" + minutes;
-    }
+        if (minutes < 10){
+            minutes = "0" + minutes;
+        }
 
-    if(hours > 11){
-        var toD = "PM";
-    } else {
-        var toD = "AM";
-    }
-
-var parser = document.createElement('a');
-parser.href = casper.cli.get('url');
-
-newUrl = parser.href;
-var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-var urlUri = sourceString.replace('.','_');
-
-var fs = require('fs');
-var logName = urlUri + '_manifest-navigation_' + timeStamp + '.csv';
-
-var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
-
-var colorizer = require('colorizer').create('Colorizer');
-
-
-// Testing Suite Functions
-var apiSuite = function(url) {
-
-    if (!url) {
-        throw new Error('A URL is required!');
-    }
-
-    this.__collected = {};
-
-    var suite = this;
-    var no_error = false;
-
-    // var type = casper.cli.get('type');
+        if(hours > 11){
+            var toD = "PM";
+        } else {
+            var toD = "AM";
+        }
 
     var parser = document.createElement('a');
-    parser.href = url;
+    parser.href = casper.cli.get('url');
 
     newUrl = parser.href;
     var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
     var urlUri = sourceString.replace('.','_');
 
-    
-    url = url + '/apps/news-app/manifest/?apiVersion=2';
+    var fs = require('fs');
+    var logName = urlUri + '_manifest-navigation_' + timeStamp + '.csv';
 
-    casper.start( url ).then(function(response) {
-        if ( response.status == 200 ) {
-            no_error = true;
-        } else {
-            throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
+    var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
+
+    var colorizer = require('colorizer').create('Colorizer');
+
+
+    // Testing Suite Functions
+    var apiSuite = function(url) {
+
+        if (!url) {
+            throw new Error('A URL is required!');
         }
-    }).then(function() {
-        suite.getContent(url, type);
-    }).run(function() {
-        this.echo('Test Complete.').exit();
-    });
-};
 
-apiSuite.prototype.getContent = function(url, type) {
-    
-    var suite = this;    
+        this.__collected = {};
 
-    casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
-        var rawContent = this.getPageContent();
+        var suite = this;
+        var no_error = false;
+
+        // var type = casper.cli.get('type');
+
+        var parser = document.createElement('a');
+        parser.href = url;
+
+        newUrl = parser.href;
+        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+        var urlUri = sourceString.replace('.','_');
+
         
-        if ( rawContent ) {
+        url = url + '/apps/news-app/manifest/?apiVersion=2';
 
-            var __jsonObj = x2js.xml_str2json( rawContent );
-            
-            // var __baseKeys = __jsonObj.plist.dict.key;
-            // var __baseVals = __jsonObj.plist.dict.string;
-            var __moduleKeys = __jsonObj.plist.dict.dict[0].key;
-            var __moduleVals = __jsonObj.plist.dict.dict[0].string;
-
-            // initialize iterator
-            var i;
-
-            for (i = __moduleKeys.length - 1; i >= 0; i--) {
-                var key = __moduleKeys[i];
-                var url = __moduleVals[i].toString();
-
-                if ( ! url.indexOf('/apps') ) {
-                    url = casper.cli.get('url') + url + '?apiVersion=2';
-              
-                    suite.__collected[key] = url;
-                }
+        casper.start( url ).then(function(response) {
+            if ( response.status == 200 ) {
+                no_error = true;
+            } else {
+                throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
+        }).then(function() {
+            //Start testing
+            
+            this.echo(colorizer.colorize('Testing started: ', 'COMMENT') + url );
 
-            var __urlSuite = suite.__collected;
+            suite.getContent(url, type);
 
-            for (var __prog in __urlSuite) {
-                if (__prog === 'navigation') {
-                    if (showOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
+        }).run(function() {
+            this.echo(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.').exit();
+        });
+    };
 
-                    // Write file headers
-                    var testInfo = 'Navigation url tested: ' + __urlSuite[__prog];
-                    var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
-                    
-                    
-                    fs.write(save, ' ' + testInfo + ',\n' + ',\n');
-                    fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
-                    fs.write(save, 'Link,URL,HTTP Status Code, JSON Status', 'a+');
+    apiSuite.prototype.getContent = function(url, type) {
+        
+        var suite = this;    
 
-                    suite.checkNavigation(url, __urlSuite[__prog]);
+        casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
+            var rawContent = this.getPageContent();
+            
+            if ( rawContent ) {
+
+                var __jsonObj = x2js.xml_str2json( rawContent );
+                
+                // var __baseKeys = __jsonObj.plist.dict.key;
+                // var __baseVals = __jsonObj.plist.dict.string;
+                var __moduleKeys = __jsonObj.plist.dict.dict[0].key;
+                var __moduleVals = __jsonObj.plist.dict.dict[0].string;
+
+                // initialize iterator
+                var i;
+
+                for (i = __moduleKeys.length - 1; i >= 0; i--) {
+                    var key = __moduleKeys[i];
+                    var url = __moduleVals[i].toString();
+
+                    if ( ! url.indexOf('/apps') ) {
+                        url = casper.cli.get('url') + url + '?apiVersion=2';
+                  
+                        suite.__collected[key] = url;
+                    }
                 }
-            }
 
-        } else {
-            throw new Error('Missing XML elements!');
-        }
-    });
-};
+                var __urlSuite = suite.__collected;
 
-apiSuite.prototype.checkNavigation = function(url, __url) {
+                for (var __prog in __urlSuite) {
+                    if (__prog === 'navigation') {
+                        if (debugOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
 
-    var suite = this;
-    // var current = suite.__collected.shift();
-
-    var reqKeys = new Array("appTitle","sectionMapping","location");
-
-    var __baseUrl = casper.cli.get('url');
-
-    // if (current.url) {
-    if (__url) {
-        casper.open(__url, {method: 'head'}).then(function(resp) {
-            
-            resp = resp;
-            
-            var status = this.status().currentHTTPStatus;
-
-            if ( status == 200) {
-                this.echo(__url + colorizer.colorize(' Status: ' + status, 'INFO') );
-
-                casper.open(__url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    
-                    var validated = false;
-                    var output = this.getPageContent();
-
-                    // console.log(output);
-
-                    __output = JSON.parse(output);
-
-                    var mainItem = __output.items;
-
-                    var count = 0;
-                    
-                    for (var __item in mainItem) {
+                        // Write file headers
+                        var testInfo = 'Navigation url tested: ' + __urlSuite[__prog];
+                        var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
                         
-                        if(mainItem.hasOwnProperty(__item)){
-                            count++;
-                        }
+                        
+                        fs.write(save, ' ' + testInfo + ',\n' + ',\n');
+                        fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
+                        fs.write(save, 'Link,URL,HTTP Status Code, JSON Status', 'a+');
 
-                        var __thisItem = __output.items[count];
+                        suite.checkNavigation(url, __urlSuite[__prog]);
+                    }
+                }
 
-                        for (var __i in __thisItem) {
-                            if (showOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+            } else {
+                throw new Error('Missing XML elements!');
+            }
+        });
+    };
 
-                            if (reqKeys.indexOf(__i) > -1) {
+    apiSuite.prototype.checkNavigation = function(url, __url) {
 
-                                if (__thisItem.length <= 0) {
-                                    throw new Error('key blank ' + __i);
-                                } else {
+        var suite = this;
+        // var current = suite.__collected.shift();
 
-                                    if (__i === 'appTitle') {
-                                        var __keyName = __thisItem[__i];
-                                    }
+        var reqKeys = new Array("appTitle","sectionMapping","location");
 
-                                    if (__i === 'location') {
-                                        
-                                        if (showOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+        var __baseUrl = casper.cli.get('url');
 
-                                        if (__thisItem[__i].indexOf('/apps') > -1) {
+        // if (current.url) {
+        if (__url) {
+            casper.open(__url, {method: 'head'}).then(function(resp) {
+                
+                resp = resp;
+                
+                var status = this.status().currentHTTPStatus;
 
-                                            if (__thisItem[__i].indexOf('?') > -1) {
-                                                var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=2'
-                                            } else {
-                                                var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=2'
-                                            }
-                                            
-                                            if (showOutput) {console.log(__keyUrl)};
-                                        }
+                if ( status == 200) {
+                    if (showOutput) {console.log(__url + colorizer.colorize(' Status: ' + status, 'INFO') )};
 
-                                        suite.checkHealth(__keyName, __keyUrl);
-                                    }
-                                }
+                    casper.open(__url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                        
+                        var validated = false;
+                        var output = this.getPageContent();
+
+                        // console.log(output);
+
+                        __output = JSON.parse(output);
+
+                        var mainItem = __output.items;
+
+                        var count = 0;
+                        
+                        for (var __item in mainItem) {
+                            
+                            if(mainItem.hasOwnProperty(__item)){
+                                count++;
                             }
 
-                            // -------------------------------------
+                            var __thisItem = __output.items[count];
 
-                            if (__i === 'items' && typeof __thisItem[__i] === 'object') {
+                            for (var __i in __thisItem) {
+                                if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
 
-                                var __parent = __output.items[count].title;
+                                if (reqKeys.indexOf(__i) > -1) {
 
-                                if (showOutput) {
-                                    console.log('-----------------');
-                                    console.log(__parent + ' sub links');
-                                }
-                                
-                                var __subItem = __output.items[count].items;
+                                    if (__thisItem.length <= 0) {
+                                        throw new Error('key blank ' + __i);
+                                    } else {
 
-                                var __count = 0;
+                                        if (__i === 'appTitle') {
+                                            var __keyName = __thisItem[__i];
+                                        }
 
-                                for (var __item in __subItem) {
-                                    
-                                    if(__subItem.hasOwnProperty(__item)){
-                                        __count++;
-
-                                        __offset = (__count - 1);
-                                        // console.log(__offset);
-                                    }
-
-                                    var __lastItem = __output.items[count].items[__offset];
-
-                                    for (var __b in __lastItem) {
-                                        if (showOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
-
-                                        if (reqKeys.indexOf(__b) > -1) {
-                                            // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
+                                        if (__i === 'location') {
                                             
-                                            if (__b === 'appTitle') {
-                                                var __lastKeyName = __lastItem[__b];
+                                            if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+
+                                            if (__thisItem[__i].indexOf('/apps') > -1) {
+
+                                                if (__thisItem[__i].indexOf('?') > -1) {
+                                                    var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=2'
+                                                } else {
+                                                    var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=2'
+                                                }
+                                                
+                                                if (debugOutput) {console.log(__keyUrl)};
                                             }
 
-                                            if (__b === 'location') {
+                                            suite.checkHealth(__keyName, __keyUrl);
+                                        }
+                                    }
+                                }
+
+                                // -------------------------------------
+
+                                if (__i === 'items' && typeof __thisItem[__i] === 'object') {
+
+                                    var __parent = __output.items[count].title;
+
+                                    if (debugOutput) {
+                                        console.log('-----------------');
+                                        console.log(__parent + ' sub links');
+                                    }
+                                    
+                                    var __subItem = __output.items[count].items;
+
+                                    var __count = 0;
+
+                                    for (var __item in __subItem) {
+                                        
+                                        if(__subItem.hasOwnProperty(__item)){
+                                            __count++;
+
+                                            __offset = (__count - 1);
+                                            // console.log(__offset);
+                                        }
+
+                                        var __lastItem = __output.items[count].items[__offset];
+
+                                        for (var __b in __lastItem) {
+                                            if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
+
+                                            if (reqKeys.indexOf(__b) > -1) {
+                                                // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
                                                 
-                                                if (showOutput) {console.log(__b + ' : ' + __lastItem[__b])};
-
-                                                if (__lastItem[__b].indexOf('/apps') > -1) {
-
-                                                    if (__lastItem[__b].indexOf('?') > -1) {
-                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=2'
-                                                    } else {
-                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=2'
-                                                    }
-                                                    
-                                                    // if (showOutput) {
-                                                        // console.log('>> ' + __lastKeyUrl);
-                                                    // };
+                                                if (__b === 'appTitle') {
+                                                    var __lastKeyName = __lastItem[__b];
                                                 }
 
-                                                suite.checkHealth(__lastKeyName, __lastKeyUrl);
-                                            }
-                                        }
+                                                if (__b === 'location') {
+                                                    
+                                                    if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
 
+                                                    if (__lastItem[__b].indexOf('/apps') > -1) {
+
+                                                        if (__lastItem[__b].indexOf('?') > -1) {
+                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=2'
+                                                        } else {
+                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=2'
+                                                        }
+                                                        
+                                                        // if (debugOutput) {
+                                                            // console.log('>> ' + __lastKeyUrl);
+                                                        // };
+                                                    }
+
+                                                    suite.checkHealth(__lastKeyName, __lastKeyUrl);
+                                                }
+                                            }
+
+                                        }
+                                        if (debugOutput) { console.log('    -----------------')};
                                     }
-                                    if (showOutput) { console.log('    -----------------')};
                                 }
+
                             }
 
+                            if (debugOutput) {console.log('-----------------')};
                         }
 
-                        if (showOutput) {console.log('-----------------')};
-                    }
-
-                });
-            }
-
-            suite.checkHealth();
-        });
-    } else {
-        // delete this.__collected; 
-    }
-};
-
-
-apiSuite.prototype.checkHealth = function(__urlName, __url) {
-
-    var suite = this;
-    // var current = suite.__collected.shift();
-
-    // require('utils').dump( current );
-
-    if (__url) {
-        casper.open(__url, {
-            method: 'head'
-        }).then(function(resp) {
-            resp = resp;
-            var status = this.status().currentHTTPStatus;
-
-            if ( status == 200) {
-                console.log(__urlName + ' : ' + __url + colorizer.colorize(' Status: ' + status, 'INFO') );
-
-                if (__url.indexOf('submit-your-photos') > -1) {
-                    console.log('Skipping UGC url....');
-                } else {
-                    suite.validateJson(__urlName, __url, status);
+                    });
                 }
-            }
-        });
-    } else {
-        // delete this.__collected;
-    }
-};
 
-apiSuite.prototype.validateJson = function(__jurlName, __jUrl, __status) {
-    var suite = this;
+                suite.checkHealth();
+            });
+        } else {
+            // delete this.__collected; 
+        }
+    };
 
-    if (__jUrl) {
-        casper.open(__jUrl,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-            resp = resp;
-            var validated = false;
-            var output = this.getPageContent();
 
-            if (showOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
+    apiSuite.prototype.checkHealth = function(__urlName, __url) {
 
-            try {
-                // __output = JSON.parse(output);
-                __output = JSON.parse(output);
-                // console.log(__output);
+        var suite = this;
+        // var current = suite.__collected.shift();
 
-                if( __output instanceof Object ) {
-                    var validated = true;
-                 }
-            } catch (e) {
-                // ...
-                console.log(e);
-            }
+        // require('utils').dump( current );
 
-            if (validated) {
-                console.log(colorizer.colorize('PASSED: JSON Validated', 'INFO') );
-                fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
-            } else {
-                console.log('...re-testing JSON');
-                // var a = "<html><head></head><body>{'a': 123}</body></html>";
-                // __catchJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
-                
-                var reg = /\<body[^>]*\>([^]*)\<\/body/m;
+        if (__url) {
+            casper.open(__url, {
+                method: 'head'
+            }).then(function(resp) {
+                resp = resp;
+                var status = this.status().currentHTTPStatus;
 
-                __catchJson = output.match(reg)[1];
+                if ( status == 200) {
+                    if (showOutput) {console.log('> ' + __urlName + ' : ' + __url + colorizer.colorize(' // Status: ' + status, 'INFO') )};
+
+                    if (__url.indexOf('submit-your-photos') > -1) {
+                        if (showOutput) {console.log('Skipping UGC url....')};
+                    } else {
+                        suite.validateJson(__urlName, __url, status);
+                    }
+                }
+            });
+        } else {
+            // delete this.__collected;
+        }
+    };
+
+    apiSuite.prototype.validateJson = function(__jurlName, __jUrl, __status) {
+        var suite = this;
+
+        if (__jUrl) {
+            casper.open(__jUrl,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                resp = resp;
+                var validated = false;
+                var output = this.getPageContent();
+
+                if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
 
                 try {
-                    __verifyOutput = JSON.parse(__catchJson);
+                    // __output = JSON.parse(output);
+                    __output = JSON.parse(output);
+                    // console.log(__output);
 
-                    if( __verifyOutput instanceof Object ) {
-                        console.log(colorizer.colorize('PASSED: Re-Eval Testing', 'INFO') );
-                        fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
-                    } else {
-                        console.log(__catchJson);
-                    }
+                    if( __output instanceof Object ) {
+                        var validated = true;
+                     }
                 } catch (e) {
                     // ...
-                    console.log('Error, parse fail also with removing HTML tags');
-                    fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'FAIL - Possible False/Positive,', 'a+');
+                    if (showOutput) {console.log(e)};
                 }
-            }
-            console.log('-----------------');
-        });
-    } else {
-        console.log('here');
-    }
-};
 
-new apiSuite(casper.cli.get('url'));
+                if (validated) {
+                    if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
+                    fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
+                } else {
+                    if (showOutput) {console.log('...re-testing JSON')};
+                    // var a = "<html><head></head><body>{'a': 123}</body></html>";
+                    // __catchJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
+                    
+                    var reg = /\<body[^>]*\>([^]*)\<\/body/m;
+
+                    __catchJson = output.match(reg)[1];
+
+                    try {
+                        __verifyOutput = JSON.parse(__catchJson);
+
+                        if( __verifyOutput instanceof Object ) {
+                            if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
+                            fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
+                        } else {
+                            if (showOutput) {console.log(__catchJson)};
+                        }
+                    } catch (e) {
+                        // ...
+                        if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail also with removing HTML tags, possible False/Positive..check url manually.')};
+                        fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'FAIL - Possible False/Positive,', 'a+');
+                    }
+                }
+                if (showOutput) {console.log('-----------------')};
+            });
+        } else {
+            if (showOutput) {console.log(colorizer.colorize('No url provided for JSON validation!', 'ERROR'))};
+        }
+    };
+
+    new apiSuite(casper.cli.get('url'));
+});

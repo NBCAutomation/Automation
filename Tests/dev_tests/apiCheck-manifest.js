@@ -1,10 +1,12 @@
 /* globals casper, require, console */
 // Author: Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version: 2.0
+// Version: 1.0
 // Case: Test API main manifest file to verify main key/values that allow the app to function correctly.
 // Use: casperjs test [file_name] --url=[site]
-// optional string params --type=debug to show logged key/val strings
+// optional string params --output=debug to show logged key/val strings
+// optional string params --output=console will show test results
+
 // Dictionary files:
 // - OTS Created 2/25/16
 
@@ -21,103 +23,102 @@
 // Phantom 1.1.0-beta3 and Phantom 1.9.8
 //
 
-var apiSuite = function(url) {
 
-    if (!url) {
-        throw new Error('A URL is required!');
-    }
+casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
+    var apiSuite = function(url) {
 
-    var suite = this;
-    var no_error = false;
-    var type = casper.cli.get('type');
-
-    if (type === 'debug') {
-        var showOutput = true;
-    } else if (type === 'dictionary') {
-        var createDictionary = true;
-    }
-
-    // Add manifest url    
-    url = url + '/apps/news-app/manifest/?apiVersion=2';
-
-    // Start Test
-    casper.start( url ).then(function(response) {
-
-        if ( response.status == 200 ) {
-            no_error = true;
-        } else {
-            throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
+        if (!url) {
+            throw new Error('A URL is required!');
         }
-    }).then(function() {
-        suite.getContent(url, type);
-        // require('utils').dump(jsonText);
-    }).run(function() {
-        this.echo('Test Complete.').exit();
-    });
-};
 
-apiSuite.prototype.getContent = function(url, type) {
-    
-    var suite = this;
+        var suite = this;
+        var no_error = false;
+        var type = casper.cli.get('output');
+        var colorizer = require('colorizer').create('Colorizer');
 
-    var colorizer = require('colorizer').create('Colorizer');
+        // Add manifest url    
+        url = url + '/apps/news-app/manifest/?apiVersion=2';
 
-    if (type === 'debug') {
-        var showOutput = true;
-    } else if (type === 'dictionary') {
-        var createDictionary = true;
-    }
+        // Start Test
+        casper.start( url ).then(function(response) {
 
-    if (!showOutput) {
-        var currentTime = new Date();
-        var timeStamp = currentTime.toISOString();
+            if ( response.status == 200 ) {
+                no_error = true;
+            } else {
+                throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
+            }
+        }).then(function() {
+            this.echo(colorizer.colorize('Testing started: ', 'COMMENT') + url );
 
-        var month = currentTime.getMonth() + 1;
-        var day = currentTime.getDate();
-        var year = currentTime.getFullYear();
-        var hours = currentTime.getHours();
-        var minutes = currentTime.getMinutes();
+            suite.getContent(url, type);
+
+        }).run(function() {
+            this.echo(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.').exit();
+        });
+    };
+
+    apiSuite.prototype.getContent = function(url, type) {
         
-        if (minutes < 10){
-            minutes = "0" + minutes;
+        var suite = this;
+
+        var colorizer = require('colorizer').create('Colorizer');
+
+        if (type === 'debug') {
+            var debugOutput = true;
+        } else if (type === 'dictionary') {
+            var createDictionary = true;
+        } else if (type === 'console') {
+            var showOutput = true;
         }
 
-        if(hours > 11){
-            var toD = "PM";
-        } else {
-            var toD = "AM";
+        if (!debugOutput) {
+            var currentTime = new Date();
+            var timeStamp = currentTime.toISOString();
+
+            var month = currentTime.getMonth() + 1;
+            var day = currentTime.getDate();
+            var year = currentTime.getFullYear();
+            var hours = currentTime.getHours();
+            var minutes = currentTime.getMinutes();
+            
+            if (minutes < 10){
+                minutes = "0" + minutes;
+            }
+
+            if(hours > 11){
+                var toD = "PM";
+            } else {
+                var toD = "AM";
+            }
+
+            var parser = document.createElement('a');
+            parser.href = url;
+
+            newUrl = parser.href;
+            var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+            var urlUri = sourceString.replace('.','_');
+
+            var fs = require('fs');
+            var logName = urlUri + '_manifest_' + timeStamp + '.csv';
+            
+            if(createDictionary){
+                var save = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary', logName);
+            } else {
+                var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
+            }
         }
 
-        var parser = document.createElement('a');
-        parser.href = url;
 
-        newUrl = parser.href;
-        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-        var urlUri = sourceString.replace('.','_');
 
-        var fs = require('fs');
-        var logName = urlUri + '_manifest_' + timeStamp + '.csv';
+        // Required API keys for app to function correctly.
+        var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
+
+        var gdocSheetkeys = {nbcnewyork:"1237123522",nbclosangeles:"760525331",nbcchicago:"1368539190",nbcbayarea:"382654776",nbcdfw:"837130684",nbcmiami:"206819603",nbcphiladelphia:"1647241295",nbcconnecticut:"1053499483",nbcwashington:"52580851",nbcsandiego:"196020938",nbcboston:"1408094619",necn:"140276335",telemundo40:"618666866",telemundo47:"1440310357",telemundo51:"1586194994",telemundo52:"1528595265",telemundo62:"955449852",telemundoareadelabahia:"1873969221",telemundoarizona:"840179992",telemundoboston:"2081694699",telemundochicago:"803813981",telemundodallas:"1261394201",telemundodenver:"51923675",telemundohouston:"153235565",telemundolasvegas:"248723970",telemundosanantonio:"1675506119",telemundopr:"1689340443"}
         
-        if(createDictionary){
-            var save = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary', logName);
-        } else {
-            var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
-        }
-    }
-
-
-
-    // Required API keys for app to function correctly.
-    var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
-
-    var gdocSheetkeys = {nbcnewyork:"1237123522",nbclosangeles:"760525331",nbcchicago:"1368539190",nbcbayarea:"382654776",nbcdfw:"837130684",nbcmiami:"206819603",nbcphiladelphia:"1647241295",nbcconnecticut:"1053499483",nbcwashington:"52580851",nbcsandiego:"196020938",nbcboston:"1408094619",necn:"140276335",telemundo40:"618666866",telemundo47:"1440310357",telemundo51:"1586194994",telemundo52:"1528595265",telemundo62:"955449852",telemundoareadelabahia:"1873969221",telemundoarizona:"840179992",telemundoboston:"2081694699",telemundochicago:"803813981",telemundodallas:"1261394201",telemundodenver:"51923675",telemundohouston:"153235565",telemundolasvegas:"248723970",telemundosanantonio:"1675506119",telemundopr:"1689340443"}
-    
-    __collected = {};
-    __dictionary = {};
-
-    casper.test.begin('OTS API Check', function suite(test) {
-        
-        if (!showOutput) {
+        __collected = {};
+        __dictionary = {};
+            
+        if (!debugOutput) {
             // Write file headers
             var testInfo = 'Manifest url tested: ' + url;
             var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
@@ -134,7 +135,7 @@ apiSuite.prototype.getContent = function(url, type) {
         casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function() {
             var rawContent = this.getPageContent();
             
-            if (showOutput) {console.log(rawContent)};
+            if (debugOutput) {console.log(rawContent)};
 
             if ( rawContent ) {
 
@@ -161,7 +162,7 @@ apiSuite.prototype.getContent = function(url, type) {
 
                             if (children[b].nodeName == 'key') {
 
-                                if (showOutput) {console.log('key // ' + children[b].textContent)};
+                                if (debugOutput) {console.log('key // ' + children[b].textContent)};
                                 var __topKey = children[b].textContent;
                             }
                             
@@ -174,16 +175,16 @@ apiSuite.prototype.getContent = function(url, type) {
 
                                     if (subChildren[c].nodeName == 'dict') {
 
-                                        if (showOutput) {console.log('=== [dict] ===')};
+                                        if (debugOutput) {console.log('=== [dict] ===')};
 
                                         var dictName = subChildren[c].previousElementSibling.textContent;
-                                        if (showOutput) {console.log('** Dict Name: ' + dictName)};
+                                        if (debugOutput) {console.log('** Dict Name: ' + dictName)};
 
                                         if (subChildren[c].childNodes.length > 1) {
                                             var thirdChildren = subChildren[c].childNodes;
 
                                             for(var d = 0; d < thirdChildren.length; d++) {
-                                                if (showOutput) {
+                                                if (debugOutput) {
                                                         console.log(' ---- third-child ' + thirdChildren[d].nodeName + ' // ' + ' -- content: ' + thirdChildren[d].textContent);
                                                               
                                                     if (thirdChildren[d].nodeName == 'dict') {
@@ -193,7 +194,7 @@ apiSuite.prototype.getContent = function(url, type) {
 
                                                 if (thirdChildren[d].nodeName == 'key') {
 
-                                                    if (showOutput) {console.log('** Dict Name: ' + dictName)};
+                                                    if (debugOutput) {console.log('** Dict Name: ' + dictName)};
 
                                                     var __keyName = dictName + '_' + thirdChildren[d].textContent;
                                                     var __subKey = thirdChildren[d].textContent;
@@ -205,7 +206,7 @@ apiSuite.prototype.getContent = function(url, type) {
                                                     var __subVal = thirdChildren[d].textContent;
                                                     __collected[__keyName] = __subVal;
 
-                                                    if (showOutput) {console.log(__keyName + ' : ' + __subVal)};
+                                                    if (debugOutput) {console.log(__keyName + ' : ' + __subVal)};
 
                                                 } else if (thirdChildren[d].nodeName == 'false' || thirdChildren[d].nodeName == 'true') {
                                                     
@@ -213,19 +214,19 @@ apiSuite.prototype.getContent = function(url, type) {
                                                     var __subVal = thirdChildren[d].nodeName;
                                                     __collected[__keyName] = __subVal;
 
-                                                    if (showOutput) {console.log(__keyName + ' : ' + __subVal)};
+                                                    if (debugOutput) {console.log(__keyName + ' : ' + __subVal)};
                                                 }
                                             }
 
                                             // Push key/val into collection
                                             __collected[__subKey] = __subVal;
 
-                                            if (showOutput) {console.log(__subKey + ' : ' + __subVal)};
+                                            if (debugOutput) {console.log(__subKey + ' : ' + __subVal)};
                                         }
                                     }
                                 }
                             } else if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real' || children[b].nodeName == 'false' || children[b].nodeName == 'true') {
-                                if (showOutput) {console.log(' -- val // ' + children[b].textContent)};
+                                if (debugOutput) {console.log(' -- val // ' + children[b].textContent)};
                                 
                                 if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real') {
                                     // Push key/val into collection
@@ -233,7 +234,7 @@ apiSuite.prototype.getContent = function(url, type) {
 
                                     __collected[__topKey] = __topVal;
 
-                                    if (showOutput) {console.log(__topKey + ' : ' + __topVal)};
+                                    if (debugOutput) {console.log(__topKey + ' : ' + __topVal)};
 
                                     
                                 } else if (children[b].nodeName == 'false' || children[b].nodeName == 'true') {
@@ -241,14 +242,14 @@ apiSuite.prototype.getContent = function(url, type) {
                                     
                                     __collected[__topKey] = __topVal;
 
-                                    if (showOutput) {console.log(__topKey + ' : ' + __topVal)};
+                                    if (debugOutput) {console.log(__topKey + ' : ' + __topVal)};
 
                                 }
                             }
                         }
                     }
                 }
-                if (showOutput) {                                                                               
+                if (debugOutput) {                                                                               
                     console.log(__topKey + ' : ' + __topVal)
                     casper.echo( 'Testing surpressed due to debug.', 'PARAMETER' );
                 } else {
@@ -287,7 +288,7 @@ apiSuite.prototype.getContent = function(url, type) {
                             __dictVal = "[No Value on manifest]";
                         }
 
-                        if (showOutput) {
+                        if (debugOutput) {
                             console.log('dict_key: ' + __dictKey);
                             console.log('dict_val: ' + __dictVal);
                         }
@@ -309,8 +310,8 @@ apiSuite.prototype.getContent = function(url, type) {
 
                        if (!(reqKeys[i] in __collected)) {
                            // throw new Error('Missing required API key! ' + reqKeys[i]);
-                           console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'));
-                           if (!showOutput) {fs.write(save, ',\n' + 'FAIL: Missing required API key! ' + reqKeys[i], 'a+');};
+                           if (showOutput) {console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'))};
+                           if (!debugOutput) {fs.write(save, ',\n' + 'FAIL: Missing required API key! ' + reqKeys[i], 'a+');};
                        } else {
                             // console.log('found key:' + reqKeys[i]);
                             for (var key in __collected) {
@@ -323,17 +324,17 @@ apiSuite.prototype.getContent = function(url, type) {
                                             fs.write(save, ',\n' + key + ',' + '"' + val + '"', 'a+');
                                         } else {
                                             if (val.indexOf('$') >= 0 ) {
-                                                console.log(colorizer.colorize('FAIL: Variable found "' + val + '" in output for ' + key, 'ERROR'));
-                                                if (!showOutput) {fs.write(save, ',\n' + 'FAIL: Variable found "' + val + '" in output for ' + key, 'a+');};
+                                                if (showOutput) {console.log(colorizer.colorize('FAIL: Variable found "' + val + '" in output for ' + key, 'ERROR'))};
+                                                if (!debugOutput) {fs.write(save, ',\n' + 'FAIL: Variable found "' + val + '" in output for ' + key, 'a+');};
                                             } else {
                                                 //TVE key check
                                                 if(/* typeof val === 'undefined' || typeof val === null || val == "" ||*/ val.length <= 0) {
                                                     if (url.indexOf('necn.com') && key == 'tve_url' || url.indexOf('telemundo') && key == 'tve_url') {
-                                                        console.log(colorizer.colorize('TVE not requred for property', 'COMMENT'));
-                                                        if (!showOutput) {fs.write(save, ',\n' + 'TVE not requred for property. ', 'a+');};
+                                                        if (showOutput) {console.log(colorizer.colorize('TVE not requred for property', 'COMMENT'))};
+                                                        if (!debugOutput) {fs.write(save, ',\n' + 'TVE not requred for property. ', 'a+');};
                                                     } else {
-                                                        console.log(colorizer.colorize('FAIL:  API value missing for: ' + reqKeys[i], 'ERROR'));
-                                                        if (!showOutput) {fs.write(save, ',\n' + 'FAIL:  API value missing for: ' + reqKeys[i], 'a+');};
+                                                        if (showOutput) {console.log(colorizer.colorize('FAIL:  API value missing for: ' + reqKeys[i], 'ERROR'))};
+                                                        if (!debugOutput) {fs.write(save, ',\n' + 'FAIL:  API value missing for: ' + reqKeys[i], 'a+');};
                                                     }
                                                 } else {
                                                     // console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
@@ -341,19 +342,19 @@ apiSuite.prototype.getContent = function(url, type) {
                                                     for (var __key in __dictionary) {
 
                                                         if (__key === key) {
-                                                            if (showOutput) {
+                                                            if (debugOutput) {
                                                                 console.log(colorizer.colorize('- Key found: ', 'INFO') + key);
                                                                 console.log(__dictionary[__key] + ' > ' + key);
                                                             }
-                                                            if (!showOutput) {
+                                                            if (!debugOutput) {
                                                                 if (val === __dictionary[__key]) {
-                                                                    console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
+                                                                    if (showOutput) {console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val)};
 
                                                                     //Write results to log
                                                                     fs.write(save, ',\n' + __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Pass', 'a+');
 
                                                                 } else {
-                                                                    console.log(colorizer.colorize('FAIL: ' + key + ' value does not match manifest', 'ERROR') + colorizer.colorize(' dictionary val: ', 'PARAMETER') + __dictionary[__key] + ' : ' + colorizer.colorize('manifest val: ', 'PARAMETER') + val);
+                                                                    if (showOutput) {console.log(colorizer.colorize('FAIL: ' + key + ' value does not match manifest', 'ERROR') + colorizer.colorize(' dictionary val: ', 'PARAMETER') + __dictionary[__key] + ' : ' + colorizer.colorize('manifest val: ', 'PARAMETER') + val)};
 
                                                                     //Write results to log
                                                                     fs.write(save, ',\n' + __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Fail', 'a+');
@@ -377,10 +378,10 @@ apiSuite.prototype.getContent = function(url, type) {
                 }
 
             } else {
-                throw new Error('Missing XML elements!');
+                if (showOutput) {throw new Error('Missing XML elements!')};
             }
-        })
-    });
-};
+        });
+    };
 
-new apiSuite(casper.cli.get('url'));
+    new apiSuite(casper.cli.get('url'));
+});
