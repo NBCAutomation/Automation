@@ -14,8 +14,8 @@ showHelp() {
 }
 
 BASE_DIR=$(dirname ${0})
-TEST_CMD="${BASE_DIR}/tests/prod_tests/${1}.js"
-PATH="${PATH}:${BASE_DIR}/bin"
+TEST_CMD="${BASE_DIR}/tests/${1}.js"
+PATH="${PATH}:${BASE_DIR}/node_modules/.bin"
 
 for i in "$@"; do
   case $i in
@@ -30,4 +30,4 @@ for i in "$@"; do
   shift
 done
 
-./bin/casperjs test ${TEST_CMD}
+./node_modules/.bin/casperjs test ${TEST_CMD}

@@ -1,3 +1,6 @@
+'use strict';
+
+const electron = require('electron');
 var app = require('app');  // Module to control application life.
 var BrowserWindow = require('browser-window');  // Module to create native browser window.
 
@@ -24,8 +27,8 @@ app.on('ready', function() {
   mainWindow = new BrowserWindow({width: 800, height: 600});
 
   // and load the index.html of the app.
-  // mainWindow.loadUrl('file://' + __dirname + '/index.html');
-  mainWindow.loadUrl('http://spire.app/test.php');
+  mainWindow.loadUrl('file://' + __dirname + '/index.html');
+  // mainWindow.loadUrl('http://spire.app/test.php');
 
   // Open the devtools.
   // mainWindow.openDevTools();

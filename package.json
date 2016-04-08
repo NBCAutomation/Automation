@@ -1,14 +1,17 @@
 {
 	"name": "OTS-Spire",
+	"author": "Deltrie Allen",
 	"version": "1.0.0",
 	"scripts": {
 		"runall": "npm run 1process-nav && npm run 1process",
-		"10concurrent-nav": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/dev_tests/apiCheck-nav.js\" --url=\"{}\"",
-		"1process-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/dev_tests/apiCheck-nav.js\" --url=\"{}\"",
-		"10concurrent": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/dev_tests/apiCheck-manifest.js\" --url=\"{}\"",
-		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/dev_tests/apiCheck-manifest.js\" --url=\"{}\""
+		"10concurrent-nav": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
+		"1process-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
+		"10concurrent": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
+		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\""
 	},
 	"dependencies": {
-		"shelljs": "^0.6.0"
+		"shelljs": "^0.6.0",
+		"casperjs": "~1.1.0-beta-3",
+		"phantomjs": "~1.9.8"
 	}
 }
