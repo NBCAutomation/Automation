@@ -101,10 +101,12 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var fs = require('fs');
             var logName = urlUri + '_manifest-audit_' + timeStamp + '.csv';
             
+            var curFolder = month + '_' + day + '_' + year;
+            
             if(createDictionary){
                 var save = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary', logName);
             } else {
-                var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
+                var save = fs.pathJoin(fs.workingDirectory, 'test_results/api_manifest_audits/' + curFolder, logName);
             }
         }
 

@@ -26,7 +26,10 @@ var SpiderSuite = function(url) {
 
     var fs = require('fs');
     var logName = urlUri + '_' + new Date().getTime() + '.csv';
-    var save = fs.pathJoin(fs.workingDirectory, 'test_results', logName);
+
+    var curFolder = month + '_' + day + '_' + year;
+
+    var save = fs.pathJoin(fs.workingDirectory, 'test_results/404_audits/' + curFolder, logName);
 
     var currentTime = new Date();
     var month = currentTime.getMonth() + 1;
