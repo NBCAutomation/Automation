@@ -1,6 +1,7 @@
 {
 	"name": "OTS-Spire",
 	"author": "Deltrie Allen",
+	"email": "deltrie.allen@nbcuni.com",
 	"version": "1.0.0",
 	"scripts": {
 		"runall": "npm run 1process-nav && npm run 1process",

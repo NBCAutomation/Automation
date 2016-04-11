@@ -1,0 +1,133 @@
+html {
+	width: 100%;
+	height: 100%;
+}
+body {
+	font: 16px Arial, Helvetica, sans-serif;
+	color: #000000;
+	background: #fff url('/assets/img/white_wall_hash_@2X.png');
+	margin: 0;
+	padding: 10px 20px 20px 20px;
+}
+
+a {
+	color: #000;
+	outline: none;
+	border: 0px none;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+h1 {
+	font-family: 'Oswald', sans-serif;
+	font-size: 4em;
+	text-align: center
+}
+
+
+.simpLogo {
+	font-size: 0.8em;
+}
+
+.clear {
+	clear: both;
+}
+
+nav {
+	background-color: #034287;
+	border-bottom: solid 1px #0574ED;
+	padding: 0.5em;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	left: 0px;
+}
+nav a {
+	color: #ccc;
+}
+
+#wrapper {
+	max-width: 800px;
+	min-height: 600px;
+	margin: 80px auto 0;
+	background-color: #fff;
+	border-radius: 18px;
+	padding: 25px;
+}
+
+.tagline {
+	font-family: 'Roboto Condensed', sans-serif;
+	font-size: 1em;
+	text-align: center;
+}
+
+#current_fucks,
+#current_mood {
+	text-align: center;
+	font-size: 1.5em;
+}
+
+#votee {
+	border-radius: 25%;
+	border: solid 8px #000;
+	border-style: inset;
+	width: 220px;
+	height: 220px;
+	overflow: hidden;
+	margin: 10px auto;
+}
+
+#votee img {
+	margin: 0px auto;
+}
+
+.entry_form {
+	padding: 25px;
+	width: 90%;
+	margin: 10px auto;
+	text-align: center;
+}
+
+.entry_form.tally .form_field {
+	display: inline-block;
+}
+
+input[name=fucks],
+input[name=vote] {
+	display: none;
+}
+
+.entry_form.tally label {
+	background: #ccc;
+	color: #fff;
+	border-radius: 7em;
+	width: 200px;
+	height: 200px;
+	margin: 10px;
+	text-align: center;
+	position: relative;
+	line-height: 200px;
+	font-size: 3em;
+}
+
+input[type=radio]:checked + label {
+	background-color: #0257b4;
+}
+
+.entry_form.tally label:hover {
+	background: #15B3E8;
+	cursor: pointer;
+}
+
+.submit_button {
+	background: #0257b4;
+	border: 0px none;
+	border-radius: 5px;
+	padding: 15px 30px;
+	text-transform: uppercase;
+	color: #fff;
+	text-align: center;
+	margin: 20px auto;
+}

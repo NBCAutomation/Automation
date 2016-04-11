@@ -1,0 +1,22 @@
+{
+    "name": "OTS-Spire",
+    "authors": [
+        {
+            "name": "Deltrie Allen",
+            "email": "deltrie.allen@nbcuni.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "slim/slim": "^3.0",
+        "slim/views": "*",
+        "slim/twig-view": "*",
+        "twig/twig": "1.24.*"
+    },
+    "autoload": {
+        "files": [
+            "libraries/MobileDetect/Detect.php",
+            "libraries/Base/spire_base.php"
+        ]
+    }
+}
