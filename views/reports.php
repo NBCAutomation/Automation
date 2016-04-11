@@ -17,10 +17,25 @@
 									{% set subArray = value %}
 									<ul>
 									{% for __subKey, __subValues in subArray %}
-										<li>
-											<a href="/test_results/{{ key }}/{{__key}}/{{ __subValues }}">
+										<li class="result file">
+											<div>
+												<a href="#">
+													<i class="fa fa-envelope"></i>
+												</a>
+											</div>
+											<div>
+												<a href="#">
+													<i class="fa fa-eye"></i>
+												</a>
+											</div>
+											<div>
+												<a href="/test_results/{{ key }}/{{__key}}/{{ __subValues }}">
+													<i class="fa fa-download"></i>
+												</a>
+											</div>
+											<div>
 												{{ __subValues }}
-											</a>
+											</div>
 										</li>
 									{% endfor %}
 									</ul>
