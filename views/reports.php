@@ -8,19 +8,20 @@
 		<div class="api_results">
 				<ul>
 				{% for key, values in results %}
-				    <li>{{ loop.index }}: {{ key }}
+				    <li>{{ key }}
 				    	<ul>
 						{% for __key, value in values %}
 							<li>
-								{{ loop.parent.loop.index }}.{{ loop.index }}: {{ value }} {{__key}}
+								{{__key}}
 								{% if loop.index == 1 %}
 									{% set subArray = value %}
 									<ul>
 									{% for __subKey, __subValues in subArray %}
-										<li>{{ loop.index }}: {{ __subKey }} > {{ __subValues }}</li>
-										{% for __value in __subValues %}
-											-- {{ loop.parent.loop.index }}.{{ loop.index }}: {{ __value }}
-										{% endfor %}
+										<li>
+											<a href="/test_results/{{ key }}/{{__key}}/{{ __subValues }}">
+												{{ __subValues }}
+											</a>
+										</li>
 									{% endfor %}
 									</ul>
 								{% endif %}
