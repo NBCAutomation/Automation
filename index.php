@@ -5,19 +5,21 @@ require_once __DIR__.'/vendor/autoload.php';
 // Create Slim app
 $app = new \Slim\App();
 
-// Mobile detection
-$detect = new Mobile_Detect();
+// // Mobile detection
+// $detect = new Mobile_Detect();
 
-if( $detect->isMobile() ){
-	$mobility = '1';
-}
+// if( $detect->isMobile() ){
+// 	$mobility = '1';
+// }
 
 // Fetch DI Container
 $container = $app->getContainer();
 
 // Register Twig View helper
 $container['view'] = function ($c) {
-    $view = new \Slim\Views\Twig('views');
+    $view = new \Slim\Views\Twig('views',[
+    	'cache' => 'false'
+    ]);
 
     // Instantiate and add Slim specific extension
     $basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');
@@ -26,15 +28,15 @@ $container['view'] = function ($c) {
     return $view;
 };
 
-// Define named route
-$app->get('/', function ($request, $response, $args, $mobility) {
+// Homepage
+$app->get('/', function ($request, $response, $args) {
     return $this->view->render($response, 'home.php', [
-        'title' => 'OTS Spire Web App',
-		'mobility' => $mobility
+        'title' => 'OTS Spire Web App'
     ]);
 })->setName('home');
 
-$app->get('/reports', function ($request, $response, $args, $mobility) {
+// Reports View
+$app->get('/reports', function ($request, $response, $args) {
 
 	$testDir = 'test_results';
 
@@ -54,14 +56,32 @@ $app->get('/reports', function ($request, $response, $args, $mobility) {
 	      } 
 	   }
 	   return $result;
-	} 
+	}
+
+	// function readCSV($dir) {
+		$row = 1;
+		$__testResult = __DIR__ . "/test_results/api_manifest_audits/4_11_2016/nbcphiladelphia_manifest-audit_2016-04-11T18:39:41.955Z.csv";
+
+		if (($handle = fopen($__testResult, "r")) !== FALSE) {
+		    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+		        $num = count($data);
+		        echo "<p> $num fields in line $row: <br /></p>\n";
+		        $row++;
+
+		        for ($c = 0; $c < $num; $c++) {
+		            echo $data[$c] . "<br />";
+		        }
+		    }
+		    fclose($handle);
+		}
+	// }
 
 	$files_array = dirToArray($testDir);
 
     return $this->view->render($response, 'reports.php', [
         'title' => 'Reports',
-		'mobility' => $mobility,
-		'results' => $files_array
+		'results' => $files_array,
+		'file' => $args['report']
     ]);
 })->setName('reports');
 
