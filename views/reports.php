@@ -12,8 +12,8 @@
 				    	<ul>
 						{% for __key, value in values %}
 							<li>
-								{{__key}}
-								{% if loop.index == 1 %}
+								{{loop.index}} {{__key}}
+								{% if loop.index > 0 %}
 									{% set subArray = value %}
 									<ul>
 									{% for __subKey, __subValues in subArray %}
@@ -34,7 +34,7 @@
 												</a>
 											</div>
 											<div>
-												{{ __subValues }}
+												{{ __subKey }} {{ __subValues }}
 											</div>
 										</li>
 									{% endfor %}
