@@ -9,7 +9,6 @@
     "minimum-stability": "dev",
     "require": {
         "slim/slim": "^3.0",
-        "slim/views": "*",
         "slim/twig-view": "*",
         "twig/twig": "1.24.*"
     },
