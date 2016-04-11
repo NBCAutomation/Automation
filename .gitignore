@@ -2,4 +2,8 @@ application/
 test_results/
 node_modules/
 vendor/
+composer.phar
+composer.lock
+.DS_Store
+
 Archive.zip
