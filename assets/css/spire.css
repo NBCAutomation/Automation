@@ -63,26 +63,6 @@ nav a {
 	text-align: center;
 }
 
-#current_fucks,
-#current_mood {
-	text-align: center;
-	font-size: 1.5em;
-}
-
-#votee {
-	border-radius: 25%;
-	border: solid 8px #000;
-	border-style: inset;
-	width: 220px;
-	height: 220px;
-	overflow: hidden;
-	margin: 10px auto;
-}
-
-#votee img {
-	margin: 0px auto;
-}
-
 .entry_form {
 	padding: 25px;
 	width: 90%;
@@ -92,11 +72,6 @@ nav a {
 
 .entry_form.tally .form_field {
 	display: inline-block;
-}
-
-input[name=fucks],
-input[name=vote] {
-	display: none;
 }
 
 .entry_form.tally label {
@@ -130,4 +105,13 @@ input[type=radio]:checked + label {
 	color: #fff;
 	text-align: center;
 	margin: 20px auto;
+}
+
+.api_results ul {
+	list-style-type: disc;
+	list-style-position: inside;
+}
+
+.api_results ul li {
+	padding-left: 0.5em;
 }

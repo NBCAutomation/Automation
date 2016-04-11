@@ -57,11 +57,12 @@ $app->get('/reports', function ($request, $response, $args, $mobility) {
 	} 
 
 	$files_array = dirToArray($testDir);
+	var_dump($files_array);
 
     return $this->view->render($response, 'reports.php', [
         'title' => 'Reports',
 		'mobility' => $mobility,
-		'results' => $results
+		'results' => $files_array
     ]);
 })->setName('reports');
 
