@@ -61,19 +61,25 @@ $app->get('/reports', function ($request, $response, $args) {
 	// function readCSV($dir) {
 		$row = 1;
 		$__testResult = __DIR__ . "/test_results/api_manifest_audits/4_11_2016/nbcphiladelphia_manifest-audit_2016-04-11T18:39:41.955Z.csv";
+		
+		echo "<table>";
 
 		if (($handle = fopen($__testResult, "r")) !== FALSE) {
 		    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 		        $num = count($data);
-		        echo "<p> $num fields in line $row: <br /></p>\n";
+		        echo "<tr>";
+		        echo "<td colspan=\"5\"><p> $num fields in line $row: <br /></p></td>";
+		        echo "</tr>";
 		        $row++;
-
+		        echo "<tr>";
 		        for ($c = 0; $c < $num; $c++) {
-		            echo $data[$c] . "<br />";
+		            echo "<td>" . $data[$c] . "</td>";
 		        }
+		        echo "</tr>";
 		    }
 		    fclose($handle);
 		}
+		echo "</table>";
 	// }
 
 	$files_array = dirToArray($testDir);
