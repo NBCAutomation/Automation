@@ -1,6 +1,4 @@
-{% extends "base.php" %}
-
-{% block content %}
+<?php include_once 'header.php' ?>
 	<div class="row">
 		<h2 class="lead">Welcome</h2>
 	</div>
@@ -29,5 +27,4 @@
 			</form>
 		</div>		
 	</div>
-
-{% endblock %}
+<?php include_once 'footer.php' ?>

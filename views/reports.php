@@ -1,23 +1,25 @@
-{% extends "base.php" %}
-
-{% block content %}
+<?php include_once 'header.php' ?>
 	<div class="row">
 		<h2 class="lead">{{title}}</h2>
 	</div>
 	<div class="row">
 		<div class="api_results">
-				<ul>
-				{% for key, values in results %}
-				    <li>{{ key }}
-				    	<ul>
-						{% for __key, value in values %}
-							<li>
-								{{loop.index}} {{__key}}
-								{% if loop.index > 0 %}
-									{% set subArray = value %}
-									<ul>
-									{% for __subKey, __subValues in subArray %}
-										<li class="result file">
+			
+			<ul>
+				<?php
+					foreach ($results as $key => $val) {
+					    echo "<li>" . $key;
+
+					    if ( is_array($val) ) {
+					    	echo "<ul>";
+					    	foreach ($val as $__key => $__val) {
+					    		echo "<li>" . $__key;
+
+					    		if ( is_array($__val) ) {
+					    			echo "<ul>";
+					    			foreach ($__val as $__subKey => $__subVal) {
+					    			?>
+					    				<li class="result file">
 											<div>
 												<a href="#">
 													<i class="fa fa-envelope"></i>
@@ -29,24 +31,31 @@
 												</a>
 											</div>
 											<div>
-												<a href="/test_results/{{ key }}/{{__key}}/{{ __subValues }}">
+												<a href=<?php echo "/test_results/". $key ."/". $__key ."/" . $__subVal; ?>
 													<i class="fa fa-download"></i>
 												</a>
 											</div>
 											<div>
-												{{ __subKey }} {{ __subValues }}
+												<?php
+													$__report = $key ."/". $__key ."/" . $__subVal;
+													$__reportLink = urlencode($__report);
+													echo $__reportLink;
+												?>
+												<a href="/reports/single?reportID="<?php echo $__reportLink; ?>"><?php echo $__subVal; ?></a>
 											</div>
-										</li>
-									{% endfor %}
-									</ul>
-								{% endif %}
-							</li>
-						{% endfor %}
-					</ul>
-					</li>
-				{% endfor %}
+					    				</li>
+					    			<?php }
+					    			echo "</ul>";
+					    		}
+					    		echo "</li>";
+					    	}
+					    	echo "</ul>";
+					    }
+					    echo "</li>";
+					}
+				?>
 			</ul>
 		</div>		
 	</div>
 
-{% endblock %}
+<?php include_once 'footer.php' ?>
