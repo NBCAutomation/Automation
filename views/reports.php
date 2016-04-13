@@ -8,10 +8,8 @@
 	}
 ?>
 
-	<div class="row">
-		<h2 class="lead"><?php echo $title; ?></h2>
-	</div>
-	<div class="row">
+	<h2 class="page-title"><?php echo $title; ?></h2>
+	<div class="panel-body">
 		<div class="api_results">
 		<!-- // Main report table view -->
 		<?php if ($mainView) { ?>
