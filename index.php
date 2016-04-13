@@ -118,7 +118,6 @@ $app->get('/home', function ($request, $response, $args) {
 $app->group('/reports', function () {
 
 	$this->get('/{view}', function ($request, $response, $args) {
-		echo 'view 1';
 		$testDir = 'test_results/'.$args['view'];
 
 		$files_array = dirToArray($testDir);

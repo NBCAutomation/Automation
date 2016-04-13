@@ -7,8 +7,12 @@
 		<?php if ($mainView) { ?>
 			<ul>
 				<?php
-					foreach ($results as $key => $val) {
-					    echo "<li class=\"result file\"><a href=\"". $view ."/". $key ."/main\"><i class=\"fa fa-folder-o\"></i> " . $key . "</a></li>";
+					if ($results) {
+						foreach ($results as $key => $val) {
+						    echo "<li class=\"result file\"><a href=\"". $view ."/". $key ."/main\"><i class=\"fa fa-folder-o\"></i> " . $key . "</a></li>";
+						}	
+					} else {
+						echo "<p>Currently there are no results to display.</p>";
 					}
 				?>
 			</ul>
@@ -17,7 +21,7 @@
 				<?php foreach ($results as $key => $val) { ?>
     				<li class="result file">
     					<div>
-    						<a href="<?php echo $linkPath . "/" . $val ?>">
+    						<a href="<?php echo $linkPath . "/" . $val ?>" download>
     							<i class="fa fa-download"></i>
     						</a>
     					</div>
@@ -27,7 +31,7 @@
 							</a>
 						</div>
 						<div>
-							<a href="#">
+							<a href="<?php echo $val; ?>">
 								<i class="fa fa-eye"></i>
 							</a>
 						</div>
