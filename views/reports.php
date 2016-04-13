@@ -1,10 +1,10 @@
 <?php include_once 'header.php' ?>
 	<div class="row">
-		<h2 class="lead">{{title}}</h2>
+		<h2 class="lead"><?php echo $title; ?></h2>
 	</div>
 	<div class="row">
 		<div class="api_results">
-			
+		<?php if ($view == 'main') { ?>
 			<ul>
 				<?php
 					foreach ($results as $key => $val) {
@@ -31,17 +31,16 @@
 												</a>
 											</div>
 											<div>
-												<a href=<?php echo "/test_results/". $key ."/". $__key ."/" . $__subVal; ?>
+												<a href=<?php echo "/test_results/". $key ."". $__key ."/" . $__subVal; ?>
 													<i class="fa fa-download"></i>
 												</a>
 											</div>
 											<div>
 												<?php
-													$__report = $key ."/". $__key ."/" . $__subVal;
+													$__report = $key ."]". $__key ."]" . $__subVal;
 													$__reportLink = urlencode($__report);
-													echo $__reportLink;
 												?>
-												<a href="/reports/single?reportID="<?php echo $__reportLink; ?>"><?php echo $__subVal; ?></a>
+												<a href="/reports/single/<?php echo $__reportLink; ?>"><?php echo $__subVal; ?></a>
 											</div>
 					    				</li>
 					    			<?php }
@@ -55,6 +54,12 @@
 					}
 				?>
 			</ul>
+		<?php } ?>
+		<?php
+		if ($view == 'single') {
+			echo $reportData;
+		}
+		?>
 		</div>		
 	</div>
 

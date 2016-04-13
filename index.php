@@ -60,38 +60,6 @@ $app->get('/reports/{view}', function ($request, $response, $args) {
 		return $result;
 	}
 
-	
-	if (strpos($args['view'], 'single') !== false) {
-		
-		// $paramValue = $app->request()->get('reportID');
-
-		echo $paramValue;
-
-		$__file = __DIR__ . "/test_results/api_manifest_audits/" . $args['view'];
-
-		function readCSV($__file) {
-			$row = 1;			
-			echo "<table>";
-
-			if (($handle = fopen($__file, "r")) !== FALSE) {
-			    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-			        $num = count($data);
-			        // echo "<tr>";
-			        // echo "<td colspan=\"5\"><p> $num fields in line $row: <br /></p></td>";
-			        // echo "</tr>";
-			        $row++;
-			        echo "<tr>";
-			        for ($c = 0; $c < $num; $c++) {
-			            echo "<td>" . $data[$c] . "</td>";
-			        }
-			        echo "</tr>";
-			    }
-			    fclose($handle);
-			}
-			echo "</table>";
-		}
-	}
-
 	$files_array = dirToArray($testDir);
 
     return $this->view->render($response, 'reports.php', [
@@ -101,6 +69,49 @@ $app->get('/reports/{view}', function ($request, $response, $args) {
 		'results' => $files_array,
     ]);
 })->setName('reports');
+
+// Reports View
+$app->get('/reports/{view}/{reportID}', function ($request, $response, $args) {
+	
+	$__reportURL = urldecode($args['reportID']);
+
+	$__report = __DIR__ . "/test_results/" . str_replace(']', '/', $__reportURL);
+
+	function readCSV($__file) {
+		$row = 1;
+
+		$__fileData;
+
+		$__fileData .= "<table>";
+
+		if (($handle = fopen($__file, "r")) !== FALSE) {
+		    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+		        $num = count($data);
+		        // echo "<tr>";
+		        // echo "<td colspan=\"5\"><p> $num fields in line $row: <br /></p></td>";
+		        // echo "</tr>";
+		        $row++;
+		        $__fileData .= "<tr>";
+		        for ($c = 0; $c < $num; $c++) {
+		            $__fileData .= "<td>" . $data[$c] . "</td>";
+		        }
+		        $__fileData .= "</tr>";
+		    }
+		    fclose($handle);
+		}
+		$__fileData .= "</table>";
+		return $__fileData;
+	}
+
+	$__reportData = readCSV($__report);
+
+    return $this->view->render($response, 'reports.php', [
+        'title' => 'Reports',
+        'page_name' => 'reports',
+        'view' => 'single',
+        'reportData' => $__reportData
+    ]);
+})->setName('reports-view');
 
 // Run app
 $app->run();
