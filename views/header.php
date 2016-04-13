@@ -19,7 +19,7 @@
 		<ul class="ts-profile-nav">
 			<li><a href="#">Help</a></li>
 			<li class="ts-account">
-				<a href="#"><img src="img/ts-avatar.jpg" class="ts-avatar hidden-side" alt=""> Account <i class="fa fa-angle-down hidden-side"></i></a>
+				<a href="#">Account <i class="fa fa-angle-down hidden-side"></i></a>
 				<ul>
 					<li><a href="#">My Account</a></li>
 					<li><a href="#">Edit Account</a></li>
@@ -34,34 +34,23 @@
 			<ul class="ts-sidebar-menu">
 				<li class="ts-label">Main Menu</li>
 				<li><a href="/"><i class="fa fa-desktop"></i> Dashboard</a></li>
-				<li><a href="/reports/main"><i class="fa fa-table"></i> Reports</a></li>
+				<li>
+					<a href="/reports/main"><i class="fa fa-table"></i> Reports</a>
+					<ul>
+						<li><a href="/reports/api_manifest_audits">Manifest Audits</a></li>
+						<li><a href="/reports/api_navigation_audits">Navigation Audits</a></li>
+					</ul>
+				</li>
 				<li><a href="/scripts"><i class="fa fa-bolt"></i> Scripts</a></li>
 				<li><a href="/scripts"><i class="fa fa-bell"></i> Alerts</a></li>
-				<li><a href="#"><i class="fa fa-sitemap"></i> Multi-Level Dropdown</a>
-					<ul>
-						<li><a href="#">2nd level</a></li>
-						<li><a href="#">2nd level</a></li>
-						<li><a href="#">3rd level</a>
-							<ul>
-								<li><a href="#">3rd level</a></li>
-								<li><a href="#">3rd level</a></li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li class="open"><a href="#"><i class="fa fa-files-o"></i> Sample Pages</a>
-					<ul>
-						<li class="open"><a href="blank.html">Blank page</a></li>
-						<li><a href="login.html">Login page</a></li>
-					</ul>
-				</li>
+				<!-- class="open" -->
 
 				<!-- Account from above -->
 				<ul class="ts-profile-nav">
 					<li><a href="#">Help</a></li>
 					<li><a href="#">Settings</a></li>
 					<li class="ts-account">
-						<a href="#"><img src="img/ts-avatar.jpg" class="ts-avatar hidden-side" alt=""> Account <i class="fa fa-angle-down hidden-side"></i></a>
+						<a href="#">Account <i class="fa fa-angle-down hidden-side"></i></a>
 						<ul>
 							<li><a href="#">My Account</a></li>
 							<li><a href="#">Edit Account</a></li>
