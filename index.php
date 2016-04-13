@@ -5,6 +5,7 @@ use Slim\Views\PhpRenderer;
 require_once __DIR__.'/vendor/autoload.php';
 
 $app = new Slim\App();
+$spire = new Spire();
 
 // Get container
 $container = $app->getContainer();
@@ -28,8 +29,16 @@ $container['view'] = function ($container) {
 //     return $view;
 // };
 
-
+// Login
 $app->get('/', function ($request, $response, $args) {
+    return $this->view->render($response, 'login.php', [
+        'title' => 'OTS Spire Web App',
+        'page_name' => 'home'
+    ]);
+})->setName('login');
+
+// Homepage
+$app->get('/home', function ($request, $response, $args) {
     return $this->view->render($response, 'home.php', [
         'title' => 'OTS Spire Web App',
         'page_name' => 'home'
@@ -119,6 +128,43 @@ $app->get('/reports/{view}/{reportID}', function ($request, $response, $args) {
         'reportData' => $__reportData
     ]);
 })->setName('reports-view');
+
+// *********************
+
+$app->post('/auth/', function ($request, $response, $args) {
+	$db_conn = $spire->getConnection();
+	$input = $app->request()->post();
+
+	$sql = "SELECT * FROM `users` WHERE `user` = :user AND `pass` = :pass";
+
+	$sql = $db_conn->prepare($sql);
+	$sql->bindParam(':user', $input['user']);
+	$sql->bindParam(':pass', $input['pass']);
+	// $sql->execute();
+	$result = $sql->execute();
+	$rows = $sql->fetchAll();
+
+	$n = count($rows);
+
+	if ($n <= 0){
+		$app->flash('error', 'Login credentials incorrect.');
+		$app->response()->redirect('/admin/');
+		// $redirect = '/admin/';
+		// $app->response()->redirect($redirect);
+	} else {
+		$app->setEncryptedCookie('BE_C','auth');
+
+		$redirect = '/admin/main/';
+		$app->response()->redirect($redirect);
+	}
+
+});
+
+$app->get('/logout/', function() use ($app,  $billboard){
+	$app->deleteCookie('BE_C');
+	$redirect = '/admin/main/';
+	$app->response()->redirect($redirect);
+});
 
 // Run app
 $app->run();
