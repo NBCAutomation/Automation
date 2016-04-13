@@ -1,10 +1,20 @@
-<?php include_once 'header.php' ?>
+<?php
+	include_once 'header.php';
+
+	if ($view == 'single') {
+		$singleView = true;
+	} elseif ($view == 'main') {
+		$mainView = true;
+	}
+?>
+
 	<div class="row">
 		<h2 class="lead"><?php echo $title; ?></h2>
 	</div>
 	<div class="row">
 		<div class="api_results">
-		<?php if ($view == 'main') { ?>
+		<!-- // Main report table view -->
+		<?php if ($mainView) { ?>
 			<ul>
 				<?php
 					foreach ($results as $key => $val) {
@@ -55,8 +65,10 @@
 				?>
 			</ul>
 		<?php } ?>
+
+		<!-- // Single report view -->
 		<?php
-		if ($view == 'single') {
+		if ($singleView) {
 			echo $reportData;
 		}
 		?>

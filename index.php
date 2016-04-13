@@ -93,7 +93,14 @@ $app->get('/reports/{view}/{reportID}', function ($request, $response, $args) {
 		        $row++;
 		        $__fileData .= "<tr>";
 		        for ($c = 0; $c < $num; $c++) {
-		            $__fileData .= "<td>" . $data[$c] . "</td>";
+		        	
+		        	if (strpos($data[$c], 'Fail') !== false) {
+		        		$__class = 'class="fail" ';
+		        	} else {
+		        		$__class = '';
+		        	}
+
+		            $__fileData .= "<td ". $__class .">" . $data[$c] . "</td>";
 		        }
 		        $__fileData .= "</tr>";
 		    }
