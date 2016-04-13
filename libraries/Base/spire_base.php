@@ -1,6 +1,6 @@
 <?php
 //Database/Model
-class jollySalt {
+class Spire {
 
 	public function getGravatar( $email, $s = 250, $d = 'mm', $r = 'g', $img = false, $atts = array() ) {
 	    $url = 'http://www.gravatar.com/avatar/';
@@ -17,9 +17,9 @@ class jollySalt {
 
 	public function getConnection() {
 	    $dbhost = "localhost";
-	    $dbuser = "jollySalt";
-	    $dbpass = "7ZqB1ZTBXMF6Lmt";
-	    $dbname = "jollySalt";
+	    $dbuser = "__spireUser";
+	    $dbpass = "password";
+	    $dbname = "ots_spire";
 	    $dbh = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
 	    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    return $dbh;
