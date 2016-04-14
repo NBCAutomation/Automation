@@ -2,6 +2,7 @@ application/
 test_results/
 node_modules/
 vendor/
+tmp/
 composer.phar
 composer.lock
 .DS_Store
