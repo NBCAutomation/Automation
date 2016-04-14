@@ -41,7 +41,7 @@
 						<li><a href="/reports/api_navigation_audits">Navigation Audits</a></li>
 					</ul>
 				</li>
-				<li><a href="/scripts"><i class="fa fa-bolt"></i> Scripts</a></li>
+				<li><a href="/scripts/main"><i class="fa fa-bolt"></i> Scripts</a></li>
 				<li><a href="/scripts"><i class="fa fa-bell"></i> Alerts</a></li>
 				<!-- class="open" -->
 
@@ -66,3 +66,5 @@
 
 				<div class="row">
 					<div class="col-md-12">
+						<h2 class="page-title"><?php echo $title; ?></h2>
+						<?php include_once './views/base/breadcrumbs.php' ?>

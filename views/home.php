@@ -1,6 +1,5 @@
-<?php include_once 'header.php' ?>
-	<h2 class="page-title">Welcome</h2>
+<?php include_once './views/base/header.php'; ?>
 	<div class="panel-body">
 		
 	</div>
-<?php include_once 'footer.php' ?>
+<?php include_once './views/base/footer.php' ?>

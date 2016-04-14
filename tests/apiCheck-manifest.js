@@ -1,7 +1,7 @@
 /* globals casper, require, console */
 // Author: Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version: 1.0
+// Version: 2.0
 // Case: Test API main manifest file to verify main key/values that allow the app to function correctly.
 // Use: casperjs test [file_name] --url=[site]
 // optional string params --output=debug to show logged key/val strings

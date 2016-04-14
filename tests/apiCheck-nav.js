@@ -1,7 +1,7 @@
 /* globals casper, require, console */
 // Author: Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version: 1.0
+// Version: 2.0
 // Case: Grab the main app navigation url from the manifest, then test each link for correct response, if response, then validate JSON.
 // Use: casperjs test [file_name] --url=[url]
 // optional string params --output=debug to show logged key/val strings

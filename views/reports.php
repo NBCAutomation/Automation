@@ -1,6 +1,4 @@
 <?php include_once './views/base/header.php'; ?>
-	<h2 class="page-title"><?php echo $title; ?></h2>
-	<?php include_once './views/base/breadcrumbs.php'; ?>
 	<div class="panel-body">
 		<div class="api_results">
 		<!-- // Main report table view -->
@@ -36,11 +34,6 @@
 							</a>
 						</div>
 						<div>
-							<?php
-								// $__report = $key ."]". $__key ."]" . $__subVal;
-								// $__reportLink = urlencode($__report);
-							?>
-							<!--<a href="<?php echo $viewPath . "/" . $val; ?>"><?php echo $val; ?></a>-->
 							<a href="<?php echo $val; ?>"><?php echo $val; ?></a>
 						</div>
     				</li>

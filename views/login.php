@@ -1,6 +1,5 @@
-<?php include_once 'header.php' ?>
-	<h2 class="page-title">Welcome</h2>
-	<div class="row">
+<?php include_once './views/base/header.php' ?>
+	<div>
 		<p>Please login</p>
 	</div>
 	<div class="row">
@@ -25,4 +24,4 @@
 			</form>
 		</div>		
 	</div>
-<?php include_once 'footer.php' ?>
+<?php include_once './views/base/footer.php' ?>

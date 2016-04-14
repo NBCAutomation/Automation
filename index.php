@@ -15,20 +15,6 @@ $container['view'] = function ($container) {
     return new \Slim\Views\PhpRenderer('./views/');
 };
 
-
-// Register Twig View helper
-// $container['view'] = function ($container) {
-//     $view = new \Slim\Views\Twig('views',[
-//     	'cache' => false
-//     ]);
-
-//     // Instantiate and add Slim specific extension
-//     $basePath = rtrim(str_ireplace('index.php', '', $container['request']->getUri()->getBasePath()), '/');
-//     $view->addExtension(new Slim\Views\TwigExtension($container['router'], $basePath));
-
-//     return $view;
-// };
-
 function dirFilesToArray($dir) {
 
 	$result = array(); 
@@ -50,28 +36,39 @@ function dirFilesToArray($dir) {
 
 function readCSV($__file) {
 	$row = 1;
+	$fails = 0;
 
 	$__fileData;
 
-	$__fileData .= "<table>";
+	$__fileData .= "<table class=\"table table-bordered table-striped\">";
 
 	if (($handle = fopen($__file, "r")) !== FALSE) {
 	    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
 	        $num = count($data);
-	        // echo "<tr>";
-	        // echo "<td colspan=\"5\"><p> $num fields in line $row: <br /></p></td>";
-	        // echo "</tr>";
 	        $row++;
+
 	        $__fileData .= "<tr>";
+
 	        for ($c = 0; $c < $num; $c++) {
 	        	
-	        	if (strpos($data[$c], 'Fail') !== false) {
-	        		$__class = 'class="fail" ';
+	        	if (strpos($data[$c], 'Fail') !== false || strpos($data[$c], 'FAIL') !== false) {
+	        		$fails++;
+	        		$__class = 'class="test_fail" ';
 	        	} else {
 	        		$__class = '';
 	        	}
 
-	            $__fileData .= "<td ". $__class .">" . $data[$c] . "</td>";
+	        	if (!empty($data[$c])) {
+	        		if ($row < 5) {
+	        			$__fileData .= "<td colspan=\"5\">" . $data[$c] . "</td>";
+	        		} else {
+	        			if ($row < 7) {
+	        				$__fileData .= "<td>" . $data[$c] . "</td>";
+		        		} else {
+		        			$__fileData .= "<td ". $__class .">" . $data[$c] . "</td>";
+		        		}
+	        		}
+	        	}
 	        }
 	        $__fileData .= "</tr>";
 	    }
@@ -133,7 +130,7 @@ $app->group('/reports', function () {
             'mainView' => true,
     		'results' => $files_array,
         ]);
-    })->setName('user-password-reset');
+    })->setName('directory-reports-view');
 
     
     $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {
@@ -174,18 +171,43 @@ $app->group('/reports', function () {
 		    ]);
     	}
     })->setName('reports-view');
-
-	
-
-  //   return $this->view->render($response, 'reports.php', [
-  //       'title' => 'Reports',
-  //       'page_name' => 'reports',
-  //       'view' => $args['view'],
-  //       'mainView' => true,
-		// 'results' => $files_array,
-  //   ]);
 });
 
+// Scripting/Testing View
+$app->group('/scripts', function () {
+
+	$this->get('/{view}', function ($request, $response, $args) {
+		$testDir = 'test_results/'.$args['view'];
+
+		$files_array = dirToArray($testDir);
+
+		if ($args['view'] != 'main') {
+			// View path
+			$__viewPath = $args['view']."/".$args['subView'];
+
+	        return $this->view->render($response, 'scripts.php', [
+	            'title' => 'Scripts & Tests',
+	            'page_name' => 'scripts',
+	            'view' => $args['view'],
+	            'viewPath' => $args['view'],
+	            'scriptView' => true,
+	    		'results' => $files_array,
+	        ]);
+	    } else {
+	    	// View path
+			$__viewPath = $args['view']."/".$args['subView'];
+
+	        return $this->view->render($response, 'scripts.php', [
+	            'title' => 'Scripts & Tests',
+	            'page_name' => 'scripts',
+	            'view' => $args['view'],
+	            'viewPath' => $args['view'],
+	            'mainView' => true,
+	    		'results' => $files_array,
+	        ]);
+	    }
+    })->setName('scripts-main-view');
+});
 
 // ********* User Auth ************
 
