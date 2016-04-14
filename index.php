@@ -1,11 +1,12 @@
 <?php
+error_reporting(E_ALL | E_STRICT);
+ini_set('display_errors', FALSE);
 
 use Slim\Views\PhpRenderer;
 
 require_once __DIR__.'/vendor/autoload.php';
 
 $app = new Slim\App();
-$spire = new Spire();
 
 // Get container
 $container = $app->getContainer();
@@ -94,6 +95,10 @@ function dirToArray($dir) {
 	}
 	return $result;
 }
+
+// ************
+// Views
+// ************
 
 // Login
 $app->get('/', function ($request, $response, $args) {
@@ -207,12 +212,40 @@ $app->group('/scripts', function () {
 	        ]);
 	    }
     })->setName('scripts-main-view');
+
+    $this->post('/{view}', function ($request, $response, $args) {
+    	// Temp File
+    	$__tmpFile = './tmp/__tempSites_'. rand() .'.txt';
+    	$__data = file_get_contents($__tmpFile);
+
+    	$allPostPutVars = $request->getParsedBody();
+    	
+    	foreach($allPostPutVars as $key => $param){
+			if (is_array($param)) {
+				foreach ($param as $__key => $__value) {
+					$__data .= 'http://www.'.$__value.'.com';
+					$__data .= "\r\n";
+				}
+			}
+    	}
+
+    	// Write the contents back to the file
+    	file_put_contents($__tmpFile, $__data, FILE_APPEND | LOCK_EX);
+
+    	echo 'wrote file';
+
+    	$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}"';
+    	var_dump($__runCommand);
+    	echo '<pre>'. shell_exec($__runCommand) .'</pre>';
+
+    })->setName('scripts-run-view');
 });
+
 
 // ********* User Auth ************
 
 // $app->post('/auth/', function ($request, $response, $args) {
-// 	$db_conn = $spire->getConnection();
+// 	$db_conn = $app->getConnection();
 // 	$input = $app->request()->post();
 
 // 	$sql = "SELECT * FROM `users` WHERE `user` = :user AND `pass` = :pass";
