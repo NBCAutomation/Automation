@@ -1,6 +1,6 @@
-<?php include_once 'header.php'; ?>
-
+<?php include_once './views/base/header.php'; ?>
 	<h2 class="page-title"><?php echo $title; ?></h2>
+	<?php include_once './views/base/breadcrumbs.php'; ?>
 	<div class="panel-body">
 		<div class="api_results">
 		<!-- // Main report table view -->
@@ -9,7 +9,7 @@
 				<?php
 					if ($results) {
 						foreach ($results as $key => $val) {
-						    echo "<li class=\"result file\"><a href=\"". $view ."/". $key ."/main\"><i class=\"fa fa-folder-o\"></i> " . $key . "</a></li>";
+						    echo "<li class=\"result file\"><a href=\"". $view ."/". $key ."/main\"><i class=\"fa fa-folder-o\"></i> " . str_replace('_','/',$key) . "</a></li>";
 						}	
 					} else {
 						echo "<p>Currently there are no results to display.</p>";
@@ -55,4 +55,4 @@
 		</div>		
 	</div>
 
-<?php include_once 'footer.php' ?>
+<?php include_once './views/base/footer.php' ?>

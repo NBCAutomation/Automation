@@ -122,35 +122,46 @@ $app->group('/reports', function () {
 
 		$files_array = dirToArray($testDir);
 
+		// View path
+		$__viewPath = $args['view']."/".$args['subView'];
+
         return $this->view->render($response, 'reports.php', [
             'title' => 'Reports',
             'page_name' => 'reports',
             'view' => $args['view'],
+            'viewPath' => $args['view'],
             'mainView' => true,
     		'results' => $files_array,
         ]);
     })->setName('user-password-reset');
 
-    // Reports View
+    
     $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {
+    	
+    	// Individual report url
+    	$__report = __DIR__ . "/test_results/" . $args['view']."/".$args['subView']."/".$args['page'];
+		$__reportData = readCSV($__report);
+
+		// Report Directory location
+		$__reportDir = __DIR__ . "/test_results/" . $args['view']."/".$args['subView'];
+		$__repoDir = dirFilesToArray($__reportDir);
+
+		// View path
+		$__viewPath = $args['view']."/".$args['subView'];
 
     	if ($args['page'] != 'main') {
-    		$__report = __DIR__ . "/test_results/" . $args['view']."/".$args['subView']."/".$args['page'];
-    		$__reportData = readCSV($__report);
-
-
+    		// Report View
     		return $this->view->render($response, 'reports.php', [
     		    'title' => 'Reports',
     		    'page_name' => 'reports',
     		    'view' => 'single',
+    		    'viewPath' => $__viewPath.'/'.$args['page'],
+		        'linkPath' => $__reportDir,
     		    'singleView' => true,
     		    'reportData' => $__reportData
     		]);
     	} elseif ($args['page']) {
-			$__reportDir = __DIR__ . "/test_results/" . $args['view']."/".$args['subView'];
-			$__repoDir = dirFilesToArray($__reportDir);
-
-			$__viewPath = $args['view']."/".$args['subView'];
+    		// Report Directory View
 
 		    return $this->view->render($response, 'reports.php', [
 		        'title' => 'Reports',
