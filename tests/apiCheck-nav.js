@@ -360,7 +360,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                 if (validated) {
                     if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
-                    fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
+                    fs.write(save, ',\n"' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
                 } else {
                     if (showOutput) {console.log('...re-testing JSON')};
                     // var a = "<html><head></head><body>{'a': 123}</body></html>";
@@ -375,14 +375,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                         if( __verifyOutput instanceof Object ) {
                             if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                            fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
+                            fs.write(save, ',\n"' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
                         } else {
                             if (showOutput) {console.log(__catchJson)};
                         }
                     } catch (e) {
                         // ...
                         if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail also with removing HTML tags, possible False/Positive..check url manually.')};
-                        fs.write(save, ',\n' + __jurlName + ',"' + __jUrl + '",' + __status + ',' + 'FAIL - Possible False/Positive,', 'a+');
+                        fs.write(save, ',\n"' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'FAIL - Possible False/Positive,', 'a+');
                     }
                 }
                 if (showOutput) {console.log('-----------------')};
