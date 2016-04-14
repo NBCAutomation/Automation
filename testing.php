@@ -3,7 +3,8 @@ header('Content-Encoding: none;');
 
 set_time_limit(0);
 
-$handle = popen("cat ./tmp/__tempSites_246595878.txt | xargs -P1 -I{} ./run.sh apiCheck-nav --url=\"{}\"", "r");
+// $handle = popen("ping 127.0.0.1", "r");
+$handle = popen("cat ./tmp/__tempSites_125149007.txt | xargs -P1 -I{} ./run.sh apiCheck-nav --url="{}"", "r");
 
 if (ob_get_level() == 0)
 ob_start();
