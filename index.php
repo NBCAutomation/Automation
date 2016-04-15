@@ -233,11 +233,11 @@ $app->group('/scripts', function () {
     	file_put_contents($__tmpFile, $__data, FILE_APPEND | LOCK_EX);
 
     	$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}" 2>&1';
-    	// var_dump($__runCommand);
-    	// echo '<pre>'. shell_exec($__runCommand) .'</pre>';
-    	// putenv('/Applications/MAMP/bin/php/php5.4.19/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin');
+    	
     	putenv("PATH=${_ENV['PATH']}:/usr/local/bin");
     	echo "<pre>".shell_exec($__runCommand)."</pre>";
+    	
+    	shell_exec("rm ". $__tmpFile);
 
     })->setName('scripts-run-view');
 });
