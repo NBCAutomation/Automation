@@ -241,9 +241,10 @@ $app->group('/scripts', function () {
     	$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}" 2>&1';
     	
     	putenv("PATH=${_ENV['PATH']}:/usr/local/bin");
-    	echo "<pre>".shell_exec($__runCommand)."</pre>";
+    	// echo "<pre>".shell_exec($__runCommand)."</pre>";
+    	echo shell_exec("npm run runall");
 
-    	shell_exec("rm ". $__tmpFile);
+    	// shell_exec("rm ". $__tmpFile);
 
     })->setName('scripts-run-view');
 });
