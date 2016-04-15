@@ -112,7 +112,8 @@ $app->get('/', function ($request, $response, $args) {
 $app->get('/home', function ($request, $response, $args) {
     return $this->view->render($response, 'home.php', [
         'title' => 'OTS Spire Web App',
-        'page_name' => 'home'
+        'page_name' => 'home',
+        'dashClass' => true
     ]);
 })->setName('home');
 
@@ -133,6 +134,7 @@ $app->group('/reports', function () {
             'view' => $args['view'],
             'viewPath' => $args['view'],
             'mainView' => true,
+            'reportClass' => true,
     		'results' => $files_array,
         ]);
     })->setName('directory-reports-view');
@@ -160,6 +162,7 @@ $app->group('/reports', function () {
     		    'viewPath' => $__viewPath.'/'.$args['page'],
 		        'linkPath' => $__reportDir,
     		    'singleView' => true,
+    		    'reportClass' => true,
     		    'reportData' => $__reportData
     		]);
     	} elseif ($args['page']) {
@@ -170,6 +173,7 @@ $app->group('/reports', function () {
 		        'page_name' => 'reports',
 		        'view' => 'single',
 		        'fileView' => true,
+		        'reportClass' => true,
 		        'viewPath' => $__viewPath,
 		        'linkPath' => $__reportDir,
 		        'results' => $__repoDir
@@ -196,6 +200,7 @@ $app->group('/scripts', function () {
 	            'view' => $args['view'],
 	            'viewPath' => $args['view'],
 	            'scriptView' => true,
+	            'scriptClass' => true,
 	    		'results' => $files_array,
 	        ]);
 	    } else {
@@ -208,6 +213,7 @@ $app->group('/scripts', function () {
 	            'view' => $args['view'],
 	            'viewPath' => $args['view'],
 	            'mainView' => true,
+	            'scriptClass' => true,
 	    		'results' => $files_array,
 	        ]);
 	    }
@@ -236,12 +242,19 @@ $app->group('/scripts', function () {
     	
     	putenv("PATH=${_ENV['PATH']}:/usr/local/bin");
     	echo "<pre>".shell_exec($__runCommand)."</pre>";
-    	
+
     	shell_exec("rm ". $__tmpFile);
 
     })->setName('scripts-run-view');
 });
 
+// Help
+$app->get('/help', function ($request, $response, $args) {
+    return $this->view->render($response, 'help.php', [
+        'title' => 'Help',
+        'page_name' => 'help'
+    ]);
+})->setName('help');
 
 // ********* User Auth ************
 

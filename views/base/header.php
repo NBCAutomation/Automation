@@ -17,7 +17,7 @@
 		<!-- <p class="tagline">A Testing &amp; Reporting Utility</p> -->
 		<span class="menu-btn"><i class="fa fa-bars"></i></span>
 		<ul class="ts-profile-nav">
-			<li><a href="#">Help</a></li>
+			<li><a href="/help">Help</a></li>
 			<li class="ts-account">
 				<a href="#">Account <i class="fa fa-angle-down hidden-side"></i></a>
 				<ul>
@@ -33,15 +33,16 @@
 		<nav class="ts-sidebar">
 			<ul class="ts-sidebar-menu">
 				<li class="ts-label">Main Menu</li>
-				<li><a href="/"><i class="fa fa-desktop"></i> Dashboard</a></li>
-				<li>
+				<li <?php if ($dashClass) { echo 'class="open"'; } ?>><a href="/"><i class="fa fa-desktop"></i> Dashboard</a></li>
+				<li <?php if ($reportClass) { echo 'class="open"'; } ?>>
 					<a href="/reports/main"><i class="fa fa-table"></i> Reports</a>
 					<ul>
+						<li><a href="/reports/main">Main</a></li>
 						<li><a href="/reports/api_manifest_audits">Manifest Audits</a></li>
 						<li><a href="/reports/api_navigation_audits">Navigation Audits</a></li>
 					</ul>
 				</li>
-				<li><a href="/scripts/main"><i class="fa fa-bolt"></i> Scripts</a></li>
+				<li <?php if ($scriptClass) { echo 'class="open"'; } ?>><a href="/scripts/main"><i class="fa fa-bolt"></i> Scripts</a></li>
 				<li><a href="/scripts"><i class="fa fa-bell"></i> Alerts</a></li>
 				<!-- class="open" -->
 
