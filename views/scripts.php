@@ -60,6 +60,21 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label class="col-sm-2 control-label">Brand Specific
+							<br>
+						</label>
+						<div class="col-sm-10">
+							<div class="checkbox">
+								<input id="checkbox1" type="checkbox">
+								<label for="checkbox1">NBC (ALL)</label>
+							</div>
+							<div class="checkbox">
+								<input id="checkbox1" type="checkbox">
+								<label for="checkbox1">TSG (ALL)</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
 						<label class="col-sm-2 control-label">Specific Sites
 							<br>
 						</label>
