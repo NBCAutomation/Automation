@@ -219,14 +219,20 @@ $app->group('/scripts', function () {
 	    }
     })->setName('scripts-main-view');
 
+
     $this->post('/{view}', function ($request, $response, $args) {
     	// Temp File
     	$__tmpFile = './tmp/__tempSites_'. rand() .'.txt';
     	$__data = file_get_contents($__tmpFile);
 
     	$allPostPutVars = $request->getParsedBody();
-    	
+
     	foreach($allPostPutVars as $key => $param){
+    		
+    		if ($key == 'script') {
+    			$__runScript = $param;
+    		}
+
 			if (is_array($param)) {
 				foreach ($param as $__key => $__value) {
 					$__data .= 'http://www.'.$__value.'.com';
@@ -238,15 +244,46 @@ $app->group('/scripts', function () {
     	// Write the contents back to the file
     	file_put_contents($__tmpFile, $__data, FILE_APPEND | LOCK_EX);
 
-    	$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-manifest --url="{}" 2>&1';
-    	
-    	putenv("PATH=${_ENV['PATH']}:/usr/local/bin");
-    	echo "<pre>".shell_exec($__runCommand)."</pre>";
+		if ($__runScript == 'spire-run') {
+			$__runCommand = 'npm run runall';
+		} elseif ($__runScript == 'apiCheck-manifest') {
+			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-manifest --url="{}" 2>&1';
+		} elseif ($__runScript == 'apiCheck-nav') {
+			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}" 2>&1';
+		}
+
+    	// echo "<pre>".shell_exec($__runCommand)."</pre>";
     	// echo shell_exec("npm run runall");
+    	
+		// $this->get('/scripts/{view}', function ($request, $response, $args) { 
+		// return $response->withRedirect('/scripts/'.$__runScript);
+		// //      return $response->withRedirect('/scripts/'.$__runScript); 
+		// });
+		// return $this->view->render($response, '/'.$__runScript);
+		
+		if ($request->isPost()) {
+	        return $this->view->render($response, 'scripts.php', [
+	            'title' => 'Scripts & Tests',
+		        'page_name' => 'scripts',
+		        'view' => $args['view'],
+		        'viewPath' => $args['view'],
+		        'scriptRunView' => true,
+		        'scriptClass' => true,
+		        'setEnv' => putenv("PATH=${_ENV['PATH']}:/usr/local/bin"),
+				'execCmd' => $__runCommand,
+				'delCmd' => shell_exec("rm ". $__tmpFile)
+	        ]);
+	    }
+    })->setName('scripts-run');
 
-    	// shell_exec("rm ". $__tmpFile);
+  //   $this->put('/{view}', function ($request, $response, $args) {
+		// $testDir = 'test_results/'.$args['view'];
 
-    })->setName('scripts-run-view');
+		// $files_array = dirToArray($testDir);
+
+		// $__viewPath = $args['view']."/".$args['subView'];
+
+  //   })->setName('scripts-run-view');
 });
 
 // Help
