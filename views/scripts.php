@@ -78,7 +78,7 @@
 						<label class="col-sm-2 control-label">Specific Sites
 							<br>
 						</label>
-						<div class="col-sm-10">
+						<div class="col-sm-3">
 							<div class="checkbox">
 								<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcnewyork">
 								<label for="checkbox1">NBC New York</label>
@@ -123,6 +123,8 @@
 								<input id="checkbox1" type="checkbox" name="test_site[]" value="necn">
 								<label for="checkbox1">NECN</label>
 							</div>
+						</div>
+						<div class="col-sm-3">
 							<div class="checkbox">
 								<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundo40">
 								<label for="checkbox1">Telemundo 40</label>
@@ -167,6 +169,8 @@
 								<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundodenver">
 								<label for="checkbox1">Telemundo Denver</label>
 							</div>
+						</div>
+						<div class="col-sm-3">	
 							<div class="checkbox">
 								<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundohouston">
 								<label for="checkbox1">Telemundo Houston</label>

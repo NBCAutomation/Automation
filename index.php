@@ -238,11 +238,11 @@ $app->group('/scripts', function () {
     	// Write the contents back to the file
     	file_put_contents($__tmpFile, $__data, FILE_APPEND | LOCK_EX);
 
-    	$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}" 2>&1';
+    	$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-manifest --url="{}" 2>&1';
     	
     	putenv("PATH=${_ENV['PATH']}:/usr/local/bin");
-    	// echo "<pre>".shell_exec($__runCommand)."</pre>";
-    	echo shell_exec("npm run runall");
+    	echo "<pre>".shell_exec($__runCommand)."</pre>";
+    	// echo shell_exec("npm run runall");
 
     	// shell_exec("rm ". $__tmpFile);
 
