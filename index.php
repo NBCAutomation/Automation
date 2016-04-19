@@ -260,7 +260,7 @@ $app->group('/scripts', function () {
 		// //      return $response->withRedirect('/scripts/'.$__runScript); 
 		// });
 		// return $this->view->render($response, '/'.$__runScript);
-		
+		sleep(1);
 		if ($request->isPost()) {
 	        return $this->view->render($response, 'scripts.php', [
 	            'title' => 'Scripts & Tests',
@@ -271,7 +271,7 @@ $app->group('/scripts', function () {
 		        'scriptClass' => true,
 		        'setEnv' => putenv("PATH=${_ENV['PATH']}:/usr/local/bin"),
 				'execCmd' => $__runCommand,
-				'delCmd' => shell_exec("rm ". $__tmpFile)
+				'delCmd' => "rm ". $__tmpFile
 	        ]);
 	    }
     })->setName('scripts-run');
