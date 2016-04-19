@@ -306,42 +306,5 @@ $app->get('/help', function ($request, $response, $args) {
     ]);
 })->setName('help');
 
-// ********* User Auth ************
-
-// $app->post('/auth/', function ($request, $response, $args) {
-// 	$db_conn = $app->getConnection();
-// 	$input = $app->request()->post();
-
-// 	$sql = "SELECT * FROM `users` WHERE `user` = :user AND `pass` = :pass";
-
-// 	$sql = $db_conn->prepare($sql);
-// 	$sql->bindParam(':user', $input['user']);
-// 	$sql->bindParam(':pass', $input['pass']);
-// 	// $sql->execute();
-// 	$result = $sql->execute();
-// 	$rows = $sql->fetchAll();
-
-// 	$n = count($rows);
-
-// 	if ($n <= 0){
-// 		$app->flash('error', 'Login credentials incorrect.');
-// 		$app->response()->redirect('/admin/');
-// 		// $redirect = '/admin/';
-// 		// $app->response()->redirect($redirect);
-// 	} else {
-// 		$app->setEncryptedCookie('_sp_C','auth');
-
-// 		$redirect = '/admin/main/';
-// 		$app->response()->redirect($redirect);
-// 	}
-
-// });
-
-// $app->get('/logout/', function() use ($app,  $billboard){
-// 	$app->deleteCookie('BE_C');
-// 	$redirect = '/admin/main/';
-// 	$app->response()->redirect($redirect);
-// });
-
 // Run app
 $app->run();
