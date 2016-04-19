@@ -241,6 +241,10 @@ $app->group('/scripts', function () {
     			$__runScript = $param;
     		}
 
+    		if ($key == 'output'){
+    			$__output = ' --output=console';
+    		}
+
 	    	if ($key == 'brand_test' && $param == 'all') {
 	    		shell_exec("rm ". $__tmpFile);
 	    		$__tmpFile = './sites.txt';
@@ -271,9 +275,9 @@ $app->group('/scripts', function () {
 		if ($__runScript == 'spire-run') {
 			$__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-manifest --url="{}" --output=console';
+			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-manifest --url="{}"'.$__output;
 		} elseif ($__runScript == 'apiCheck-nav') {
-			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}" --output=console';
+			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}"'.$__output;
 		}
 
 		sleep(1);
