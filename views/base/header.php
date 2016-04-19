@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
 	<title><?php echo $title ?></title>
 	<link rel="stylesheet" type="text/css" href="/assets/css/master.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 	<!--[if lt IE 9]>
 	<script src="oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 	<script src="oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -34,14 +35,7 @@
 			<ul class="ts-sidebar-menu">
 				<li class="ts-label">Main Menu</li>
 				<li <?php if ($dashClass) { echo 'class="open"'; } ?>><a href="/"><i class="fa fa-desktop"></i> Dashboard</a></li>
-				<li <?php if ($reportClass) { echo 'class="open"'; } ?>>
-					<a href="/reports/main"><i class="fa fa-table"></i> Reports</a>
-					<ul>
-						<li><a href="/reports/main">Main</a></li>
-						<li><a href="/reports/api_manifest_audits">Manifest Audits</a></li>
-						<li><a href="/reports/api_navigation_audits">Navigation Audits</a></li>
-					</ul>
-				</li>
+				<li <?php if ($reportClass) { echo 'class="open"'; } ?>><a href="/reports/main"><i class="fa fa-table"></i> Reports</a></li>
 				<li <?php if ($scriptClass) { echo 'class="open"'; } ?>><a href="/scripts/main"><i class="fa fa-bolt"></i> Scripts</a></li>
 				<li><a href="/scripts"><i class="fa fa-bell"></i> Alerts</a></li>
 				<!-- class="open" -->

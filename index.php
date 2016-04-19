@@ -187,6 +187,12 @@ $app->group('/scripts', function () {
 
 	$this->get('/{view}', function ($request, $response, $args) {
 		$testDir = 'test_results/'.$args['view'];
+		
+		if ($args['view'] != 'spire-run') {
+			$showOutput = true;
+		} else {
+			$showOutput = false;
+		}
 
 		$files_array = dirToArray($testDir);
 
@@ -202,6 +208,7 @@ $app->group('/scripts', function () {
 	            'scriptView' => true,
 	            'scriptClass' => true,
 	    		'results' => $files_array,
+	    		'configureOutput' => $showOutput
 	        ]);
 	    } else {
 	    	// View path
@@ -215,6 +222,7 @@ $app->group('/scripts', function () {
 	            'mainView' => true,
 	            'scriptClass' => true,
 	    		'results' => $files_array,
+	    		'configureOutput' => $showOutput
 	        ]);
 	    }
     })->setName('scripts-main-view');
@@ -228,39 +236,48 @@ $app->group('/scripts', function () {
     	$allPostPutVars = $request->getParsedBody();
 
     	foreach($allPostPutVars as $key => $param){
-    		
+
     		if ($key == 'script') {
     			$__runScript = $param;
     		}
 
-			if (is_array($param)) {
-				foreach ($param as $__key => $__value) {
-					$__data .= 'http://www.'.$__value.'.com';
-					$__data .= "\r\n";
+	    	if ($key == 'brand_test' && $param == 'all') {
+	    		shell_exec("rm ". $__tmpFile);
+	    		$__tmpFile = './sites.txt';
+	    	} elseif ($key == 'brand_test' && $param == 'nbc') {
+	    		shell_exec("rm ". $__tmpFile);
+	    		$__tmpFile = './sites-nbc.txt';
+	    	} elseif ($key == 'brand_test' && $param == 'telemundo') {
+	    		shell_exec("rm ". $__tmpFile);
+	    		$__tmpFile = './sites-tsg.txt';
+	    	} else {
+	    		$writeTempFile = true;
+	    		if ($key == 'test_site' && is_array($param)) {
+					foreach ($param as $__key => $__value) {
+						$__data .= 'http://www.'.$__value.'.com';
+						$__data .= "\r\n";
+					}
 				}
-			}
+	    	}	
     	}
 
-    	// Write the contents back to the file
-    	file_put_contents($__tmpFile, $__data, FILE_APPEND | LOCK_EX);
+    	if ($writeTempFile) {
+    		file_put_contents($__tmpFile, $__data, FILE_APPEND | LOCK_EX);
+    		$__delCMD = "rm ". $__tmpFile;
+    	} else {
+    		$__delCMD = '';
+    	}
 
 		if ($__runScript == 'spire-run') {
 			$__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-manifest --url="{}" 2>&1';
+			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-manifest --url="{}" --output=console';
 		} elseif ($__runScript == 'apiCheck-nav') {
-			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}" 2>&1';
+			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. __DIR__ .'/run.sh apiCheck-nav --url="{}" --output=console';
 		}
 
-    	// echo "<pre>".shell_exec($__runCommand)."</pre>";
-    	// echo shell_exec("npm run runall");
-    	
-		// $this->get('/scripts/{view}', function ($request, $response, $args) { 
-		// return $response->withRedirect('/scripts/'.$__runScript);
-		// //      return $response->withRedirect('/scripts/'.$__runScript); 
-		// });
-		// return $this->view->render($response, '/'.$__runScript);
 		sleep(1);
+
 		if ($request->isPost()) {
 	        return $this->view->render($response, 'scripts.php', [
 	            'title' => 'Scripts & Tests',
@@ -271,19 +288,10 @@ $app->group('/scripts', function () {
 		        'scriptClass' => true,
 		        'setEnv' => putenv("PATH=${_ENV['PATH']}:/usr/local/bin"),
 				'execCmd' => $__runCommand,
-				'delCmd' => "rm ". $__tmpFile
+				'delCmd' => $__delCMD
 	        ]);
 	    }
     })->setName('scripts-run');
-
-  //   $this->put('/{view}', function ($request, $response, $args) {
-		// $testDir = 'test_results/'.$args['view'];
-
-		// $files_array = dirToArray($testDir);
-
-		// $__viewPath = $args['view']."/".$args['subView'];
-
-  //   })->setName('scripts-run-view');
 });
 
 // Help

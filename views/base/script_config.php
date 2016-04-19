@@ -1,13 +1,30 @@
-	<div class="panel-heading">Configure Script</div>
+	<div class="panel-heading"><i class="fa fa-cogs" aria-hidden="true"></i> Configure Script</div>
 	<div class="panel-body">
+		<div class="alert alert-dismissible alert-info">
+			<p><em>Note: Tests run asynchronously per selected site (test 1 > site 1, test 1 site 2, test 2 > site 1).</em></p>
+		</div>
 		<form method="post" class="form-horizontal">
+			<?php if ($configureOutput) { ?>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Console Output
+					<br>
+				</label>
+				<div class="col-sm-10">
+					<div class="checkbox">
+						<input id="checkbox1" name="output" type="checkbox" value="console">
+						<label for="checkbox1">Yes</label>
+					</div>
+				</div>
+			</div>
+			<hr />
+			<?php } ?>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Run Suite
 					<br>
 				</label>
 				<div class="col-sm-10">
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox">
+						<input id="checkbox1" class="class1" name="brand_test" type="checkbox" value="all">
 						<label for="checkbox1">Default (ALL)</label>
 					</div>
 				</div>
@@ -18,11 +35,11 @@
 				</label>
 				<div class="col-sm-10">
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox">
+						<input id="checkbox1" class="class2" name="brand_test" type="checkbox" value="nbc">
 						<label for="checkbox1">NBC (ALL)</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox">
+						<input id="checkbox1" class="class2" name="brand_test" type="checkbox" value="telemundo">
 						<label for="checkbox1">TSG (ALL)</label>
 					</div>
 				</div>
@@ -33,111 +50,111 @@
 				</label>
 				<div class="col-sm-3">
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcnewyork">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcnewyork">
 						<label for="checkbox1">NBC New York</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbclosangeles">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbclosangeles">
 						<label for="checkbox1">NBC Los Angeles</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcchicago">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcchicago">
 						<label for="checkbox1">NBC Chicago</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcbayarea">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcbayarea">
 						<label for="checkbox1">NBC Bay Area</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcdfw">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcdfw">
 						<label for="checkbox1">NBC DFW</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcmiami">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcmiami">
 						<label for="checkbox1">NBC Miami</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcphiladelphia">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcphiladelphia">
 						<label for="checkbox1">NBC Philadelphia</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcconnecticut">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcconnecticut">
 						<label for="checkbox1">NBC Connecticut</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcwashington">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcwashington">
 						<label for="checkbox1">NBC Washington</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="nbcsandiego">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcsandiego">
 						<label for="checkbox1">NBC San Diego</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="necn">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="necn">
 						<label for="checkbox1">NECN</label>
 					</div>
 				</div>
 				<div class="col-sm-3">
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundo40">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo40">
 						<label for="checkbox1">Telemundo 40</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundo47">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo47">
 						<label for="checkbox1">Telemundo 47</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundo51">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo51">
 						<label for="checkbox1">Telemundo 51</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundo52">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo52">
 						<label for="checkbox1">Telemundo 52</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundo62">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo62">
 						<label for="checkbox1">Telemundo 62</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundoareadelabahia">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundoareadelabahia">
 						<label for="checkbox1">Telemundo Area de la Bahia</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundoarizona">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundoarizona">
 						<label for="checkbox1">Telemundo Arizona</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundoboston">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundoboston">
 						<label for="checkbox1">Telemundo Boston</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundochicago">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundochicago">
 						<label for="checkbox1">Telemundo Chicago</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundodallas">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundodallas">
 						<label for="checkbox1">Telemundo Dallas</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundodenver">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundodenver">
 						<label for="checkbox1">Telemundo Denver</label>
 					</div>
 				</div>
 				<div class="col-sm-3">	
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundohouston">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundohouston">
 						<label for="checkbox1">Telemundo Houston</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundolasvegas">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundolasvegas">
 						<label for="checkbox1">Telemundo Las Vegas</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundosanantonio">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundosanantonio">
 						<label for="checkbox1">Telemundo San Antonio</label>
 					</div>
 					<div class="checkbox">
-						<input id="checkbox1" type="checkbox" name="test_site[]" value="telemundopr">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundopr">
 						<label for="checkbox1">Telemundo PR</label>
 					</div>
 				</div>

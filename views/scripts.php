@@ -59,14 +59,31 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">Running Script...</div>
 			<div class="panel-body">
-				<?php echo($execCmd) ?>
+				<div class="progress progress-striped active">
+					<div class="progress-bar" style="width: 100%"></div>
+				</div>
+				<div class="process-data">
+					<?php
+						$bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m');
+						$bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>');
+
+						$output = shell_exec($execCmd);
+						
+						$lines = split("[\r|\n]", trim($output));
+						array_shift($lines);
+						echo "<table class=\"table table-bordered table-striped\">";
+						foreach($lines as $drive) {
+						    $formattedText = str_replace($bashOutput, $bashOutputStyle, $drive);
+						    echo "<tr><td>".$formattedText."</td></tr>";
+						}
+
+						echo "</table>";
+						echo shell_exec($delCmd);
+						
+					?>
+				</div>	
 			</div>
 		</div>
-
-		<!-- <div class="well">
-			<p> </p>
-		</div> -->
-
 	<?php } ?>
 	</div>
 <?php include_once './views/base/footer.php' ?>
