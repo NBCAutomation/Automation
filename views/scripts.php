@@ -47,11 +47,6 @@
 		<div class="panel panel-default">
 			<?php include_once './views/base/script_config.php' ?>
 		</div>
-
-		<!-- <div class="well">
-			<p> </p>
-		</div> -->
-
 	<?php } ?>
 	<?php if ($scriptRunView) { ?>
 		<h3><?php echo $view ?></h3>
@@ -76,7 +71,6 @@
 						    $formattedText = str_replace($bashOutput, $bashOutputStyle, $drive);
 						    echo "<tr><td>".$formattedText."</td></tr>";
 						}
-
 						echo "</table>";
 						echo shell_exec($delCmd);
 						
