@@ -23,5 +23,6 @@
 
 // pclose($handle);
 // ob_end_flush();
-echo shell_exec(". ~/.bash_profile; which node");
+// echo shell_exec(". ~/.bash_profile; which node");
+phpinfo();
 ?>
