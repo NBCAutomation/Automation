@@ -6,7 +6,7 @@
 		<div class="entry_form">
 			<form action="/" method="post" id="main_entry_form">
 				<div class="form_field">
-					<label>Name:</label>
+					<label>Names:</label>
 					<input type="input" name="name" size="35" id="name" class="inputField" />
 					<div class="clear"></div>
 				</div>
