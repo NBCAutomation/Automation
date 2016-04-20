@@ -44,11 +44,11 @@ h1 {
 	padding: 0.3em;
 }
 
-.panel-body .api_results table tr:nth-child(5) {
+.panel-body table tr:nth-child(5) {
 	font-weight: bold;
 }
 
-.panel-body .api_results table .test_fail {
+.panel-body .test_fail {
 	color: red;
 	font-weight: bold;
 	background: #FFCCCC;

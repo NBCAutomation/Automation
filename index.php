@@ -290,7 +290,6 @@ $app->group('/scripts', function () {
 		        'viewPath' => $args['view'],
 		        'scriptRunView' => true,
 		        'scriptClass' => true,
-		        'setEnv' => putenv("PATH=${_ENV['PATH']}:/usr/local/bin"),
 				'execCmd' => $__runCommand,
 				'delCmd' => $__delCMD
 	        ]);
