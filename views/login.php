@@ -22,6 +22,6 @@
 					<input type="submit" value="Submit" name="submit" class="submit_button" />
 				</div>
 			</form>
-		</div>		
+		</div>		   
 	</div>
 <?php include_once './views/base/footer.php' ?>
