@@ -88,12 +88,13 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }).then(function() {
             //Start testing
             
-            this.echo(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+            console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
 
             suite.getContent(url, type);
 
         }).run(function() {
-            this.echo(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.').exit();
+            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
+            this.exit();
         });
     };
 

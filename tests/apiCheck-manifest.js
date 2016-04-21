@@ -54,7 +54,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
         }).run(function() {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
-            test.done();
+            this.exit();
         });
     };
 
