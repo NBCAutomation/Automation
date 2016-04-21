@@ -6,15 +6,20 @@ use Slim\Views\PhpRenderer;
 
 require_once __DIR__.'/vendor/autoload.php';
 
-$app = new Slim\App();
-
 // Get container
-$container = $app->getContainer();
+$container = new \Slim\Container;
 
 // Register component on container
 $container['view'] = function ($container) {
     return new \Slim\Views\PhpRenderer('./views/');
 };
+
+$container['cache'] = function () {
+    return new \Slim\HttpCache\CacheProvider();
+};
+
+$app = new \Slim\App($container);
+$app->add(new \Slim\HttpCache\Cache('public', 86400));
 
 function dirFilesToArray($dir) {
 
