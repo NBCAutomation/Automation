@@ -4,7 +4,7 @@
 	"email": "deltrie.allen@nbcuni.com",
 	"version": "1.0.0",
 	"scripts": {
-		"runall": "npm run 10process-nav && npm run 10process",
+		"runall": "npm run 10concurrent-nav && npm run 10concurrent",
 		"runall-async": "npm run 1process-nav && npm run 1process",
 		"10concurrent-nav": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
 		"1process-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
