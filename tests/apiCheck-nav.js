@@ -51,8 +51,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var curFolder = month + '_' + day + '_' + year;
 
     var saveLocation = 'test_results/api_navigation_audits/' + curFolder;
+    fs.makeDirectory(saveLocation, 775);
     var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
-    fs.chmodSync(saveLocation, 0o775);
 
     var colorizer = require('colorizer').create('Colorizer');
 
