@@ -5,6 +5,7 @@
 	"version": "1.0.0",
 	"scripts": {
 		"runall": "npm run 1process-nav && npm run 1process",
+		"runall-10": "npm run 10process-nav && npm run 10process",
 		"10concurrent-nav": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
 		"1process-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
 		"10concurrent": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
