@@ -5,7 +5,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">Cronjobs</div>
 					<div class="panel-body">
-						<p>Currently the master job (spire-run), is set to run daily at 9:30 AM EST.</p>
+						<p>Currently the master job (spire-run), is set to run daily at 9:30 AM EST. This command runs the "spre-run" command below.</p>
 					</div>
 				</div>
 			</li>
@@ -13,7 +13,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">Spire-run (master script)</div>
 					<div class="panel-body">
-						<p>Spire-run is the master script that will run all scripts concurrently (synchronously) in chunks of 10. Output while running this way will be co-mingled when viewed. This test can be ran asynchronously by command line using the run command below;</p>
+						<p>Spire-run is the master script that will run all scripts concurrently (synchronously) in chunks of 10. Output while running this way will be co-mingled when viewed and not in order. This test can be ran asynchronously via command line using the command below;</p>
 						<div class="well">
 							<p>npm run runall-async</p>
 						</div>
