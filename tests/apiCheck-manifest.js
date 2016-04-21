@@ -107,7 +107,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             if(createDictionary){
                 var save = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary', logName);
             } else {
-                var save = fs.pathJoin(fs.workingDirectory, 'test_results/api_manifest_audits/' + curFolder, logName);
+                var saveLocation = 'test_results/api_manifest_audits/' + curFolder;
+                var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
+                fs.chmodSync(saveLocation, 0o775);
             }
         }
 
