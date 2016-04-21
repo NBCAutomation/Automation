@@ -13,10 +13,11 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">Spire-run (master script)</div>
 					<div class="panel-body">
-						<p>Spire-run is the master script that will run all scripts asynchronously (Script 1 > site 1, Script 1 > site 2, Script 2 > site 1, etc), starting with the Manifest navigation script. This test can be ran synchronously in chunks of 10 at a time via command line using the run command below;</p>
+						<p>Spire-run is the master script that will run all scripts concurrently (synchronously) in chunks of 10. Output while running this way will be co-mingled when viewed. This test can be ran asynchronously by command line using the run command below;</p>
 						<div class="well">
-							<p>npm run runall-10</p>
+							<p>npm run runall-async</p>
 						</div>
+						<p>Running Async, scripts will process in sequence (Script 1 > site 1, Script 1 > site 2, Script 2 > site 1, etc).</p>
 					</div>
 				</div>
 			</li>
