@@ -64,7 +64,7 @@
 						$bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m');
 						$bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>');
 
-						$output = shell_exec($execCmd);
+						$output = shell_exec('sudo -u spirebot'. $execCmd);
 						
 						$lines = split("[\r|\n]", trim($output));
 						array_shift($lines);
