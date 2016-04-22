@@ -19,7 +19,7 @@
 		<span class="menu-btn"><i class="fa fa-bars"></i></span>
 		<ul class="ts-profile-nav">
 			<li><a href="/help">Help</a></li>
-			<li class="ts-account">
+			<li class="ts-account" style="display: none;">
 				<a href="#">Account <i class="fa fa-angle-down hidden-side"></i></a>
 				<ul>
 					<li><a href="#">My Account</a></li>
@@ -44,7 +44,7 @@
 				<ul class="ts-profile-nav">
 					<li><a href="#">Help</a></li>
 					<li><a href="#">Settings</a></li>
-					<li class="ts-account">
+					<li class="ts-account" style="display: none;">
 						<a href="#">Account <i class="fa fa-angle-down hidden-side"></i></a>
 						<ul>
 							<li><a href="#">My Account</a></li>

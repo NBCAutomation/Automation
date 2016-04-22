@@ -19,7 +19,7 @@ $container['cache'] = function () {
 };
 
 $app = new \Slim\App($container);
-$app->add(new \Slim\HttpCache\Cache('public', 10800));
+// $app->add(new \Slim\HttpCache\Cache('public', 10800));
 
 function dirFilesToArray($dir) {
 
