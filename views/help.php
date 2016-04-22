@@ -13,11 +13,11 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">Spire-run (master script)</div>
 					<div class="panel-body">
-						<p>Spire-run is the master script that will run all scripts concurrently (synchronously) in chunks of 10. Output while running this way will be co-mingled when viewed and not in order. This test can be ran asynchronously via command line using the command below;</p>
+						<p>Spire-run is the master script that will run all scripts asynchronously.</p>
 						<div class="well">
 							<p>npm run runall-async</p>
 						</div>
-						<p>Running Async, scripts will process in sequence (Script 1 > site 1, Script 1 > site 2, Script 2 > site 1, etc).</p>
+						<p>Running Async, scripts will process in sequence (Script 1 > site 1, Script 1 > site 2, Script 2 > site 1, etc). This test can be ran synchronously to test multiple scripts/sites at one time, but this is currently not being used due to memory leaks via PhantomJS. Possible future enhancement. </p>
 					</div>
 				</div>
 			</li>
