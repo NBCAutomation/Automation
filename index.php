@@ -287,6 +287,9 @@ $app->group('/scripts', function () {
 
 		sleep(1);
 
+		$setThisEnv = getenv('PATH');
+		// echo shell_exec('putenv("PATH={$setThisEnv}:/usr/local/bin")');
+
 		if ($request->isPost()) {
 	        return $this->view->render($response, 'scripts.php', [
 	            'title' => 'Scripts & Tests',
@@ -295,6 +298,8 @@ $app->group('/scripts', function () {
 		        'viewPath' => $args['view'],
 		        'scriptRunView' => true,
 		        'scriptClass' => true,
+		        // 'setEnv' => putenv("PATH={$setThisEnv}:/usr/local/bin"),
+		        'setEnv' => putenv("PATH={$setThisEnv}:/usr/local/bin"),
 				'execCmd' => $__runCommand,
 				'delCmd' => $__delCMD
 	        ]);
