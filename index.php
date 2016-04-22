@@ -19,7 +19,7 @@ $container['cache'] = function () {
 };
 
 $app = new \Slim\App($container);
-$app->add(new \Slim\HttpCache\Cache('public', 86400));
+$app->add(new \Slim\HttpCache\Cache('public', 10800));
 
 function dirFilesToArray($dir) {
 
@@ -288,7 +288,6 @@ $app->group('/scripts', function () {
 		sleep(1);
 
 		$setThisEnv = getenv('PATH');
-		// echo shell_exec('putenv("PATH={$setThisEnv}:/usr/local/bin")');
 
 		if ($request->isPost()) {
 	        return $this->view->render($response, 'scripts.php', [
