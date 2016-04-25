@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-npm run runall
+npm run runall-async
