@@ -225,39 +225,89 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         
         if (__url) {
             casper.open(__url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                var status = this.status().currentHTTPStatus;
 
                 var validated = false;
                 var output = this.getPageContent();
 
-                // if (type === 'default' ) {
-                    __output = JSON.parse(output);
-                // } else {
-                //     __output = output;
-                // }
+                var count = 0;
+                var _count = 0;
+
+                __output = JSON.parse(output);
 
                 var mainItem = __output.items;
 
-                // if (articleTest) {
-                //     console.log('HERE************************');
-                //     console.log(__output.items);
-                // }
+                if (articleTest) {
+                    var mainItemArticles = __output.modules;
 
-                var count = 0;
-                var _count = 0;
-                
-                
-                for (var __item in mainItem) {
-                    
-                    if(mainItem.hasOwnProperty(__item)){
-                        count++;
+                    console.log('-----------------');
+                    console.log(__url);
+                    console.log('-----------------');
+
+                    for (var __itemThis in mainItemArticles) {
+
+                        // if(mainItemArticles.hasOwnProperty(__itemThis)){
+                        //     _count++;
+                        // }
+
+                        // console.log('== '+__itemThis.items);
+                        var __thisShit = mainItemArticles[__itemThis];
+
+                        for (var __iK in __thisShit) {
+                            console.log(__iK + ' : ' + __thisShit[__iK]);
+
+                            if (__iK === 'items' && typeof __thisShit[__iK] === 'object') {
+                                
+                                var __innerItems = __thisShit[__iK];
+
+                                // console.log('  > ' + __thisShit[__iK]);
+
+                                var __subCount = 0;
+
+                                for (var __items in __innerItems) {
+
+                                    if (typeof __innerItems[__items] === 'object') {
+                                        console.log('  -----------------');
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].contentID);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].contentID);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].title);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].byline);
+                                        // console.log('  >> '+__items + ' : ' + __innerItems[__items].summary);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].displayDate);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].updatedMessage);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].shareURL);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].typeName);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].fullsizeImageURL);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].thumbnailImageURL);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].fullsizeLeadImageURL);
+                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].leadImageURL);
+                                        // console.log('  >> '+__items + ' : ' + __innerItems[__items].contentBody);
+                                        console.log('  -----------------');
+                                    }
+                                }
+                                
+                            }
+                        }
                     }
+                }
 
-                    var __thisItem = __output.items[count];
+                if (manifestTest) {                
+                    for (var __item in mainItem) {
+                        
+                        if(mainItem.hasOwnProperty(__item)){
+                            count++;
+                        }
 
-                    for (var __i in __thisItem) {
-                        if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+                        var __thisItem = __output.items[count];
 
-                        if (manifestTest) {
+                        for (var __i in __thisItem) {
+                            if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+                            
+                            if (articleTest) {
+                                // console.log(__thisItem[__i]);
+                            }
+
+                            
                             if (reqKeys.indexOf(__i) > -1) {
 
                                 if (__thisItem.length <= 0) {
@@ -289,7 +339,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         // Set collections array
                                         if (manifestTest) {
                                             if (!(__keyName in __contentSections)){
-                                                console.log('- key '+__keyName);
+                                                // console.log('- key '+__keyName);
                                                 __contentSections[__keyName] = __keyUrl;
                                             }
                                         }
@@ -354,7 +404,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 // Set collections array
                                                 if (manifestTest) {
                                                     if (!(__lastKeyName in __contentSections)){
-                                                        console.log(' - '+__lastKeyName);
+                                                        // console.log(' - '+__lastKeyName);
                                                         __contentSections[__lastKeyName] = __lastKeyUrl;
                                                     }
                                                 }
@@ -366,14 +416,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 }
                             }
                         }
-                        // End Manifest test
-                        
-                        if(articleTest){
 
-                        }
+                        if (debugOutput) {console.log('-----------------')};
                     }
-
-                    if (debugOutput) {console.log('-----------------')};
                 }
 
                 if (manifestTest) {
@@ -387,15 +432,13 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     apiSuite.prototype.grabArticles = function(destinations) {
         var suite = this;
 
-        // this.destinations = __endpoints.slice();
-
         for(destination in destinations ){
             var val = destinations[destination];
-            
-            console.log('  > ' +destination + '   >>   ' + val);
-            console.log('-----------------');
 
             suite.spiderObjects(destination, val, 'json', 'article');
+            
+            // console.log(' ' +destination + ' >> ' + val)
+            // console.log('-----------------------');
             
         }
     }
