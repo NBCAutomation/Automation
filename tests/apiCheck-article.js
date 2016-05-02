@@ -77,7 +77,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         newUrl = parser.href;
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
-
         
         url = url + '/apps/news-app/manifest/?apiVersion=2';
 
@@ -209,6 +208,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
 
     apiSuite.prototype.spiderObjects = function(url, __url, type, apitest) {
+        console.log(' 123 ',url, __url, type, apitest);
+    
         
         var suite = this;
         var __baseUrl = casper.cli.get('url');
@@ -224,7 +225,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         __contentSections = {};
         
         if (__url) {
-            casper.open(__url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+            console.log('__url', __url);
+            casper.thenOpen(__url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }, function(resp) {
+                console.log('this', this);
                 var status = this.status().currentHTTPStatus;
 
                 var validated = false;
@@ -238,11 +241,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 var mainItem = __output.items;
 
                 if (articleTest) {
+                    // console.log('modules', JSON.stringify(__output));
+                    // console.log('modules', JSON.stringify(__output.modules));
+                    console.log('modules', __output.modules[0].title);
                     var mainItemArticles = __output.modules;
 
-                    console.log('-----------------');
-                    console.log(__url);
-                    console.log('-----------------');
+                    // console.log('-----------------');
+                    // console.log(__url);
+                    // console.log('-----------------');
 
                     for (var __itemThis in mainItemArticles) {
 
@@ -254,7 +260,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         var __thisShit = mainItemArticles[__itemThis];
 
                         for (var __iK in __thisShit) {
-                            console.log(__iK + ' : ' + __thisShit[__iK]);
+                            // console.log(__iK + ' : ' + __thisShit[__iK]);
 
                             if (__iK === 'items' && typeof __thisShit[__iK] === 'object') {
                                 
@@ -421,21 +427,25 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     }
                 }
 
+                console.log('this2', this);
                 if (manifestTest) {
+                    console.log('__contentSections',JSON.stringify(__contentSections));
                     suite.grabArticles(__contentSections);
                 }
-
-            })
+            });
         }
     };
 
     apiSuite.prototype.grabArticles = function(destinations) {
         var suite = this;
 
+        console.log(JSON.stringify(destinations));
+
         for(destination in destinations ){
             var val = destinations[destination];
 
-            suite.spiderObjects(destination, val, 'json', 'article');
+            console.log('about to spider:', destination, val, 'json', 'article');
+            this.spiderObjects(destination, val, 'json', 'article');
             
             // console.log(' ' +destination + ' >> ' + val)
             // console.log('-----------------------');
