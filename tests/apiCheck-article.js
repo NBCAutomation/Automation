@@ -90,7 +90,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             //Start testing
             
             console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-
+console.log(debugOutput);
+                this.exit();
             suite.getContent(url, type);
 
         }).run(function() {
@@ -207,10 +208,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
 
-    apiSuite.prototype.spiderObjects = function(url, __url, type, apitest) {
-        console.log(' 123 ',url, __url, type, apitest);
-    
-        
+    apiSuite.prototype.spiderObjects = function(url, __url, type, apitest) {    
         var suite = this;
         var __baseUrl = casper.cli.get('url');
         var reqKeys = new Array("appTitle","sectionMapping","location");
@@ -225,9 +223,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         __contentSections = {};
         
         if (__url) {
-            console.log('__url', __url);
             casper.thenOpen(__url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }, function(resp) {
-                console.log('this', this);
+                
                 var status = this.status().currentHTTPStatus;
 
                 var validated = false;
@@ -235,66 +232,121 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                 var count = 0;
                 var _count = 0;
+                var setFail = 0;
 
                 __output = JSON.parse(output);
 
                 var mainItem = __output.items;
 
                 if (articleTest) {
-                    // console.log('modules', JSON.stringify(__output));
-                    // console.log('modules', JSON.stringify(__output.modules));
-                    console.log('modules', __output.modules[0].title);
+                    
                     var mainItemArticles = __output.modules;
 
-                    // console.log('-----------------');
-                    // console.log(__url);
-                    // console.log('-----------------');
-
                     for (var __itemThis in mainItemArticles) {
+                        console.log('Testing endpoint: ' + __url);
 
-                        // if(mainItemArticles.hasOwnProperty(__itemThis)){
-                        //     _count++;
-                        // }
+                        if (debugOutput) {
+                            console.log('-----------------');
+                            console.log('> Endpoint', __url);
+                            console.log('-----------------');
+                        }
 
                         // console.log('== '+__itemThis.items);
                         var __thisShit = mainItemArticles[__itemThis];
 
                         for (var __iK in __thisShit) {
-                            // console.log(__iK + ' : ' + __thisShit[__iK]);
 
                             if (__iK === 'items' && typeof __thisShit[__iK] === 'object') {
                                 
                                 var __innerItems = __thisShit[__iK];
-
-                                // console.log('  > ' + __thisShit[__iK]);
 
                                 var __subCount = 0;
 
                                 for (var __items in __innerItems) {
 
                                     if (typeof __innerItems[__items] === 'object') {
-                                        console.log('  -----------------');
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].contentID);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].contentID);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].title);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].byline);
-                                        // console.log('  >> '+__items + ' : ' + __innerItems[__items].summary);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].displayDate);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].updatedMessage);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].shareURL);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].typeName);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].fullsizeImageURL);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].thumbnailImageURL);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].fullsizeLeadImageURL);
-                                        console.log('  >> '+__items + ' : ' + __innerItems[__items].leadImageURL);
-                                        // console.log('  >> '+__items + ' : ' + __innerItems[__items].contentBody);
-                                        console.log('  -----------------');
+                                        if (debugOutput) {
+                                            console.log('  -----------------');
+                                            console.log('  >> contentID ' + ' : ' + __innerItems[__items].contentID);
+                                            console.log('  >> title ' + ' : ' + __innerItems[__items].title);
+                                            console.log('  >> byline ' + ' : ' + __innerItems[__items].byline);
+                                            console.log('  >> summary ' + ' : ' + __innerItems[__items].summary);
+                                            console.log('  >> displayDate ' + ' : ' + __innerItems[__items].displayDate);
+                                            console.log('  >> updatedMessage ' + ' : ' + __innerItems[__items].updatedMessage);
+                                            console.log('  >> shareURL ' + ' : ' + __innerItems[__items].shareURL);
+                                            console.log('  >> typeName ' + ' : ' + __innerItems[__items].typeName);
+                                            console.log('  >> fullsizeImageURL ' + ' : ' + __innerItems[__items].fullsizeImageURL);
+                                            console.log('  >> thumbnailImageURL ' + ' : ' + __innerItems[__items].thumbnailImageURL);
+                                            console.log('  >> fullsizeLeadImageURL ' + ' : ' + __innerItems[__items].fullsizeLeadImageURL);
+                                            console.log('  >> leadImageURL ' + ' : ' + __innerItems[__items].leadImageURL);
+                                            console.log('  >> feature ' + ' : ' + __innerItems[__items].feature);
+                                            console.log('  >> sponsored ' + ' : ' + __innerItems[__items].sponsored);
+                                            console.log('  >> liveVideoEmbed ' + ' : ' + __innerItems[__items].liveVideoEmbed);
+                                            console.log('  >> liveAppVideoEmbed ' + ' : ' + __innerItems[__items].liveAppVideoEmbed);
+                                            console.log('  >> contentBody ' + ' : ' + __innerItems[__items].contentBody);
+                                            console.log('  >> leadMedia ' + ' : ' + __innerItems[__items].leadMedia);
+                                        }
+                                        
+                                        // Check for the Feature flag
+                                        if (__innerItems[__items].feature === true) {
+                                            
+                                            if (__innerItems[__items].featureName.length <= 0) {
+                                                setFail++;
+                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE, but featureName empty.', 'ERROR'));
+                                            } else if (__innerItems[__items].featureId.length <= 0) {
+                                                setFail++;
+                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE, but featureId empty.', 'ERROR'));
+                                            }
+                                        }
+
+                                        // Check for the Sponsor flag
+                                        if (__innerItems[__items].sponsored === true) {
+                                            
+                                            if (__innerItems[__items].sponsorName.length <= 0) {
+                                                setFail++;
+                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE, but sponsorName empty.', 'ERROR'));
+                                            } else if (__innerItems[__items].sponsorID.length <= 0) {
+                                                setFail++;
+                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE, but sponsorID empty.', 'ERROR'));
+                                            }
+                                        }
+
+                                        // Check for the LiveStream flag
+                                        if (__innerItems[__items].isLiveStream === true) {
+                                            
+                                            if (__innerItems[__items].liveVideoEmbed.length <= 0) {
+                                                setFail++;
+                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE, but liveVideoEmbed empty.', 'ERROR'));
+                                            } else if (__innerItems[__items].liveAppVideoEmbed.length <= 0) {
+                                                setFail++;
+                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE, but liveAppVideoEmbed empty.', 'ERROR'));
+                                            }
+                                        }
+                                        
+                                        if (typeof __innerItems[__items].leadMedia === 'object') {
+                                            
+                                            console.log('  >---------------');
+
+                                            __subItems = __innerItems[__items].leadMedia;
+
+                                            for (var __indItems in __subItems) {
+                                                // if (typeof __subItems[__indItems] === 'object') {
+                                                    console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
+                                                // }
+                                            }
+
+                                            if (debugOutput) {console.log('  >---------------')};
+
+                                        }
+
+                                        if (debugOutput) {console.log('  -----------------')};
                                     }
                                 }
                                 
                             }
                         }
                     }
+                    console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
                 }
 
                 if (manifestTest) {                
@@ -339,13 +391,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             if (debugOutput) {console.log(__keyUrl)};
                                         }
 
-                                        // suite.checkHealth(__keyName, __keyUrl);
-                                        // console.log(__keyName, __keyUrl);
-
                                         // Set collections array
                                         if (manifestTest) {
                                             if (!(__keyName in __contentSections)){
-                                                // console.log('- key '+__keyName);
                                                 __contentSections[__keyName] = __keyUrl;
                                             }
                                         }
@@ -404,9 +452,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                     if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
                                                 }
 
-                                                // suite.checkHealth(__lastKeyName, __lastKeyUrl);
-                                                // console.log('-- '+__lastKeyName, __lastKeyUrl);
-
                                                 // Set collections array
                                                 if (manifestTest) {
                                                     if (!(__lastKeyName in __contentSections)){
@@ -427,9 +472,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     }
                 }
 
-                console.log('this2', this);
                 if (manifestTest) {
-                    console.log('__contentSections',JSON.stringify(__contentSections));
+                    // console.log('__contentSections',JSON.stringify(__contentSections));
                     suite.grabArticles(__contentSections);
                 }
             });
@@ -439,16 +483,18 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     apiSuite.prototype.grabArticles = function(destinations) {
         var suite = this;
 
-        console.log(JSON.stringify(destinations));
+        var omitSections = new Array("News","Entertainment","Noticias destacadas","Entretenimiento");
 
         for(destination in destinations ){
             var val = destinations[destination];
 
-            console.log('about to spider:', destination, val, 'json', 'article');
-            this.spiderObjects(destination, val, 'json', 'article');
-            
-            // console.log(' ' +destination + ' >> ' + val)
-            // console.log('-----------------------');
+            if (!(destination in omitSections)) {
+                if (debugOutput) {
+                    console.log(' ' + destination + ' >> ' + val)
+                    console.log('-----------------------');
+                }
+                this.spiderObjects(destination, val, 'json', 'article');
+            }
             
         }
     }
