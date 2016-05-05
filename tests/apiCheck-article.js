@@ -12,6 +12,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var xmlLib = require('./xml2json');
     var x2js = new xmlLib();
 
+    var debugOutput = false;
+
     var type = casper.cli.get('output');
         if (type === 'debug') {
             var debugOutput = true;
@@ -90,8 +92,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             //Start testing
             
             console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-console.log(debugOutput);
-                this.exit();
+
             suite.getContent(url, type);
 
         }).run(function() {
@@ -265,6 +266,7 @@ console.log(debugOutput);
                                 for (var __items in __innerItems) {
 
                                     if (typeof __innerItems[__items] === 'object') {
+
                                         if (debugOutput) {
                                             console.log('  -----------------');
                                             console.log('  >> contentID ' + ' : ' + __innerItems[__items].contentID);
@@ -324,15 +326,14 @@ console.log(debugOutput);
                                         }
                                         
                                         if (typeof __innerItems[__items].leadMedia === 'object') {
-                                            
-                                            console.log('  >---------------');
 
                                             __subItems = __innerItems[__items].leadMedia;
 
                                             for (var __indItems in __subItems) {
                                                 // if (typeof __subItems[__indItems] === 'object') {
+                                                if (debugOutput) {
                                                     console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
-                                                // }
+                                                }
                                             }
 
                                             if (debugOutput) {console.log('  >---------------')};
@@ -489,10 +490,10 @@ console.log(debugOutput);
             var val = destinations[destination];
 
             if (!(destination in omitSections)) {
-                if (debugOutput) {
-                    console.log(' ' + destination + ' >> ' + val)
-                    console.log('-----------------------');
-                }
+                // if (debugOutput) {
+                //     console.log(' ' + destination + ' >> ' + val)
+                //     console.log('-----------------------');
+                // }
                 this.spiderObjects(destination, val, 'json', 'article');
             }
             
