@@ -11,7 +11,7 @@
 						<!-- <span class="script_version">V1.0</span> -->
 					</div>
 					<div class="panel-body">
-						<span class="note">Bash script to run all automated test scripts.</span>
+						<span class="note">Bash script to run all automated test scripts. This script currently runs on a cron daily at 9:30 AM EST. If all sites are selected, this test can take up to 30 min to complete.</span>
 					</div>
 				</div>
 			</li>
