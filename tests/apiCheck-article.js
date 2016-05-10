@@ -287,7 +287,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         }
                                         
                                         // Check for the Feature flag
-                                        if (__innerItems[__items].feature === false) {
+                                        if (__innerItems[__items].feature === true) {
                                             
                                             if (__innerItems[__items].featureName.length <= 0) {
                                                 setFail++;
@@ -387,6 +387,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         }
                     }
                     console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
+
+                    if (setFail > 0) {
+                        console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
+                    } else {
+                        console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
+                    }
                 }
 
                 if (manifestTest) {                
