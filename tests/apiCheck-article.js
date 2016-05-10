@@ -48,13 +48,19 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var urlUri = sourceString.replace('.','_');
 
     var fs = require('fs');
-    var logName = urlUri + '_navigation-audit_' + timeStamp + '.csv';
+    var logName = urlUri + '_endpoint_article-audit_' + timeStamp + '.csv';
 
     var curFolder = month + '_' + day + '_' + year;
 
-    var saveLocation = 'test_results/api_navigation_audits/' + curFolder;
+    var saveLocation = 'test_results/api_article_audits/' + curFolder;
     fs.makeDirectory(saveLocation, 775);
     var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
+
+    // Write file headers
+    var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
+    
+    fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
+    fs.write(save, 'Content ID,Title,Error,Endpoint', 'a+');
 
     var colorizer = require('colorizer').create('Colorizer');
 
@@ -137,15 +143,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 for (var __prog in __urlSuite) {
                     if (__prog === 'navigation') {
                         if (debugOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
-
-                        // Write file headers
-                        var testInfo = 'Navigation url tested: ' + __urlSuite[__prog];
-                        var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
-                        
-                        
-                        fs.write(save, ' ' + testInfo + ',\n' + ',\n');
-                        fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
-                        fs.write(save, 'Link,URL,HTTP Status Code, JSON Status', 'a+');
 
                         suite.checkNavigation(url, __urlSuite[__prog]);
                     }
@@ -269,35 +266,49 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                         if (debugOutput) {
                                             console.log('  -----------------');
-                                            console.log('  >> contentID ' + ' : ' + __innerItems[__items].contentID);
-                                            console.log('  >> title ' + ' : ' + __innerItems[__items].title);
-                                            console.log('  >> byline ' + ' : ' + __innerItems[__items].byline);
-                                            console.log('  >> summary ' + ' : ' + __innerItems[__items].summary);
-                                            console.log('  >> displayDate ' + ' : ' + __innerItems[__items].displayDate);
-                                            console.log('  >> updatedMessage ' + ' : ' + __innerItems[__items].updatedMessage);
-                                            console.log('  >> shareURL ' + ' : ' + __innerItems[__items].shareURL);
-                                            console.log('  >> typeName ' + ' : ' + __innerItems[__items].typeName);
-                                            console.log('  >> fullsizeImageURL ' + ' : ' + __innerItems[__items].fullsizeImageURL);
-                                            console.log('  >> thumbnailImageURL ' + ' : ' + __innerItems[__items].thumbnailImageURL);
-                                            console.log('  >> fullsizeLeadImageURL ' + ' : ' + __innerItems[__items].fullsizeLeadImageURL);
-                                            console.log('  >> leadImageURL ' + ' : ' + __innerItems[__items].leadImageURL);
-                                            console.log('  >> feature ' + ' : ' + __innerItems[__items].feature);
-                                            console.log('  >> sponsored ' + ' : ' + __innerItems[__items].sponsored);
-                                            console.log('  >> liveVideoEmbed ' + ' : ' + __innerItems[__items].liveVideoEmbed);
-                                            console.log('  >> liveAppVideoEmbed ' + ' : ' + __innerItems[__items].liveAppVideoEmbed);
-                                            console.log('  >> contentBody ' + ' : ' + __innerItems[__items].contentBody);
-                                            console.log('  >> leadMedia ' + ' : ' + __innerItems[__items].leadMedia);
+                                            console.log('  >> article_contentID  : ' + __innerItems[__items].contentID);
+                                            console.log('  >> article_title  : ' + __innerItems[__items].title);
+                                            console.log('  >> article_byline  : ' + __innerItems[__items].byline);
+                                            console.log('  >> article_summary  : ' + __innerItems[__items].summary);
+                                            console.log('  >> article_displayDate  : ' + __innerItems[__items].displayDate);
+                                            console.log('  >> article_updatedMessage  : ' + __innerItems[__items].updatedMessage);
+                                            console.log('  >> article_shareURL  : ' + __innerItems[__items].shareURL);
+                                            console.log('  >> article_typeName  : ' + __innerItems[__items].typeName);
+                                            console.log('  >> article_fullsizeImageURL  : ' + __innerItems[__items].fullsizeImageURL);
+                                            console.log('  >> article_thumbnailImageURL  : ' + __innerItems[__items].thumbnailImageURL);
+                                            console.log('  >> article_fullsizeLeadImageURL  : ' + __innerItems[__items].fullsizeLeadImageURL);
+                                            console.log('  >> article_leadImageURL  : ' + __innerItems[__items].leadImageURL);
+                                            console.log('  >> article_feature  : ' + __innerItems[__items].feature);
+                                            console.log('  >> article_sponsored  : ' + __innerItems[__items].sponsored);
+                                            console.log('  >> article_liveVideoEmbed  : ' + __innerItems[__items].liveVideoEmbed);
+                                            console.log('  >> article_liveAppVideoEmbed  : ' + __innerItems[__items].liveAppVideoEmbed);
+                                            console.log('  >> article_contentBody  : ' + __innerItems[__items].contentBody);
+                                            console.log('  >> article_leadMedia  : ' + __innerItems[__items].leadMedia);
                                         }
                                         
                                         // Check for the Feature flag
-                                        if (__innerItems[__items].feature === true) {
+                                        if (__innerItems[__items].feature === false) {
                                             
                                             if (__innerItems[__items].featureName.length <= 0) {
                                                 setFail++;
-                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE, but featureName empty.', 'ERROR'));
+
+                                                var __curError = 'Feature flag set to TRUE but featureName empty.';
+
+                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + __innerItems[__items].contentID + ', but featureName empty.', 'ERROR'));
+
+                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+
+                                                var __curError = '';
+
                                             } else if (__innerItems[__items].featureId.length <= 0) {
                                                 setFail++;
-                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE, but featureId empty.', 'ERROR'));
+
+                                                var __curError = 'Feature flag set to TRUE but featureId empty.';
+                                                
+                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + __innerItems[__items].contentID + ', but featureId empty.', 'ERROR'));
+                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+
+                                                var __curError = '';
                                             }
                                         }
 
@@ -306,10 +317,26 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             
                                             if (__innerItems[__items].sponsorName.length <= 0) {
                                                 setFail++;
-                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE, but sponsorName empty.', 'ERROR'));
+                                                
+                                                var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
+
+                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + __innerItems[__items].contentID + ', but sponsorName empty.', 'ERROR'));
+                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+
+                                                var __curError = '';
+
+
                                             } else if (__innerItems[__items].sponsorID.length <= 0) {
                                                 setFail++;
-                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE, but sponsorID empty.', 'ERROR'));
+                                                
+                                                var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
+
+                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + __innerItems[__items].contentID + ', but sponsorID empty.', 'ERROR'));
+                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+
+                                                var __curError = '';
+
+
                                             }
                                         }
 
@@ -318,10 +345,22 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             
                                             if (__innerItems[__items].liveVideoEmbed.length <= 0) {
                                                 setFail++;
-                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE, but liveVideoEmbed empty.', 'ERROR'));
+
+                                                var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
+
+                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + __innerItems[__items].contentID + ', but liveVideoEmbed empty.', 'ERROR'));
+                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+
+                                                var __curError = '';
                                             } else if (__innerItems[__items].liveAppVideoEmbed.length <= 0) {
                                                 setFail++;
-                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE, but liveAppVideoEmbed empty.', 'ERROR'));
+                                                
+                                                var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
+
+                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + __innerItems[__items].contentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
+                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+
+                                                var __curError = '';
                                             }
                                         }
                                         
