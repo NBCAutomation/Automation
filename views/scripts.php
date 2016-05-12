@@ -11,7 +11,8 @@
 						<!-- <span class="script_version">V1.0</span> -->
 					</div>
 					<div class="panel-body">
-						<span class="note">Bash script to run all automated test scripts. This script currently runs on a cron daily at 9:30 AM EST. If all sites are selected, this test can take up to 30 min to complete.</span>
+						<p><b>Running from web-app is currently disabled due to memory leaks and sever stability.</b></p>
+						<span class="note">Bash script to run all automated test scripts. This script currently runs on a cron daily at 9:30 AM EST.</span>
 					</div>
 				</div>
 			</li>
@@ -45,7 +46,7 @@
 		<h3><?php echo $view ?></h3>
 
 		<div class="panel panel-default">
-			<?php include_once './views/base/script_config.php' ?>
+		<?php if($view != 'spire-run'){include_once './views/base/script_config.php';} ?>
 		</div>
 	<?php } ?>
 	<?php if ($scriptRunView) { ?>
