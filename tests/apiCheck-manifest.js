@@ -37,7 +37,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var colorizer = require('colorizer').create('Colorizer');
 
         // Add manifest url    
-        url = url + '/apps/news-app/manifest/?apiVersion=2';
+        url = url + '/apps/news-app/manifest/?apiVersion=3';
 
         // Start Test
         casper.start( url ).then(function(response) {
