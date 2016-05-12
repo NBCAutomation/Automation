@@ -5,6 +5,13 @@
 		
 		<?php
 			if ($results) {
+				$d = date('n_d_Y');
+				echo '<h4>Today\'s Reports </h4>';
+				echo "<div class=\"api_results\">";
+				echo "<ul>";
+				echo "<li class=\"result file\"><a href=\"". $view ."/". $d ."/main\"><i class=\"fa fa-folder-o\"></i> " . str_replace('_','/',$d) . "</a></li>";
+				echo "</div></ul><hr />";
+
 				echo "<div class=\"api_results\">";
 				echo "<ul>";
 				foreach ($results as $key => $val) {
