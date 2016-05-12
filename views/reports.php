@@ -6,15 +6,26 @@
 		<?php
 			if ($results) {
 				$d = date('n_d_Y');
-				echo '<h4>Today\'s Reports </h4>';
-				echo "<div class=\"api_results\">";
-				echo "<ul>";
-				echo "<li class=\"result file\"><a href=\"". $view ."/". $d ."/main\"><i class=\"fa fa-folder-o\"></i> " . str_replace('_','/',$d) . "</a></li>";
-				echo "</div></ul><hr />";
+
+				echo '<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class="panel-title">Today\'s Report</h3>
+					</div>
+					<div class="panel-body">
+						<div class="api_results">
+							<ul>
+								<li class="result file"><a href="'. $view .'/'. $d .'/main"><i class="fa fa-folder-o"></i> ' . str_replace('_','/',$d) . '</a></li>
+							</ul>
+						</div>
+					</div>
+				</div><hr />';
 
 				echo "<div class=\"api_results\">";
 				echo "<ul>";
-				foreach ($results as $key => $val) {
+
+				$sorted = array_reverse($results);
+				
+				foreach ($sorted as $key => $val) {
 				    echo "<li class=\"result file\"><a href=\"". $view ."/". $key ."/main\"><i class=\"fa fa-folder-o\"></i> " . str_replace('_','/',$key) . "</a></li>";
 				}
 				echo "</div>";
