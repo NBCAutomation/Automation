@@ -21,85 +21,13 @@ $container['cache'] = function () {
 $app = new \Slim\App($container);
 // $app->add(new \Slim\HttpCache\Cache('public', 10800));
 
-function dirFilesToArray($dir) {
+spl_autoload_register(function ($spire) {
+    require ("libraries/Base/" . $spire_base . ".php");
+});
 
-	$result = array(); 
+// var_dump($spire);
+$spire = new Spire();
 
-	$cdir = scandir($dir);
-
-	foreach ($cdir as $key => $value) {
-		if ( !in_array($value,array(".","..")) ) {
-
-			if ( is_dir($dir . DIRECTORY_SEPARATOR . $value) ) {
-				$result[$value] = dirToArray($dir . DIRECTORY_SEPARATOR . $value);
-			} else {
-				$result[] = $value;
-			}
-		}
-	}
-	return $result;
-}
-
-function readCSV($__file) {
-	$row = 1;
-	$fails = 0;
-
-	$__fileData;
-
-	$__fileData .= "<table class=\"table table-bordered table-striped\">";
-
-	if (($handle = fopen($__file, "r")) !== FALSE) {
-	    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-	        $num = count($data);
-	        $row++;
-
-	        $__fileData .= "<tr>";
-
-	        for ($c = 0; $c < $num; $c++) {
-	        	
-	        	if (strpos($data[$c], 'Fail') !== false || strpos($data[$c], 'FAIL') !== false) {
-	        		$fails++;
-	        		$__class = 'class="test_fail" ';
-	        	} else {
-	        		$__class = '';
-	        	}
-
-	        	if (!empty($data[$c])) {
-	        		if ($row < 5) {
-	        			$__fileData .= "<td colspan=\"5\">" . $data[$c] . "</td>";
-	        		} else {
-	        			if ($row < 7) {
-	        				$__fileData .= "<td>" . $data[$c] . "</td>";
-		        		} else {
-		        			$__fileData .= "<td ". $__class .">" . $data[$c] . "</td>";
-		        		}
-	        		}
-	        	}
-	        }
-	        $__fileData .= "</tr>";
-	    }
-	    fclose($handle);
-	}
-	$__fileData .= "</table>";
-	return $__fileData;
-}
-
-function dirToArray($dir) {
-
-	$result = array(); 
-
-	$cdir = scandir($dir);
-
-	foreach ($cdir as $key => $value) {
-		if ( !in_array($value,array(".","..")) ) {
-
-			if ( is_dir($dir . DIRECTORY_SEPARATOR . $value) ) {
-				$result[$value] = dirToArray($dir . DIRECTORY_SEPARATOR . $value);
-			}
-		}
-	}
-	return $result;
-}
 
 // ************
 // Views
@@ -128,7 +56,7 @@ $app->group('/reports', function () {
 	$this->get('/{view}', function ($request, $response, $args) {
 		$testDir = 'test_results/'.$args['view'];
 
-		$files_array = dirToArray($testDir);
+		$files_array = $spire->dirToArray($testDir);
 
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
@@ -149,11 +77,11 @@ $app->group('/reports', function () {
     	
     	// Individual report url
     	$__report = __DIR__ . "/test_results/" . $args['view']."/".$args['subView']."/".$args['page'];
-		$__reportData = readCSV($__report);
+		$__reportData = $spire->readCSV($__report);
 
 		// Report Directory location
 		$__reportDir = __DIR__ . "/test_results/" . $args['view']."/".$args['subView'];
-		$__repoDir = dirFilesToArray($__reportDir);
+		$__repoDir = $spire->dirFilesToArray($__reportDir);
 
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
@@ -199,7 +127,7 @@ $app->group('/scripts', function () {
 			$showOutput = false;
 		}
 
-		$files_array = dirToArray($testDir);
+		$files_array = $spire->dirToArray($testDir);
 
 		if ($args['view'] != 'main') {
 			// View path
