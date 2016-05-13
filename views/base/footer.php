@@ -5,7 +5,7 @@
 				
 				<div class="clearfix pt pb">
 					<div class="col-md-12">
-						<p><em>&copy; OTS Spire 2016</em></p>
+						<p><em>&copy; OTS Spire 2016 V1.0</em></p>
 					</div>
 				</div>
 			</div>
