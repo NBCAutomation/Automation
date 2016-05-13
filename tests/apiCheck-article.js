@@ -60,7 +60,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
     
     fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
-    fs.write(save, 'Content ID,Title,Error,Endpoint', 'a+');
 
     var colorizer = require('colorizer').create('Colorizer');
 
@@ -86,7 +85,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/manifest/?apiVersion=2';
+        url = url + '/apps/news-app/manifest/?apiVersion=3';
 
         casper.start( url ).then(function(response) {
             if ( response.status == 200 ) {
@@ -132,7 +131,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     var url = __moduleVals[i].toString();
 
                     if ( ! url.indexOf('/apps') ) {
-                        url = casper.cli.get('url') + url + '?apiVersion=2';
+                        url = casper.cli.get('url') + url + '?apiVersion=3';
                   
                         suite.__collected[key] = url;
                     }
@@ -170,39 +169,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 }
 
             });
-        } 
-            // delete this.__collected; 
-            // var current = __contentSections.shift();
-
-            // for(__sectionURL in __contentSections ){
-            //     var val = __contentSections[__sectionURL];
-            //     console.log('>> testing ' + val);
-            //     suite.checkNavigation(__sectionURL, val)
-            //     _count++;
-            // }
-            // suite.checkHealth(__lastKeyName, __lastKeyUrl);
-            
-            // Object.keys(__contentSections).length;
-            // if (__contentSections) {
-            //     var _count = 0;
-                // var i;
-
-                // for (i in __contentSections) {
-                //     // if (__contentSections.hasOwnProperty(i)) {
-                //         _count++;
-                //         console.log('++ ');
-                //         if (_count > 0) {
-                //             for(__sectionURL in __contentSections ){
-                //                 var val = __contentSections[__sectionURL];
-                //                 console.log('>>'+val);
-                //                 suite.checkNavigation(__sectionURL, val)
-                //             }
-                //         }
-                        
-                    // }
-                // }
-            // }
-        // }
+        }
     };
 
 
@@ -242,6 +209,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                     for (var __itemThis in mainItemArticles) {
                         console.log('Testing endpoint: ' + __url);
+                        fs.write(save, ',\n"Endpoint: '+ __url +'"', 'a+');
+                        fs.write(save, ',\nContent ID,Title,Error,Endpoint', 'a+');
 
                         if (debugOutput) {
                             console.log('-----------------');
@@ -264,12 +233,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                     if (typeof __innerItems[__items] === 'object') {
 
-                                        if (debugOutput) {
+                                        // if (debugOutput) {
                                             console.log('  -----------------');
                                             console.log('  >> article_contentID  : ' + __innerItems[__items].contentID);
                                             console.log('  >> article_title  : ' + __innerItems[__items].title);
                                             console.log('  >> article_byline  : ' + __innerItems[__items].byline);
-                                            console.log('  >> article_summary  : ' + __innerItems[__items].summary);
+                                            // console.log('  >> article_summary  : ' + __innerItems[__items].summary);
                                             console.log('  >> article_displayDate  : ' + __innerItems[__items].displayDate);
                                             console.log('  >> article_updatedMessage  : ' + __innerItems[__items].updatedMessage);
                                             console.log('  >> article_shareURL  : ' + __innerItems[__items].shareURL);
@@ -282,8 +251,16 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             console.log('  >> article_sponsored  : ' + __innerItems[__items].sponsored);
                                             console.log('  >> article_liveVideoEmbed  : ' + __innerItems[__items].liveVideoEmbed);
                                             console.log('  >> article_liveAppVideoEmbed  : ' + __innerItems[__items].liveAppVideoEmbed);
-                                            console.log('  >> article_contentBody  : ' + __innerItems[__items].contentBody);
+                                            // console.log('  >> article_contentBody  : ' + __innerItems[__items].contentBody);
                                             console.log('  >> article_leadMedia  : ' + __innerItems[__items].leadMedia);
+                                        // }
+
+                                        if (__innerItems[__items].fullsizeImageURL.indexOf('0*false') > -1) {
+                                            console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + __innerItems[__items].fullsizeImageURL + '.', 'ERROR'));
+                                        }
+
+                                        if (__innerItems[__items].thumbnailImageURL.indexOf('0*false') > -1) {
+                                            console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + __innerItems[__items].thumbnailImageURL + '.', 'ERROR'));
                                         }
                                         
                                         // Check for the Feature flag
@@ -367,11 +344,16 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         if (typeof __innerItems[__items].leadMedia === 'object') {
 
                                             __subItems = __innerItems[__items].leadMedia;
-
+                                            console.log('    ------------------ ');
                                             for (var __indItems in __subItems) {
                                                 // if (typeof __subItems[__indItems] === 'object') {
-                                                if (debugOutput) {
+
+                                                // if (debugOutput) {
                                                     console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
+                                                // }
+                                                
+                                                if (__subItems[__indItems] === 'Gallery') {
+                                                    
                                                 }
                                             }
 
@@ -387,12 +369,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         }
                     }
                     console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
-
-                    if (setFail > 0) {
-                        console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
-                    } else {
-                        console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
-                    }
                 }
 
                 if (manifestTest) {                
@@ -429,9 +405,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         if (__thisItem[__i].indexOf('/apps') > -1) {
 
                                             if (__thisItem[__i].indexOf('?') > -1) {
-                                                var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=2'
+                                                var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=3'
                                             } else {
-                                                var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=2'
+                                                var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=3'
                                             }
                                             
                                             if (debugOutput) {console.log(__keyUrl)};
@@ -490,9 +466,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 if (__lastItem[__b].indexOf('/apps') > -1) {
 
                                                     if (__lastItem[__b].indexOf('?') > -1) {
-                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=2'
+                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=3'
                                                     } else {
-                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=2'
+                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=3'
                                                     }
                                                     
                                                     if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
@@ -535,10 +511,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             var val = destinations[destination];
 
             if (!(destination in omitSections)) {
-                // if (debugOutput) {
-                //     console.log(' ' + destination + ' >> ' + val)
-                //     console.log('-----------------------');
-                // }
+                if (debugOutput) {
+                    console.log(' ' + destination + ' >> ' + val)
+                    console.log('-----------------------');
+                }
                 this.spiderObjects(destination, val, 'json', 'article');
             }
             
