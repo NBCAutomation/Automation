@@ -16,16 +16,6 @@ class Spire {
 	    }
 	    return $url;
 	}
-
-	public function getConnection() {
-	    $dbhost = "localhost";
-	    $dbuser = "__spireUser";
-	    $dbpass = "password";
-	    $dbname = "ots_spire";
-	    $dbh = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
-	    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	    return $dbh;
-	}
 	
 	public function dirFilesToArray($dir) {
 
