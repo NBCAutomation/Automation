@@ -18,26 +18,31 @@ function verifyRequiredParams($required_fields) {
   $error_fields = "";
   $request_params = array();
   $request_params = $_REQUEST;
+
+
   // handling PUT request params
   if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-    $app = \Slim\Slim::getInstance();
+    // $app = \Slim\Slim::getInstance();
     parse_str($app->request()->getBody(), $request_params);
   }
+
   foreach ($required_fields as $field) {
     if (!isset($request_params[$field]) || !is_array($request_params)) {
       $error = true;
       $error_fields .= $field . ', ';
     }
   }
+
   if ($error) {
     // required fields are missing or empty
     // echo error json and stop the app
     $response = array();
-    $app = \Slim\Slim::getInstance();
+    // $app = \Slim\Slim::getInstance();
     $response['error'] = true;
     $response["message"] = 'Required field(s) ' . substr($error_fields, 0, -2) . ' is missing or empty';
+    // var_dump($response);
     echoResponse(400, $response);
-    $app->stop();
+    // $app->stop();
   }
 }
 
@@ -45,12 +50,13 @@ function verifyRequiredParams($required_fields) {
 * Valiedating email address
 */
 function validateEmail($email){
-  $app = \Slim\Slim::getInstance();
+  // $app = \Slim\Slim::getInstance();
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $response['error'] = true;
     $response['message'] = 'Email is not valid';
+
     echoResponse(400, $response);
-    $app->stop();
+    // $app->stop();
   }
 }
 
@@ -60,7 +66,7 @@ function validateEmail($email){
 * @param Int $response Json response
 */
 function echoResponse($status_code, $response) {
-  $app = \Slim\Slim::getInstance();
+  // $app = \Slim\Slim::getInstance();
   // Http response code
   $app->status($status_code);
   // setting response content type to json
@@ -76,7 +82,7 @@ function authenticate(\Slim\Route $route) {
   // getting request header
   $headers = apache_request_headers();
   $response = array();
-  $app = \Slim\Slim::getInstance();
+  // $app = \Slim\Slim::getInstance();
 
   // verifying authorization header
   if (isset($headers['Authorization'])) {
@@ -90,7 +96,7 @@ function authenticate(\Slim\Route $route) {
       $response['error'] = true;
       $response['message'] = 'Access denied. Invalid api key';
       echoResponse(401, $response);
-      $app->stop();
+      // $app->stop();
     } else {
       global $user_id;
       // get user primary key id
@@ -104,7 +110,7 @@ function authenticate(\Slim\Route $route) {
     $response['error'] = true;
     $response['message'] = "Api key is missing";
     echoResponse(400, $response);
-    $app->stop();
+    // $app->stop();
   }
 }
 

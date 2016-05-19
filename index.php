@@ -337,32 +337,65 @@ $app->get('/test/:name', function ($name) {
 *  method - POST
 *  params - name, email, password
 */
+$app->group('/register', function () {
 
-$app->post('/register', function() use ($app) {
-  // check for required params
-  verifyRequiredParams(array('name', 'email', 'password'));
-  $response = array();
-  // reading post params
-  $name = $app->request->post('name');
-  $email = $app->request->post('email');
-  $password = $app->request->post('password');
-  // validating email address
-  validateEmail($email);
-  $db = new DbHandler();
-  $res = $db->createUser($name, $email, $password);
-  if ($res == USER_CREATED_SUCCESSFULLY) {
-      $response["error"] = false;
-      $response["message"] = "You are successfully registered";
-      echoResponse(201, $response);
-  } else if ($res == USER_CREATE_FAILED) {
-      $response["error"] = true;
-      $response["message"] = "Oops! An error occurred while registereing";
-      echoResponse(200, $response);
-  } else if ($res == USER_ALREADY_EXISTED) {
-      $response["error"] = true;
-      $response["message"] = "Sorry, this email already existed";
-      echoResponse(200, $response);
-  }
+	$this->get('/{view}', function ($request, $response, $args) {
+
+        return $this->view->render($response, 'register.php', [
+            'title' => 'Register',
+            'page_name' => 'register',
+            'view' => $args['view'],
+            'viewPath' => $args['view'],
+            'mainView' => true
+        ]);
+    })->setName('register-view');
+
+
+	// $this->post('/{view}', function() use ($request, $response, $args, $app) {
+	$this->post('/{view}', function ($request, $response, $args) {
+		// var_dump($request->getParsedBody());
+
+		$__postVars = $request->getParsedBody();
+
+		// reading post params
+		$name = $__postVars['name'];
+		$email = $__postVars['email'];
+		$password = $__postVars['password'];
+
+		// check for required params
+		verifyRequiredParams(array('name', 'email', 'password'));
+		
+		$formResponse = array();
+		
+		// validating email address
+		validateEmail($email);
+		$db = new DbHandler();
+		$res = $db->createUser($name, $email, $password);
+
+		if ($res) {
+			if ($res == 'USER_CREATED_SUCCESSFULLY') {
+				$formResponse["error"] = false;
+				$formResponse["message"] = "You are successfully registered";
+			} else if ($res == 'USER_CREATE_FAILED') {
+				$formResponse["error"] = true;
+				$formResponse["message"] = "An error occurred while registereing";
+			} else if ($res == 'USER_ALREADY_EXISTED') {
+				$formResponse["error"] = true;
+				$formResponse["message"] = "This email has already been registered.";
+			}
+
+	        return $this->view->render($response, 'register.php', [
+	            'title' => 'Register',
+	            'page_name' => 'register',
+	            'view' => $args['view'],
+	            'viewPath' => $args['view'],
+	            'mainView' => true,
+	            'messages' => $formResponse["message"]
+	        ]);
+		} else {
+			echo 'Failed creation response.';
+		}
+	});
 });
 
 /**
@@ -371,35 +404,53 @@ $app->post('/register', function() use ($app) {
 * method - POST
 * params - email, password
 */
+$app->group('/register', function () {
 
-$app->post('/login', function() use ($app) {
-  verifyRequiredParams(array('email', 'password'));
-  // reading post params
-  $email = $app->request()->post('email');
-  $password = $app->request()->post('password');
-  $response = array();
-  $db = new DbHandler();
-  // check for correct email and password
-  if ($db->checkLogin($email, $password)) {
-      // get the user by email
-      $user = $db->getUserByEmail($email);
-      if ($user != NULL) {
-          $response["error"] = false;
-          $response['name'] = $user['name'];
-          $response['email'] = $user['email'];
-          $response['apiKey'] = $user['api_key'];
-          $response['createdAt'] = $user['created_at'];
-      } else {
-          // unknown error occurred
-          $response['error'] = true;
-          $response['message'] = "An error occurred. Please try again";
-      }
-  } else {
-      // user credentials are wrong
-      $response['error'] = true;
-      $response['message'] = 'Login failed. Incorrect credentials';
-  }
-  echoResponse(200, $response);
+	$this->get('/{view}', function ($request, $response, $args) {
+
+        return $this->view->render($response, 'login.php', [
+            'title' => 'Register',
+            'page_name' => 'register',
+            'view' => $args['view'],
+            'viewPath' => $args['view'],
+            'mainView' => true
+        ]);
+    })->setName('register-view');
+
+
+	$this->post('/{view}', function ($request, $response, $args) {
+	  	verifyRequiredParams(array('email', 'password'));
+	  
+		// reading post params
+		$email = $app->request()->post('email');
+		$password = $app->request()->post('password');
+		$formResponse = array();
+		$db = new DbHandler();
+
+		// check for correct email and password
+		if ($db->checkLogin($email, $password)) {
+			// get the user by email
+			$user = $db->getUserByEmail($email);
+
+			if ($user != NULL) {
+				$formResponse["error"] = false;
+				$formResponse['name'] = $user['name'];
+				$formResponse['email'] = $user['email'];
+				$formResponse['apiKey'] = $user['api_key'];
+				$formResponse['createdAt'] = $user['created_at'];
+			} else {
+				// unknown error occurred
+				$formResponse['error'] = true;
+				$formResponse['message'] = "An error occurred. Please try again";
+			}
+		} else {
+		  // user credentials are wrong
+		  $formResponse['error'] = true;
+		  $formResponse['message'] = 'Login failed. Incorrect credentials';
+		}
+	  
+	  echoResponse(200, $formResponse);
+	});
 });
 /**
 * Creating new task in db
@@ -409,21 +460,21 @@ $app->post('/login', function() use ($app) {
 */
 $app->post('/tasks', 'authenticate', function() use ($app){
   verifyRequiredParams(array('task'));
-  $response = array();
+  $formResponse = array();
   $task = $app->request->post('task');
   global $user_id;
   $db = new DbHandler();
   // creating new task
   $task_id = $db->createTask($user_id, $task);
   if ($task_id != NULL) {
-      $response["error"] = false;
-      $response["message"] = "Task created successfully";
-      $response["task_id"] = $task_id;
+      $formResponse["error"] = false;
+      $formResponse["message"] = "Task created successfully";
+      $formResponse["task_id"] = $task_id;
   } else {
-      $response["error"] = true;
-      $response["message"] = "Failed to create task. Please try again";
+      $formResponse["error"] = true;
+      $formResponse["message"] = "Failed to create task. Please try again";
   }
-  echoResponse(201, $response);
+  echoResponse(201, $formResponse);
 });
 /**
 * Listing all tasks of particular user
@@ -432,12 +483,12 @@ $app->post('/tasks', 'authenticate', function() use ($app){
 */
 $app->get('/tasks', 'authenticate', function(){
   global $user_id;
-  $response = array();
+  $formResponse = array();
   $db = new DbHandler();
   // fetching all user tasks
   $result = $db->getAllUserTasks($user_id);
-  $response["error"] = false;
-  $response["tasks"] = array();
+  $formResponse["error"] = false;
+  $formResponse["tasks"] = array();
   // looping through result and preparing tasks array
   while ($task = $result->fetch_assoc()) {
       $tmp = array();
@@ -445,9 +496,9 @@ $app->get('/tasks', 'authenticate', function(){
       $tmp["task"] = $task["task"];
       $tmp["status"] = $task["status"];
       $tmp["createdAt"] = $task["created_at"];
-      array_push($response["tasks"], $tmp);
+      array_push($formResponse["tasks"], $tmp);
   }
-  echoResponse(200, $response);
+  echoResponse(200, $formResponse);
 });
 /**
 * Listing single task of particular user
@@ -457,21 +508,21 @@ $app->get('/tasks', 'authenticate', function(){
 */
 $app->get('/tasks/:task_id', 'authenticate', function($task_id){
   global $user_id;
-  $response = array();
+  $formResponse = array();
   $db = new DbHandler();
   // fetch task
   $result = $db->getTask($task_id, $user_id);
   if ($result != NULL) {
-      $response["error"] = false;
-      $response["id"] = $result["id"];
-      $response["task"] = $result["task"];
-      $response["status"] = $result["status"];
-      $response["createdAt"] = $result["created_at"];
-      echoResponse(200, $response);
+      $formResponse["error"] = false;
+      $formResponse["id"] = $result["id"];
+      $formResponse["task"] = $result["task"];
+      $formResponse["status"] = $result["status"];
+      $formResponse["createdAt"] = $result["created_at"];
+      echoResponse(200, $formResponse);
   } else {
-      $response["error"] = true;
-      $response["message"] = "The requested resource doesn't exists";
-      echoResponse(404, $response);
+      $formResponse["error"] = true;
+      $formResponse["message"] = "The requested resource doesn't exists";
+      echoResponse(404, $formResponse);
   }
 });
 /**
@@ -486,19 +537,19 @@ $app->put('/tasks/:task_id', 'authenticate', function($task_id) use($app) {
   $task = $app->request->put('task');
   $status = $app->request->put('status');
   $db = new DbHandler();
-  $response = array();
+  $formResponse = array();
   // updating task
   $result = $db->updateTask($user_id, $task_id, $task, $status);
   if ($result) {
       // task updated successfully
-      $response["error"] = false;
-      $response["message"] = "Task updated successfully";
+      $formResponse["error"] = false;
+      $formResponse["message"] = "Task updated successfully";
   } else {
       // task failed to update
-      $response["error"] = true;
-      $response["message"] = "Task failed to update. Please try again!";
+      $formResponse["error"] = true;
+      $formResponse["message"] = "Task failed to update. Please try again!";
   }
-  echoResponse(200, $response);
+  echoResponse(200, $formResponse);
 });
 /**
  * Deleting task. Users can delete only their tasks
@@ -508,18 +559,18 @@ $app->put('/tasks/:task_id', 'authenticate', function($task_id) use($app) {
 $app->delete('/tasks/:task_id', 'authenticate', function($task_id) use($app) {
     global $user_id;
     $db = new DbHandler();
-    $response = array();
+    $formResponse = array();
     $result = $db->deleteTask($user_id, $task_id);
     if ($result) {
         // task deleted successfully
-        $response["error"] = false;
-        $response["message"] = "Task deleted succesfully";
+        $formResponse["error"] = false;
+        $formResponse["message"] = "Task deleted succesfully";
     } else {
         // task failed to delete
-        $response["error"] = true;
-        $response["message"] = "Task failed to delete. Please try again!";
+        $formResponse["error"] = true;
+        $formResponse["message"] = "Task failed to delete. Please try again!";
     }
-    echoResponse(200, $response);
+    echoResponse(200, $formResponse);
 });
 
 // ==============================================

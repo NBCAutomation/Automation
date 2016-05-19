@@ -6,6 +6,7 @@ class DbHandler {
 
     function __construct() {
         require_once dirname(__FILE__) . '/dbConn.php';
+
         // opening db connection
         $db = new DbConnect();
         $this->conn = $db->connect();
@@ -33,7 +34,7 @@ class DbHandler {
 
             // insert query
             $stmt = $this->conn->prepare("INSERT INTO users(name, email, password_hash, api_key, status) values(?, ?, ?, ?, 1)");
-            $stmt->bind_param("", $name, $email, $password_hash, $api_key);
+            $stmt->bind_param("ssss", $name, $email, $password_hash, $api_key);
 
             $result = $stmt->execute();
 
@@ -42,14 +43,14 @@ class DbHandler {
             // Check for successful insertion
             if ($result) {
                 // User successfully inserted
-                return USER_CREATED_SUCCESSFULLY;
+                $response = 'USER_CREATED_SUCCESSFULLY';
             } else {
                 // Failed to create user
-                return USER_CREATE_FAILED;
+                $response = 'USER_CREATE_FAILED';
             }
         } else {
             // User with same email already existed in the db
-            return USER_ALREADY_EXISTED;
+            $response = 'USER_ALREADY_EXISTED';
         }
 
         return $response;
