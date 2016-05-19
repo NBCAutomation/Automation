@@ -3,8 +3,8 @@ require_once BASEPATH.'/vendor/autoload.php';
 require_once 'spire_config.php';
 
 if(PHP_DEBUG_MODE){
-  error_reporting(0);
-  ini_set('display_errors', 'On');
+    error_reporting(0);
+    ini_set('display_errors', 'On');
 }
 
 // authorized user id from db - global var
@@ -14,36 +14,37 @@ $user_id = NULL;
 * Verifying required params posted or not
 */
 function verifyRequiredParams($required_fields) {
-  $error = false;
-  $error_fields = "";
-  $request_params = array();
-  $request_params = $_REQUEST;
+    
+    $error = false;
+    $error_fields = "";
+    $request_params = array();
+    $request_params = $_REQUEST;
 
 
-  // handling PUT request params
-  if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-    // $app = \Slim\Slim::getInstance();
-    parse_str($app->request()->getBody(), $request_params);
-  }
-
-  foreach ($required_fields as $field) {
-    if (!isset($request_params[$field]) || !is_array($request_params)) {
-      $error = true;
-      $error_fields .= $field . ', ';
+    // handling PUT request params
+    if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+        // $app = \Slim\Slim::getInstance();
+        parse_str($app->request()->getBody(), $request_params);
     }
-  }
 
-  if ($error) {
-    // required fields are missing or empty
-    // echo error json and stop the app
-    $response = array();
-    // $app = \Slim\Slim::getInstance();
-    $response['error'] = true;
-    $response["message"] = 'Required field(s) ' . substr($error_fields, 0, -2) . ' is missing or empty';
-    // var_dump($response);
-    echoResponse(400, $response);
-    // $app->stop();
-  }
+    foreach ($required_fields as $field) {
+        if (!isset($request_params[$field]) || !is_array($request_params)) {
+            $error = true;
+            $error_fields .= $field . ', ';
+        }
+    }
+
+    if ($error) {
+        // required fields are missing or empty
+        // echo error json and stop the app
+        $response = array();
+        // $app = \Slim\Slim::getInstance();
+        $response['error'] = true;
+        $response["message"] = 'Required field(s) ' . substr($error_fields, 0, -2) . ' is missing or empty';
+        // var_dump($response);
+        echoResponse(400, $response);
+        // $app->stop();
+    }
 }
 
 /**
@@ -57,7 +58,7 @@ function validateEmail($email){
 
     echoResponse(400, $response);
     // $app->stop();
-  }
+}
 }
 
 /**
@@ -97,21 +98,21 @@ function authenticate(\Slim\Route $route) {
       $response['message'] = 'Access denied. Invalid api key';
       echoResponse(401, $response);
       // $app->stop();
-    } else {
+  } else {
       global $user_id;
       // get user primary key id
       $user = $db->getUserId($api_key);
       if ($user != NULL) {
         $user_id = $user['id'];
-      }
     }
-  } else {
+}
+} else {
     // api key is missing in header
     $response['error'] = true;
     $response['message'] = "Api key is missing";
     echoResponse(400, $response);
     // $app->stop();
-  }
+}
 }
 
 /** Debugging utility */
@@ -121,7 +122,7 @@ function p($input, $exit=1) {
   echo '</pre>';
   if($exit) {
     exit;
-  }
+}
 }
 
 function j($input, $encode=true, $exit=1) {
@@ -130,7 +131,7 @@ function j($input, $encode=true, $exit=1) {
   echo '</pre>';
   if($exit) {
     exit;
-  }
+}
 }
 
 ?>

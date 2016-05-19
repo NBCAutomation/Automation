@@ -320,16 +320,7 @@ $app->get('/help', function ($request, $response, $args) {
     ]);
 })->setName('help');
 
-// ==============================================
 
-$app->get('/test/:name', function ($name) {
-    // echo "Hello, $name";
-    return $this->view->render($response, 'home.php', [
-        'title' => 'OTS Spire Web App',
-        'page_name' => 'home',
-        'dashClass' => true
-    ]);
-});
 
 /**
 *  User registration
@@ -346,7 +337,8 @@ $app->group('/register', function () {
             'page_name' => 'register',
             'view' => $args['view'],
             'viewPath' => $args['view'],
-            'mainView' => true
+            'mainView' => true,
+            'hideBreadcrumbs' => true
         ]);
     })->setName('register-view');
 
@@ -404,26 +396,30 @@ $app->group('/register', function () {
 * method - POST
 * params - email, password
 */
-$app->group('/register', function () {
+$app->group('/login', function () {
 
 	$this->get('/{view}', function ($request, $response, $args) {
 
         return $this->view->render($response, 'login.php', [
-            'title' => 'Register',
-            'page_name' => 'register',
+            'title' => 'Login',
+            'page_name' => 'login',
             'view' => $args['view'],
             'viewPath' => $args['view'],
-            'mainView' => true
+            'mainView' => true,
+            'hideBreadcrumbs' => true
         ]);
-    })->setName('register-view');
+    })->setName('login-view');
 
 
 	$this->post('/{view}', function ($request, $response, $args) {
+
+		$__postVars = $request->getParsedBody();
+
 	  	verifyRequiredParams(array('email', 'password'));
 	  
 		// reading post params
-		$email = $app->request()->post('email');
-		$password = $app->request()->post('password');
+		$email = $__postVars['email'];
+		$password = $__postVars['password'];
 		$formResponse = array();
 		$db = new DbHandler();
 
@@ -431,6 +427,7 @@ $app->group('/register', function () {
 		if ($db->checkLogin($email, $password)) {
 			// get the user by email
 			$user = $db->getUserByEmail($email);
+			var_dump($user);
 
 			if ($user != NULL) {
 				$formResponse["error"] = false;
@@ -452,6 +449,7 @@ $app->group('/register', function () {
 	  echoResponse(200, $formResponse);
 	});
 });
+
 /**
 * Creating new task in db
 * method POST

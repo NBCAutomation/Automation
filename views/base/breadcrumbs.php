@@ -3,6 +3,7 @@
 	$__endItem = end($urlPath);
 
 	$breadcrumbPath;
+
 	if (sizeof($urlPath) > 1) {
 		$baseView = $urlPath[0];
 	}
@@ -20,6 +21,8 @@
 			$breadcrumbPath .= '<li><a href=/'.$page_name.'/'.$value.'>'. $value .'</a></li>';
 		}
 	}
+
+	if (!$hideBreadcrumbs) {
 ?>
 
 <div id="breadcrumbs">
@@ -29,3 +32,4 @@
 		<?php echo $breadcrumbPath; ?>
 	</ul>
 </div>
+<?php } ?>
