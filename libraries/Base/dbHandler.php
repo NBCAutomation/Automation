@@ -110,8 +110,21 @@ class DbHandler {
     public function getUserByEmail($email) {
         $stmt = $this->conn->prepare("SELECT name, email, api_key, status, created_at FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
+
         if ($stmt->execute()) {
-            $user = $stmt->get_result()->fetch_assoc();
+            $stmt->bind_result($name, $email, $api_key, $status, $created_at);
+
+            $user = array();
+
+            /* fetch values */
+            mysqli_stmt_fetch($stmt);
+
+            /* set values */
+            $user['name'] = $name;
+            $user['email'] = $email;
+            $user['api_key'] = $api_key;
+            $user['created_at'] = $created_at;
+
             $stmt->close();
             return $user;
         } else {
@@ -133,6 +146,20 @@ class DbHandler {
         } else {
             return NULL;
         }
+
+        // if ($stmt->execute()) {
+        //     $stmt->bind_result($api_key);
+
+        //     $api_key = array();
+
+        //     /* fetch values */
+        //     mysqli_stmt_fetch($stmt);
+        //     var_dump($api_key)
+        //     $stmt->close();
+        //     return $api_key;
+        // } else {
+        //     return NULL;
+        // }
     }
 
     /**

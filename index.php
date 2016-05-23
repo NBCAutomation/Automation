@@ -1,16 +1,14 @@
 <?php
 error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', FALSE);
+ini_set('display_errors', TRUE);
 
 use Slim\Views\PhpRenderer;
 
 define("BASEPATH", __DIR__);
 
-use Dflydev\FigCookies\FigRequestCookies;
 require_once __DIR__.'/libraries/Base/dbHandler.php';
 require_once __DIR__.'/libraries/Base/passHash.php';
 require_once __DIR__.'/libraries/Base/utils.php';
-
 require_once __DIR__.'/vendor/autoload.php';
 
 // Get container
@@ -28,85 +26,8 @@ $container['cache'] = function () {
 $app = new \Slim\App($container);
 // $app->add(new \Slim\HttpCache\Cache('public', 10800));
 
-function dirFilesToArray($dir) {
 
-	$result = array(); 
 
-	$cdir = scandir($dir);
-
-	foreach ($cdir as $key => $value) {
-		if ( !in_array($value,array(".","..")) ) {
-
-			if ( is_dir($dir . DIRECTORY_SEPARATOR . $value) ) {
-				$result[$value] = dirToArray($dir . DIRECTORY_SEPARATOR . $value);
-			} else {
-				$result[] = $value;
-			}
-		}
-	}
-	return $result;
-}
-
-function readCSV($__file) {
-	$row = 1;
-	$fails = 0;
-
-	$__fileData;
-
-	$__fileData .= "<table class=\"table table-bordered table-striped\">";
-
-	if (($handle = fopen($__file, "r")) !== FALSE) {
-	    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-	        $num = count($data);
-	        $row++;
-
-	        $__fileData .= "<tr>";
-
-	        for ($c = 0; $c < $num; $c++) {
-	        	
-	        	if (strpos($data[$c], 'Fail') !== false || strpos($data[$c], 'FAIL') !== false) {
-	        		$fails++;
-	        		$__class = 'class="test_fail" ';
-	        	} else {
-	        		$__class = '';
-	        	}
-
-	        	if (!empty($data[$c])) {
-	        		if ($row < 5) {
-	        			$__fileData .= "<td colspan=\"5\">" . $data[$c] . "</td>";
-	        		} else {
-	        			if ($row < 7) {
-	        				$__fileData .= "<td>" . $data[$c] . "</td>";
-		        		} else {
-		        			$__fileData .= "<td ". $__class .">" . $data[$c] . "</td>";
-		        		}
-	        		}
-	        	}
-	        }
-	        $__fileData .= "</tr>";
-	    }
-	    fclose($handle);
-	}
-	$__fileData .= "</table>";
-	return $__fileData;
-}
-
-function dirToArray($dir) {
-
-	$result = array(); 
-
-	$cdir = scandir($dir);
-
-	foreach ($cdir as $key => $value) {
-		if ( !in_array($value,array(".","..")) ) {
-
-			if ( is_dir($dir . DIRECTORY_SEPARATOR . $value) ) {
-				$result[$value] = dirToArray($dir . DIRECTORY_SEPARATOR . $value);
-			}
-		}
-	}
-	return $result;
-}
 
 // ************
 // Views
@@ -135,7 +56,7 @@ $app->group('/reports', function () {
 	$this->get('/{view}', function ($request, $response, $args) {
 		$testDir = 'test_results/'.$args['view'];
 
-		$files_array = dirToArray($testDir);
+		$files_array = Spire::dirToArray($testDir);
 
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
@@ -156,11 +77,11 @@ $app->group('/reports', function () {
     	
     	// Individual report url
     	$__report = __DIR__ . "/test_results/" . $args['view']."/".$args['subView']."/".$args['page'];
-		$__reportData = readCSV($__report);
+		$__reportData = Spire::readCSV($__report);
 
 		// Report Directory location
 		$__reportDir = __DIR__ . "/test_results/" . $args['view']."/".$args['subView'];
-		$__repoDir = dirFilesToArray($__reportDir);
+		$__repoDir = Spire::dirFilesToArray($__reportDir);
 
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
@@ -206,7 +127,7 @@ $app->group('/scripts', function () {
 			$showOutput = false;
 		}
 
-		$files_array = dirToArray($testDir);
+		$files_array = Spire::dirToArray($testDir);
 
 		if ($args['view'] != 'main') {
 			// View path
@@ -428,30 +349,16 @@ $app->group('/login', function () {
 		if ($db->checkLogin($email, $password)) {
 			// get the user by email
 			$user = $db->getUserByEmail($email);
-			var_dump($user);
-			
-			$cookie = Cookie::create('theme', 'blue');
-			var_dump($cookie);
-			// return $this->view->render($response, 'home.php', [
-			//     'title' => 'Login',
-			//     'page_name' => 'login',
-			//     'view' => $args['view'],
-			//     'viewPath' => $args['view'],
-			//     'mainView' => true,
-			//     'hideBreadcrumbs' => true
-			// ]);
 
-			// if ($user != NULL) {
-			// 	$formResponse["error"] = false;
-			// 	$formResponse['name'] = $user['name'];
-			// 	$formResponse['email'] = $user['email'];
-			// 	$formResponse['apiKey'] = $user['api_key'];
-			// 	$formResponse['createdAt'] = $user['created_at'];
-			// } else {
-			// 	// unknown error occurred
-			// 	$formResponse['error'] = true;
-			// 	$formResponse['message'] = "An error occurred. Please try again";
-			// }
+			return $this->view->render($response, 'login.php', [
+			    'title' => 'Login',
+			    'page_name' => 'login',
+			    'view' => $args['view'],
+			    'viewPath' => $args['view'],
+			    'mainView' => true,
+			    'hideBreadcrumbs' => true,
+			    'cookie' => $cookie
+			]);
 		} else {
 		  // user credentials are wrong
 		  $formResponse['error'] = true;
