@@ -3,6 +3,7 @@ error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', TRUE);
 
 use Slim\Views\PhpRenderer;
+use Dflydev\FigCookies\FigResponseCookies;
 
 define("BASEPATH", __DIR__);
 
@@ -11,8 +12,17 @@ require_once __DIR__.'/libraries/Base/passHash.php';
 require_once __DIR__.'/libraries/Base/utils.php';
 require_once __DIR__.'/vendor/autoload.php';
 
+// print_r(get_declared_classes());
+
 // Get container
 $container = new \Slim\Container;
+
+$configuration = [
+    'settings' => [
+        'displayErrorDetails' => true,
+    ],
+];
+$container = new \Slim\Container($configuration);
 
 // Register component on container
 $container['view'] = function ($container) {
@@ -25,7 +35,6 @@ $container['cache'] = function () {
 
 $app = new \Slim\App($container);
 // $app->add(new \Slim\HttpCache\Cache('public', 10800));
-
 
 
 
@@ -356,8 +365,8 @@ $app->group('/login', function () {
 			    'view' => $args['view'],
 			    'viewPath' => $args['view'],
 			    'mainView' => true,
-			    'hideBreadcrumbs' => true,
-			    'cookie' => $cookie
+			    'user' => $user,
+			    'hideBreadcrumbs' => true
 			]);
 		} else {
 		  // user credentials are wrong
