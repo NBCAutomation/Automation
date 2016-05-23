@@ -6,6 +6,7 @@ use Slim\Views\PhpRenderer;
 
 define("BASEPATH", __DIR__);
 
+use Dflydev\FigCookies\FigRequestCookies;
 require_once __DIR__.'/libraries/Base/dbHandler.php';
 require_once __DIR__.'/libraries/Base/passHash.php';
 require_once __DIR__.'/libraries/Base/utils.php';
@@ -428,18 +429,29 @@ $app->group('/login', function () {
 			// get the user by email
 			$user = $db->getUserByEmail($email);
 			var_dump($user);
+			
+			$cookie = Cookie::create('theme', 'blue');
+			var_dump($cookie);
+			// return $this->view->render($response, 'home.php', [
+			//     'title' => 'Login',
+			//     'page_name' => 'login',
+			//     'view' => $args['view'],
+			//     'viewPath' => $args['view'],
+			//     'mainView' => true,
+			//     'hideBreadcrumbs' => true
+			// ]);
 
-			if ($user != NULL) {
-				$formResponse["error"] = false;
-				$formResponse['name'] = $user['name'];
-				$formResponse['email'] = $user['email'];
-				$formResponse['apiKey'] = $user['api_key'];
-				$formResponse['createdAt'] = $user['created_at'];
-			} else {
-				// unknown error occurred
-				$formResponse['error'] = true;
-				$formResponse['message'] = "An error occurred. Please try again";
-			}
+			// if ($user != NULL) {
+			// 	$formResponse["error"] = false;
+			// 	$formResponse['name'] = $user['name'];
+			// 	$formResponse['email'] = $user['email'];
+			// 	$formResponse['apiKey'] = $user['api_key'];
+			// 	$formResponse['createdAt'] = $user['created_at'];
+			// } else {
+			// 	// unknown error occurred
+			// 	$formResponse['error'] = true;
+			// 	$formResponse['message'] = "An error occurred. Please try again";
+			// }
 		} else {
 		  // user credentials are wrong
 		  $formResponse['error'] = true;
