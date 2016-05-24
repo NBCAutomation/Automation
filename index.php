@@ -3,7 +3,6 @@ error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', TRUE);
 
 use Slim\Views\PhpRenderer;
-use Dflydev\FigCookies\FigResponseCookies;
 
 define("BASEPATH", __DIR__);
 
@@ -11,6 +10,9 @@ require_once __DIR__.'/libraries/Base/dbHandler.php';
 require_once __DIR__.'/libraries/Base/passHash.php';
 require_once __DIR__.'/libraries/Base/utils.php';
 require_once __DIR__.'/vendor/autoload.php';
+
+use Dflydev\FigCookies\Cookie;
+use Dflydev\FigCookies\FigResponseCookies;
 
 // print_r(get_declared_classes());
 
@@ -33,6 +35,12 @@ $container['cache'] = function () {
     return new \Slim\HttpCache\CacheProvider();
 };
 
+$container['cookie'] = function($c){
+    $request = $c->get('request');
+    return new \Slim\Http\Cookies($request->getCookieParams());
+};
+
+
 $app = new \Slim\App($container);
 // $app->add(new \Slim\HttpCache\Cache('public', 10800));
 
@@ -42,22 +50,29 @@ $app = new \Slim\App($container);
 // Views
 // ************
 
-// Login
-$app->get('/', function ($request, $response, $args) {
-    return $this->view->render($response, 'login.php', [
-        'title' => 'OTS Spire Web App',
-        'page_name' => 'home'
-    ]);
-})->setName('login');
 
+// ************
 // Homepage
-$app->get('/home', function ($request, $response, $args) {
+// ************
+$app->get('/', function ($request, $response, $args) {
     return $this->view->render($response, 'home.php', [
         'title' => 'OTS Spire Web App',
         'page_name' => 'home',
-        'dashClass' => true
+        'hideBreadcrumbs' => true
     ]);
 })->setName('home');
+
+
+$app->group('/dashboard', function () {
+	$this->get('/{view}', function ($request, $response, $args) {
+	    return $this->view->render($response, 'home.php', [
+	        'title' => 'Dashboard',
+	        'page_name' => 'home',
+	        'dashClass' => true,
+	        'hideBreadcrumbs' => true
+	    ]);
+	})->setName('home');
+});
 
 // Reports View
 $app->group('/reports', function () {
@@ -359,15 +374,35 @@ $app->group('/login', function () {
 			// get the user by email
 			$user = $db->getUserByEmail($email);
 
-			return $this->view->render($response, 'login.php', [
-			    'title' => 'Login',
-			    'page_name' => 'login',
-			    'view' => $args['view'],
-			    'viewPath' => $args['view'],
-			    'mainView' => true,
-			    'user' => $user,
-			    'hideBreadcrumbs' => true
-			]);
+			// $setCookie = SetCookie::create('lu')
+			//     ->withValue('Rg3vHJZnehYLjVg7qi3bZjzg')
+			//     ->withExpires('Tue, 15-Jan-2018 21:47:38 GMT')
+			//     ->withMaxAge(500)
+			//     ->rememberForever()
+			//     ->withPath('/')
+			//     ->withDomain('.example.com')
+			//     ->withSecure(true)
+			//     ->withHttpOnly(true)
+			// ;
+
+			$request = FigRequestCookies::set($request, Cookie::create('theme', 'blue'));
+			var_dump($request);
+			// exit();
+			
+			
+			
+			// return $response->withRedirect('/dashboard/main');
+
+			// return $this->view->render($response, 'home.php', [
+			//     'title' => 'Login',
+			//     'page_name' => 'login',
+			//     'view' => $args['view'],
+			//     'viewPath' => $args['view'],
+			//     'mainView' => true,
+			//     'user' => $user,
+			//     'hideBreadcrumbs' => true,
+			//     'auth' => $set
+			// ]);
 		} else {
 		  // user credentials are wrong
 		  $formResponse['error'] = true;
