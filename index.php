@@ -386,7 +386,7 @@ $app->group('/login', function () {
 			// ;
 
 			$request = FigRequestCookies::set($request, Cookie::create('theme', 'blue'));
-			var_dump($request);
+			var_dump($request); 
 			// exit();
 			
 			
