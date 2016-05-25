@@ -12,6 +12,8 @@ require_once __DIR__.'/libraries/Base/utils.php';
 require_once __DIR__.'/vendor/autoload.php';
 
 use Dflydev\FigCookies\Cookie;
+use Dflydev\FigCookies\SetCookie;
+use Dflydev\FigCookies\FigRequestCookies;
 use Dflydev\FigCookies\FigResponseCookies;
 
 // print_r(get_declared_classes());
@@ -45,6 +47,11 @@ $app = new \Slim\App($container);
 // $app->add(new \Slim\HttpCache\Cache('public', 10800));
 
 
+// $cookies = Dflydev\FigCookies\Cookies::fromRequest($request);
+// $setCookies = Dflydev\FigCookies\SetCookies::fromResponse($response);
+// $request = $cookies->renderIntoCookieHeader($request);
+// $response = $setCookies->renderIntoSetCookieHeader($response);
+
 
 // ************
 // Views
@@ -65,6 +72,17 @@ $app->get('/', function ($request, $response, $args) {
 
 $app->group('/dashboard', function () {
 	$this->get('/{view}', function ($request, $response, $args) {
+		// $cookie = FigRequestCookies::get($request, 'spUI');
+		$__cookie = FigResponseCookies::get($response, 'token');
+		// $setCookie = FigResponseCookies::get($response, 'theme', 'simple');
+
+		// var_dump($request);
+		// $setCookie = FigResponseCookies::get($response, 'spUI');
+ 		
+ 		var_dump($__cookie);
+ 		var_dump('<br />************************************************<br />');
+ 		var_dump($response);
+
 	    return $this->view->render($response, 'home.php', [
 	        'title' => 'Dashboard',
 	        'page_name' => 'home',
@@ -374,24 +392,39 @@ $app->group('/login', function () {
 			// get the user by email
 			$user = $db->getUserByEmail($email);
 
-			// $setCookie = SetCookie::create('lu')
+			// $setCookie = SetCookie::create('spUI')
 			//     ->withValue('Rg3vHJZnehYLjVg7qi3bZjzg')
 			//     ->withExpires('Tue, 15-Jan-2018 21:47:38 GMT')
 			//     ->withMaxAge(500)
-			//     ->rememberForever()
-			//     ->withPath('/')
-			//     ->withDomain('.example.com')
-			//     ->withSecure(true)
-			//     ->withHttpOnly(true)
 			// ;
 
-			$request = FigRequestCookies::set($request, Cookie::create('theme', 'blue'));
-			var_dump($request); 
+			// var_dump($request);
+			// var_dump('************************<br />');
+			
+			// $request = FigRequestCookies::set($request, Cookie::create('spUI', 'blue'));
+			
+			$response = FigResponseCookies::set($response, SetCookie::create('token')
+			    ->withValue($user['api_key'])
+			    ->withDomain('example.com')
+			    ->withPath('/firewall')
+			);
+
+			// $__cookie = FigResponseCookies::get($response, 'token');
+			// var_dump('<pre>'.$__cookie.'</pre>');
+
 			// exit();
-			
-			
-			
-			// return $response->withRedirect('/dashboard/main');
+
+			// $response = FigResponseCookies::set($response, SetCookie::create('spUI')
+			//     ->withValue('api_key')
+		 //        ->withExpires('Tue, 15-Jan-2017 21:47:38 GMT')
+		 //        ->withMaxAge(500)
+		 //        ->withPath('/')
+		 //        ->withDomain('.example.com')
+		 //        ->withSecure(true)
+		 //        ->withHttpOnly(true)
+			// );
+
+			return $response->withRedirect('/dashboard/main');
 
 			// return $this->view->render($response, 'home.php', [
 			//     'title' => 'Login',
