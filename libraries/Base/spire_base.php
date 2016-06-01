@@ -2,6 +2,8 @@
 use \InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
+require_once dirname(__FILE__) . '/dbConn.php';
+
 class Spire {
 
 	public function getGravatar( $email, $s = 250, $d = 'mm', $r = 'g', $img = false, $atts = array() ) {
@@ -105,30 +107,5 @@ class Spire {
 		}
 		return $result;
 	}
-
-	public function deleteCookie(Response $response, $key) {
-        $cookie = urlencode($key).'='.
-            urlencode('deleted').'; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path=/; secure; httponly';
-        $response = $response->withAddedHeader('Set-Cookie', $cookie);
-        return $response;
-    }
-    
-    public function addCookie(Response $response, $cookieName, $cookieValue) {
-    	// var_dump($response.'<br />'.$cookieName.'<br />'.$cookieValue);
-    	var_dump('expression');
-    	exit();
-        // $expirationMinutes = 10;
-        // $expiry = new \DateTimeImmutable('now + '.$expirationMinutes.'minutes');
-        // $cookie = urlencode($cookieName).'='.
-        //     urlencode($cookieValue).'; expires='.$expiry->format(\DateTime::COOKIE).'; Max-Age=' .
-        //     $expirationMinutes * 60 . '; path=/; secure; httponly';
-        // $response = $response->withAddedHeader('Set-Cookie', $cookie);
-        // return $response;
-    }
-
-    public function getCookieValue(Request $request, $cookieName) {
-        $cookies = $request->getCookieParams();
-        return isset($cookies[$cookieName]) ? $cookies[$cookieName] : null;
-    }
 }
 ?>

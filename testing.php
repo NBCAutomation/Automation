@@ -24,5 +24,6 @@
 // pclose($handle);
 // ob_end_flush();
 // echo shell_exec(". ~/.bash_profile; which node");
-phpinfo();
+// phpinfo();
+print_r(get_loaded_extensions());
 ?>

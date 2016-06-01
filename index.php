@@ -9,12 +9,11 @@ define("BASEPATH", __DIR__);
 require_once __DIR__.'/libraries/Base/dbHandler.php';
 require_once __DIR__.'/libraries/Base/passHash.php';
 require_once __DIR__.'/libraries/Base/utils.php';
+require_once __DIR__.'/libraries/Base/spire_auth.php';
 require_once __DIR__.'/vendor/autoload.php';
 
-use Dflydev\FigCookies\Cookie;
-use Dflydev\FigCookies\SetCookie;
-use Dflydev\FigCookies\FigRequestCookies;
-use Dflydev\FigCookies\FigResponseCookies;
+use \SpireMiddleware;
+
 
 // print_r(get_declared_classes());
 
@@ -37,21 +36,54 @@ $container['cache'] = function () {
     return new \Slim\HttpCache\CacheProvider();
 };
 
-$container['cookie'] = function($c){
-    $request = $c->get('request');
-    return new \Slim\Http\Cookies($request->getCookieParams());
+$container['session'] = function ($c) {
+  return new \SlimSession\Helper;
 };
 
 
 $app = new \Slim\App($container);
 // $app->add(new \Slim\HttpCache\Cache('public', 10800));
 
+$app->auth = false;
 
-// $cookies = Dflydev\FigCookies\Cookies::fromRequest($request);
-// $setCookies = Dflydev\FigCookies\SetCookies::fromResponse($response);
-// $request = $cookies->renderIntoCookieHeader($request);
-// $response = $setCookies->renderIntoSetCookieHeader($response);
+$session = new \SlimSession\Helper;
 
+// $auth = function ($request, $response, $next) {
+
+// 	$headers = $request->getHeaders();
+// 	$outcome = array();
+
+// 	// Verifying Authorization Header
+// 	if (isset($headers['Authorization'])) {
+// 	    $db = new DbHandler('mysql-localhost');
+
+// 	    // get the api key
+// 	    $api_key = $headers['Authorization'];
+	    
+// 	    // validating api key
+// 	    if (!$db->isValidApiKey($api_key)) {
+// 	        // api key is not present in users table
+// 	        $outcome["error"] = true;
+// 	        $outcome["message"] = "Access Denied. Invalid Api key";
+// 	        echoRespnse(401, $outcome, $output);
+// 	    } else {
+// 	        global $user_id;
+// 	        // get user primary key id
+// 	        $user_id = $db->getUserId($api_key);
+// 	        $response = $next($request, $response);
+// 	        return $response;
+// 	    }
+// 	} else {
+// 	    // api key is missing in header
+// 	    $outcome["error"] = true;
+// 	    $outcome["message"] = "Api key is missing";
+// 	    //echoRespnse(400, $response, $outcome);
+// 	    return $response->withStatus(401)->write("Not allowed here - ".$outcome["message"]);
+// 	}
+
+// };
+
+// $app->add(new \SpireMiddleware);
 
 // ************
 // Views
@@ -70,18 +102,26 @@ $app->get('/', function ($request, $response, $args) {
 })->setName('home');
 
 
-$app->group('/dashboard', function () {
-	$this->get('/{view}', function ($request, $response, $args) {
-		// $cookie = FigRequestCookies::get($request, 'spUI');
-		$__cookie = FigResponseCookies::get($response, 'token');
-		// $setCookie = FigResponseCookies::get($response, 'theme', 'simple');
+$app->group('/dashboard', function () use ($app) {
+	$this->get('/main', function ($request, $response, $args) {
 
-		// var_dump($request);
-		// $setCookie = FigResponseCookies::get($response, 'spUI');
- 		
- 		var_dump($__cookie);
- 		var_dump('<br />************************************************<br />');
- 		var_dump($response);
+		// $cookie = FigRequestCookies::get($request, 'spUI');
+		// $__cookie = FigResponseCookies::get($response, 'spUI');
+		// $setCookie = FigResponseCookies::get($response, 'theme', 'simple');
+		$st = $session->my_key;
+		var_dump($this->session);
+		// var_dump($_SESSION);
+		// var_dump($__cookie);
+ 		echo('<style>.ts-sidebar {display: none;}</style>');
+ 		// var_dump($app->auth);
+ 		echo('<br /><br />');
+ 		// var_dump($app->auth);
+ 		echo('<br /><br />');
+ 		// var_dump($_SESSION);
+ 		// echo('<br /><br />');
+ 		// var_dump($request);
+ 		// var_dump('<br /><br />');
+ 		// var_dump($response);
 
 	    return $this->view->render($response, 'home.php', [
 	        'title' => 'Dashboard',
@@ -89,7 +129,7 @@ $app->group('/dashboard', function () {
 	        'dashClass' => true,
 	        'hideBreadcrumbs' => true
 	    ]);
-	})->setName('home');
+	})->setName('dashboard');
 });
 
 // Reports View
@@ -360,9 +400,10 @@ $app->group('/register', function () {
 * method - POST
 * params - email, password
 */
-$app->group('/login', function () {
+$app->group('/login', function () use ($app) {
 
 	$this->get('/{view}', function ($request, $response, $args) {
+		session_start();
 
         return $this->view->render($response, 'login.php', [
             'title' => 'Login',
@@ -375,7 +416,7 @@ $app->group('/login', function () {
     })->setName('login-view');
 
 
-	$this->post('/{view}', function ($request, $response, $args) {
+	$this->post('/{view}', function ($request, $response, $args) use ($app) {
 
 		$__postVars = $request->getParsedBody();
 
@@ -385,49 +426,23 @@ $app->group('/login', function () {
 		$email = $__postVars['email'];
 		$password = $__postVars['password'];
 		$formResponse = array();
+		$uResponse = array();
 		$db = new DbHandler();
 
 		// check for correct email and password
 		if ($db->checkLogin($email, $password)) {
 			// get the user by email
 			$user = $db->getUserByEmail($email);
-
-			// $setCookie = SetCookie::create('spUI')
-			//     ->withValue('Rg3vHJZnehYLjVg7qi3bZjzg')
-			//     ->withExpires('Tue, 15-Jan-2018 21:47:38 GMT')
-			//     ->withMaxAge(500)
-			// ;
-
-			// var_dump($request);
-			// var_dump('************************<br />');
 			
-			// $request = FigRequestCookies::set($request, Cookie::create('spUI', 'blue'));
-			
-			$response = FigResponseCookies::set($response, SetCookie::create('token')
-			    ->withValue($user['api_key'])
-			    ->withDomain('example.com')
-			    ->withPath('/firewall')
-			);
+			// $request = $request->withAttribute('token', $user['api_key']);
+			// $_SESSION[$app->config-get('auth.session')] = $user->id;
+			// $uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
+			// return $response = $response->withRedirect($uri, 403);
 
-			// $__cookie = FigResponseCookies::get($response, 'token');
-			// var_dump('<pre>'.$__cookie.'</pre>');
-
-			// exit();
-
-			// $response = FigResponseCookies::set($response, SetCookie::create('spUI')
-			//     ->withValue('api_key')
-		 //        ->withExpires('Tue, 15-Jan-2017 21:47:38 GMT')
-		 //        ->withMaxAge(500)
-		 //        ->withPath('/')
-		 //        ->withDomain('.example.com')
-		 //        ->withSecure(true)
-		 //        ->withHttpOnly(true)
-			// );
-
-			return $response->withRedirect('/dashboard/main');
+			// return $response->withRedirect('/dashboard/main');
 
 			// return $this->view->render($response, 'home.php', [
-			//     'title' => 'Login',
+			//     'title' => 'Dashboard',
 			//     'page_name' => 'login',
 			//     'view' => $args['view'],
 			//     'viewPath' => $args['view'],
@@ -436,13 +451,43 @@ $app->group('/login', function () {
 			//     'hideBreadcrumbs' => true,
 			//     'auth' => $set
 			// ]);
+			
+			if ($user != NULL) {
+
+				// SpireMiddleware::isAuth($user['email']);
+				// $_SESSION[$app->auth] = $user['email'];
+			 	
+			 	$session->my_key = $user['api_key'];
+
+				$_SESSION['animal']   = 'cat';
+				$uResponse["error"] = false;
+				$uResponse['name'] = $user['name'];
+				$uResponse['email'] = $user['email'];
+				$uResponse['apiKey'] = $user['api_key'];
+				
+				$app->auth = $user['api_key'];
+
+				var_dump($this->session);
+				exit();
+				
+				// $app->view()->setData('auth', $user['api_key']);
+			} else {
+				// unknown error occurred
+				$uResponse['error'] = true;
+				$uResponse['message'] = "An error occurred. Please try again";
+			}
 		} else {
 		  // user credentials are wrong
 		  $formResponse['error'] = true;
 		  $formResponse['message'] = 'Login failed. Incorrect credentials';
 		}
-	  
-	  echoResponse(200, $formResponse);
+	  	
+	  	
+	  	$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
+		return $response = $response->withRedirect($uri, 403);
+		
+		echoResponse(200, $formResponse);
+	// })->add(new SpireMiddleware());
 	});
 });
 
