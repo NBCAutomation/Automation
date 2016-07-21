@@ -485,22 +485,25 @@ class DbHandler {
     /**
      * Insert Test Results
      */
-    public function navigationAuditInsert($filename) {
-        // var_dump($filename);
-        $stmt = $this->conn->prepare("LOAD DATA LOCAL INFILE '$filename' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 5 LINES (id, test_id, endpoint, link_name, link_url, status_code, status)");
-        var_dump();
+    public function navigationAuditInsert($resultsFile) {
+        // print_r($resultsFile);
+        $fuck = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 5 LINES (test_id, link_name, link_name, link_url, status_code, status)";
+        var_dump($fuck);
+        $stmt = $this->conn->prepare($fuck);
+        // $stmt->bind_param("s", $resultsFile);
+        $stmt->execute();
+        var_dump($stmt);
+
         //Working directly in MySQL
         /*
         
-        LOAD DATA LOCAL INFILE '/Users/telemundodigital/Documents/Repositories/Applications/SpireV3/ots-spirev3/public/test_results/api_navigation_audits/7_6_2016/nbcmiami_navigation-audit_7_6_2016-12_00-PM.csv' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 5 LINES ( test_id, link_name, link_url, status_code, status)
+        LOAD DATA LOCAL INFILE /Users/telemundodigital/Documents/Repositories/Applications/NBC OTS Spire/public/test_results/api_navigation_audits/7_21_2016/nbcmiami_navigation-audit_7_21_2016-12_44-PM.csv INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 5 LINES ( test_id, link_name, link_url, status_code, status)
 
-/Users/telemundodigital/Documents/Repositories/Applications/SpireV3/ots-spirev3/public/test_results/api_navigation_audits/7_6_2016/nbcmiami_navigation-audit_2016-07-06T.csv
          */
 
-        // $stmt->bind_param("s", $filename);
-        $stmt->execute();
         $num_affected_rows = $stmt->affected_rows;
-        var_dump($num_affected_rows);
+        var_dump('<br />affected rows => ', $num_affected_rows);
+        
         $stmt->close();
         return $num_affected_rows > 0;
     }
