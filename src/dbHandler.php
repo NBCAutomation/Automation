@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors',1);
+error_reporting(E_ALL);
 
 class DbHandler {
 
@@ -456,9 +458,9 @@ class DbHandler {
      * Creating Test ID
      */
     
-    public function createTestID($testID, $testType) {
-        $stmt = $this->conn->prepare("INSERT INTO tests(test_id, type) VALUES(?, ?)");
-        $stmt->bind_param("is", $testID, $testType);
+    public function createTestID($testID, $stationProperty, $testType) {
+        $stmt = $this->conn->prepare("INSERT INTO tests(test_id, property, type) VALUES(?, ?, ?)");
+        $stmt->bind_param("iss", $testID, $stationProperty, $testType);
 
         $result = $stmt->execute();
         $stmt->close();
@@ -487,25 +489,49 @@ class DbHandler {
      */
     public function navigationAuditInsert($resultsFile) {
         // print_r($resultsFile);
-        $fuck = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 5 LINES (test_id, link_name, link_name, link_url, status_code, status)";
-        var_dump($fuck);
-        $stmt = $this->conn->prepare($fuck);
-        // $stmt->bind_param("s", $resultsFile);
-        $stmt->execute();
-        var_dump($stmt);
+        $fuck = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES ( test_id, link_name, link_url, status_code, status)";
+        
+
+
+        if ( !($stmt = $this->conn->query($fuck)) ) {
+            // echo "\nQuery execute failed: ERRNO: (" . $this->conn->errno . ") " . $this->conn->error;
+            return 0;
+        } else {
+            return 1;
+        }
+
+
+
+
+        // $stmt = $this->conn->prepare("LOAD DATA LOCAL INFILE ? INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES ( test_id, link_name, link_url, status_code, status)");
+        
+        // var_dump($fuck);
+        
+        // $stmt = $this->conn->prepare($fuck);
+        // // $stmt->bind_param("s", $resultsFile);
+        // echo "string 1";
+        // $stmt->execute();
+        // printf("Error: %s.\n", $stmt->error);
+        // echo "string 2";
+        // var_dump($stmt->error);
+        // echo "string 3";
+        // $stmt->close();
+        
+        // // $this_result = mysql_query($stmt) or trigger_error(mysql_error()." ".$stmt);
+        // var_dump($result);
 
         //Working directly in MySQL
         /*
         
-        LOAD DATA LOCAL INFILE /Users/telemundodigital/Documents/Repositories/Applications/NBC OTS Spire/public/test_results/api_navigation_audits/7_21_2016/nbcmiami_navigation-audit_7_21_2016-12_44-PM.csv INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 5 LINES ( test_id, link_name, link_url, status_code, status)
+        LOAD DATA LOCAL INFILE /Users/telemundodigital/Documents/Repositories/Applications/NBC OTS Spire/public/test_results/api_navigation_audits/7_25_2016/nbcchicago_navigation-audit_7_25_2016-11_58-AM.csv INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES ( test_id, link_name, link_url, status_code, status)
 
          */
 
-        $num_affected_rows = $stmt->affected_rows;
-        var_dump('<br />affected rows => ', $num_affected_rows);
+        // $num_affected_rows = $stmt->affected_rows;
+        // var_dump('<br />affected rows => ', $num_affected_rows);
         
-        $stmt->close();
-        return $num_affected_rows > 0;
+        // $stmt->close();
+        // return $num_affected_rows > 0;
     }
 }
 

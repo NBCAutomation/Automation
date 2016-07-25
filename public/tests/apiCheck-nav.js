@@ -86,7 +86,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
         casper.start( url ).then(function(response) {
             // suite.checkConnection(url);
-            suite.curTestID(url, type);
+            suite.createTestID(url, type, urlUri);
 
             casper.then(function() {
                 //Start testing
@@ -106,12 +106,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     // Create test id in DB
-    apiSuite.prototype.curTestID = function(url, type) {
+    apiSuite.prototype.createTestID = function(url, type, stationProperty) {
 
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-nav';
+        var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-nav&property=' + stationProperty;
 
         if (dbUrl) {
             // casper.start( 'dbUrl' ).then(function(response) {
@@ -241,13 +241,13 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         if (debugOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
 
                         // Write file headers
-                        var testInfo = 'Navigation url tested: ' + __urlSuite[__prog];
-                        var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
+                        // var testInfo = 'Navigation url tested: ' + __urlSuite[__prog];
+                        // var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
                         
                         
-                        fs.write(save, ' ' + testInfo + ',\n' + ',\n');
-                        fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
-                        fs.write(save, 'Test ID,Link,URL,HTTP Status Code, JSON Status,', 'a+');
+                        // fs.write(save, ' ' + testInfo + '\n' + '\n');
+                        // fs.write(save, ' ' + testTime + '\n' + '\n', 'a+');
+                        fs.write(save, 'Test ID,Link,URL,HTTP Status Code, JSON Status,' + '\n', 'a+');
 
                         suite.checkNavigation(url, __urlSuite[__prog], testID);
                     }
@@ -466,7 +466,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                 if (validated) {
                     if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
-                    fs.write(save, ',\n"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'JSON Validated,', 'a+');
+                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'JSON Validated,' + '\n', 'a+');
                 } else {
                     if (showOutput) {console.log('...re-testing JSON')};
                     // var a = "<html><head></head><body>{'a': 123}</body></html>";
@@ -481,14 +481,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                         if( __verifyOutput instanceof Object ) {
                             if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                            fs.write(save, ',\n"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'JSON Validated,', 'a+');
+                            fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'JSON Validated,' + '\n', 'a+');
                         } else {
                             if (showOutput) {console.log(__catchJson)};
                         }
                     } catch (e) {
                         // ...
                         if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail also with removing HTML tags, possible False/Positive..check url manually.')};
-                        fs.write(save, ',\n"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'FAIL - Possible False/Positive,', 'a+');
+                        fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'FAIL - Possible False/Positive,' + '\n', 'a+');
                     }
                 }
                 if (showOutput) {console.log('-----------------')};

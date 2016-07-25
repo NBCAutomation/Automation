@@ -739,44 +739,44 @@ $app->group('/utils', function () {
 
 		$db = new DbHandler();
 
+		// Set necessary vars
 		$utilReqParams = $request->getQueryParams();
 		$randTestID = rand(0, 9999);
+
+		$stationProperty = $utilReqParams['property'];
 		
 		$testType = $utilReqParams['testscript'];
 		
 		if ($utilReqParams['task'] == 'generate'){
-			$__create = true;
+			$createTestID = true;
 		}
 
 		if ($utilReqParams['task'] == 'upload'){
-			$__upload = true;
+			$uploadResultsFile = true;
 		}
 
-		if ($__create) {
-			$thisID = $db->createTestID($randTestID, $testType);
+		if ($createTestID) {
+			$thisID = $db->createTestID($randTestID, $stationProperty, $testType);
 
 			if ($thisID != NULL) {
 				echo $thisID;
 			} else {
 				echo('che le derp');
 			}	
-		} elseif ($__upload) {
+		} elseif ($uploadResultsFile) {
 			$testResultsFile = $utilReqParams['fileLoc'];
-			// var_dump($testResultsFile);
 
 			echo "...importing csv to db<br />";
 
-			// $__report = BASEPATH . "/test_results/api_navigation_audits/6_22_2016/nbcmiami_navigation-audit_2016-06-22T14:41:21.348Z.csv";
-
-			// test file
-			// http://spire.app/utils/createspireid?task=upload&testType=apiNav&fileLoc=%2FUsers%2Ftelemundodigital%2FDocuments%2FRepositories%2FApplications%2FNBC%20OTS%20Spire%2Fpublic%2Ftest_results%2Fapi_navigation_audits%2F7_21_2016%2Fnbcmiami_navigation-audit_7_21_2016-12_44-PM.csv
-
 			if ($utilReqParams['testType'] == 'apiNav') {
+				$db->navigationAuditInsert($testResultsFile);
 				// $thisupload = $db->navigationAuditInsert($testResultsFile);	
 				if ($db->navigationAuditInsert($testResultsFile)) {
 					echo 'inserted';
+					$this->logger->info("Nav Test results imported");
 				} else {
-					echo 'fail';
+					echo 'fail insert';
+					$this->logger->info("DB import failed");
 				}
 			}
 
