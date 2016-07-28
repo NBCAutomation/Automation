@@ -22,7 +22,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
 
     var currentTime = new Date();
-    var timeStamp = currentTime.toISOString();
 
     var month = currentTime.getMonth() + 1;
     var day = currentTime.getDate();
@@ -39,6 +38,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         } else {
             var toD = "AM";
         }
+
+
+    var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
 
     var parser = document.createElement('a');
     parser.href = casper.cli.get('url');
@@ -88,8 +90,19 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         url = url + '/apps/news-app/manifest/?apiVersion=3';
 
         casper.start( url ).then(function(response) {
+            console.log(response);
             if ( response.status == 200 ) {
                 no_error = true;
+                
+                suite.createTestID(url, type, urlUri);
+                
+                casper.then(function() {
+                    //Start testing
+                    
+                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+                    // suite.getContent(url, type, testID);
+
+                });
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
@@ -98,15 +111,49 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             
             console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
 
-            suite.getContent(url, type);
-
         }).run(function() {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             this.exit();
         });
     };
 
-    apiSuite.prototype.getContent = function(url, type) {
+    // Create test id in DB
+    apiSuite.prototype.createTestID = function(url, type, stationProperty) {
+
+        var suite = this;
+
+        // require('utils').dump( current );
+        var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-article_content&property=' + stationProperty;
+
+        if (dbUrl) {
+            // casper.start( 'dbUrl' ).then(function(response) {
+                casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    
+                    var status = this.status().currentHTTPStatus;
+
+                    if ( status == 200) {
+                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
+
+                        var output = this.getHTML();
+                        var __dbID = casper.getElementInfo('body').text;
+
+                        suite.getContent(url, type, __dbID);
+
+                        // console.log('derp = '+__dbID);
+                        // return __dbID;
+                    } else {
+                        throw new Error('Unable to get/store Test ID!');
+                    }
+                    
+                });
+            // });
+        }
+        // } else {
+        //     // delete this.__collected;
+        // }
+    };
+
+    apiSuite.prototype.getContent = function(url, type, testID) {
         
         var suite = this;    
 
@@ -143,7 +190,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     if (__prog === 'navigation') {
                         if (debugOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
 
-                        suite.checkNavigation(url, __urlSuite[__prog]);
+                        suite.checkNavigation(url, __urlSuite[__prog], testID);
                     }
                 }
 
@@ -153,7 +200,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         });
     };
 
-    apiSuite.prototype.checkNavigation = function(url, __url) {
+    apiSuite.prototype.checkNavigation = function(url, __url, testID) {
 
         var suite = this;
 
@@ -161,11 +208,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             casper.open(__url,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 
                 var status = this.status().currentHTTPStatus;
-
                 if ( status == 200) {
                     if (showOutput) {console.log(__url + colorizer.colorize(' Status: ' + status, 'INFO') )};
 
-                    suite.spiderObjects(url, __url, 'default', 'manifest');
+                    suite.spiderObjects(url, __url, 'default', 'manifest', testID);
                 }
 
             });
@@ -173,7 +219,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
 
-    apiSuite.prototype.spiderObjects = function(url, __url, type, apitest) {    
+    apiSuite.prototype.spiderObjects = function(url, __url, type, apitest, testID) {    
         var suite = this;
         var __baseUrl = casper.cli.get('url');
         var reqKeys = new Array("appTitle","sectionMapping","location");
@@ -202,6 +248,135 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 __output = JSON.parse(output);
 
                 var mainItem = __output.items;
+
+                if (manifestTest) {                
+                    for (var __item in mainItem) {
+                        
+                        if(mainItem.hasOwnProperty(__item)){
+                            count++;
+                        }
+
+                        var __thisItem = __output.items[count];
+
+                        for (var __i in __thisItem) {
+                            if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+                            
+                            if (articleTest) {
+                                // console.log(__thisItem[__i]);
+                            }
+
+                            
+                            if (reqKeys.indexOf(__i) > -1) {
+
+                                if (__thisItem.length <= 0) {
+                                    throw new Error('key blank ' + __i);
+                                } else {
+
+                                    if (__i === 'appTitle') {
+                                        var __keyName = __thisItem[__i];
+                                    }
+
+                                    if (__i === 'location') {
+                                        
+                                        if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+
+                                        if (__thisItem[__i].indexOf('/apps') > -1) {
+
+                                            if (__thisItem[__i].indexOf('?') > -1) {
+                                                var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=3'
+                                            } else {
+                                                var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=3'
+                                            }
+                                            
+                                            if (debugOutput) {console.log(__keyUrl)};
+                                        }
+
+                                        // Set collections array
+                                        if (manifestTest) {
+                                            if (!(__keyName in __contentSections)){
+                                                __contentSections[__keyName] = __keyUrl;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            // -------------------------------------
+
+                            if (__i === 'items' && typeof __thisItem[__i] === 'object') {
+
+                                var __parent = __output.items[count].title;
+
+                                if (debugOutput) {
+                                    console.log('-----------------');
+                                    console.log(__parent + ' sub links');
+                                }
+                                
+                                var __subItem = __output.items[count].items;
+
+                                var __count = 0;
+
+                                for (var __item in __subItem) {
+                                    
+                                    if(__subItem.hasOwnProperty(__item)){
+                                        __count++;
+
+                                        __offset = (__count - 1);
+                                        // console.log(__offset);
+                                    }
+
+                                    var __lastItem = __output.items[count].items[__offset];
+
+                                    for (var __b in __lastItem) {
+                                        if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
+
+                                        if (reqKeys.indexOf(__b) > -1) {
+                                            // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
+                                            
+                                            if (__b === 'appTitle') {
+                                                var __lastKeyName = __lastItem[__b];
+                                            }
+
+                                            if (__b === 'location') {
+                                                
+                                                if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
+
+                                                if (__lastItem[__b].indexOf('/apps') > -1) {
+
+                                                    if (__lastItem[__b].indexOf('?') > -1) {
+                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=3'
+                                                    } else {
+                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=3'
+                                                    }
+                                                    
+                                                    if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
+                                                }
+
+                                                // Set collections array
+                                                if (manifestTest) {
+                                                    if (!(__lastKeyName in __contentSections)){
+                                                        // console.log(' - '+__lastKeyName);
+                                                        __contentSections[__lastKeyName] = __lastKeyUrl;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                    if (debugOutput) { console.log('    -----------------')};
+                                }
+                            }
+                        }
+
+                        if (debugOutput) {console.log('-----------------')};
+                    }
+                }
+
+                if (manifestTest) {
+                    // console.log('__contentSections -> ',JSON.stringify(__contentSections));
+                    suite.grabArticles(__contentSections, testID);
+                }
+
 
                 if (articleTest) {
                     
@@ -370,139 +545,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     }
                     console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
                 }
-
-                if (manifestTest) {                
-                    for (var __item in mainItem) {
-                        
-                        if(mainItem.hasOwnProperty(__item)){
-                            count++;
-                        }
-
-                        var __thisItem = __output.items[count];
-
-                        for (var __i in __thisItem) {
-                            if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
-                            
-                            if (articleTest) {
-                                // console.log(__thisItem[__i]);
-                            }
-
-                            
-                            if (reqKeys.indexOf(__i) > -1) {
-
-                                if (__thisItem.length <= 0) {
-                                    throw new Error('key blank ' + __i);
-                                } else {
-
-                                    if (__i === 'appTitle') {
-                                        var __keyName = __thisItem[__i];
-                                    }
-
-                                    if (__i === 'location') {
-                                        
-                                        if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
-
-                                        if (__thisItem[__i].indexOf('/apps') > -1) {
-
-                                            if (__thisItem[__i].indexOf('?') > -1) {
-                                                var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=3'
-                                            } else {
-                                                var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=3'
-                                            }
-                                            
-                                            if (debugOutput) {console.log(__keyUrl)};
-                                        }
-
-                                        // Set collections array
-                                        if (manifestTest) {
-                                            if (!(__keyName in __contentSections)){
-                                                __contentSections[__keyName] = __keyUrl;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            // -------------------------------------
-
-                            if (__i === 'items' && typeof __thisItem[__i] === 'object') {
-
-                                var __parent = __output.items[count].title;
-
-                                if (debugOutput) {
-                                    console.log('-----------------');
-                                    console.log(__parent + ' sub links');
-                                }
-                                
-                                var __subItem = __output.items[count].items;
-
-                                var __count = 0;
-
-                                for (var __item in __subItem) {
-                                    
-                                    if(__subItem.hasOwnProperty(__item)){
-                                        __count++;
-
-                                        __offset = (__count - 1);
-                                        // console.log(__offset);
-                                    }
-
-                                    var __lastItem = __output.items[count].items[__offset];
-
-                                    for (var __b in __lastItem) {
-                                        if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
-
-                                        if (reqKeys.indexOf(__b) > -1) {
-                                            // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
-                                            
-                                            if (__b === 'appTitle') {
-                                                var __lastKeyName = __lastItem[__b];
-                                            }
-
-                                            if (__b === 'location') {
-                                                
-                                                if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
-
-                                                if (__lastItem[__b].indexOf('/apps') > -1) {
-
-                                                    if (__lastItem[__b].indexOf('?') > -1) {
-                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=3'
-                                                    } else {
-                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=3'
-                                                    }
-                                                    
-                                                    if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
-                                                }
-
-                                                // Set collections array
-                                                if (manifestTest) {
-                                                    if (!(__lastKeyName in __contentSections)){
-                                                        // console.log(' - '+__lastKeyName);
-                                                        __contentSections[__lastKeyName] = __lastKeyUrl;
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                    }
-                                    if (debugOutput) { console.log('    -----------------')};
-                                }
-                            }
-                        }
-
-                        if (debugOutput) {console.log('-----------------')};
-                    }
-                }
-
-                if (manifestTest) {
-                    // console.log('__contentSections',JSON.stringify(__contentSections));
-                    suite.grabArticles(__contentSections);
-                }
             });
         }
     };
 
-    apiSuite.prototype.grabArticles = function(destinations) {
+    apiSuite.prototype.grabArticles = function(destinations, testID) {
         var suite = this;
 
         var omitSections = new Array("News","Entertainment","Noticias destacadas","Entretenimiento");
@@ -515,13 +562,13 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     console.log(' ' + destination + ' >> ' + val)
                     console.log('-----------------------');
                 }
-                this.spiderObjects(destination, val, 'json', 'article');
+                this.spiderObjects(destination, val, 'json', 'article', testID);
             }
             
         }
     }
 
-    apiSuite.prototype.checkHealth = function(__urlName, __url) {
+    apiSuite.prototype.checkHealth = function(__urlName, __url, testID) {
 
         var suite = this;
         // var current = suite.__collected.shift();
@@ -541,7 +588,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     if (__url.indexOf('submit-your-photos') > -1) {
                         if (showOutput) {console.log('Skipping UGC url....')};
                     } else {
-                        suite.validateJson(__urlName, __url, status);
+                        suite.validateJson(__urlName, __url, status, testID);
                     }
                 }
             });
@@ -550,7 +597,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
-    apiSuite.prototype.validateJson = function(__jurlName, __jUrl, __status) {
+    apiSuite.prototype.validateJson = function(__jurlName, __jUrl, __status, testID) {
         var suite = this;
 
         if (__jUrl) {
