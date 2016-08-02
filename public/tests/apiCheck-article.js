@@ -90,7 +90,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         url = url + '/apps/news-app/manifest/?apiVersion=3';
 
         casper.start( url ).then(function(response) {
-            console.log(response);
+            // console.log(response);
             if ( response.status == 200 ) {
                 no_error = true;
                 
@@ -245,132 +245,145 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 var _count = 0;
                 var setFail = 0;
 
-                __output = JSON.parse(output);
 
-                var mainItem = __output.items;
+                try {
+                    // __output = JSON.parse(output);
+                    verifyThisOutput = JSON.parse(output);
 
-                if (manifestTest) {                
-                    for (var __item in mainItem) {
-                        
-                        if(mainItem.hasOwnProperty(__item)){
-                            count++;
-                        }
+                    if( verifyThisOutput instanceof Object ) {
 
-                        var __thisItem = __output.items[count];
+                        __output = JSON.parse(output);
 
-                        for (var __i in __thisItem) {
-                            if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
-                            
-                            if (articleTest) {
-                                // console.log(__thisItem[__i]);
-                            }
+                        var mainItem = __output.items;
 
-                            
-                            if (reqKeys.indexOf(__i) > -1) {
-
-                                if (__thisItem.length <= 0) {
-                                    throw new Error('key blank ' + __i);
-                                } else {
-
-                                    if (__i === 'appTitle') {
-                                        var __keyName = __thisItem[__i];
-                                    }
-
-                                    if (__i === 'location') {
-                                        
-                                        if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
-
-                                        if (__thisItem[__i].indexOf('/apps') > -1) {
-
-                                            if (__thisItem[__i].indexOf('?') > -1) {
-                                                var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=3'
-                                            } else {
-                                                var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=3'
-                                            }
-                                            
-                                            if (debugOutput) {console.log(__keyUrl)};
-                                        }
-
-                                        // Set collections array
-                                        if (manifestTest) {
-                                            if (!(__keyName in __contentSections)){
-                                                __contentSections[__keyName] = __keyUrl;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            // -------------------------------------
-
-                            if (__i === 'items' && typeof __thisItem[__i] === 'object') {
-
-                                var __parent = __output.items[count].title;
-
-                                if (debugOutput) {
-                                    console.log('-----------------');
-                                    console.log(__parent + ' sub links');
-                                }
+                        if (manifestTest) {                
+                            for (var __item in mainItem) {
                                 
-                                var __subItem = __output.items[count].items;
+                                if(mainItem.hasOwnProperty(__item)){
+                                    count++;
+                                }
 
-                                var __count = 0;
+                                var __thisItem = __output.items[count];
 
-                                for (var __item in __subItem) {
+                                for (var __i in __thisItem) {
+                                    if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
                                     
-                                    if(__subItem.hasOwnProperty(__item)){
-                                        __count++;
-
-                                        __offset = (__count - 1);
-                                        // console.log(__offset);
+                                    if (articleTest) {
+                                        // console.log(__thisItem[__i]);
                                     }
 
-                                    var __lastItem = __output.items[count].items[__offset];
+                                    
+                                    if (reqKeys.indexOf(__i) > -1) {
 
-                                    for (var __b in __lastItem) {
-                                        if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
+                                        if (__thisItem.length <= 0) {
+                                            throw new Error('key blank ' + __i);
+                                        } else {
 
-                                        if (reqKeys.indexOf(__b) > -1) {
-                                            // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
-                                            
-                                            if (__b === 'appTitle') {
-                                                var __lastKeyName = __lastItem[__b];
+                                            if (__i === 'appTitle') {
+                                                var __keyName = __thisItem[__i];
                                             }
 
-                                            if (__b === 'location') {
+                                            if (__i === 'location') {
                                                 
-                                                if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
+                                                if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
 
-                                                if (__lastItem[__b].indexOf('/apps') > -1) {
+                                                if (__thisItem[__i].indexOf('/apps') > -1) {
 
-                                                    if (__lastItem[__b].indexOf('?') > -1) {
-                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=3'
+                                                    if (__thisItem[__i].indexOf('?') > -1) {
+                                                        var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=3'
                                                     } else {
-                                                        var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=3'
+                                                        var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=3'
                                                     }
                                                     
-                                                    if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
+                                                    if (debugOutput) {console.log(__keyUrl)};
                                                 }
 
                                                 // Set collections array
                                                 if (manifestTest) {
-                                                    if (!(__lastKeyName in __contentSections)){
-                                                        // console.log(' - '+__lastKeyName);
-                                                        __contentSections[__lastKeyName] = __lastKeyUrl;
+                                                    if (!(__keyName in __contentSections)){
+                                                        __contentSections[__keyName] = __keyUrl;
                                                     }
                                                 }
                                             }
                                         }
-
                                     }
-                                    if (debugOutput) { console.log('    -----------------')};
+
+                                    // -------------------------------------
+
+                                    if (__i === 'items' && typeof __thisItem[__i] === 'object') {
+
+                                        var __parent = __output.items[count].title;
+
+                                        if (debugOutput) {
+                                            console.log('-----------------');
+                                            console.log(__parent + ' sub links');
+                                        }
+                                        
+                                        var __subItem = __output.items[count].items;
+
+                                        var __count = 0;
+
+                                        for (var __item in __subItem) {
+                                            
+                                            if(__subItem.hasOwnProperty(__item)){
+                                                __count++;
+
+                                                __offset = (__count - 1);
+                                                // console.log(__offset);
+                                            }
+
+                                            var __lastItem = __output.items[count].items[__offset];
+
+                                            for (var __b in __lastItem) {
+                                                if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
+
+                                                if (reqKeys.indexOf(__b) > -1) {
+                                                    // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
+                                                    
+                                                    if (__b === 'appTitle') {
+                                                        var __lastKeyName = __lastItem[__b];
+                                                    }
+
+                                                    if (__b === 'location') {
+                                                        
+                                                        if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
+
+                                                        if (__lastItem[__b].indexOf('/apps') > -1) {
+
+                                                            if (__lastItem[__b].indexOf('?') > -1) {
+                                                                var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=3'
+                                                            } else {
+                                                                var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=3'
+                                                            }
+                                                            
+                                                            if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
+                                                        }
+
+                                                        // Set collections array
+                                                        if (manifestTest) {
+                                                            if (!(__lastKeyName in __contentSections)){
+                                                                // console.log(' - '+__lastKeyName);
+                                                                __contentSections[__lastKeyName] = __lastKeyUrl;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                            if (debugOutput) { console.log('    -----------------')};
+                                        }
+                                    }
                                 }
+
+                                if (debugOutput) {console.log('-----------------')};
                             }
                         }
-
-                        if (debugOutput) {console.log('-----------------')};
-                    }
+                     }
+                } catch (e) {
+                    // ...
+                    if (showOutput) {console.log(e)};
                 }
+                    
 
                 if (manifestTest) {
                     // console.log('__contentSections -> ',JSON.stringify(__contentSections));
@@ -383,7 +396,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     var mainItemArticles = __output.modules;
 
                     for (var __itemThis in mainItemArticles) {
-                        console.log('Testing endpoint: ' + __url);
+                        console.log('ID:\n ' + testID + ' Testing endpoint: ' + __url);
                         fs.write(save, ',\n"Endpoint: '+ __url +'"', 'a+');
                         fs.write(save, ',\nContent ID,Title,Error,Endpoint', 'a+');
 
@@ -408,7 +421,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                     if (typeof __innerItems[__items] === 'object') {
 
-                                        // if (debugOutput) {
+                                        if (debugOutput) {
                                             console.log('  -----------------');
                                             console.log('  >> article_contentID  : ' + __innerItems[__items].contentID);
                                             console.log('  >> article_title  : ' + __innerItems[__items].title);
@@ -428,7 +441,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             console.log('  >> article_liveAppVideoEmbed  : ' + __innerItems[__items].liveAppVideoEmbed);
                                             // console.log('  >> article_contentBody  : ' + __innerItems[__items].contentBody);
                                             console.log('  >> article_leadMedia  : ' + __innerItems[__items].leadMedia);
-                                        // }
+                                        }
 
                                         if (__innerItems[__items].fullsizeImageURL.indexOf('0*false') > -1) {
                                             console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + __innerItems[__items].fullsizeImageURL + '.', 'ERROR'));
@@ -439,7 +452,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         }
                                         
                                         // Check for the Feature flag
-                                        if (__innerItems[__items].feature === true) {
+                                        if (__innerItems[__items].feature === false) {
                                             
                                             if (__innerItems[__items].featureName.length <= 0) {
                                                 setFail++;
@@ -519,13 +532,17 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         if (typeof __innerItems[__items].leadMedia === 'object') {
 
                                             __subItems = __innerItems[__items].leadMedia;
-                                            console.log('    ------------------ ');
+                                            
+                                            if (debugOutput) {
+                                                console.log('    ------------------ ');
+                                            }
+
                                             for (var __indItems in __subItems) {
                                                 // if (typeof __subItems[__indItems] === 'object') {
 
-                                                // if (debugOutput) {
+                                                if (debugOutput) {
                                                     console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
-                                                // }
+                                                }
                                                 
                                                 if (__subItems[__indItems] === 'Gallery') {
                                                     
