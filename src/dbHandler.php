@@ -489,49 +489,28 @@ class DbHandler {
      */
     public function navigationAuditInsert($resultsFile) {
         // print_r($resultsFile);
-        $fuck = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES ( test_id, link_name, link_url, status_code, status)";
+        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status)";
         
 
 
-        if ( !($stmt = $this->conn->query($fuck)) ) {
+        if ( !($stmt = $this->conn->query($uploadQuery)) ) {
             // echo "\nQuery execute failed: ERRNO: (" . $this->conn->errno . ") " . $this->conn->error;
             return 0;
         } else {
             return 1;
         }
+    }
 
+    public function articleAuditInsert($resultsFile) {
+        // print_r($resultsFile);
+        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE article_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, endpoint, content_id, content_title, content_error)";
 
-
-
-        // $stmt = $this->conn->prepare("LOAD DATA LOCAL INFILE ? INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES ( test_id, link_name, link_url, status_code, status)");
-        
-        // var_dump($fuck);
-        
-        // $stmt = $this->conn->prepare($fuck);
-        // // $stmt->bind_param("s", $resultsFile);
-        // echo "string 1";
-        // $stmt->execute();
-        // printf("Error: %s.\n", $stmt->error);
-        // echo "string 2";
-        // var_dump($stmt->error);
-        // echo "string 3";
-        // $stmt->close();
-        
-        // // $this_result = mysql_query($stmt) or trigger_error(mysql_error()." ".$stmt);
-        // var_dump($result);
-
-        //Working directly in MySQL
-        /*
-        
-        LOAD DATA LOCAL INFILE /Users/telemundodigital/Documents/Repositories/Applications/NBC OTS Spire/public/test_results/api_navigation_audits/7_25_2016/nbcchicago_navigation-audit_7_25_2016-11_58-AM.csv INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES ( test_id, link_name, link_url, status_code, status)
-
-         */
-
-        // $num_affected_rows = $stmt->affected_rows;
-        // var_dump('<br />affected rows => ', $num_affected_rows);
-        
-        // $stmt->close();
-        // return $num_affected_rows > 0;
+        if ( !($stmt = $this->conn->query($uploadQuery)) ) {
+            // echo "\nQuery execute failed: ERRNO: (" . $this->conn->errno . ") " . $this->conn->error;
+            return 0;
+        } else {
+            return 1;
+        }
     }
 }
 

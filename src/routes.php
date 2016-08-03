@@ -756,6 +756,7 @@ $app->group('/utils', function () {
 		}
 
 		if ($createTestID) {
+			// Create test ID
 			$thisID = $db->createTestID($randTestID, $stationProperty, $testType);
 
 			if ($thisID != NULL) {
@@ -764,10 +765,12 @@ $app->group('/utils', function () {
 				echo('che le derp');
 			}	
 		} elseif ($uploadResultsFile) {
+			// Updload results file
 			$testResultsFile = $utilReqParams['fileLoc'];
 
 			echo "...importing csv to db<br />";
 
+			// Check test type -- Needs refactoring
 			if ($utilReqParams['testType'] == 'apiNav') {
 				$db->navigationAuditInsert($testResultsFile);
 				// $thisupload = $db->navigationAuditInsert($testResultsFile);	
@@ -778,6 +781,8 @@ $app->group('/utils', function () {
 					echo 'fail insert';
 					$this->logger->info("DB import failed");
 				}
+			} elseif ($utilReqParams['testType'] == 'apiArticle') {
+				$db->articleAuditInsert($testResultsFile);
 			}
 
 		} else {

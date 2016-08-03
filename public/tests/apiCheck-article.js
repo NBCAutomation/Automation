@@ -13,6 +13,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var x2js = new xmlLib();
 
     var debugOutput = false;
+    var logResults = true;
 
     var type = casper.cli.get('output');
         if (type === 'debug') {
@@ -20,6 +21,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         } else if (type === 'console') {
             var showOutput = true;
         }
+
+    if ( casper.cli.get('testing') ) {
+        var logResults = false;
+    }
 
     var currentTime = new Date();
 
@@ -59,9 +64,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
 
     // Write file headers
-    var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
+    // var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
     
-    fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
+    // fs.write(save, ' ' + testTime + ',\n' + '\n', 'a+');
+    fs.write(save, 'Test ID,Endpoint,Content ID,Content Title,Error,' + '\n', 'a+');
 
     var colorizer = require('colorizer').create('Colorizer');
 
@@ -113,6 +119,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
         }).run(function() {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
+
+            //Process file to DB
+            if (logResults) {
+                suite.processTestResults(save);
+            }
+
             this.exit();
         });
     };
@@ -123,7 +135,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-article_content&property=' + stationProperty;
+        var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-article&property=' + stationProperty;
 
         if (dbUrl) {
             // casper.start( 'dbUrl' ).then(function(response) {
@@ -151,6 +163,42 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         // } else {
         //     // delete this.__collected;
         // }
+    };
+
+    // Log results in DB
+    apiSuite.prototype.processTestResults = function(resultsFile) {
+        var testResultFileLocation = encodeURIComponent(save);
+        // console.log('save information == ' + testResultFileLocation);
+        // this.exit();
+
+        var suite = this;
+
+        // require('utils').dump( current );
+        var processUrl = 'http://spire.app/utils/createspireid?task=upload&testType=apiArticle&fileLoc=' + testResultFileLocation;
+
+        if (processUrl) {
+            // casper.start( 'processUrl' ).then(function(response) {
+                casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    
+                    var status = this.status().currentHTTPStatus;
+
+                    if ( status == 200) {
+                        if (debugOutput) { console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl ) };
+
+                        var output = this.getHTML();
+                        var __dbID = casper.getElementInfo('body').text;
+
+                        suite.getContent(url, type, __dbID);
+
+                        // console.log('derp = '+__dbID);
+                        // return __dbID;
+                    } else {
+                        throw new Error('Unable to get/store Test ID!');
+                    }
+                    
+                });
+            // });
+        }
     };
 
     apiSuite.prototype.getContent = function(url, type, testID) {
@@ -396,9 +444,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     var mainItemArticles = __output.modules;
 
                     for (var __itemThis in mainItemArticles) {
-                        console.log('ID:\n ' + testID + ' Testing endpoint: ' + __url);
-                        fs.write(save, ',\n"Endpoint: '+ __url +'"', 'a+');
-                        fs.write(save, ',\nContent ID,Title,Error,Endpoint', 'a+');
+                        console.log('Test ID: ' + testID + '\nTesting endpoint: ' + __url);
 
                         if (debugOutput) {
                             console.log('-----------------');
@@ -452,7 +498,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         }
                                         
                                         // Check for the Feature flag
-                                        if (__innerItems[__items].feature === false) {
+                                        if (__innerItems[__items].feature === true) {
                                             
                                             if (__innerItems[__items].featureName.length <= 0) {
                                                 setFail++;
@@ -461,7 +507,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                                 console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + __innerItems[__items].contentID + ', but featureName empty.', 'ERROR'));
 
-                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
 
                                                 var __curError = '';
 
@@ -471,7 +517,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Feature flag set to TRUE but featureId empty.';
                                                 
                                                 console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + __innerItems[__items].contentID + ', but featureId empty.', 'ERROR'));
-                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
 
                                                 var __curError = '';
                                             }
@@ -486,7 +532,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + __innerItems[__items].contentID + ', but sponsorName empty.', 'ERROR'));
-                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
 
                                                 var __curError = '';
 
@@ -497,7 +543,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + __innerItems[__items].contentID + ', but sponsorID empty.', 'ERROR'));
-                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
 
                                                 var __curError = '';
 
@@ -514,7 +560,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + __innerItems[__items].contentID + ', but liveVideoEmbed empty.', 'ERROR'));
-                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
 
                                                 var __curError = '';
                                             } else if (__innerItems[__items].liveAppVideoEmbed.length <= 0) {
@@ -523,7 +569,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + __innerItems[__items].contentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
-                                                fs.write(save, ',\n"' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + __url, 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
 
                                                 var __curError = '';
                                             }
@@ -640,7 +686,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                 if (validated) {
                     if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
-                    fs.write(save, ',\n"' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
+                    fs.write(save, '"' + testID + '","' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'JSON Validated,' + '\n', 'a+');
                 } else {
                     if (showOutput) {console.log('...re-testing JSON')};
                     
@@ -653,14 +699,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                         if( __verifyOutput instanceof Object ) {
                             if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                            fs.write(save, ',\n"' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'JSON Validated,', 'a+');
+                            fs.write(save, '"' + testID + '","' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'JSON Validated,' + '\n', 'a+');
                         } else {
                             if (showOutput) {console.log(__catchJson)};
                         }
                     } catch (e) {
                         // ...
                         if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail also with removing HTML tags, possible False/Positive..check url manually.')};
-                        fs.write(save, ',\n"' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'FAIL - Possible False/Positive,', 'a+');
+                        fs.write(save, '"' + testID + '","' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'FAIL - Possible False/Positive,' + '\n', 'a+');
                     }
                 }
                 if (showOutput) {console.log('-----------------')};

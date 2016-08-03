@@ -14,6 +14,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     // Global Vars
     var xmlLib = require('./xml2json');
     var x2js = new xmlLib();
+    var logResults = true;
 
     var type = casper.cli.get('output');
         if (type === 'debug') {
@@ -21,6 +22,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         } else if (type === 'console') {
             var showOutput = true;
         }
+
+    if ( casper.cli.get('testing') ) {
+        var logResults = false;
+    }
 
     var currentTime = new Date();
 
@@ -99,7 +104,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             
             //Process file to DB
-            suite.processTestResults(save);
+            if (logResults) {
+                suite.processTestResults(save);
+            }
 
             this.exit();
         });
@@ -144,7 +151,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     // Log results in DB
     apiSuite.prototype.processTestResults = function(resultsFile) {
         var testResultFileLocation = encodeURIComponent(save);
-        console.log('save information == ' + testResultFileLocation);
+        // console.log('save information == ' + testResultFileLocation);
         // this.exit();
 
         var suite = this;
