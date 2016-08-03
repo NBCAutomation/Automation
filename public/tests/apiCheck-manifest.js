@@ -178,9 +178,21 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                                 for(var c = 0; c < subChildren.length; c++) {
 
+                                    if (subChildren[c].nodeName == 'array') {
+                                        console.log('found array');
+                                    }
+
                                     if (subChildren[c].nodeName == 'dict') {
 
                                         if (debugOutput) {console.log('=== [dict] ===')};
+
+                                        console.log('\nDebug ======\n');
+                                        console.log('nodeType >> ' + subChildren[c].nodeType);
+                                        console.log('nodeName >> ' + subChildren[c].nodeName);
+                                        console.log('textContent >> ' + JSON.stringify(subChildren[c].textContent));
+                                        console.log('nodeValue >> ' + subChildren[c].nodeValue);
+                                        console.log('\n/Debug ======');
+                                        
 
                                         var dictName = subChildren[c].previousElementSibling.textContent;
                                         if (debugOutput) {console.log('** Dict Name: ' + dictName)};
