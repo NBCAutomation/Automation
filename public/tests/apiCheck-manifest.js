@@ -25,45 +25,11 @@
 
 
 casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
-    var apiSuite = function(url) {
 
-        if (!url) {
-            throw new Error('A URL is required!');
-        }
+    var colorizer = require('colorizer').create('Colorizer');
+    var logResults = true;
 
-        var suite = this;
-        var no_error = false;
-        var type = casper.cli.get('output');
-        var colorizer = require('colorizer').create('Colorizer');
-
-        // Add manifest url    
-        url = url + '/apps/news-app/manifest/?apiVersion=3';
-
-        // Start Test
-        casper.start( url ).then(function(response) {
-
-            if ( response.status == 200 ) {
-                no_error = true;
-            } else {
-                throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
-            }
-        }).then(function() {
-            console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-
-            suite.getContent(url, type);
-
-        }).run(function() {
-            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
-            this.exit();
-        });
-    };
-
-    apiSuite.prototype.getContent = function(url, type) {
-        
-        var suite = this;
-
-        var colorizer = require('colorizer').create('Colorizer');
-
+    var type = casper.cli.get('output');
         if (type === 'debug') {
             var debugOutput = true;
         } else if (type === 'dictionary') {
@@ -72,16 +38,19 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var showOutput = true;
         }
 
-        if (!debugOutput) {
-            var currentTime = new Date();
-            var timeStamp = currentTime.toISOString();
+    if ( casper.cli.get('testing') ) {
+        var logResults = false;
+    }
 
-            var month = currentTime.getMonth() + 1;
-            var day = currentTime.getDate();
-            var year = currentTime.getFullYear();
-            var hours = currentTime.getHours();
-            var minutes = currentTime.getMinutes();
-            
+    if (!debugOutput) {
+        var currentTime = new Date();
+
+        var month = currentTime.getMonth() + 1;
+        var day = currentTime.getDate();
+        var year = currentTime.getFullYear();
+        var hours = currentTime.getHours();
+        var minutes = currentTime.getMinutes();
+
             if (minutes < 10){
                 minutes = "0" + minutes;
             }
@@ -92,33 +61,157 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 var toD = "AM";
             }
 
-            var parser = document.createElement('a');
-            parser.href = url;
 
-            newUrl = parser.href;
-            var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-            var urlUri = sourceString.replace('.','_');
+        var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
 
-            var fs = require('fs');
-            var logName = urlUri + '_manifest-audit_' + timeStamp + '.csv';
-            
-            var curFolder = month + '_' + day + '_' + year;
-            
-            if(createDictionary){
-                var save = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary', logName);
-            } else {
-                var saveLocation = 'test_results/api_manifest_audits/' + curFolder;
-                fs.makeDirectory(saveLocation, 775);
-                var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
-            }
+        var parser = document.createElement('a');
+        parser.href = casper.cli.get('url');
+
+        newUrl = parser.href;
+        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+        var urlUri = sourceString.replace('.','_');
+
+        var fs = require('fs');
+        var logName = urlUri + '_manifest-audit_' + timeStamp + '.csv';
+
+        var curFolder = month + '_' + day + '_' + year;
+        
+        if(createDictionary){
+            var save = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary', logName);
+        } else {
+            var saveLocation = 'test_results/api_manifest_audits/' + curFolder;
+            fs.makeDirectory(saveLocation, 775);
+            var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
+        }
+    }
+
+    var colorizer = require('colorizer').create('Colorizer');
+
+    var apiSuite = function(url) {
+
+        if (!url) {
+            throw new Error('A URL is required!');
         }
 
+        var suite = this;
 
+        var parser = document.createElement('a');
+        parser.href = url;
+
+        newUrl = parser.href;
+        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+        var urlUri = sourceString.replace('.','_');
+
+        // Add manifest url    
+        url = url + '/apps/news-app/manifest/?apiVersion=3';
+
+        // Start Test
+        casper.start( url ).then(function(response) {
+
+            if ( response.status == 200 ) {
+                suite.createTestID(url, type, urlUri);
+
+                casper.then(function() {
+                    //Start testing
+                    
+                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+                    // suite.getContent(url, type, testID);
+
+                })
+            } else {
+                throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
+            }
+        }).run(function() {
+            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
+            
+            //Process file to DB
+            if (logResults) {
+                suite.processTestResults(save);
+            }
+
+            this.exit();
+        });
+    };
+
+    // Create test id in DB
+    apiSuite.prototype.createTestID = function(url, type, stationProperty) {
+
+        var suite = this;
+
+        // require('utils').dump( current );
+        var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-manifest&property=' + stationProperty;
+
+        if (dbUrl) {
+            // casper.start( 'dbUrl' ).then(function(response) {
+                casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    
+                    var status = this.status().currentHTTPStatus;
+
+                    if ( status == 200) {
+                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
+
+                        var output = this.getHTML();
+                        var __dbID = casper.getElementInfo('body').text;
+
+                        suite.getContent(url, type, __dbID);
+
+                        // console.log('derp = '+__dbID);
+                        // return __dbID;
+                    } else {
+                        throw new Error('Unable to get/store Test ID!');
+                    }
+                    
+                });
+            // });
+        }
+        // } else {
+        //     // delete this.__collected;
+        // }
+    };
+
+    // Log results in DB
+    apiSuite.prototype.processTestResults = function(resultsFile) {
+        var testResultFileLocation = encodeURIComponent(save);
+        console.log('save information == ' + testResultFileLocation);
+        // this.exit();
+
+        var suite = this;
+
+        // require('utils').dump( current );
+        var processUrl = 'http://spire.app/utils/createspireid?task=upload&testType=apiManifest&fileLoc=' + testResultFileLocation;
+
+        if (processUrl) {
+            // casper.start( 'processUrl' ).then(function(response) {
+                casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    
+                    var status = this.status().currentHTTPStatus;
+
+                    if ( status == 200) {
+                        if (debugOutput) { console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl ) };
+
+                        var output = this.getHTML();
+                        var __dbID = casper.getElementInfo('body').text;
+
+                        suite.getContent(url, type, __dbID);
+
+                        // console.log('derp = '+__dbID);
+                        // return __dbID;
+                    } else {
+                        throw new Error('Unable to get/store Test ID!');
+                    }
+                    
+                });
+            // });
+        }
+    };
+
+    apiSuite.prototype.getContent = function(url, type, testID) {
+        
+        var suite = this;
+        var apiVersion = '3';
 
         // Required API keys for app to function correctly.
         var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
-
-        var gdocSheetkeys = {nbcnewyork:"1237123522",nbclosangeles:"760525331",nbcchicago:"1368539190",nbcbayarea:"382654776",nbcdfw:"837130684",nbcmiami:"206819603",nbcphiladelphia:"1647241295",nbcconnecticut:"1053499483",nbcwashington:"52580851",nbcsandiego:"196020938",nbcboston:"1408094619",necn:"140276335",telemundo40:"618666866",telemundo47:"1440310357",telemundo51:"1586194994",telemundo52:"1528595265",telemundo62:"955449852",telemundoareadelabahia:"1873969221",telemundoarizona:"840179992",telemundoboston:"2081694699",telemundochicago:"803813981",telemundodallas:"1261394201",telemundodenver:"51923675",telemundohouston:"153235565",telemundolasvegas:"248723970",telemundosanantonio:"1675506119",telemundopr:"1689340443"}
         
         __collected = {};
         __dictionary = {};
@@ -131,9 +224,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             if(createDictionary){
                 fs.write(save, 'Expected Key,Expected Value', 'a+');
             } else {
-                fs.write(save, ' ' + testInfo + ',\n' + ',\n');
-                fs.write(save, ' ' + testTime + ',\n' + ',\n', 'a+');
-                fs.write(save, 'Expected Key,Expected Value,Tested Key,Tested Value,Pass/Fail', 'a+');
+                fs.write(save, 'Test ID,API Version,Expected Key,Expected Value,Live Key,Live Value,Pass/Fail,Info,' + '\n', 'a+');
             }
         }
 
@@ -328,9 +419,12 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                        }
 
                        if (!(reqKeys[i] in __collected)) {
-                           // throw new Error('Missing required API key! ' + reqKeys[i]);
-                           if (showOutput) {console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'))};
-                           if (!debugOutput) {fs.write(save, ',\n' + 'FAIL: Missing required API key! ' + reqKeys[i], 'a+');};
+                            // throw new Error('Missing required API key! ' + reqKeys[i]);
+                            if (showOutput) {console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'))};
+                            if (!debugOutput) {
+                                // fs.write(save, ',\n' + 'FAIL: Missing required API key! ' + reqKeys[i], 'a+');
+                                fs.write(save, testID + ',' + apiVersion + ',' +  reqKeys[i] + ',"--missing--",' + reqKeys[i] + ',"--missing--",' + 'Fail,FAIL: Missing required API key! ' + reqKeys[i] + ',\n', 'a+');
+                            };
                        } else {
                             // console.log('found key:' + reqKeys[i]);
                             for (var key in __collected) {
@@ -344,16 +438,24 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                         } else {
                                             if (val.indexOf('$') >= 0 ) {
                                                 if (showOutput) {console.log(colorizer.colorize('FAIL: Variable found "' + val + '" in output for ' + key, 'ERROR'))};
-                                                if (!debugOutput) {fs.write(save, ',\n' + 'FAIL: Variable found "' + val + '" in output for ' + key, 'a+');};
+                                                if (!debugOutput) {
+                                                    // fs.write(save, ',\n' + 'FAIL: Variable found "' + val + '" in output for ' + key, 'a+');
+                                                    fs.write(save, testID + ',' + apiVersion + ',' +  key + ',"--error--",' + key + ',"--error--",' + 'Fail,FAIL: Variable found ' + val + ',\n', 'a+');
+                                                };
                                             } else {
                                                 //TVE key check
                                                 if(/* typeof val === 'undefined' || typeof val === null || val == "" ||*/ val.length <= 0) {
                                                     if (url.indexOf('necn.com') && key == 'tve_url' || url.indexOf('telemundo') && key == 'tve_url') {
                                                         if (showOutput) {console.log(colorizer.colorize('TVE not requred for property', 'COMMENT'))};
-                                                        if (!debugOutput) {fs.write(save, ',\n' + 'TVE not requred for property. ', 'a+');};
+                                                        if (!debugOutput) {
+                                                            fs.write(save, ',\n' + 'TVE not requred for property. ', 'a+');
+                                                            fs.write(save, testID + ',' + apiVersion + ',' +  key + ',"--//--",' + key + ',"--//--",' + 'Pass,TVE not requred for property ' + key + ',\n', 'a+');
+                                                        };
                                                     } else {
                                                         if (showOutput) {console.log(colorizer.colorize('FAIL:  API value missing for: ' + reqKeys[i], 'ERROR'))};
-                                                        if (!debugOutput) {fs.write(save, ',\n' + 'FAIL:  API value missing for: ' + reqKeys[i], 'a+');};
+                                                        if (!debugOutput) {
+                                                            fs.write(save, testID + ',' + apiVersion + ',' +  reqKeys[i] + ',"--missing--",' + reqKeys[i] + ',"--missing--",' + 'Fail,FAIL:  API value missing for: ' + reqKeys[i] + ',\n', 'a+');
+                                                        };
                                                     }
                                                 } else {
                                                     // console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
@@ -369,14 +471,16 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                                                 if (val === __dictionary[__key]) {
                                                                     if (showOutput) {console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val)};
 
-                                                                    //Write results to log
-                                                                    fs.write(save, ',\n' + __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Pass', 'a+');
+                                                                    // Write results to log
+                                                                    // Test ID,API Version,Expected Key,Expected Value,Live Key,Live Value,Pass/Fail,Info
+                                                                    fs.write(save, testID + ',"' + apiVersion + '","' + __key + '","' + __dictionary[__key] + '","' + key + '","' + val + '",' + 'Pass, ,' + '\n', 'a+');
 
                                                                 } else {
                                                                     if (showOutput) {console.log(colorizer.colorize('FAIL: ' + key + ' value does not match manifest', 'ERROR') + colorizer.colorize(' dictionary val: ', 'PARAMETER') + __dictionary[__key] + ' : ' + colorizer.colorize('manifest val: ', 'PARAMETER') + val)};
 
-                                                                    //Write results to log
-                                                                    fs.write(save, ',\n' + __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Fail', 'a+');
+                                                                    // Write results to log
+                                                                    // Test ID,API Version,Expected Key,Expected Value,Live Key,Live Value,Pass/Fail,Info
+                                                                    fs.write(save, testID + ',' + apiVersion + ',' +  __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Fail,FAIL: ' + key + ' value does not match manifest.,\n', 'a+');
                                                                 }
                                                             }
                                                         }

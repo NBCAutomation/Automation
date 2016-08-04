@@ -512,6 +512,18 @@ class DbHandler {
             return 1;
         }
     }
+
+    public function manifestAuditInsert($resultsFile) {
+        // print_r($resultsFile);
+        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE manifest_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, apiVersion, expected_key, expected_value, live_key, live_value, status, info)";
+
+        if ( !($stmt = $this->conn->query($uploadQuery)) ) {
+            // echo "\nQuery execute failed: ERRNO: (" . $this->conn->errno . ") " . $this->conn->error;
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 }
 
 ?>

@@ -783,6 +783,16 @@ $app->group('/utils', function () {
 				}
 			} elseif ($utilReqParams['testType'] == 'apiArticle') {
 				$db->articleAuditInsert($testResultsFile);
+			} elseif ($utilReqParams['testType'] == 'apiManifest') {
+				$db->manifestAuditInsert($testResultsFile);
+
+				if ($db->manifestAuditInsert($testResultsFile)) {
+					echo 'inserted';
+					$this->logger->info("Manifest test results imported");
+				} else {
+					echo 'fail insert';
+					$this->logger->info("DB import failed");
+				}
 			}
 
 		} else {

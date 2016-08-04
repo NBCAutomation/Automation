@@ -54,7 +54,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     newUrl = parser.href;
     var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
     var urlUri = sourceString.replace('.','_');
-
+    
     var fs = require('fs');
     var logName = urlUri + '_navigation-audit_' + timeStamp + '.csv';
 
@@ -76,7 +76,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         this.__collected = {};
 
         var suite = this;
-        var no_error = false;
 
         // var type = casper.cli.get('type');
 
@@ -89,17 +88,23 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         
         url = url + '/apps/news-app/manifest/?apiVersion=3';
 
+        // Start Test
         casper.start( url ).then(function(response) {
             // suite.checkConnection(url);
-            suite.createTestID(url, type, urlUri);
+            
+            if ( response.status == 200 ) {
+                suite.createTestID(url, type, urlUri);
 
-            casper.then(function() {
-                //Start testing
-                
-                console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-                // suite.getContent(url, type, testID);
+                casper.then(function() {
+                    //Start testing
+                    
+                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+                    // suite.getContent(url, type, testID);
 
-            })
+                })
+            } else {
+                throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
+            }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             
