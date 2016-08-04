@@ -184,18 +184,19 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                                     if (subChildren[c].nodeName == 'dict') {
 
-                                        if (debugOutput) {console.log('=== [dict] ===')};
+                                        if (debugOutput) {
 
-                                        console.log('\nDebug ======\n');
-                                        console.log('nodeType >> ' + subChildren[c].nodeType);
-                                        console.log('nodeName >> ' + subChildren[c].nodeName);
-                                        console.log('textContent >> ' + JSON.stringify(subChildren[c].textContent));
-                                        console.log('nodeValue >> ' + subChildren[c].nodeValue);
-                                        console.log('\n/Debug ======');
-                                        
+                                            console.log('=== [dict] ===');
+                                            console.log('\nDebug ======\n');
+                                            console.log('nodeType >> ' + subChildren[c].nodeType);
+                                            console.log('nodeName >> ' + subChildren[c].nodeName);
+                                            console.log('textContent >> ' + JSON.stringify(subChildren[c].textContent));
+                                            console.log('nodeValue >> ' + subChildren[c].nodeValue);
+                                            console.log('\n/Debug ======');
+                                        }
 
-                                        var dictName = subChildren[c].previousElementSibling.textContent;
-                                        if (debugOutput) {console.log('** Dict Name: ' + dictName)};
+                                        // var dictName = subChildren[c].previousElementSibling.textContent;
+                                        // if (debugOutput) {console.log('** Dict Name: ' + dictName)};
 
                                         if (subChildren[c].childNodes.length > 1) {
                                             var thirdChildren = subChildren[c].childNodes;
@@ -211,9 +212,10 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                                                 if (thirdChildren[d].nodeName == 'key') {
 
-                                                    if (debugOutput) {console.log('** Dict Name: ' + dictName)};
+                                                    // if (debugOutput) {console.log('** Dict Name: ' + dictName)};
 
-                                                    var __keyName = dictName + '_' + thirdChildren[d].textContent;
+                                                    // var __keyName = dictName + '_' + thirdChildren[d].textContent;
+                                                    var __keyName = thirdChildren[d].textContent;
                                                     var __subKey = thirdChildren[d].textContent;
                                                 }
                                                 
