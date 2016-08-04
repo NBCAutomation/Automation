@@ -107,7 +107,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         casper.start( url ).then(function(response) {
 
             if ( response.status == 200 ) {
-                //Start testing
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
 
                 suite.createTestID(url, type, urlUri);
