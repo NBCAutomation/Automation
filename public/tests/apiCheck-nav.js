@@ -149,7 +149,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     // Log results in DB
     apiSuite.prototype.processTestResults = function(resultsFile) {
         var testResultFileLocation = encodeURIComponent(save);
-        // console.log('save information == ' + testResultFileLocation);
+        console.log('save information == ' + testResultFileLocation);
         // this.exit();
 
         var suite = this;
@@ -252,7 +252,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         
                         // fs.write(save, ' ' + testInfo + '\n' + '\n');
                         // fs.write(save, ' ' + testTime + '\n' + '\n', 'a+');
-                        fs.write(save, 'Test ID,Link,URL,HTTP Status Code, JSON Status,' + '\n', 'a+');
+                        fs.write(save, 'Test ID,Link,URL,HTTP Status Code, Status,Info,' + '\n', 'a+');
 
                         suite.checkNavigation(url, __urlSuite[__prog], testID);
                     }
@@ -471,7 +471,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                 if (validated) {
                     if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
-                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'JSON Validated,' + '\n', 'a+');
+                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","JSON Validated",' + '\n', 'a+');
                 } else {
                     if (showOutput) {console.log('...re-testing JSON')};
                     // var a = "<html><head></head><body>{'a': 123}</body></html>";
@@ -490,20 +490,20 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                 if( __verifyOutput instanceof Object ) {
                                     if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'PASS - JSON Validated,' + '\n', 'a+');
+                                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","PASS - JSON Validated",' + '\n', 'a+');
                                 } else {
                                     if (showOutput) {console.log(__catchJson)};
                                 }
                             } catch (e) {
                                 // ...
                                 if (showOutput) {console.log(colorizer.colorize('WARNING: ', 'COMMENT') + 'Parse fail unable to parse programmatically also with removing HTML tags, possible False/Positive..check url manually.')};
-                                fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'WARNING - Possible False/Positive,' + '\n', 'a+');
+                                fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Warn","WARNING - Possible False/Positive",' + '\n', 'a+');
                             }
                         }
 
                     } catch (e) {
                         if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!')};
-                        fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'FAIL - Possible content error,' + '\n', 'a+');
+                        fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Fail","FAIL - Possible content error",' + '\n', 'a+');
                     }
                 }
                 if (showOutput) {console.log('-----------------')};

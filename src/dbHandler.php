@@ -489,7 +489,7 @@ class DbHandler {
      */
     public function navigationAuditInsert($resultsFile) {
         // print_r($resultsFile);
-        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status)";
+        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status, info)";
         
 
 
@@ -524,6 +524,13 @@ class DbHandler {
             return 1;
         }
     }
+
+    /**
+     * Reporting
+     */
+    // public function manifestAuditInsert($resultsFile) {
+
+    // }
 }
 
 ?>
