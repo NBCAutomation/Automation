@@ -4,12 +4,14 @@
 	"email": "deltrie.allen@nbcuni.com",
 	"version": "1.0.0",
 	"scripts": {
-		"runall": "npm run 10concurrent-nav && npm run 10concurrent",
-		"runall-async": "npm run 1process-nav && npm run 1process",
+		"runall": "npm run 10concurrent-nav && npm run 10concurrent && 10concurrent-article",
+		"runall-async": "npm run 1process && npm run 1process-nav && run 1process-article",
+		"10concurrent": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
+		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
 		"10concurrent-nav": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
 		"1process-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
-		"10concurrent": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
-		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\""
+		"10concurrent-article": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
+		"1process-article": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\""		
 	},
 	"dependencies": {
 		"shelljs": "^0.6.0",
