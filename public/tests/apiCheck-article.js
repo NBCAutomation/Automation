@@ -98,33 +98,18 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         casper.start( url ).then(function(response) {
             // console.log(response);
             if ( response.status == 200 ) {
-                no_error = true;
-                
+                console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
                 suite.createTestID(url, type, urlUri);
-                
-                casper.then(function() {
-                    //Start testing
-                    
-                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-                    // suite.getContent(url, type, testID);
-
-                });
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
-        }).then(function() {
-            //Start testing
-            
-            console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-
         }).run(function() {
-            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
-
             //Process file to DB
             if (logResults) {
                 suite.processTestResults(save);
             }
 
+            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             this.exit();
         });
     };

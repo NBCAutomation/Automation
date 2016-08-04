@@ -93,26 +93,19 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             // suite.checkConnection(url);
             
             if ( response.status == 200 ) {
+                console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+
                 suite.createTestID(url, type, urlUri);
-
-                casper.then(function() {
-                    //Start testing
-                    
-                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-                    // suite.getContent(url, type, testID);
-
-                })
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
-        }).run(function() {
-            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
-            
+        }).run(function() {            
             //Process file to DB
             if (logResults) {
                 suite.processTestResults(save);
             }
 
+            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             this.exit();
         });
     };
@@ -486,21 +479,31 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     
                     var reg = /\<body[^>]*\>([^]*)\<\/body/m;
 
-                    __catchJson = output.match(reg)[1];
+                    // __catchJson = output.match(reg)[1];
 
                     try {
-                        __verifyOutput = JSON.parse(__catchJson);
+                        __catchJson = output.match(reg)[1];
 
-                        if( __verifyOutput instanceof Object ) {
-                            if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                            fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'JSON Validated,' + '\n', 'a+');
-                        } else {
-                            if (showOutput) {console.log(__catchJson)};
+                        if (__catchJson) {
+                            try {
+                                __verifyOutput = JSON.parse(__catchJson);
+
+                                if( __verifyOutput instanceof Object ) {
+                                    if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
+                                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'PASS - JSON Validated,' + '\n', 'a+');
+                                } else {
+                                    if (showOutput) {console.log(__catchJson)};
+                                }
+                            } catch (e) {
+                                // ...
+                                if (showOutput) {console.log(colorizer.colorize('WARNING: ', 'COMMENT') + 'Parse fail unable to parse programmatically also with removing HTML tags, possible False/Positive..check url manually.')};
+                                fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'WARNING - Possible False/Positive,' + '\n', 'a+');
+                            }
                         }
+
                     } catch (e) {
-                        // ...
-                        if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail also with removing HTML tags, possible False/Positive..check url manually.')};
-                        fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'FAIL - Possible False/Positive,' + '\n', 'a+');
+                        if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!')};
+                        fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',' + 'FAIL - Possible content error,' + '\n', 'a+');
                     }
                 }
                 if (showOutput) {console.log('-----------------')};

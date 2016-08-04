@@ -85,8 +85,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         }
     }
 
-    var colorizer = require('colorizer').create('Colorizer');
-
     var apiSuite = function(url) {
 
         if (!url) {
@@ -109,26 +107,21 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         casper.start( url ).then(function(response) {
 
             if ( response.status == 200 ) {
+                //Start testing
+                console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+
                 suite.createTestID(url, type, urlUri);
 
-                casper.then(function() {
-                    //Start testing
-                    
-                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-                    // suite.getContent(url, type, testID);
-
-                })
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
         }).run(function() {
-            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
-            
             //Process file to DB
             if (logResults) {
                 suite.processTestResults(save);
             }
 
+            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             this.exit();
         });
     };
@@ -172,7 +165,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     // Log results in DB
     apiSuite.prototype.processTestResults = function(resultsFile) {
         var testResultFileLocation = encodeURIComponent(save);
-        console.log('save information == ' + testResultFileLocation);
+        // console.log('save information == ' + testResultFileLocation);
         // this.exit();
 
         var suite = this;
