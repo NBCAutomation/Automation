@@ -7,7 +7,7 @@
 // optional string params --output=debug to show logged key/val strings
 // optional string params --output=console will show test results
 
-casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
+casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) {
     // Global Vars
     var xmlLib = require('./xml2json');
     var x2js = new xmlLib();
@@ -153,7 +153,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     // Log results in DB
     apiSuite.prototype.processTestResults = function(resultsFile) {
         var testResultFileLocation = encodeURIComponent(save);
-        // console.log('save information == ' + testResultFileLocation);
+        console.log('save information == ' + testResultFileLocation);
         // this.exit();
 
         var suite = this;
@@ -429,7 +429,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     var mainItemArticles = __output.modules;
 
                     for (var __itemThis in mainItemArticles) {
-                        console.log('Test ID: ' + testID + '\nTesting endpoint: ' + __url);
+                        // console.log('Test ID: ' + testID + '\nTesting endpoint: ' + __url);
 
                         if (debugOutput) {
                             console.log('-----------------');
@@ -591,7 +591,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                             }
                         }
                     }
-                    console.log('Endpoint testing completed with ' + setFail + ' FAILs.');
+                    if (showOutput) { console.log('Endpoint testing completed with ' + setFail + ' FAILs.'); }
                 }
             });
         }

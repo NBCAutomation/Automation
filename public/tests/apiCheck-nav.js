@@ -166,10 +166,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     if ( status == 200) {
                         if (debugOutput) { console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl ) };
 
-                        var output = this.getHTML();
-                        var __dbID = casper.getElementInfo('body').text;
+                        // var output = this.getHTML();
+                        // var __dbID = casper.getElementInfo('body').text;
 
-                        suite.getContent(url, type, __dbID);
+                        // suite.getContent(url, type, __dbID);
 
                         // console.log('derp = '+__dbID);
                         // return __dbID;
