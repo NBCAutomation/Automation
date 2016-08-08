@@ -126,6 +126,13 @@ $app->group('/dashboard', function () use ($app) {
 $app->group('/reports', function () {
 
 	$this->get('/{view}', function ($request, $response, $args) {
+		$db = new DbHandler();
+
+$someResultsNShit = $db->getAllTests('20');
+
+var_dump('someresults > ',$someResultsNShit);
+// exit();
+
 		$permissions = $request->getAttribute('spPermissions');
 
 		$testDir = 'test_results/'.$args['view'];
@@ -781,9 +788,19 @@ $app->group('/utils', function () {
 					echo 'fail insert';
 					$this->logger->info("DB import failed");
 				}
-			} elseif ($utilReqParams['testType'] == 'apiArticle') {
-				$db->articleAuditInsert($testResultsFile);
-			} elseif ($utilReqParams['testType'] == 'apiManifest') {
+			}
+
+			if ($utilReqParams['testType'] == 'apiArticle') {
+				if ($db->articleAuditInsert($testResultsFile)) {
+					echo 'Article test results imported';
+					$this->logger->info("Article test results imported");
+				} else {
+					echo 'DB import failed';
+					$this->logger->info("DB import failed");
+				}
+			}
+
+			if ($utilReqParams['testType'] == 'apiManifest') {
 				$db->manifestAuditInsert($testResultsFile);
 
 				if ($db->manifestAuditInsert($testResultsFile)) {

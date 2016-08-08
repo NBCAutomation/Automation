@@ -528,9 +528,49 @@ class DbHandler {
     /**
      * Reporting
      */
-    // public function manifestAuditInsert($resultsFile) {
+    
+    public function getAllTests($testID) {
+        // $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id =".$testID);
+        $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id = ?");
+        
+        $stmt->bind_param("i", $testID);
 
-    // }
+        if ($stmt->execute()) { 
+            $stmt->bind_result($thisTestID, $testRefID, $property, $testType);
+
+            /* fetch values */
+            mysqli_stmt_fetch($stmt);
+            var_dump($thisTestID, $testRefID, $property, $testType);
+            $stmt->close();
+            // return $user_role;
+        } else {
+            return NULL;
+        }
+
+    }
+
+    public function getTestResults($testID, $testType) {
+        
+        switch ($testType) {
+            case "apiCheck-manifest":
+                $resultsTableName = 'manifest_tests';
+                break;
+            case "apiCheck-nav":
+                $resultsTableName = 'nav_tests';
+                break;
+            case "apiCheck-article":
+                $resultsTableName = 'article_tests';
+                break;
+            default:
+                $resultsTableName = '';
+        }
+
+        $stmt = $this->conn->prepare("SELECT * FROM ? WHERE test_id = ?");
+        $stmt->bind_param("si", $resultsTableName, $testID);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
 }
 
 ?>
