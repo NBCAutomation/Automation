@@ -30,50 +30,13 @@
 				}
 				echo "</div>";
 			} else { ?>
-				<ul>
-					<li>
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<i class="fa fa-folder" aria-hidden="true"></i> 
-								<a href="/reports/api_manifest_audits">Manifest Audits</a>
-								<!-- <span class="script_version">V2.0</span> -->
-							</div>
-							<div class="panel-body">
-								<span class="note">Manifest Key/Value pair testing against pre-defined manifest dictionary files <a href="https://goo.gl/77NtUc" target="_blank">https://goo.gl/77NtUc</a>.</span>
-							</div>
-						</div>
-					</li>
-					<li>
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<i class="fa fa-folder" aria-hidden="true"></i> 
-								<a href="/reports/api_navigation_audits">Navigation Audits</a>
-								<!-- <span class="script_version">V2.0</span> -->
-							</div>
-							<div class="panel-body">
-								<span class="note">Manifest testing for App Navigation items. Case: Load manifest > locate navigation block > load and test all navigation links > load endpoint and test JSON for validation.</span>
-							</div>
-						</div>
-					</li>
-					<li>
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<i class="fa fa-folder" aria-hidden="true"></i> 
-								<a href="/reports/api_article_audits">Article Audits</a>
-								<!-- <span class="script_version">V2.0</span> -->
-							</div>
-							<div class="panel-body">
-								<span class="note">Manifest testing for App article items. Case: Load manifest > locate navigation block > load and test all navigation links > load endpoint > grab article objects and test required keys.</span>
-							</div>
-						</div>
-					</li>
-				</ul>
+				
 		<?php } ?>
 		
 	<?php } else if ($fileView) { ?>
 		<div class="api_results">
 			<ul>
-				<?php foreach ($results as $key => $val) { ?>
+				<!--<?php foreach ($results as $key => $val) { ?>
 					<li class="result file">
 						<div>
 							<a href="<?php echo $linkPath . "/" . $val ?>" download>
@@ -94,7 +57,7 @@
 							<a href="<?php echo $val; ?>"><?php echo $val; ?></a>
 						</div>
 					</li>
-				<?php } ?>
+				<?php } ?>-->
 			</ul>
 		</div>
 	<?php
