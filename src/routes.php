@@ -128,16 +128,17 @@ $app->group('/reports', function () {
 	$this->get('/{view}', function ($request, $response, $args) {
 		$db = new DbHandler();
 
-$someResultsNShit = $db->getAllTests('20');
+// $someResultsNShit = $db->getAllTests('20');
+$someResultsNShit = $db->getAllTests();
+echo "<style>.ts-sidebar{display: none;}</style>";
 
-var_dump('someresults > ',$someResultsNShit);
-// exit();
-
+// echo $args['view'];
+var_dump($someResultsNShit);
 		$permissions = $request->getAttribute('spPermissions');
 
 		$testDir = 'test_results/'.$args['view'];
 
-		$files_array = Spire::dirToArray($testDir);
+		// $files_array = Spire::dirToArray($testDir);
 
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
@@ -149,7 +150,7 @@ var_dump('someresults > ',$someResultsNShit);
             'viewPath' => $args['view'],
             'mainView' => true,
             'reportClass' => true,
-    		'results' => $files_array,
+    		// 'results' => $files_array,
     		
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),

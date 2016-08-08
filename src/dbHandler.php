@@ -529,7 +529,32 @@ class DbHandler {
      * Reporting
      */
     
-    public function getAllTests($testID) {
+    public function getAllTests() {
+        // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
+        $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests");
+        $stmt->execute();
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+                }
+
+                $apiTestsArray[] = $tests;
+            }
+
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
+    }
+
+    public function getTestsById($testID) {
         // $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id =".$testID);
         $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id = ?");
         
@@ -552,12 +577,23 @@ class DbHandler {
     public function getTestResults($testID, $testType) {
         
         switch ($testType) {
+            
             case "apiCheck-manifest":
                 $resultsTableName = 'manifest_tests';
                 break;
+
+            case "api_manifest_audits":
+                $resultsTableName = 'manifest_tests';
+                break;
+
             case "apiCheck-nav":
                 $resultsTableName = 'nav_tests';
                 break;
+
+            case "api_navigation_audits":
+                $resultsTableName = 'nav_tests';
+                break;
+
             case "apiCheck-article":
                 $resultsTableName = 'article_tests';
                 break;
