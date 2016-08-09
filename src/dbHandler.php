@@ -530,13 +530,11 @@ class DbHandler {
      */
     
     public function getAllTests() {
-        // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
-        $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests");
-        $stmt->execute();
+        $stmt = $this->conn->prepare("SELECT * FROM tests");
         $tests = array();
 
         if ($stmt->execute()) {
-            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type);
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
 
             while (mysqli_stmt_fetch($stmt)){
                 
@@ -554,7 +552,8 @@ class DbHandler {
         }
     }
 
-    public function getTestsById($testID) {
+
+    public function getTestById($testID) {
         // $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id =".$testID);
         $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id = ?");
         
@@ -574,39 +573,117 @@ class DbHandler {
 
     }
 
-    public function getTestResults($testID, $testType) {
+    public function getAllTestByType($testType) {
         
         switch ($testType) {
             
-            case "apiCheck-manifest":
-                $resultsTableName = 'manifest_tests';
-                break;
-
             case "api_manifest_audits":
-                $resultsTableName = 'manifest_tests';
-                break;
-
-            case "apiCheck-nav":
-                $resultsTableName = 'nav_tests';
+                $testTypeName = 'apiCheck-manifest';
                 break;
 
             case "api_navigation_audits":
-                $resultsTableName = 'nav_tests';
+                $testTypeName = 'apiCheck-nav';
                 break;
 
-            case "apiCheck-article":
-                $resultsTableName = 'article_tests';
+            case "api_article_audits":
+                $testTypeName = 'apiCheck-article';
                 break;
             default:
-                $resultsTableName = '';
+                $testTypeName = 'none-existent';
         }
 
-        $stmt = $this->conn->prepare("SELECT * FROM ? WHERE test_id = ?");
-        $stmt->bind_param("si", $resultsTableName, $testID);
-        $result = $stmt->execute();
-        $stmt->close();
-        return $result;
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE type = ?");
+        $stmt->bind_param("s", $testTypeName);
+        
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+                }
+
+                $apiTestsArray[] = $tests;
+            }
+
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
     }
+
+    public function checkForTestFailures($testID, $testResultsTable) {
+        // var_dump($testID, $testResultsTable);
+        
+        switch ($testResultsTable) {
+            
+            case "api_manifest_audits":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "api_navigation_audits":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "api_article_audits":
+                $testTableName = 'article_tests';
+                break;
+            default:
+                $testTableName = 'none-existent';
+        }
+
+        $stmt = $this->conn->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
+        
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->status, $test->total);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                if ($test->total > 0) {
+                    return 'fail';
+                } else {
+                    return 'pass';
+                }
+            }
+
+            $stmt->close();
+        } else {
+            return NULL;
+        }
+    }
+
+
+    public function getCurrentTestsByType($testType) {
+        // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE ");
+        // $stmt->execute();
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+                }
+
+                $apiTestsArray[] = $tests;
+            }
+
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
+    }
+
 }
 
 ?>

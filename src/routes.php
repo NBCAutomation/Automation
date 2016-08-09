@@ -128,12 +128,9 @@ $app->group('/reports', function () {
 	$this->get('/{view}', function ($request, $response, $args) {
 		$db = new DbHandler();
 
-// $someResultsNShit = $db->getAllTests('20');
-$someResultsNShit = $db->getAllTests();
-echo "<style>.ts-sidebar{display: none;}</style>";
+		// $getReports = $db->getAllTests('20');
+		$getReports = $db->getAllTestByType($args['view']);
 
-// echo $args['view'];
-var_dump($someResultsNShit);
 		$permissions = $request->getAttribute('spPermissions');
 
 		$testDir = 'test_results/'.$args['view'];
@@ -143,14 +140,19 @@ var_dump($someResultsNShit);
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
 
+		if ($args['view'] == 'main') {
+			$mainView = true;
+		}
+
         return $this->renderer->render($response, 'reports.php', [
             'title' => 'Reports',
             'page_name' => 'reports',
             'view' => $args['view'],
             'viewPath' => $args['view'],
-            'mainView' => true,
+            'mainView' => $mainView,
             'reportClass' => true,
     		// 'results' => $files_array,
+    		'results' => $getReports,
     		
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),

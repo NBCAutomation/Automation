@@ -110,3 +110,29 @@ h1 {
 table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
 	text-transform: capitalize;
 }
+
+.api_results .report_status {
+	border-radius: 100%;
+	width: 13px;
+	height: 13px;
+	position: relative;
+	text-indent: -9999px;
+	overflow: hidden;
+}
+
+.api_results .report_status.fail {
+	background: red;
+}
+
+.api_results .report_status.pass {
+	background: green;
+}
+
+.api_results .report_row_status.fail {
+	/*background: #ffd8d8 !important;*/
+	color: red;
+}
+
+.api_results .report_row_status.fail a {
+	color: red;
+}
