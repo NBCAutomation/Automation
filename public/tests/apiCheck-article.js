@@ -67,7 +67,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
     // var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
     
     // fs.write(save, ' ' + testTime + ',\n' + '\n', 'a+');
-    fs.write(save, 'Test ID,Endpoint,Content ID,Content Title,Error,' + '\n', 'a+');
+    fs.write(save, 'Test ID,Endpoint,Content ID,Content Title,Error,Status' + '\n', 'a+');
 
     var colorizer = require('colorizer').create('Colorizer');
 
@@ -429,7 +429,11 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                     var mainItemArticles = __output.modules;
 
                     for (var __itemThis in mainItemArticles) {
-                        // console.log('Test ID: ' + testID + '\nTesting endpoint: ' + __url);
+                        if (showOutput) {
+                            console.log('-----------------');
+                            console.log(' Test ID: ' + testID + '\n Testing endpoint: ' + __url);
+                            console.log(' -------');
+                        }
 
                         if (debugOutput) {
                             console.log('-----------------');
@@ -483,7 +487,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                         }
                                         
                                         // Check for the Feature flag
-                                        if (__innerItems[__items].feature === true) {
+                                        if (__innerItems[__items].feature === false) {
                                             
                                             if (__innerItems[__items].featureName.length <= 0) {
                                                 setFail++;
@@ -492,7 +496,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
 
                                                 console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + __innerItems[__items].contentID + ', but featureName empty.', 'ERROR'));
 
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
 
                                                 var __curError = '';
 
@@ -502,7 +506,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                                 var __curError = 'Feature flag set to TRUE but featureId empty.';
                                                 
                                                 console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + __innerItems[__items].contentID + ', but featureId empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
 
                                                 var __curError = '';
                                             }
@@ -517,7 +521,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + __innerItems[__items].contentID + ', but sponsorName empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
 
                                                 var __curError = '';
 
@@ -528,7 +532,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + __innerItems[__items].contentID + ', but sponsorID empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
 
                                                 var __curError = '';
 
@@ -545,7 +549,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                                 var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + __innerItems[__items].contentID + ', but liveVideoEmbed empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
 
                                                 var __curError = '';
                                             } else if (__innerItems[__items].liveAppVideoEmbed.length <= 0) {
@@ -554,7 +558,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                                 var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + __innerItems[__items].contentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '",' + '\n', 'a+');
+                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
 
                                                 var __curError = '';
                                             }
@@ -591,7 +595,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                             }
                         }
                     }
-                    if (showOutput) { console.log('Endpoint testing completed with ' + setFail + ' FAILs.'); }
+                    if (showOutput) { console.log(' >> Endpoint testing completed with ' + setFail + ' FAILs.'); }
                 }
             });
         }
