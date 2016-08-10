@@ -142,6 +142,14 @@ $app->group('/reports', function () {
 
 		if ($args['view'] == 'main') {
 			$mainView = true;
+			$singleView = false;
+			$reportsView = false;
+			$fileView = false;
+		} else {
+			$mainView = false;
+			$reportsView = true;
+			$singleView = false;
+			$fileView = false;
 		}
 
         return $this->renderer->render($response, 'reports.php', [
@@ -150,6 +158,9 @@ $app->group('/reports', function () {
             'view' => $args['view'],
             'viewPath' => $args['view'],
             'mainView' => $mainView,
+            'reportsView' => $reportsView,
+            'singleView' => $singleView,
+            'fileView' => $fileView,
             'reportClass' => true,
     		// 'results' => $files_array,
     		'results' => $getReports,
