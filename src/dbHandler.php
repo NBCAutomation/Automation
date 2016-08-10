@@ -503,7 +503,7 @@ class DbHandler {
 
     public function articleAuditInsert($resultsFile) {
         // print_r($resultsFile);
-        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE article_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, endpoint, content_id, content_title, content_error)";
+        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE article_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, endpoint, content_id, content_title, content_error, status)";
 
         if ( !($stmt = $this->conn->query($uploadQuery)) ) {
             // echo "\nQuery execute failed: ERRNO: (" . $this->conn->errno . ") " . $this->conn->error;
@@ -647,8 +647,10 @@ class DbHandler {
                 
                 if ($test->total > 0) {
                     return 'fail';
+                    echo 'fail';
                 } else {
                     return 'pass';
+                    echo 'pass';
                 }
             }
 
