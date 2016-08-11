@@ -487,7 +487,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                         }
                                         
                                         // Check for the Feature flag
-                                        if (__innerItems[__items].feature === false) {
+                                        if (__innerItems[__items].feature === true) {
                                             
                                             if (__innerItems[__items].featureName.length <= 0) {
                                                 setFail++;

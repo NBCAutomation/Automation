@@ -135,23 +135,35 @@ $app->group('/reports', function () {
 
 		$testDir = 'test_results/'.$args['view'];
 
-		// $files_array = Spire::dirToArray($testDir);
-
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
 
-		if ($args['view'] == 'main') {
-			$mainView = true;
-			$singleView = false;
-			$reportsView = false;
-			$fileView = false;
-		} else {
-			$mainView = false;
-			$reportsView = true;
-			$singleView = false;
-			$fileView = false;
-		}
+		switch ($args['view']) {
+		    
+		    case "main":
+		        $mainView = true;
+		        break;
 
+		    case "overview":
+		        $overView = true;	
+		        break;
+
+		    case "api_article_audits":
+		        $reportsView = true;
+		        break;
+
+		    case "api_navigation_audits":
+		        $reportsView = true;
+		        break;
+
+	        case "api_manifest_audits":
+	            $reportsView = true;
+	            break;
+
+		    default:
+		        $testTypeName = 'none-existent';
+		}
+		
         return $this->renderer->render($response, 'reports.php', [
             'title' => 'Reports',
             'page_name' => 'reports',
@@ -160,9 +172,9 @@ $app->group('/reports', function () {
             'mainView' => $mainView,
             'reportsView' => $reportsView,
             'singleView' => $singleView,
+            'overView' => $overView,
             'fileView' => $fileView,
             'reportClass' => true,
-    		// 'results' => $files_array,
     		'results' => $getReports,
     		
     		//Auth Specific
@@ -174,21 +186,19 @@ $app->group('/reports', function () {
 
     
     $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {
+    	$db = new DbHandler();
+
     	$permissions = $request->getAttribute('spPermissions');
 
-    	// Individual report url
-    	$__report = BASEPATH . "/test_results/" . $args['view']."/".$args['subView']."/".$args['page'];
-    	$c__report = str_replace('/src/','/public/',$__report);
-		$__reportData = Spire::readCSV($c__report);
+    	echo '<style>.ts-sidebar{display: none;}</style>';
 
-		// Report Directory location
-		$__reportDirLoc = BASEPATH . "/test_results/" . $args['view']."/".$args['subView'];
-		
-		// Change when live to html dir
-		$c__reportDirLoc = str_replace('/src/','/public/',$__reportDirLoc);
-		
-		// var_dump(BASEPATH);
-		$__repoDir = Spire::dirFilesToArray($__reportDirLoc);
+
+    	$allPostPutVars = $request->getQueryParams();
+    	$currentRecord = $db->getTestById($args['page']);
+
+    	$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type']);
+
+    	// var_dump($currentRecordResults);
 
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
@@ -229,6 +239,7 @@ $app->group('/reports', function () {
 		    ]);
     	}
     })->setName('reports-view')->add( new SpireAuth() );
+
 });
 
 // Scripting/Testing View

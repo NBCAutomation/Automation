@@ -60,7 +60,7 @@
 				</div>
 			</div><hr />
 
-			date range search - https://datatables.net/examples/plug-ins/range_filtering.html
+			<!-- date range search - https://datatables.net/examples/plug-ins/range_filtering.html -->
 			<div class="api_results">
 				<div class="panel panel-default">
 					<div class="panel-heading">Reports</div>
@@ -108,12 +108,12 @@
 							$testReportTime = date('n/d/Y', strtotime($testReport['created']));
 
 						    echo '<tr class="report_row_status '.$testReportStatus.'">';
-							    echo '<td><a href="#"><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></a></td>';
-							    echo '<td><a href="#"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
-							    echo '<td><a href="#">'.$testReport['id'].'</a></td>';
-							    echo '<td><a href="#">'.$testReport['test_id'].'</a></td>';
-							    echo '<td><a href="#">'.$testReport['property'].'</a></td>';
-							    echo '<td><a href="#">'.$testReportTime.'</a></td>';
+							    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['id'].'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['test_id'].'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReportTime.'</a></td>';
 			                echo "</tr>";
 						}
 					?>
@@ -160,6 +160,54 @@
 		echo $reportData;
 	}
 	?>
-	</div>
+	<?php if ($overView) { ?>
+		<h3>Overview</h3>
+		<p></p>
+		<?php
+
+			$db = new DbHandler();
+
+			$recentTests = $db->getAllRecentTests();
+		?>
+		<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+			<thead>
+				<tr>
+					<th>Status</th>
+					<th>ID</th>
+					<th>API Test</th>
+					<th>Test Property</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>Status</th>
+					<th>ID</th>
+					<th>API Test</th>
+					<th>Test Property</th>
+				</tr>
+			</tfoot>
+			<tbody>
+			<?php
+				foreach ($recentTests as $testReport) {
+					
+					$testReportStatus = $db->checkForTestFailures($testReport['id'], $testReport['type']);
+
+				    echo '<tr class="report_row_status '.$testReportStatus.'">';
+					    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+					    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['id'].'</a></td>';
+					    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['type'].'</a></td>';
+					    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'</a></td>';
+	                echo "</tr>";
+
+					// echo $testReport['id'].'<br />';
+					// echo $testReport['property'].'<br />';
+					// echo $testReport['type'].'<br />';
+				}
+			?>
+			</tbody>
+		</table>
+
+	<?php } ?>
+	</div><!-- panel-body api_results -->
 
 <?php include_once 'base/footer.php' ?>

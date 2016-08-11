@@ -178,8 +178,8 @@ class DbHandler {
      */
     public function getUserId($api_key) {
         $stmt = $this->conn->prepare("SELECT id FROM users WHERE api_key = ?");
-        // $stmt->bind_param("s", $api_key);
         $stmt->bind_param("s", $api_key);
+
         if ($stmt->execute()) {
             $user_id = $stmt->get_result()->fetch_assoc();
             $stmt->close();
@@ -193,22 +193,6 @@ class DbHandler {
      * Fetching user id by api key
      * @param String $api_key user api key
      */
-    // public function getUserRole($api_key) {
-    //     $stmt = $this->conn->prepare("SELECT role FROM users WHERE api_key = ?");
-    //     // $stmt = $this->conn->prepare("SELECT `users`.`role` FROM `users` LEFT JOIN `user_roles` ON `user_roles`.`role` = `users`.`role`");
-        // $stmt = $this->conn->prepare("SELECT `users`.`role` FROM `users` WHERE `api_key` = `31d6440532e72c5882e90baa3e820eca` AS `c_uer_role` INNER JOIN `user_roles` ON `users`.`c_uer_role` = `user_roles`.`role`");
-
-    //     $stmt->bind_param("s", $api_key);
-    //     if ($stmt->execute()) {
-    //         $user_role = $stmt->get_result()->fetch_assoc();
-    //         var_dump('user role - '.$user_role);
-    //         $stmt->close();
-    //         return $user_role;
-    //     } else {
-    //         return NULL;
-    //     }
-    // }
-
 
     public function getUserRole($api_key) {
         $stmt = $this->conn->prepare("SELECT role FROM users WHERE api_key = ?");
@@ -552,21 +536,51 @@ class DbHandler {
         }
     }
 
+    public function getAllRecentTests() {
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 8 HOUR GROUP BY type");
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+
+                }
+
+                $apiTestsArray[] = $tests;
+            }
+
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
+    }
+
 
     public function getTestById($testID) {
         // $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id =".$testID);
-        $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id = ?");
-        
+        $stmt = $this->conn->prepare("SELECT id, test_id, property, type, created FROM tests WHERE id = ?");
+        $tests = array();
+
         $stmt->bind_param("i", $testID);
 
         if ($stmt->execute()) { 
-            $stmt->bind_result($thisTestID, $testRefID, $property, $testType);
+            $stmt->bind_result($thisTestID, $testRefID, $property, $type, $created);
 
             /* fetch values */
             mysqli_stmt_fetch($stmt);
-            var_dump($thisTestID, $testRefID, $property, $testType);
+            $tests['id'] = $thisTestID;
+            $tests['refId'] = $testRefID;
+            $tests['property'] = $property;
+            $tests['type'] = $type;
+            $tests['created'] = $created;
+
             $stmt->close();
-            // return $user_role;
+            return $tests;
         } else {
             return NULL;
         }
@@ -616,6 +630,121 @@ class DbHandler {
         }
     }
 
+    public function getCurrentTestsByType($testType) {
+        // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE ");
+        // $stmt->execute();
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+                }
+
+                $apiTestsArray[] = $tests;
+            }
+
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
+    }
+
+
+    public function getCurrentTestResults($testID, $testType) {
+
+        switch ($testType) {
+            
+            case "api_manifest_audits":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "apiCheck-manifest":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "api_navigation_audits":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "apiCheck-nav":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "api_article_audits":
+                $testTableName = 'article_tests';
+                break;
+
+            case "apiCheck-article":
+                $testTableName = 'article_tests';
+                break;
+
+            default:
+                $testTableName = 'none-existent';
+        }
+
+
+        $stmt = $this->conn->prepare("SELECT * FROM ".$testTableName." WHERE test_id = ".$testID);
+        // $stmt->bind_param("si", $testTableName, $testID);
+        
+        $tests = array();
+        $result = $stmt->execute();
+        
+        if ($result) {
+            var_dump($result);
+            // $testResults = $stmt->get_result();
+            $result = mysqli_stmt_fetch($stmt);
+
+            
+            $num_of_rows = $result->num_rows;
+            
+            foreach ($result as $key => $value) {
+                echo $key.' => '.$value;
+                var_dump($value);
+            }
+            
+        }
+
+        // while ($row = $result->fetch_array(MYSQLI_NUM))
+        // {
+        //     foreach ($row as $r)
+        //     {
+        //         print "$r ";
+        //     }
+        //     print "\n";
+        // }
+
+        // if ($result) {
+        //     foreach ($result as $key => $value) {
+        //         echo $key.' => '.$value;
+        //         # code...
+        //     }
+        //     // $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+            
+        //     // var_dump($testResults);
+
+        //     // while (mysqli_stmt_fetch($stmt)){
+                
+        //     //     foreach( $test as $key => $value ){
+        //     //         $tests[$key] = $value;
+        //     //     }
+
+        //     //     $apiTestsArray[] = $tests;
+        //     // }
+
+        //     $stmt->close();
+        //     // return $apiTestsArray;
+        // } else {
+        //     return NULL;
+        // }
+    }
+
+
     public function checkForTestFailures($testID, $testResultsTable) {
         // var_dump($testID, $testResultsTable);
         
@@ -625,13 +754,26 @@ class DbHandler {
                 $testTableName = 'manifest_tests';
                 break;
 
+            case "apiCheck-manifest":
+                $testTableName = 'manifest_tests';
+                break;
+
             case "api_navigation_audits":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "apiCheck-nav":
                 $testTableName = 'nav_tests';
                 break;
 
             case "api_article_audits":
                 $testTableName = 'article_tests';
                 break;
+
+            case "apiCheck-article":
+                $testTableName = 'article_tests';
+                break;
+
             default:
                 $testTableName = 'none-existent';
         }
@@ -655,32 +797,6 @@ class DbHandler {
             }
 
             $stmt->close();
-        } else {
-            return NULL;
-        }
-    }
-
-
-    public function getCurrentTestsByType($testType) {
-        // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
-        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE ");
-        // $stmt->execute();
-        $tests = array();
-
-        if ($stmt->execute()) {
-            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
-
-            while (mysqli_stmt_fetch($stmt)){
-                
-                foreach( $test as $key => $value ){
-                    $tests[$key] = $value;
-                }
-
-                $apiTestsArray[] = $tests;
-            }
-
-            $stmt->close();
-            return $apiTestsArray;
         } else {
             return NULL;
         }
