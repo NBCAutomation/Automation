@@ -55,7 +55,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
     var urlUri = sourceString.replace('.','_');
 
     var fs = require('fs');
-    var logName = urlUri + '_endpoint_article-audit_' + timeStamp + '.csv';
+    var logName = urlUri + '_article-audit_' + timeStamp + '.csv';
 
     var curFolder = month + '_' + day + '_' + year;
 
@@ -153,16 +153,11 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
     // Log results in DB
     apiSuite.prototype.processTestResults = function(resultsFile) {
         var testResultFileLocation = encodeURIComponent(save);
-        console.log('save information == ' + testResultFileLocation);
-        // this.exit();
 
         var suite = this;
-
-        // require('utils').dump( current );
         var processUrl = 'http://spire.app/utils/createspireid?task=upload&testType=apiArticle&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
-            // casper.start( 'processUrl' ).then(function(response) {
                 casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                     
                     var status = this.status().currentHTTPStatus;
@@ -170,15 +165,10 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                     if ( status == 200) {
                         if (debugOutput) { console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl ) };
 
-                        var output = this.getHTML();
-                        var __dbID = casper.getElementInfo('body').text;
-
-                        suite.getContent(url, type, __dbID);
-
-                        // console.log('derp = '+__dbID);
-                        // return __dbID;
+                        // var output = this.getHTML();
+                        
                     } else {
-                        throw new Error('Unable to get/store Test ID!');
+                        throw new Error('Unable to store test results!');
                     }
                     
                 });

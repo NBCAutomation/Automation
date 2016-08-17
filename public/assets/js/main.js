@@ -20,9 +20,16 @@
 	 
 	 
 	$('#zctb').DataTable({
-		"scrollX": true
+		"scrollX": true,
+		"order": [[ 2, "desc" ]]
 	});
 	 
+	$('#report-table').DataTable({
+		"scrollX": true,
+		"iDisplayLength": 100
+	});
+
+
 	$.fn.dataTable.ext.search.push(
 		function( settings, data, dataIndex ) {
 			var min = parseInt( $('#min').val(), 10 );

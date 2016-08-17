@@ -182,12 +182,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         if (debugOutput) { console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl ) };
 
                         // var output = this.getHTML();
-                        // var __dbID = casper.getElementInfo('body').text;
-
-                        // suite.getContent(url, type, __dbID);
-
-                        // console.log('derp = '+__dbID);
-                        // return __dbID;
+                        
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }

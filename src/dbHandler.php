@@ -537,7 +537,7 @@ class DbHandler {
     }
 
     public function getAllRecentTests() {
-        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 8 HOUR GROUP BY type");
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR GROUP BY type");
         $tests = array();
 
         if ($stmt->execute()) {
@@ -562,7 +562,6 @@ class DbHandler {
 
 
     public function getTestById($testID) {
-        // $stmt = $this->conn->prepare("SELECT id, test_id, property, type FROM tests WHERE id =".$testID);
         $stmt = $this->conn->prepare("SELECT id, test_id, property, type, created FROM tests WHERE id = ?");
         $tests = array();
 
@@ -662,26 +661,32 @@ class DbHandler {
             
             case "api_manifest_audits":
                 $testTableName = 'manifest_tests';
+                $manifestBind = true;
                 break;
 
             case "apiCheck-manifest":
                 $testTableName = 'manifest_tests';
+                $manifestBind = true;
                 break;
 
             case "api_navigation_audits":
                 $testTableName = 'nav_tests';
+                $navBind = true;
                 break;
 
             case "apiCheck-nav":
                 $testTableName = 'nav_tests';
+                $navBind = true;
                 break;
 
             case "api_article_audits":
                 $testTableName = 'article_tests';
+                $articleBind = true;
                 break;
 
             case "apiCheck-article":
                 $testTableName = 'article_tests';
+                $articleBind = true;
                 break;
 
             default:
@@ -690,58 +695,38 @@ class DbHandler {
 
 
         $stmt = $this->conn->prepare("SELECT * FROM ".$testTableName." WHERE test_id = ".$testID);
-        // $stmt->bind_param("si", $testTableName, $testID);
         
         $tests = array();
-        $result = $stmt->execute();
-        
-        if ($result) {
-            var_dump($result);
-            // $testResults = $stmt->get_result();
-            $result = mysqli_stmt_fetch($stmt);
 
-            
-            $num_of_rows = $result->num_rows;
-            
-            foreach ($result as $key => $value) {
-                echo $key.' => '.$value;
-                var_dump($value);
+        if ($stmt->execute()) {
+
+            if ($manifestBind) {
+                $stmt->bind_result($test->id, $test->test_id, $test->api_version, $test->expected_key, $test->expected_value, $test->live_key, $test->live_value, $test->status, $test->info, $test->created);
             }
             
-        }
+            if ($navBind) {
+                $stmt->bind_result($test->id, $test->test_id, $test->link_name, $test->link_url, $test->status_code, $test->status , $test->info, $test->created);
+            }
 
-        // while ($row = $result->fetch_array(MYSQLI_NUM))
-        // {
-        //     foreach ($row as $r)
-        //     {
-        //         print "$r ";
-        //     }
-        //     print "\n";
-        // }
+            if ($articleBind) {
+                //articleBind
+                $stmt->bind_result($test->id, $test->test_id, $test->endpoint, $test->content_id, $test->content_title, $test->content_error, $test->status, $test->created);
+            }
 
-        // if ($result) {
-        //     foreach ($result as $key => $value) {
-        //         echo $key.' => '.$value;
-        //         # code...
-        //     }
-        //     // $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
-            
-        //     // var_dump($testResults);
-
-        //     // while (mysqli_stmt_fetch($stmt)){
+            while (mysqli_stmt_fetch($stmt)){
                 
-        //     //     foreach( $test as $key => $value ){
-        //     //         $tests[$key] = $value;
-        //     //     }
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+                }
 
-        //     //     $apiTestsArray[] = $tests;
-        //     // }
+                $apiTestsArray[] = $tests;
+            }
 
-        //     $stmt->close();
-        //     // return $apiTestsArray;
-        // } else {
-        //     return NULL;
-        // }
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
     }
 
 

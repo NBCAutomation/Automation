@@ -40,26 +40,23 @@
 					</div>
 				</div>
 			</li>
+			<li>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<i class="fa fa-folder" aria-hidden="true"></i> 
+						<a href="/reports/overview">Overview</a>
+						<!-- <span class="script_version">V2.0</span> -->
+					</div>
+					<div class="panel-body">
+						<span class="note"></span>
+					</div>
+				</div>
+			</li>
 		</ul>
 	<?php } ?>
 	<?php
 		if ($reportsView) {
-			$d = date('n_d_Y');
 	?>
-
-			<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title">Today's Report</h3>
-				</div>
-				<div class="panel-body">
-					<div class="api_results">
-						<ul>
-							<li class="result file"><a href="<?php echo $view .'/'. $d; ?>/main"><i class="fa fa-folder-o"></i><?php str_replace('_','/',$d) ?></a></li>
-						</ul>
-					</div>
-				</div>
-			</div><hr />
-
 			<!-- date range search - https://datatables.net/examples/plug-ins/range_filtering.html -->
 			<div class="api_results">
 				<div class="panel panel-default">
@@ -102,17 +99,30 @@
 							</tfoot>
 							<tbody>
 					<?php
+						if ( strpos($view, 'manifest') ) {
+							$testTypeFolder = 'manifest';
+						} elseif ( strpos($view, 'nav') ) {
+							$testTypeFolder = 'navigation';
+						} elseif ( strpos($view, 'article') ) {
+							$testTypeFolder = 'article';
+						}
+
 						foreach ($results as $testReport) {
 							$db = new DbHandler();
 							$testReportStatus = $db->checkForTestFailures($testReport['id'], $view);
-							$testReportTime = date('n/d/Y', strtotime($testReport['created']));
+							$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
+
+							$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
+							$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport['created']));
+
+							$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
 
 						    echo '<tr class="report_row_status '.$testReportStatus.'">';
 							    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+							    echo '<td><a href="'.$reportCSVFile.'" download><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['id'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['test_id'].'</a></td>';
-							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'.com</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReportTime.'</a></td>';
 			                echo "</tr>";
 						}
@@ -157,7 +167,78 @@
 	<?php
 	}
 	if ($singleView) {
-		echo $reportData;
+		$db = new DbHandler();
+
+		switch ($viewType) {
+		    
+		    case "apiCheck-manifest":
+		        $tableHeaders = '<th>Status</th><th>Expected Key</th><th>Expected Value</th><th>Live Key</th><th>Live Value</th><th>Info</th><th>API Version</th>';
+		        $manifestData = true;
+		        break;
+
+		    case "apiCheck-nav":
+		        $tableHeaders = '<th> Status</th><th>Link</th><th>URL</th><th>HTTP Status Code</th><th>Info</th>';
+		        $navData = true;
+		        break;
+
+		    default:
+		        $tableHeaders = '<th> Status</th><th>Endpoint</th><th>Content ID</th><th>Content Title</th><th>Content Error</th>';
+		        $articleData = true;
+		}
+	?>
+		<p>Errors displayed first</p>
+		<?php 
+			if ($articleData) {
+				echo "<p>Data will only be display when errors exist.</p>";
+			}
+
+		?>
+		<table id="report-table" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+			<thead>
+				<tr>
+					<?php echo $tableHeaders; ?>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<?php echo $tableHeaders; ?>
+				</tr>
+			</tfoot>
+			<tbody>
+			<?php
+
+				foreach ($reportData as $thisReport) {
+					
+					$testReportStatus = $db->checkForTestFailures($reportID, $viewType);
+
+				    echo '<tr class="report_row_status '.strtolower($thisReport['status']).'">';
+					    echo '<td><div class="report_status '.strtolower($thisReport['status']).'">'.$thisReport['status'].'</div></td>';
+
+					    if ($manifestData) {
+						    echo '<td>'.$thisReport['expected_key'].'</td>';
+						    echo '<td>'.$thisReport['expected_value'].'</td>';
+						    echo '<td>'.$thisReport['live_key'].'</td>';
+						    echo '<td>'.$thisReport['live_value'].'</td>';
+						    echo '<td>'.$thisReport['info'].'</td>';
+						    echo '<td>'.$thisReport['api_version'].'</td>';
+					    } elseif ($navData) {
+						    echo '<td>'.$thisReport['link_name'].'</td>';
+						    echo '<td>'.$thisReport['link_url'].'</td>';
+						    echo '<td>'.$thisReport['status_code'].'</td>';
+						    echo '<td>'.$thisReport['info'].'</td>';
+					    } elseif ($articleData) {
+						    echo '<td>'.$thisReport['endpoint'].'</td>';
+						    echo '<td>'.$thisReport['content_id'].'</td>';
+						    echo '<td>'.$thisReport['content_title'].'</td>';
+						    echo '<td>'.$thisReport['content_error'].'</td>';
+					    }
+					    
+	                echo "</tr>";
+				}
+			?>
+			</tbody>
+		</table>
+	<?php 
 	}
 	?>
 	<?php if ($overView) { ?>
@@ -168,7 +249,15 @@
 			$db = new DbHandler();
 
 			$recentTests = $db->getAllRecentTests();
+			$firstArray = $recentTests['1'];
+
+			// var_dump($firstArray['created']);
+			$lastRunDT = date('n/d/Y, g:i A', strtotime($firstArray['created']));
+
+			echo 'Last run: '.$lastRunDT;
+			echo "<hr />";
 		?>
+		<p><i>Results displayed are from the past hour, the property/test endpoint is variable.</i></p>
 		<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 			<thead>
 				<tr>
@@ -194,9 +283,9 @@
 
 				    echo '<tr class="report_row_status '.$testReportStatus.'">';
 					    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-					    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['id'].'</a></td>';
-					    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['type'].'</a></td>';
-					    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'</a></td>';
+					    echo '<td>'.$testReport['id'].'</td>';
+					    echo '<td>'.$testReport['type'].'</td>';
+					    echo '<td>'.$testReport['property'].'</td>';
 	                echo "</tr>";
 
 					// echo $testReport['id'].'<br />';

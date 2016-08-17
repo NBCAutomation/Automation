@@ -190,54 +190,31 @@ $app->group('/reports', function () {
 
     	$permissions = $request->getAttribute('spPermissions');
 
-    	echo '<style>.ts-sidebar{display: none;}</style>';
-
 
     	$allPostPutVars = $request->getQueryParams();
     	$currentRecord = $db->getTestById($args['page']);
 
     	$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type']);
 
-    	// var_dump($currentRecordResults);
-
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
 
-    	if ($args['page'] != 'main') {
-    		// Report View
-    		return $this->renderer->render($response, 'reports.php', [
-    		    'title' => 'Reports',
-    		    'page_name' => 'reports',
-    		    'view' => 'single',
-    		    'viewPath' => $__viewPath.'/'.$args['page'],
-		        'linkPath' => $__reportDirLoc,
-    		    'singleView' => true,
-    		    'reportClass' => true,
-    		    'reportData' => $__reportData,
-    		    
-    		    //Auth Specific
-    		    'user' => $request->getAttribute('spAuth'),
-    	        'uAuth' => $permissions['auth'],
-    	        'uAthMessage' => $permissions['uAthMessage']
-    		]);
-    	} elseif ($args['page']) {
-    		// Report Directory View
-		    return $this->renderer->render($response, 'reports.php', [
-		        'title' => 'Reports',
-		        'page_name' => 'reports',
-		        'view' => 'single',
-		        'fileView' => true,
-		        'reportClass' => true,
-		        'viewPath' => $__viewPath,
-		        'linkPath' => $__reportDirLoc,
-		        'results' => $__repoDir,
-		        
-		        //Auth Specific
-		        'user' => $request->getAttribute('spAuth'),
-    	        'uAuth' => $permissions['auth'],
-    	        'uAthMessage' => $permissions['uAthMessage']
-		    ]);
-    	}
+		// Report View
+		return $this->renderer->render($response, 'reports.php', [
+		    'title' => 'Reports',
+		    'page_name' => 'reports',
+		    'view' => 'single',
+		    'viewType' => $currentRecord['type'],
+		    'singleView' => true,
+		    'reportClass' => true,
+		    'reportID' => $currentRecord['id'],
+		    'reportData' => $currentRecordResults,
+		    
+		    //Auth Specific
+		    'user' => $request->getAttribute('spAuth'),
+	        'uAuth' => $permissions['auth'],
+	        'uAthMessage' => $permissions['uAthMessage']
+		]);
     })->setName('reports-view')->add( new SpireAuth() );
 
 });
