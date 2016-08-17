@@ -113,13 +113,15 @@
 							$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
 
 							$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
-							$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport['created']));
+							$reportCSVDateTime =  date('n_j_Y-H_i-A', strtotime($testReport['created']));
 
 							$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
 
+							$fileLocation = urlencode($reportCSVFile);
+
 						    echo '<tr class="report_row_status '.$testReportStatus.'">';
 							    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-							    echo '<td><a href="'.$reportCSVFile.'" download><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+							    echo '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['id'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['test_id'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'.com</a></td>';

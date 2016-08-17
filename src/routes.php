@@ -830,4 +830,12 @@ $app->group('/utils', function () {
 		//    var_dump($key.' => '.$param);
 		// }
     });
+
+    $this->get('/download', function ($request, $response) {
+    	$allPostPutVars = $request->getQueryParams();
+
+		$file = $allPostPutVars['file'];
+		$__tempFile = __DIR__.'/../public'.$file;
+		return mhndev\slimFileResponse\FileResponse::getResponse($response, $__tempFile);
+    });
 });
