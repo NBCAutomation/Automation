@@ -13,3 +13,4 @@ composer.lock
 Archive.zip
 phpcompatinfo.json
 spire_sql_sample.sql
+npm-debug.log
