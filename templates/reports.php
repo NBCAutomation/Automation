@@ -8,6 +8,18 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<i class="fa fa-folder" aria-hidden="true"></i> 
+						<a href="/reports/overview">Overview</a>
+						<!-- <span class="script_version">V2.0</span> -->
+					</div>
+					<div class="panel-body">
+						<span class="note"></span>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<i class="fa fa-folder" aria-hidden="true"></i> 
 						<a href="/reports/api_manifest_audits">Manifest Audits</a>
 						<!-- <span class="script_version">V2.0</span> -->
 					</div>
@@ -33,18 +45,6 @@
 					<div class="panel-heading">
 						<i class="fa fa-folder" aria-hidden="true"></i> 
 						<a href="/reports/api_article_audits">Article/Content Audits</a>
-						<!-- <span class="script_version">V2.0</span> -->
-					</div>
-					<div class="panel-body">
-						<span class="note"></span>
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<i class="fa fa-folder" aria-hidden="true"></i> 
-						<a href="/reports/overview">Overview</a>
 						<!-- <span class="script_version">V2.0</span> -->
 					</div>
 					<div class="panel-body">
