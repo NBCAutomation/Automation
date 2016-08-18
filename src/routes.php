@@ -570,15 +570,15 @@ $app->group('/admin', function () use ($app) {
 			$permissions = $request->getAttribute('spPermissions');
 
 			$db = new DbHandler();
-			// $stations = $db->getAllStations();
+			$stations = $db->getAllStations();
 
 			return $this->renderer->render($response, 'admin-stations.php', [
-		        'title' => 'Station Settings',
+		        'title' => 'Station Properties',
 		        'page_name' => 'admin-stations',
 		        'admin_stationsClass' => true,
 		        'hideBreadcrumbs' => true,
-		        'stationView' => true,
-		        'spireStations' => $stations,
+		        'stationsView' => true,
+		        'stations' => $stations,
 		        
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
@@ -592,11 +592,10 @@ $app->group('/admin', function () use ($app) {
 		$this->get('/update/{station_id}', function ($request, $response, $args) {
 
 			$permissions = $request->getAttribute('spPermissions');
-
 			$db = new DbHandler();
 			// $users = $db->getAllUsers();
 
-			// $editingStation = $db->getStationById($args['user_id']);
+			$editingStation = $db->getStationById($args['station_id']);
 
 			return $this->renderer->render($response, 'admin-stations.php', [
 		        'title' => 'Station Settings',

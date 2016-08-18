@@ -19,12 +19,19 @@
  	});
 	 
 	 
+
+	// Table settings
 	$('#zctb').DataTable({
 		"scrollX": true,
 		"order": [[ 2, "desc" ]]
 	});
 	 
 	$('#report-table').DataTable({
+		"scrollX": true,
+		"iDisplayLength": 100
+	});
+
+	$('#stations-table').DataTable({
 		"scrollX": true,
 		"iDisplayLength": 100
 	});

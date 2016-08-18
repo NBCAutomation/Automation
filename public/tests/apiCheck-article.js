@@ -111,6 +111,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
 
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             this.exit();
+            test.done();
         });
     };
 

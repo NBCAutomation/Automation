@@ -537,6 +537,54 @@ class DbHandler {
     }
 
     public function getAllRecentTests() {
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 1 HOUR GROUP BY type");
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+
+                }
+
+                $apiTestsArray[] = $tests;
+            }
+
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
+    }
+
+    public function getAllRecentTests30Days() {
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created BETWEEN NOW() - INTERVAL 30 DAY AND NOW() GROUP BY type");
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+
+                }
+
+                $apiTestsArray[] = $tests;
+            }
+
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
+    }
+
+    public function getAllTestsFromToday() {
         $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR GROUP BY type");
         $tests = array();
 
@@ -782,6 +830,58 @@ class DbHandler {
             }
 
             $stmt->close();
+        } else {
+            return NULL;
+        }
+    }
+
+    public function getAllStations() {
+        $stmt = $this->conn->prepare("SELECT * FROM stations");
+        $stmt->execute();
+        $stations = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($station->id, $station->call_letters, $station->brand, $station->shortname, $station->url, $station->group, $station->api_version);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $station as $key => $value ){
+                    $stations[$key] = $value;
+                }
+
+                $stationsArray[] = $stations;
+            }
+
+            $stmt->close();
+            return $stationsArray;
+        } else {
+            return NULL;
+        }
+    }
+
+    public function getStationById($stationID) {
+        $stmt = $this->conn->prepare("SELECT * FROM stations WHERE id = ?");
+        $stmt->bind_param("i", $stationID);
+
+        $station = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($id, $call_letters, $brand, $shortname, $url, $group, $api_version);
+
+            /* fetch values */
+            mysqli_stmt_fetch($stmt);
+
+            /* set values */
+            $station['id'] = $id;
+            $station['call_letters'] = $call_letters;
+            $station['brand'] = $brand;
+            $station['shortname'] = $shortname;
+            $station['url'] = $url;
+            $station['group'] = $group;
+            $station['api_version'] = $api_version;
+
+            $stmt->close();
+            return $station;
         } else {
             return NULL;
         }

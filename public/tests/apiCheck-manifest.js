@@ -72,12 +72,22 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var urlUri = sourceString.replace('.','_');
 
         var fs = require('fs');
-        var logName = urlUri + '_manifest-audit_' + timeStamp + '.csv';
+        
+        if(createDictionary){
+            var logName = urlUri + '_dictionary.csv';
+        } else {
+            var logName = urlUri + '_manifest-audit_' + timeStamp + '.csv';
+        }
 
         var curFolder = month + '_' + day + '_' + year;
         
         if(createDictionary){
-            var save = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary', logName);
+            // var saveLocation = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary');
+            var saveLocation = 'manifest_dictionary/';
+
+            fs.makeDirectory(saveLocation, 775);
+            var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
+
         } else {
             var saveLocation = 'test_results/api_manifest_audits/' + curFolder;
             fs.makeDirectory(saveLocation, 775);
@@ -343,7 +353,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
 
                     // var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
-                    var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
+                    var dictionaryFile = 'manifest_dictionary/' + urlUri + '_dictionary.csv';
                     var localDictName =  urlUri + '_dictionary.csv';
 
                     var dictionaryData = fs.read(dictionaryFile);
