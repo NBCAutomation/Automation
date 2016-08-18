@@ -158,21 +158,18 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         var processUrl = 'http://spire.app/utils/createspireid?task=upload&testType=apiArticle&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
-                casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    
-                    var status = this.status().currentHTTPStatus;
+            casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                
+                var status = this.status().currentHTTPStatus;
 
-                    if ( status == 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl ) };
-
-                        // var output = this.getHTML();
-                        
-                    } else {
-                        throw new Error('Unable to store test results!');
-                    }
-                    
-                });
-            // });
+                if ( status == 200) {
+                    console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl );                    
+                } else {
+                    throw new Error('Unable to get/store Test ID!');
+                    this.exit();
+                }
+                
+            });
         }
     };
 

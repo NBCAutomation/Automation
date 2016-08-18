@@ -105,23 +105,22 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
         // Start Test
         casper.start( url ).then(function(response) {
-
             if ( response.status == 200 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-
-                suite.createTestID(url, type, urlUri);
-
             } else {
-                throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
+                casper.test.fail('Page did not load correctly. Response: ' + response.status);
             }
+        }).then(function () {
+            suite.createTestID(url, type, urlUri);
         }).run(function() {
             //Process file to DB
             if (logResults) {
                 suite.processTestResults(save);
             }
 
-            console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
+            console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
             this.exit();
+            test.done();
         });
     };
 
@@ -134,61 +133,46 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-manifest&property=' + stationProperty;
 
         if (dbUrl) {
-            // casper.start( 'dbUrl' ).then(function(response) {
-                casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    
-                    var status = this.status().currentHTTPStatus;
+            casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                
+                var status = this.status().currentHTTPStatus;
 
-                    if ( status == 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
+                if ( status == 200) {
+                    if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
-                        var output = this.getHTML();
-                        var __dbID = casper.getElementInfo('body').text;
+                    var output = this.getHTML();
+                    var __dbID = casper.getElementInfo('body').text;
 
-                        suite.getContent(url, type, __dbID);
-
-                        // console.log('derp = '+__dbID);
-                        // return __dbID;
-                    } else {
-                        throw new Error('Unable to get/store Test ID!');
-                    }
-                    
-                });
-            // });
+                    suite.getContent(url, type, __dbID);
+                } else {
+                    throw new Error('Unable to get/store Test ID!');
+                }
+                
+            });
         }
-        // } else {
-        //     // delete this.__collected;
-        // }
     };
 
     // Log results in DB
     apiSuite.prototype.processTestResults = function(resultsFile) {
         var testResultFileLocation = encodeURIComponent(save);
-        // console.log('save information == ' + testResultFileLocation);
-        // this.exit();
 
         var suite = this;
 
-        // require('utils').dump( current );
         var processUrl = 'http://spire.app/utils/createspireid?task=upload&testType=apiManifest&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
-            // casper.start( 'processUrl' ).then(function(response) {
-                casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    
-                    var status = this.status().currentHTTPStatus;
+            casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                
+                var status = this.status().currentHTTPStatus;
 
-                    if ( status == 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl ) };
-
-                        // var output = this.getHTML();
-                        
-                    } else {
-                        throw new Error('Unable to get/store Test ID!');
-                    }
-                    
-                });
-            // });
+                if ( status == 200) {
+                    console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl );                    
+                } else {
+                    throw new Error('Unable to get/store Test ID!');
+                    this.exit();
+                }
+                
+            });
         }
     };
 
@@ -224,10 +208,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 var parser = new DOMParser();
                 xmlDoc = parser.parseFromString(rawContent,'text/xml');
-
-                // var __json = JSON.stringify( rawContent );
-
-                // var urlObject = JSON.parse(__json);
 
                 var nodeDicts = xmlDoc.getElementsByTagName("dict");
 

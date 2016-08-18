@@ -90,7 +90,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
         // Start Test
         casper.start( url ).then(function(response) {
-            // suite.checkConnection(url);
             
             if ( response.status == 200 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
@@ -107,6 +106,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             this.exit();
+            test.done();
         });
     };
 
@@ -119,38 +119,28 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-nav&property=' + stationProperty;
 
         if (dbUrl) {
-            // casper.start( 'dbUrl' ).then(function(response) {
-                casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    
-                    var status = this.status().currentHTTPStatus;
+            casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                
+                var status = this.status().currentHTTPStatus;
 
-                    if ( status == 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
+                if ( status == 200) {
+                    if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
-                        var output = this.getHTML();
-                        var __dbID = casper.getElementInfo('body').text;
+                    var output = this.getHTML();
+                    var __dbID = casper.getElementInfo('body').text;
 
-                        suite.getContent(url, type, __dbID);
-
-                        // console.log('derp = '+__dbID);
-                        // return __dbID;
-                    } else {
-                        throw new Error('Unable to get/store Test ID!');
-                    }
-                    
-                });
-            // });
+                    suite.getContent(url, type, __dbID);
+                } else {
+                    throw new Error('Unable to get/store Test ID!');
+                }
+                
+            });
         }
-        // } else {
-        //     // delete this.__collected;
-        // }
     };
 
     // Log results in DB
     apiSuite.prototype.processTestResults = function(resultsFile) {
         var testResultFileLocation = encodeURIComponent(save);
-        console.log('save information == ' + testResultFileLocation);
-        // this.exit();
 
         var suite = this;
 
@@ -158,48 +148,18 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var processUrl = 'http://spire.app/utils/createspireid?task=upload&testType=apiNav&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
-            // casper.start( 'processUrl' ).then(function(response) {
-                casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    
-                    var status = this.status().currentHTTPStatus;
-
-                    if ( status == 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl ) };
-
-                        // var output = this.getHTML();
-
-                    } else {
-                        throw new Error('Unable to get/store Test ID!');
-                    }
-                    
-                });
-            // });
-        }
-    };
-
-    apiSuite.prototype.checkConnection = function(url) {
-
-        var suite = this;
-        // var current = suite.__collected.shift();
-
-        // require('utils').dump( current );
-
-        if (url) {
-            casper.open(url,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                
-                resp = resp;
+            casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 
                 var status = this.status().currentHTTPStatus;
-                console.log(status);
 
                 if ( status == 200) {
-                    return true;
+                    console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl );                    
                 } else {
-                    return false;
+                    throw new Error('Unable to get/store Test ID!');
+                    this.exit();
                 }
+                
             });
-        } else {
-            return 'No url provided';
         }
     };
 
@@ -207,7 +167,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         
         var suite = this;
 
-        // casper.open(url, { method: 'get', headers: { 'Accept': 'text/xml' } }).then(function() {
         casper.open(url,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function() {
             var rawContent = this.getHTML();
             
@@ -240,13 +199,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     if (__prog === 'navigation') {
                         if (debugOutput) {console.log(__prog + ' :: ' + __urlSuite[__prog])};
 
-                        // Write file headers
-                        // var testInfo = 'Navigation url tested: ' + __urlSuite[__prog];
-                        // var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
-                        
-                        
-                        // fs.write(save, ' ' + testInfo + '\n' + '\n');
-                        // fs.write(save, ' ' + testTime + '\n' + '\n', 'a+');
                         fs.write(save, 'Test ID,Link,URL,HTTP Status Code, Status,Info,' + '\n', 'a+');
 
                         suite.checkNavigation(url, __urlSuite[__prog], testID);
