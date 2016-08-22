@@ -2,15 +2,15 @@
 	"name": "OTS-Spire",
 	"author": "Deltrie Allen",
 	"email": "deltrie.allen@nbcuni.com",
-	"version": "1.0.0",
+	"version": "3.0.0",
 	"scripts": {
 		"runall": "npm run 5concurrent && npm run 5concurrent-nav && 5concurrent-article",
 		"runall-async": "npm run 1process && npm run 1process-nav && run 1process-article",
-		"5concurrent": "cat sites.txt | xargs -P8 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
+		"5concurrent": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
 		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
-		"5concurrent-nav": "cat sites.txt | xargs -P8 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
+		"5concurrent-nav": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
 		"1process-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
-		"5concurrent-article": "cat sites.txt | xargs -P8 -I{} casperjs test \"./tests/apiCheck-article.js\" --url=\"{}\"",
+		"5concurrent-article": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-article.js\" --url=\"{}\"",
 		"1process-article": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-article.js\" --url=\"{}\""		
 	},
 	"dependencies": {

@@ -1,6 +1,7 @@
 <?php include_once 'base/header.php'; ?>
 	<div class="panel-body api_results">
-	<?php if ($mainView) { ?>
+	<?php if ($mainView) {
+		?>
 		<h3></h3>
 		
 		<ul>
@@ -12,7 +13,7 @@
 						<!-- <span class="script_version">V2.0</span> -->
 					</div>
 					<div class="panel-body">
-						<span class="note"></span>
+						<span class="note">Main overview screen displaying pass/fails for all tests.</span>
 					</div>
 				</div>
 			</li>
@@ -247,7 +248,6 @@
 		<h3>Overview</h3>
 		<p></p>
 		<?php
-
 			$db = new DbHandler();
 
 			$recentTests = $db->getAllRecentTests();
@@ -280,19 +280,24 @@
 			<tbody>
 			<?php
 				foreach ($recentTests as $testReport) {
+
+					if (strpos($testReport['type'], 'manifest')) {
+						$reportsURL = '/reports/api_manifest_audits';
+					} elseif (strpos($testReport['type'], 'nav')) {
+						$reportsURL = '/reports/api_navigation_audits';
+					} elseif (strpos($testReport['type'], 'article')) {
+						$reportsURL = '/reports/api_article_audits';
+					}
+
 					
 					$testReportStatus = $db->checkForTestFailures($testReport['id'], $testReport['type']);
 
 				    echo '<tr class="report_row_status '.$testReportStatus.'">';
 					    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-					    echo '<td>'.$testReport['id'].'</td>';
-					    echo '<td>'.$testReport['type'].'</td>';
-					    echo '<td>'.$testReport['property'].'</td>';
+					    echo '<td><a href="'.$reportsURL.'">'.$testReport['id'].'</a></td>';
+					    echo '<td><a href="'.$reportsURL.'">'.$testReport['type'].'</a></td>';
+					    echo '<td><a href="'.$reportsURL.'">'.$testReport['property'].'</a></td>';
 	                echo "</tr>";
-
-					// echo $testReport['id'].'<br />';
-					// echo $testReport['property'].'<br />';
-					// echo $testReport['type'].'<br />';
 				}
 			?>
 			</tbody>

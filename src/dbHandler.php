@@ -537,7 +537,7 @@ class DbHandler {
     }
 
     public function getAllRecentTests() {
-        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 1 HOUR GROUP BY type");
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR GROUP BY type");
         $tests = array();
 
         if ($stmt->execute()) {

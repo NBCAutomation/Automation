@@ -19,6 +19,7 @@ $app->get('/', function ($request, $response, $args) {
     	    //Auth Specific
     	    'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
     	]);	
     } else {
@@ -44,6 +45,7 @@ $app->group('/dashboard', function () use ($app) {
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
 	    // ]);
 	    ]);
@@ -63,6 +65,7 @@ $app->group('/dashboard', function () use ($app) {
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
 	    // ]);
 	    ]);
@@ -180,6 +183,7 @@ $app->group('/reports', function () {
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
         ]);
     })->setName('directory-reports-view')->add( new SpireAuth() );
@@ -213,6 +217,7 @@ $app->group('/reports', function () {
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
 		]);
     })->setName('reports-view')->add( new SpireAuth() );
@@ -252,6 +257,7 @@ $app->group('/scripts', function () {
 	    		//Auth Specific
 	    		'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 	        ]);
 	    } else {
@@ -271,6 +277,7 @@ $app->group('/scripts', function () {
 	    		//Auth Specific
 	    		'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 	        ]);
 	    }
@@ -369,6 +376,7 @@ $app->get('/help', function ($request, $response, $args) {
         //Auth Specific
         'user' => $request->getAttribute('spAuth'),
         'uAuth' => $permissions['auth'],
+        'uRole' => $permissions['role'],
         'uAthMessage' => $permissions['uAthMessage']
     ]);
 })->setName('help')->add( new SpireAuth() );
@@ -456,6 +464,7 @@ $app->group('/admin', function () use ($app) {
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
 	    // ]);
 	    ]);
@@ -481,6 +490,7 @@ $app->group('/admin', function () use ($app) {
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 		    // ]);
 		    ]);
@@ -507,6 +517,7 @@ $app->group('/admin', function () use ($app) {
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 		    ]);
 		})->setName('admin-users')->add( new SpireAuth() );
@@ -556,6 +567,7 @@ $app->group('/admin', function () use ($app) {
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 		    ]);
 
@@ -583,6 +595,7 @@ $app->group('/admin', function () use ($app) {
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 		    // ]);
 		    ]);
@@ -608,6 +621,7 @@ $app->group('/admin', function () use ($app) {
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 		    ]);
 		})->setName('admin-users')->add( new SpireAuth() );
@@ -657,6 +671,7 @@ $app->group('/admin', function () use ($app) {
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 		    ]);
 
