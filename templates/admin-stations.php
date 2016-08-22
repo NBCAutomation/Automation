@@ -149,11 +149,6 @@
 							<table>
 								<tbody>
 									<tr>
-										<div class="form_field">
-											<label class="text-uppercase text-sm">New Password:</label>
-											<input type="password" name="u_password" size="35" id="u_password" class="form-control mb u_password" />
-											<div class="clear"></div>
-										</div>
 										<div class="clear"></div>
 										<div id="input_buttons">
 											<input type="hidden" value="<?php echo $editingUser['id']; ?>" name="u_id" />

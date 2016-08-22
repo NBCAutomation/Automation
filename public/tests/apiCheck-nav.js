@@ -116,7 +116,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-nav&property=' + stationProperty;
+        var dbUrl = 'http://spire.app/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty;
 
         if (dbUrl) {
             casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
@@ -145,7 +145,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         // require('utils').dump( current );
-        var processUrl = 'http://spire.app/utils/createspireid?task=upload&testType=apiNav&fileLoc=' + testResultFileLocation;
+        var processUrl = 'http://spire.app/utils/tasks?task=upload&testType=apiNav&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
             casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {

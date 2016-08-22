@@ -121,7 +121,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = 'http://spire.app/utils/createspireid?task=generate&testscript=apiCheck-article&property=' + stationProperty;
+        var dbUrl = 'http://spire.app/utils/tasks?task=generate&testscript=apiCheck-article&property=' + stationProperty;
 
         if (dbUrl) {
             // casper.start( 'dbUrl' ).then(function(response) {
@@ -156,7 +156,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         var testResultFileLocation = encodeURIComponent(save);
 
         var suite = this;
-        var processUrl = 'http://spire.app/utils/createspireid?task=upload&testType=apiArticle&fileLoc=' + testResultFileLocation;
+        var processUrl = 'http://spire.app/utils/tasks?task=upload&testType=apiArticle&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
             casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {

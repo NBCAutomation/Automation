@@ -758,7 +758,7 @@ $app->get('/logout', function ($request, $response, $args) {
 // === Utils ===
 $app->group('/utils', function () {
 
-	$this->get('/createspireid', function ($request, $response, $args) {
+	$this->get('/tasks', function ($request, $response, $args) {
 
 		$db = new DbHandler();
 
