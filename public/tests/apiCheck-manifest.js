@@ -192,7 +192,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var apiVersion = '3';
 
         // Required API keys for app to function correctly.
-        var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
+        // var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
+        // var reqKeys = new Array("domain","market-site-key","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","app-urls","weather-branding","iteam-branding","alerts","ugctemplets","breaking","home","home-investigation","facebook-comments-script","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","app-base-urls","advertising-display","advertising-video","home-top-stories","content","gallery","recommended","related","weather-conditions-icon","weather-forcast","weather-wsi-forcast","weather-location-lookup","web-links","facebook","url","google-plus","url","instagram","url","search","title","url","send-feedback","url","settings-privacy-policy","title","url","traffic","url","tv-listings","title","url","tve","url","twitter","url","weather-alerts","url","weather-school-closings","url","omniture","report-suite-ids","tracking-server","app-section-server-name","page-view-event","link-type","station-division","station-business-unit","station-call-sign","station-market",/*"updateScreen","force-update","update-screen-title","update-screen-desc","update-screen-appUrl","update-screen-appversion",*/"advertising","ad-unit-level1","fw_ssid","adtest","stage","display","network-id","echo-transition-delay","splash","enabled","ad-unit-level2","request-timeout","display-duration","target-width","target-height","scaling-x","scaling-y","article-interstitial","gallery-interstitial","video","network-id","direct-sold-target-width","direct-sold-target-height","backfill-target-width","backfill-target-height","backfill-app-id","default-iab-category-tier1","default-iab-category-tier2","contact","name","address-line1","address-line2","phone","contact-Info","phone1","contactInfoLabel","contactInfoNumber","phone2","contactInfoLabel","contactInfoNumber","phone3","contactInfoLabel","contactInfoNumber","investigation-phone","investigation-email","more-app-ids","weather","meteorologist-summary-disabled","market-default-postal-code","market-default-location-name","market-default-dma","market-default-lat","market-default-long","scroll-down-animation-hour","scroll-down-animation-display-sec","geo-location-prompt-visit-interval","app-id","wsi-map-id","wsi-market-default-layer","wsi-market-local-radar","wsi-mobile-radars","live-promotion","is-live-promotion","promotion-type","url-schema-ios","app-link-ios","url-schema-android","app-link-android");
+        var reqKeys = new Array("domain","market-site-key","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","app-urls","weather-branding","iteam-branding","alerts","ugctemplets","breaking","home","home-investigation","facebook-comments-script","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","app-base-urls","advertising-display","advertising-video","home-top-stories","content","gallery","recommended","related","weather-conditions-icon","weather-forcast","weather-wsi-forcast","weather-location-lookup","web-links","facebook","url","google-plus","url","instagram","url","search","title","url","send-feedback","url","settings-privacy-policy","title","url","traffic","url","tv-listings","title","url","tve","url","twitter","url","weather-alerts","url","weather-school-closings","url","omniture","report-suite-ids","tracking-server","app-section-server-name","page-view-event","link-type","station-division","station-business-unit","station-call-sign","station-market",/*"updateScreen","force-update","update-screen-title","update-screen-desc","update-screen-appUrl","update-screen-appversion",*/"advertising","ad-unit-level1","fw_ssid","adtest","stage","display","network-id","echo-transition-delay","splash","enabled","ad-unit-level2","request-timeout","display-duration","target-width","target-height","scaling-x","scaling-y","article-interstitial","gallery-interstitial","video","network-id","direct-sold-target-width","direct-sold-target-height","backfill-target-width","backfill-target-height","backfill-app-id","default-iab-category-tier1","default-iab-category-tier2","contact","name","address-line1","address-line2","phone","contact-Info","phone1","contactInfoLabel","contactInfoNumber","phone2","contactInfoLabel","contactInfoNumber","phone3","contactInfoLabel","contactInfoNumber","investigation-phone","investigation-email","more-app-ids","weather","meteorologist-summary-disabled","market-default-postal-code","market-default-location-name","market-default-dma","market-default-lat","market-default-long","scroll-down-animation-hour","scroll-down-animation-display-sec","geo-location-prompt-visit-interval","app-id","wsi-map-id","wsi-market-default-layer","wsi-market-local-radar","wsi-mobile-radars","live-promotion","is-live-promotion","promotion-type","url-schema-ios","app-link-ios","url-schema-android","app-link-android");
         
         __collected = {};
         __dictionary = {};
@@ -212,7 +214,36 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         casper.open(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function() {
             var rawContent = this.getHTML();
             
-            if (debugOutput) {console.log(rawContent)};
+            // if (debugOutput) {console.log(rawContent)};
+            /*
+                Notes:
+
+                If sub-nested value, the key/value is built using parent + child + grandchild relationship of dictionary items. Objects are stored as "[keyName]: [value]"
+
+                Based on the example below, the required testing key/value(s) will be built as;
+                - "web-links_facebook_url: http://www.facebook.com/NBCNewYork"
+                - "web-links_google-plus_url: https://plus.google.com/+NBCNewYork"
+
+                Example:
+                <key>web-links</key>
+                <dict>
+                    <key>facebook</key>
+                    <dict>
+                        <key>url</key>
+                        <string>
+                        <![CDATA[ http://www.facebook.com/NBCNewYork ]]>
+                        </string>
+                    </dict>
+                    <key>google-plus</key>
+                    <dict>
+                        <key>url</key>
+                        <string>
+                            <![CDATA[ https://plus.google.com/+NBCNewYork ]]>
+                        </string>
+                    </dict>
+                </dict>
+
+             */
 
             if ( rawContent ) {
 
@@ -224,19 +255,22 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 // console.log('nodes ' + nodeDicts.length);
 
                 for(var i = 0; i < nodeDicts.length; i++) {
-                    // console.log(i + ' || ' + nodeDicts[i].nodeName);
+                    console.log(i + ' || ' + nodeDicts[i].textContent);
 
-                    var cNode = nodeDicts[i];
+                    var currentNode = nodeDicts[i];
+                    // var previousSiblingText = currentNode.previousElementSibling.textContent;
 
-                    if (cNode.hasChildNodes) {
-                        var children = cNode.childNodes;
+                    console.log(currentNode);
+
+                    if (currentNode.hasChildNodes) {
+                        var children = currentNode.childNodes;
 
                         for(var b = 0; b < children.length; b++) {
 
                             if (children[b].nodeName == 'key') {
 
                                 if (debugOutput) {console.log('key // ' + children[b].textContent)};
-                                var __topKey = children[b].textContent;
+                                var parentKeyName = children[b].textContent;
                             }
                             
                             // console.log('sub-children ' + children[b].childNodes.length);
@@ -246,16 +280,13 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                                 for(var c = 0; c < subChildren.length; c++) {
 
-                                    if (subChildren[c].nodeName == 'array') {
-                                        console.log('found array');
-                                    }
-
                                     if (subChildren[c].nodeName == 'dict') {
 
                                         if (debugOutput) {
 
                                             console.log('=== [dict] ===');
                                             console.log('\nDebug ======\n');
+                                            console.log('** TopKey Name: ' + parentKeyName)
                                             console.log('nodeType >> ' + subChildren[c].nodeType);
                                             console.log('nodeName >> ' + subChildren[c].nodeName);
                                             console.log('textContent >> ' + JSON.stringify(subChildren[c].textContent));
@@ -263,8 +294,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                             console.log('\n/Debug ======');
                                         }
 
-                                        // var dictName = subChildren[c].previousElementSibling.textContent;
-                                        // if (debugOutput) {console.log('** Dict Name: ' + dictName)};
+                                        var dictionaryItemName = parentKeyName + '_' + subChildren[c].previousElementSibling.textContent;
+                                        if (debugOutput) {console.log('** Dict Name: ' + dictionaryItemName)};
 
                                         if (subChildren[c].childNodes.length > 1) {
                                             var thirdChildren = subChildren[c].childNodes;
@@ -280,35 +311,50 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                                                 if (thirdChildren[d].nodeName == 'key') {
 
-                                                    // if (debugOutput) {console.log('** Dict Name: ' + dictName)};
+                                                    if (debugOutput) {
+                                                        console.log('** Dict Name: ' + dictionaryItemName)
+                                                        console.log("combinedKeyName = " + dictionaryItemName + '_' + thirdChildren[d].textContent);
+                                                        console.log("currentKeyName = " + thirdChildren[d].textContent);
+                                                        console.log("subKeyName = " + thirdChildren[d].textContent);
+                                                    };
 
-                                                    // var __keyName = dictName + '_' + thirdChildren[d].textContent;
-                                                    var __keyName = thirdChildren[d].textContent;
-                                                    var __subKey = thirdChildren[d].textContent;
+                                                    var combinedKeyName = dictionaryItemName + '_' + thirdChildren[d].textContent;
+                                                    var currentKeyName = thirdChildren[d].textContent;
+                                                    var subKeyName = thirdChildren[d].textContent;
                                                 }
                                                 
                                                 if (thirdChildren[d].nodeName == 'string' || thirdChildren[d].nodeName == 'integer' || thirdChildren[d].nodeName == 'real') {
                                                     
                                                     // Push key/val into collection
                                                     var __subVal = thirdChildren[d].textContent;
-                                                    __collected[__keyName] = __subVal;
+                                                    __collected[combinedKeyName] = __subVal;
 
-                                                    if (debugOutput) {console.log(__keyName + ' : ' + __subVal)};
+                                                    if (debugOutput) {console.log(combinedKeyName + ' : ' + __subVal)};
 
                                                 } else if (thirdChildren[d].nodeName == 'false' || thirdChildren[d].nodeName == 'true') {
                                                     
                                                     // Push key/val into collection
                                                     var __subVal = thirdChildren[d].nodeName;
-                                                    __collected[__keyName] = __subVal;
+                                                    __collected[combinedKeyName] = __subVal;
 
-                                                    if (debugOutput) {console.log(__keyName + ' : ' + __subVal)};
+                                                    if (debugOutput) {console.log(combinedKeyName + ' : ' + __subVal)};
                                                 }
                                             }
 
                                             // Push key/val into collection
-                                            __collected[__subKey] = __subVal;
+                                            __collected[subKeyName] = __subVal;
 
-                                            if (debugOutput) {console.log(__subKey + ' : ' + __subVal)};
+                                            if (debugOutput) {console.log(subKeyName + ' : ' + __subVal)};
+                                        }
+                                    } else if (subChildren[c].nodeName == 'string' || subChildren[c].nodeName == 'integer' || subChildren[c].nodeName == 'real') {
+                                        if (debugOutput) {
+                                            // console.log('        not a dictionary');
+                                            // console.log('        nodeName ' + subChildren[c].nodeName);
+                                        }
+                                    } else {
+                                        if (debugOutput) {
+                                            // console.log('        not a dictionary');
+                                            // console.log('        textContent >> ' + JSON.stringify(subChildren[c].textContent));
                                         }
                                     }
                                 }
@@ -319,25 +365,28 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                     // Push key/val into collection
                                     var __topVal = children[b].textContent;
 
-                                    __collected[__topKey] = __topVal;
+                                    __collected[parentKeyName] = __topVal;
 
-                                    if (debugOutput) {console.log(__topKey + ' : ' + __topVal)};
+                                    if (debugOutput) {console.log(parentKeyName + ' : ' + __topVal)};
 
                                     
                                 } else if (children[b].nodeName == 'false' || children[b].nodeName == 'true') {
                                     var __topVal = children[b].nodeName;
                                     
-                                    __collected[__topKey] = __topVal;
+                                    __collected[parentKeyName] = __topVal;
 
-                                    if (debugOutput) {console.log(__topKey + ' : ' + __topVal)};
+                                    if (debugOutput) {console.log(parentKeyName + ' : ' + __topVal)};
 
                                 }
                             }
                         }
                     }
                 }
+
+                console.log(JSON.stringify(__collected));
+
                 if (debugOutput) {                                                                               
-                    console.log(__topKey + ' : ' + __topVal)
+                    console.log(parentKeyName + ' : ' + __topVal)
                     casper.echo( 'Testing surpressed due to debug.', 'PARAMETER' );
                 } else {
                     var cwd = fs.absolute(".");
@@ -395,13 +444,19 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                            // console.log('key = ' + __colData[key]);
                        }
 
+                       // console.log(JSON.stringify(__collected));
+                       // this.exit();
+
                        if (!(reqKeys[i] in __collected)) {
-                            // throw new Error('Missing required API key! ' + reqKeys[i]);
-                            if (showOutput) {console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'))};
-                            if (!debugOutput) {
-                                // fs.write(save, ',\n' + 'FAIL: Missing required API key! ' + reqKeys[i], 'a+');
-                                fs.write(save, testID + ',' + apiVersion + ',' +  reqKeys[i] + ',"--missing--",' + reqKeys[i] + ',"--missing--",' + 'Fail,FAIL: Missing required API key! ' + reqKeys[i] + ',\n', 'a+');
-                            };
+                            if(!createDictionary){
+                                // throw new Error('Missing required API key! ' + reqKeys[i]);
+                                if (showOutput) {console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'))};
+                                if (!debugOutput) {
+                                    // fs.write(save, ',\n' + 'FAIL: Missing required API key! ' + reqKeys[i], 'a+');
+                                    // fs.write(save, testID + ',' + apiVersion + ',' +  reqKeys[i] + ',"--missing--",' + reqKeys[i] + ',"--missing--",' + 'Fail,FAIL: Missing required API key! ' + reqKeys[i] + ',\n', 'a+');
+                                }
+                            }
+
                        } else {
                             // console.log('found key:' + reqKeys[i]);
                             for (var key in __collected) {
