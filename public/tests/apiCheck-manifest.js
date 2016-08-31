@@ -111,7 +111,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var urlUri = sourceString.replace('.','_');
 
         // Add manifest url    
-        url = url + '/apps/news-app/manifest/?apiVersion=3';
+        url = url + '/apps/news-app/manifest/?apiVersion=4';
 
         // Start Test
         casper.start( url ).then(function(response) {
@@ -192,12 +192,162 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var apiVersion = '3';
 
         // Required API keys for app to function correctly.
-        // var reqKeys = new Array("domain","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","content","gallery","weather-conditions-icon","weather-wsi-forcast",/*"facebook_url","instagram_url","twitter_url",*/"search_title","send-feedback_url","traffic_url","settings-privacy-policy_title","settings-privacy-policy_url","tv-listings_title","tv-listings_url","tve_url","weather-alerts_url","weather-school-closings_url","report-suite-ids","ad-unit-level1","fw_ssid","network-id","echo-transition-delay","splash_enabled","splash_ad-unit-level2","splash_request-timeout","splash_display-duration","splash_target-width","splash_target-height","article-interstitial","gallery-interstitial","backfill-target-width","backfill-target-height","backfill-app-id");
-        // var reqKeys = new Array("domain","market-site-key","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","app-urls","weather-branding","iteam-branding","alerts","ugctemplets","breaking","home","home-investigation","facebook-comments-script","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","app-base-urls","advertising-display","advertising-video","home-top-stories","content","gallery","recommended","related","weather-conditions-icon","weather-forcast","weather-wsi-forcast","weather-location-lookup","web-links","facebook","url","google-plus","url","instagram","url","search","title","url","send-feedback","url","settings-privacy-policy","title","url","traffic","url","tv-listings","title","url","tve","url","twitter","url","weather-alerts","url","weather-school-closings","url","omniture","report-suite-ids","tracking-server","app-section-server-name","page-view-event","link-type","station-division","station-business-unit","station-call-sign","station-market",/*"updateScreen","force-update","update-screen-title","update-screen-desc","update-screen-appUrl","update-screen-appversion",*/"advertising","ad-unit-level1","fw_ssid","adtest","stage","display","network-id","echo-transition-delay","splash","enabled","ad-unit-level2","request-timeout","display-duration","target-width","target-height","scaling-x","scaling-y","article-interstitial","gallery-interstitial","video","network-id","direct-sold-target-width","direct-sold-target-height","backfill-target-width","backfill-target-height","backfill-app-id","default-iab-category-tier1","default-iab-category-tier2","contact","name","address-line1","address-line2","phone","contact-Info","phone1","contactInfoLabel","contactInfoNumber","phone2","contactInfoLabel","contactInfoNumber","phone3","contactInfoLabel","contactInfoNumber","investigation-phone","investigation-email","more-app-ids","weather","meteorologist-summary-disabled","market-default-postal-code","market-default-location-name","market-default-dma","market-default-lat","market-default-long","scroll-down-animation-hour","scroll-down-animation-display-sec","geo-location-prompt-visit-interval","app-id","wsi-map-id","wsi-market-default-layer","wsi-market-local-radar","wsi-mobile-radars","live-promotion","is-live-promotion","promotion-type","url-schema-ios","app-link-ios","url-schema-android","app-link-android");
-        var reqKeys = new Array("domain","market-site-key","launch-image-name","ugc-partition-id","video-autoplay","push-notification-url-key","push-notification-flag-key","comscore-app-name","app-urls","weather-branding","iteam-branding","alerts","ugctemplets","breaking","home","home-investigation","facebook-comments-script","navigation","settings-terms-of-use","settings-terms-of-service","settings-closed-captioning-faq","submit-media","trending","weather-forcast-video","weather-forcast-story","weather-maps","app-base-urls","advertising-display","advertising-video","home-top-stories","content","gallery","recommended","related","weather-conditions-icon","weather-forcast","weather-wsi-forcast","weather-location-lookup","web-links","facebook","url","google-plus","url","instagram","url","search","title","url","send-feedback","url","settings-privacy-policy","title","url","traffic","url","tv-listings","title","url","tve","url","twitter","url","weather-alerts","url","weather-school-closings","url","omniture","report-suite-ids","tracking-server","app-section-server-name","page-view-event","link-type","station-division","station-business-unit","station-call-sign","station-market",/*"updateScreen","force-update","update-screen-title","update-screen-desc","update-screen-appUrl","update-screen-appversion",*/"advertising","ad-unit-level1","fw_ssid","adtest","stage","display","network-id","echo-transition-delay","splash","enabled","ad-unit-level2","request-timeout","display-duration","target-width","target-height","scaling-x","scaling-y","article-interstitial","gallery-interstitial","video","network-id","direct-sold-target-width","direct-sold-target-height","backfill-target-width","backfill-target-height","backfill-app-id","default-iab-category-tier1","default-iab-category-tier2","contact","name","address-line1","address-line2","phone","contact-Info","phone1","contactInfoLabel","contactInfoNumber","phone2","contactInfoLabel","contactInfoNumber","phone3","contactInfoLabel","contactInfoNumber","investigation-phone","investigation-email","more-app-ids","weather","meteorologist-summary-disabled","market-default-postal-code","market-default-location-name","market-default-dma","market-default-lat","market-default-long","scroll-down-animation-hour","scroll-down-animation-display-sec","geo-location-prompt-visit-interval","app-id","wsi-map-id","wsi-market-default-layer","wsi-market-local-radar","wsi-mobile-radars","live-promotion","is-live-promotion","promotion-type","url-schema-ios","app-link-ios","url-schema-android","app-link-android");
+        var reqKeys = new Array(
+            "domain",
+            "market-site-key",
+            "launch-image-name",
+            "ugc-partition-id",
+            "video-autoplay",
+            "push-notification-url-key",
+            "push-notification-flag-key",
+            "comscore-app-name",
+            /*
+            "web-links_facebook_url",
+            "web-links_google-plus_url",
+            "web-links_instagram_url",
+            */
+            "web-links_search_title",
+            "web-links_search_url",
+            "web-links_send-feedback_url",
+            "web-links_settings-privacy-policy_title",
+            "web-links_settings-privacy-policy_url",
+            "web-links_traffic_url",
+            "web-links_tv-listings_title",
+            "web-links_tv-listings_url",
+            "web-links_tve_url",
+            /*
+            "web-links_twitter_url",
+            */
+            "web-links_weather-alerts_url",
+            "web-links_weather-school-closings_url",
+            "advertising_display_network-id",
+            "advertising_display_echo-transition-delay",
+            "echo-transition-delay",
+            "advertising_splash_enabled",
+            "advertising_splash_ad-unit-level2",
+            "advertising_splash_request-timeout",
+            "advertising_splash_display-duration",
+            "advertising_splash_target-width",
+            "advertising_splash_target-height",
+            "advertising_splash_scaling-x",
+            "advertising_splash_scaling-y",
+            "scaling-y",
+            "advertising_video_network-id",
+            "advertising_video_direct-sold-target-width",
+            "advertising_video_direct-sold-target-height",
+            "advertising_video_backfill-target-width",
+            "advertising_video_backfill-target-height",
+            "advertising_video_backfill-app-id",
+            "backfill-app-id",
+            "phone3",
+            "wsi-map-id",
+            "wsi-market-default-layer",
+            "weather-branding",
+            "iteam-branding",
+            "alerts",
+            "ugctemplets",
+            "breaking",
+            "home",
+            "home-investigation",
+            "facebook-comments-script",
+            "navigation",
+            "settings-terms-of-use",
+            "settings-terms-of-service",
+            "settings-closed-captioning-faq",
+            "submit-media",
+            "trending",
+            "weather-forcast-video",
+            "weather-forcast-story",
+            "weather-maps",
+            "advertising-display",
+            "advertising-video",
+            "home-top-stories",
+            "content",
+            "gallery",
+            "recommended",
+            "related",
+            "weather-conditions-icon",
+            "weather-forcast",
+            "weather-wsi-forcast",
+            "weather-location-lookup",
+            "title",
+            "report-suite-ids",
+            "tracking-server",
+            "app-section-server-name",
+            "page-view-event",
+            "link-type",
+            "station-division",
+            "station-business-unit",
+            "station-call-sign",
+            "station-market",
+            /*
+            "force-update",
+            "update-screen-title",
+            "update-screen-desc",
+            "update-screen-appUrl",
+            "update-screen-appversion",
+            */
+            "ad-unit-level1",
+            "fw_ssid",
+            /*
+            "adtest",
+            */
+            "stage",
+            "article-interstitial",
+            "gallery-interstitial",
+            "default-iab-category-tier1",
+            /*
+            "default-iab-category-tier2",
+            */
+            "network-id",
+            "enabled",
+            "ad-unit-level2",
+            "request-timeout",
+            "display-duration",
+            "target-width",
+            "target-height",
+            "scaling-x",
+            "direct-sold-target-width",
+            "direct-sold-target-height",
+            "backfill-target-width",
+            "backfill-target-height",
+            "name",
+            "address-line1",
+            "address-line2",
+            "phone",
+            "contact-Info_phone1_contactInfoLabel",
+            "contact-Info_phone1_contactInfoNumber",
+            "contactInfoNumber",
+            "contact-Info_phone2_contactInfoLabel",
+            "contact-Info_phone2_contactInfoNumber",
+            "contact-Info_phone3_contactInfoLabel",
+            "contact-Info_phone3_contactInfoNumber",
+            "investigation-phone",
+            "investigation-email",
+            "contactInfoLabel",
+            "meteorologist-summary-disabled",
+            "market-default-postal-code",
+            "market-default-location-name",
+            "market-default-dma",
+            "market-default-lat",
+            "market-default-long",
+            "scroll-down-animation-hour",
+            "scroll-down-animation-display-sec",
+            "geo-location-prompt-visit-interval",
+            /*
+            "app-id",
+            */
+            "is-live-promotion",
+            "promotion-type",
+            "url-schema-ios",
+            "app-link-ios",
+            "url-schema-android",
+            "app-link-android"
+        );
         
-        __collected = {};
-        __dictionary = {};
+        collectionObject = {};
+        dictionaryObject = {};
+        testResultsObject = {};
             
         if (!debugOutput) {
             // Write file headers
@@ -255,12 +405,13 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 // console.log('nodes ' + nodeDicts.length);
 
                 for(var i = 0; i < nodeDicts.length; i++) {
-                    console.log(i + ' || ' + nodeDicts[i].textContent);
+                    // console.log(i + ' || ' + nodeDicts[i].namespaceURI);
 
                     var currentNode = nodeDicts[i];
-                    // var previousSiblingText = currentNode.previousElementSibling.textContent;
+                    // var previousSiblingText = currentNode.previousSibling;
+                    // console.log(' >>> <<< ' + previousSiblingText);
 
-                    console.log(currentNode);
+                    console.log(previousSiblingText);
 
                     if (currentNode.hasChildNodes) {
                         var children = currentNode.childNodes;
@@ -327,7 +478,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                                     
                                                     // Push key/val into collection
                                                     var __subVal = thirdChildren[d].textContent;
-                                                    __collected[combinedKeyName] = __subVal;
+                                                    collectionObject[combinedKeyName] = __subVal;
 
                                                     if (debugOutput) {console.log(combinedKeyName + ' : ' + __subVal)};
 
@@ -335,14 +486,14 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                                     
                                                     // Push key/val into collection
                                                     var __subVal = thirdChildren[d].nodeName;
-                                                    __collected[combinedKeyName] = __subVal;
+                                                    collectionObject[combinedKeyName] = __subVal;
 
                                                     if (debugOutput) {console.log(combinedKeyName + ' : ' + __subVal)};
                                                 }
                                             }
 
                                             // Push key/val into collection
-                                            __collected[subKeyName] = __subVal;
+                                            collectionObject[subKeyName] = __subVal;
 
                                             if (debugOutput) {console.log(subKeyName + ' : ' + __subVal)};
                                         }
@@ -365,7 +516,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                     // Push key/val into collection
                                     var __topVal = children[b].textContent;
 
-                                    __collected[parentKeyName] = __topVal;
+                                    collectionObject[parentKeyName] = __topVal;
 
                                     if (debugOutput) {console.log(parentKeyName + ' : ' + __topVal)};
 
@@ -373,7 +524,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                 } else if (children[b].nodeName == 'false' || children[b].nodeName == 'true') {
                                     var __topVal = children[b].nodeName;
                                     
-                                    __collected[parentKeyName] = __topVal;
+                                    collectionObject[parentKeyName] = __topVal;
 
                                     if (debugOutput) {console.log(parentKeyName + ' : ' + __topVal)};
 
@@ -383,7 +534,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     }
                 }
 
-                console.log(JSON.stringify(__collected));
+                // console.log(JSON.stringify(collectionObject));
 
                 if (debugOutput) {                                                                               
                     console.log(parentKeyName + ' : ' + __topVal)
@@ -429,7 +580,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                             console.log('dict_val: ' + __dictVal);
                         }
 
-                        __dictionary[__dictKey] = __dictVal;
+                        dictionaryObject[__dictKey] = __dictVal;
                     }
                     
                     // throw new Error('quit');
@@ -444,10 +595,10 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                            // console.log('key = ' + __colData[key]);
                        }
 
-                       // console.log(JSON.stringify(__collected));
+                       // console.log(JSON.stringify(collectionObject));
                        // this.exit();
 
-                       if (!(reqKeys[i] in __collected)) {
+                       if (!(reqKeys[i] in collectionObject)) {
                             if(!createDictionary){
                                 // throw new Error('Missing required API key! ' + reqKeys[i]);
                                 if (showOutput) {console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'))};
@@ -459,9 +610,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                        } else {
                             // console.log('found key:' + reqKeys[i]);
-                            for (var key in __collected) {
+                            for (var key in collectionObject) {
 
-                                var val = __collected[key];
+                                var val = collectionObject[key];
 
                                 if ( reqKeys.indexOf(key) > -1 ) {
                                     if (reqKeys[i] == key) {
@@ -492,27 +643,27 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                                 } else {
                                                     // console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val);
 
-                                                    for (var __key in __dictionary) {
+                                                    for (var __key in dictionaryObject) {
 
                                                         if (__key === key) {
                                                             if (debugOutput) {
                                                                 console.log(colorizer.colorize('- Key found: ', 'INFO') + key);
-                                                                console.log(__dictionary[__key] + ' > ' + key);
+                                                                console.log(dictionaryObject[__key] + ' > ' + key);
                                                             }
                                                             if (!debugOutput) {
-                                                                if (val === __dictionary[__key]) {
+                                                                if (val === dictionaryObject[__key]) {
                                                                     if (showOutput) {console.log(colorizer.colorize('PASS: ', 'INFO') + key + ' : ' + val)};
 
                                                                     // Write results to log
                                                                     // Test ID,API Version,Expected Key,Expected Value,Live Key,Live Value,Pass/Fail,Info
-                                                                    fs.write(save, testID + ',"' + apiVersion + '","' + __key + '","' + __dictionary[__key] + '","' + key + '","' + val + '",' + 'Pass, ,' + '\n', 'a+');
+                                                                    fs.write(save, testID + ',"' + apiVersion + '","' + __key + '","' + dictionaryObject[__key] + '","' + key + '","' + val + '",' + 'Pass, ,' + '\n', 'a+');
 
                                                                 } else {
-                                                                    if (showOutput) {console.log(colorizer.colorize('FAIL: ' + key + ' value does not match manifest', 'ERROR') + colorizer.colorize(' dictionary val: ', 'PARAMETER') + __dictionary[__key] + ' : ' + colorizer.colorize('manifest val: ', 'PARAMETER') + val)};
+                                                                    if (showOutput) {console.log(colorizer.colorize('FAIL: ' + key + ' value does not match manifest', 'ERROR') + colorizer.colorize(' dictionary val: ', 'PARAMETER') + dictionaryObject[__key] + ' : ' + colorizer.colorize('manifest val: ', 'PARAMETER') + val)};
 
                                                                     // Write results to log
                                                                     // Test ID,API Version,Expected Key,Expected Value,Live Key,Live Value,Pass/Fail,Info
-                                                                    fs.write(save, testID + ',' + apiVersion + ',' +  __key + ',"' + __dictionary[__key] + '",' + key + ',"' + val + '",' + 'Fail,FAIL: ' + key + ' value does not match manifest.,\n', 'a+');
+                                                                    fs.write(save, testID + ',' + apiVersion + ',' +  __key + ',"' + dictionaryObject[__key] + '",' + key + ',"' + val + '",' + 'Fail,FAIL: ' + key + ' value does not match manifest.,\n', 'a+');
                                                                 }
                                                             }
                                                         }
