@@ -34,6 +34,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var debugOutput = true;
         } else if (type === 'dictionary') {
             var createDictionary = true;
+            var logResults = false;
         } else if (type === 'console') {
             var showOutput = true;
         }
@@ -86,6 +87,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var saveLocation = 'manifest_dictionary/';
 
             fs.makeDirectory(saveLocation, 775);
+            console.log(logName);
             var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
 
         } else {
@@ -191,7 +193,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var suite = this;
         var apiVersion = '3';
 
-        // Required API keys for app to function correctly.
+        // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
         var reqKeys = new Array(
             "domain",
             "market-site-key",
@@ -400,6 +402,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 var parser = new DOMParser();
                 xmlDoc = parser.parseFromString(rawContent,'text/xml');
 
+                // Grab first dictionay section on the XMl for parsing
                 var nodeDicts = xmlDoc.getElementsByTagName("dict");
 
                 // console.log('nodes ' + nodeDicts.length);
@@ -411,96 +414,204 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     // var previousSiblingText = currentNode.previousSibling;
                     // console.log(' >>> <<< ' + previousSiblingText);
 
-                    console.log(previousSiblingText);
+                    // console.log(previousSiblingText);
 
                     if (currentNode.hasChildNodes) {
                         var children = currentNode.childNodes;
 
+                        // Loop through children and set the parent string/key of the dictionary based on the previous key item
+                        
                         for(var b = 0; b < children.length; b++) {
 
                             if (children[b].nodeName == 'key') {
 
-                                if (debugOutput) {console.log('key // ' + children[b].textContent)};
-                                var parentKeyName = children[b].textContent;
-                            }
-                            
-                            // console.log('sub-children ' + children[b].childNodes.length);
+                                if (debugOutput) {
+                                    console.log('\n============= Debug =============\n');
+                                    console.log('key : ' + children[b].textContent);
+                                };
 
+                                var parentKeyName = children[b].textContent;
+                            }  /* else {
+                                if (debugOutput) {
+                                    if (children[b].nodeName == 'array') {
+                                        console.log('dicks out in the  array');
+                                    }
+                                }
+                            } */
+                            
+                            
+                            // If children
                             if (children[b].childNodes.length > 1) {
+
+                                console.log(' -----');
+                                console.log('   [  Dict  ]');
+                                
                                 var subChildren = children[b].childNodes;
 
                                 for(var c = 0; c < subChildren.length; c++) {
 
-                                    if (subChildren[c].nodeName == 'dict') {
+                                    if (subChildren[c].nodeName == 'key' || subChildren[c].nodeName == 'string' || subChildren[c].nodeName == 'integer' || subChildren[c].nodeName == 'real') {
+                                        // Find keys within data subset
+                                        if (subChildren[c].nodeName == 'key') {
+                                            if (debugOutput) {
+                                                console.log('    childKeyName = ' + subChildren[c].textContent);
+                                                console.log('    combinedchildName = ' + parentKeyName + '_' + subChildren[c].textContent);
+                                            }
+                                            
+                                            var combinedchildName = parentKeyName + '_' + subChildren[c].textContent;
+
+                                        // Find value in data subset
+                                        }
+                                        if (subChildren[c].nodeName == 'string' || subChildren[c].nodeName == 'integer' || subChildren[c].nodeName == 'real') {
+                                            if (debugOutput) {
+                                                console.log('    childVal = ' + subChildren[c].textContent + '\n');
+
+                                            }
+
+                                            var childVal = subChildren[c].textContent;
+                                        }
+
+                                        if (debugOutput) {
+                                            if (childVal) {
+                                                // console.log(subKeyName + ' : ' + grandchildVal)
+                                                console.log('    object => ' + combinedchildName + ' : ' + childVal);
+                                                console.log('    ---------------------\n');
+                                                var childVal = null;
+                                            }
+                                        }
+                                    }  else if (children[b].nodeName == 'array') {
+                                        var childArray = children[b];
+
+                                        var arrayParentName = children[b].previousElementSibling.textContent;
+
+                                        if (childArray.hasChildNodes) {
+                                            var arrayChildren = childArray.childNodes;
+
+                                            // Loop through children and set the parent string/key of the dictionary based on the previous key item
+                                            
+                                            for(var f = 0; f < arrayChildren.length; f++) {
+
+                                                // if (arrayChildren[f].nodeName == 'dict') {
+                                                    console.log('dick butts');
+
+                                                    // arrayGrandChildren = arrayChildren[f].childNodes;
+
+                                                    // for(var d = 0; d < arrayGrandChildren.length; d++) {
+                                                    //     if (arrayGrandChildren[d].nodeName == 'key') {
+
+                                                    //         if (debugOutput) {
+                                                    //             console.log('       arrayGrandChildKeyName = ' + arrayGrandChildren[d].textContent + '\n');
+                                                    //             console.log('       arrayGrandchildCombinedKey = ' + arrayParentName + '_' + arrayGrandChildren[d].textContent);
+                                                    //         };
+
+                                                    //         // Set array key name
+                                                    //         var arrayGrandchildCombinedKey = arrayParentName + '_' + arrayGrandChildren[d].textContent;
+
+                                                    //     } else if (arrayGrandChildren[d].nodeName == 'string' || arrayGrandChildren[d].nodeName == 'integer' || arrayGrandChildren[d].nodeName == 'real') {
+                                                            
+                                                    //         if (debugOutput) {
+                                                    //             console.log('       arrayGrandChildValue = ' + arrayGrandChildren[d].textContent + '\n');
+                                                    //             // console.log('       object => ' + grandchildCombinedKey + ' : ' + grandchildVal + '\n');
+                                                                
+                                                    //         };
+
+                                                    //         // Set array key value
+                                                    //         var arrayGrandChildValue = arrayGrandChildren[d].textContent;
+
+                                                    //     }
+                                                        
+                                                    //     if (arrayGrandChildValue) {
+                                                    //         if (debugOutput) {
+                                                    //             console.log('       object => ' + arrayGrandchildCombinedKey + ' : ' + arrayGrandChildValue);
+                                                    //             console.log('       ------------------------------\n');
+                                                    //         }
+                                                    //         var arrayGrandChildValue = null;
+                                                    //     }
+                                                    // }
+                                                // }
+                                            }
+                                        }
+
+                                    // If grandchildren
+                                    } else if (subChildren[c].nodeName == 'dict') {
 
                                         if (debugOutput) {
 
-                                            console.log('=== [dict] ===');
-                                            console.log('\nDebug ======\n');
-                                            console.log('** TopKey Name: ' + parentKeyName)
-                                            console.log('nodeType >> ' + subChildren[c].nodeType);
-                                            console.log('nodeName >> ' + subChildren[c].nodeName);
-                                            console.log('textContent >> ' + JSON.stringify(subChildren[c].textContent));
-                                            console.log('nodeValue >> ' + subChildren[c].nodeValue);
-                                            console.log('\n/Debug ======');
+                                            // console.log('=== [dict] ===');
+                                            // console.log('\n============= Debug =============\n');
+                                            // console.log('   TopKey Name: ' + parentKeyName)
+                                            // console.log('   nodeType >> ' + subChildren[c].nodeType);
+                                            // console.log('   nodeName >> [  ' + subChildren[c].nodeName + '  ]');
+                                            // console.log('   textContent >> ' + JSON.stringify(subChildren[c].textContent));
+                                            // console.log('   nodeValue >> ' + subChildren[c].nodeValue);
+                                            // console.log('\n============= Debug =============\n');
                                         }
 
-                                        var dictionaryItemName = parentKeyName + '_' + subChildren[c].previousElementSibling.textContent;
-                                        if (debugOutput) {console.log('** Dict Name: ' + dictionaryItemName)};
+                                        // console.log(subChildren[c].previousElementSibling.textContent);
+
+                                        var comdbinedDictionaryItemName = parentKeyName + '_' + subChildren[c].previousElementSibling.textContent;
+                                        var singleDictionayName = subChildren[c].previousElementSibling.textContent;
+
+                                        if (debugOutput) {
+                                            if (subChildren[c].nodeName == 'dict') {
+                                                console.log('\n');
+                                                console.log('    --[ Dict ] ' + singleDictionayName);
+                                            }
+                                        };
 
                                         if (subChildren[c].childNodes.length > 1) {
                                             var thirdChildren = subChildren[c].childNodes;
 
                                             for(var d = 0; d < thirdChildren.length; d++) {
-                                                if (debugOutput) {
-                                                        console.log(' ---- third-child ' + thirdChildren[d].nodeName + ' // ' + ' -- content: ' + thirdChildren[d].textContent);
+                                                // if (debugOutput) {
+                                                //         console.log(' ---- third-child ' + thirdChildren[d].nodeName + ' // ' + ' -- content: ' + thirdChildren[d].textContent);
                                                               
-                                                    if (thirdChildren[d].nodeName == 'dict') {
-                                                        console.log(' ** Subprev ** ' + thirdChildren[d].previousElementSibling.textContent);
-                                                    }
-                                                }
+                                                //     if (thirdChildren[d].nodeName == 'dict') {
+                                                //         console.log(' ** Subprev ** ' + thirdChildren[d].previousElementSibling.textContent);
+                                                //     }
+                                                // }
 
                                                 if (thirdChildren[d].nodeName == 'key') {
 
                                                     if (debugOutput) {
-                                                        console.log('** Dict Name: ' + dictionaryItemName)
-                                                        console.log("combinedKeyName = " + dictionaryItemName + '_' + thirdChildren[d].textContent);
-                                                        console.log("currentKeyName = " + thirdChildren[d].textContent);
-                                                        console.log("subKeyName = " + thirdChildren[d].textContent);
+                                                        console.log('       grandchildCurrentKeyName = ' + thirdChildren[d].textContent + '\n');
+                                                        console.log('       grandchildCombinedKey = ' + comdbinedDictionaryItemName + '_' + thirdChildren[d].textContent);
                                                     };
 
-                                                    var combinedKeyName = dictionaryItemName + '_' + thirdChildren[d].textContent;
-                                                    var currentKeyName = thirdChildren[d].textContent;
+                                                    var grandchildCombinedKey = comdbinedDictionaryItemName + '_' + thirdChildren[d].textContent;
+                                                    var grandchildCurrentKeyName = thirdChildren[d].textContent;
                                                     var subKeyName = thirdChildren[d].textContent;
-                                                }
-                                                
-                                                if (thirdChildren[d].nodeName == 'string' || thirdChildren[d].nodeName == 'integer' || thirdChildren[d].nodeName == 'real') {
+
+                                                } else if (thirdChildren[d].nodeName == 'string' || thirdChildren[d].nodeName == 'integer' || thirdChildren[d].nodeName == 'real') {
                                                     
                                                     // Push key/val into collection
-                                                    var __subVal = thirdChildren[d].textContent;
-                                                    collectionObject[combinedKeyName] = __subVal;
+                                                    var grandchildVal = thirdChildren[d].textContent;
+                                                    collectionObject[grandchildCombinedKey] = grandchildVal;
 
-                                                    if (debugOutput) {console.log(combinedKeyName + ' : ' + __subVal)};
+                                                    if (debugOutput) {
+                                                        console.log('       grandchildValue = ' + grandchildVal + '\n');
+                                                        console.log('       object => ' + grandchildCombinedKey + ' : ' + grandchildVal + '\n');
+                                                        console.log('       ------------------------------\n');
+                                                    };
 
                                                 } else if (thirdChildren[d].nodeName == 'false' || thirdChildren[d].nodeName == 'true') {
                                                     
                                                     // Push key/val into collection
-                                                    var __subVal = thirdChildren[d].nodeName;
-                                                    collectionObject[combinedKeyName] = __subVal;
+                                                    var grandchildVal = thirdChildren[d].nodeName;
+                                                    collectionObject[grandchildCombinedKey] = grandchildVal;
 
-                                                    if (debugOutput) {console.log(combinedKeyName + ' : ' + __subVal)};
+                                                    if (debugOutput) {
+                                                        console.log('       grandchildValue = ' + grandchildVal + '\n');
+                                                        console.log('       object => ' + grandchildCombinedKey + ' : ' + grandchildVal + '\n');
+                                                        console.log('       ------------------------------\n');
+                                                    };
                                                 }
                                             }
 
                                             // Push key/val into collection
-                                            collectionObject[subKeyName] = __subVal;
+                                            // collectionObject[subKeyName] = grandchildVal;
 
-                                            if (debugOutput) {console.log(subKeyName + ' : ' + __subVal)};
-                                        }
-                                    } else if (subChildren[c].nodeName == 'string' || subChildren[c].nodeName == 'integer' || subChildren[c].nodeName == 'real') {
-                                        if (debugOutput) {
-                                            // console.log('        not a dictionary');
-                                            // console.log('        nodeName ' + subChildren[c].nodeName);
+                                            
                                         }
                                     } else {
                                         if (debugOutput) {
@@ -510,7 +621,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                     }
                                 }
                             } else if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real' || children[b].nodeName == 'false' || children[b].nodeName == 'true') {
-                                if (debugOutput) {console.log(' -- val // ' + children[b].textContent)};
+                                if (debugOutput) {console.log('val : ' + children[b].textContent + '\n')};
                                 
                                 if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real') {
                                     // Push key/val into collection
@@ -518,7 +629,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                                     collectionObject[parentKeyName] = __topVal;
 
-                                    if (debugOutput) {console.log(parentKeyName + ' : ' + __topVal)};
+                                    if (debugOutput) {
+                                        console.log('object => ' + parentKeyName + ' : ' + __topVal);
+                                    };
 
                                     
                                 } else if (children[b].nodeName == 'false' || children[b].nodeName == 'true') {
@@ -526,7 +639,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                     
                                     collectionObject[parentKeyName] = __topVal;
 
-                                    if (debugOutput) {console.log(parentKeyName + ' : ' + __topVal)};
+                                    if (debugOutput) {
+                                        console.log('object => ' + parentKeyName + ' : ' + __topVal);
+                                    };
 
                                 }
                             }
@@ -536,7 +651,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 // console.log(JSON.stringify(collectionObject));
 
-                if (debugOutput) {                                                                               
+                if (debugOutput) {
                     console.log(parentKeyName + ' : ' + __topVal)
                     casper.echo( 'Testing surpressed due to debug.', 'PARAMETER' );
                 } else {
