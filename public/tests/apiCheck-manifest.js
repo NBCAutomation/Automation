@@ -4,18 +4,11 @@
 // Version: 2.0
 // Case: Test API main manifest file to verify main key/values that allow the app to function correctly.
 // Use: casperjs test [file_name] --url=[site]
-// optional string params --output=debug to show logged key/val strings
-// optional string params --output=console will show test results
+//    optional string params --output=debug to show logged key/val strings
+//    optional string params --output=console will show test results
 
 // Dictionary files:
-// - OTS Created 2/25/16
-
-/*
-* ==== Notes for future release - 3/15/16 === 
-* - Download dictionary data from GSheets
-* - Write log results to GSheets
-* - Cron/NPM process to run concurrent tests
-*/
+// - OTS Created 9/7/16
 
 // - TSG Pending..
 // -http://collaborative-tools-project.blogspot.com/2012/05/getting-csv-data-into-google.html
@@ -118,7 +111,11 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         // Start Test
         casper.start( url ).then(function(response) {
             if ( response.status == 200 ) {
-                console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+                if(createDictionary){
+                    console.log('Dictionary creation started.');
+                } else {
+                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+                }
             } else {
                 casper.test.fail('Page did not load correctly. Response: ' + response.status);
             }
@@ -129,8 +126,11 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             if (logResults) {
                 suite.processTestResults(save);
             }
-
-            console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
+            if(createDictionary){
+                console.log('Dictionary creation ended.');
+            } else {
+                console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
+            }
             this.exit();
             test.done();
         });
@@ -144,23 +144,27 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         // require('utils').dump( current );
         var dbUrl = 'http://spire.app/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty;
 
-        if (dbUrl) {
-            casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                
-                var status = this.status().currentHTTPStatus;
+        if(createDictionary){
+            suite.getContent(url, type, 'xx');
+        } else {
+            if (dbUrl) {
+                casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    
+                    var status = this.status().currentHTTPStatus;
 
-                if ( status == 200) {
-                    if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
+                    if ( status == 200) {
+                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
-                    var output = this.getHTML();
-                    var __dbID = casper.getElementInfo('body').text;
+                        var output = this.getHTML();
+                        var __dbID = casper.getElementInfo('body').text;
 
-                    suite.getContent(url, type, __dbID);
-                } else {
-                    throw new Error('Unable to get/store Test ID!');
-                }
-                
-            });
+                        suite.getContent(url, type, __dbID);
+                    } else {
+                        throw new Error('Unable to get/store Test ID!');
+                    }
+                    
+                });
+            }
         }
     };
 
@@ -233,7 +237,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             "advertising_splash_target-height",
             "advertising_splash_scaling-x",
             "advertising_splash_scaling-y",
-            "scaling-y",
             "advertising_video_network-id",
             "advertising_video_direct-sold-target-width",
             "advertising_video_direct-sold-target-height",
@@ -241,47 +244,46 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             "advertising_video_backfill-target-height",
             "advertising_video_backfill-app-id",
             "backfill-app-id",
-            "phone3",
             "wsi-map-id",
             "wsi-market-default-layer",
-            "weather-branding",
-            "iteam-branding",
-            "alerts",
-            "ugctemplets",
-            "breaking",
-            "home",
-            "home-investigation",
-            "facebook-comments-script",
-            "navigation",
-            "settings-terms-of-use",
-            "settings-terms-of-service",
-            "settings-closed-captioning-faq",
-            "submit-media",
-            "trending",
-            "weather-forcast-video",
-            "weather-forcast-story",
-            "weather-maps",
-            "advertising-display",
-            "advertising-video",
-            "home-top-stories",
-            "content",
-            "gallery",
-            "recommended",
-            "related",
-            "weather-conditions-icon",
-            "weather-forcast",
-            "weather-wsi-forcast",
-            "weather-location-lookup",
+            "app-urls_weather-branding",
+            "app-urls_iteam-branding",
+            "app-urls_alerts",
+            "app-urls_ugctemplets",
+            "app-urls_breaking",
+            "app-urls_home",
+            "app-urls_home-investigation",
+            "app-urls_facebook-comments-script",
+            "app-urls_navigation",
+            "app-urls_settings-terms-of-use",
+            "app-urls_settings-terms-of-service",
+            "app-urls_settings-closed-captioning-faq",
+            "app-urls_submit-media",
+            "app-urls_trending",
+            "app-urls_weather-forcast-video",
+            "app-urls_weather-forcast-story",
+            "app-urls_weather-maps",
+            "app-base-urls_advertising-display",
+            "app-base-urls_advertising-video",
+            "app-base-urls_home-top-storie",
+            "app-base-urls_content",
+            "app-base-urls_gallery",
+            "app-base-urls_recommended",
+            "app-base-urls_related",
+            "app-base-urls_weather-conditions-icon",
+            "app-base-urls_weather-forcast",
+            "app-base-urls_weather-wsi-forcast",
+            "app-base-urls_weather-location-lookup",
             "title",
-            "report-suite-ids",
-            "tracking-server",
-            "app-section-server-name",
-            "page-view-event",
-            "link-type",
-            "station-division",
-            "station-business-unit",
-            "station-call-sign",
-            "station-market",
+            "omniture_report-suite-ids",
+            "omniture_tracking-server",
+            "omniture_app-section-server-name",
+            "omniture_page-view-event",
+            "omniture_link-type",
+            "omniture_station-division",
+            "omniture_station-business-unit",
+            "omniture_station-call-sign",
+            "omniture_station-market",
             /*
             "force-update",
             "update-screen-title",
@@ -289,34 +291,22 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             "update-screen-appUrl",
             "update-screen-appversion",
             */
-            "ad-unit-level1",
-            "fw_ssid",
+            "advertising_ad-unit-level1",
+            "advertising_fw_ssid",
             /*
             "adtest",
             */
-            "stage",
-            "article-interstitial",
-            "gallery-interstitial",
-            "default-iab-category-tier1",
+            "advertising_advertising_stage",
+            "advertising_article-interstitial",
+            "advertising_gallery-interstitial",
+            "advertising_default-iab-category-tier1",
+            "advertising_default-iab-category-tier2",
+            "advertising_splash_display-duratio",
+            "contact_name",
+            "contact_address-line1",
+            "contact_address-line2",
+            "contact_phone",
             /*
-            "default-iab-category-tier2",
-            */
-            "network-id",
-            "enabled",
-            "ad-unit-level2",
-            "request-timeout",
-            "display-duration",
-            "target-width",
-            "target-height",
-            "scaling-x",
-            "direct-sold-target-width",
-            "direct-sold-target-height",
-            "backfill-target-width",
-            "backfill-target-height",
-            "name",
-            "address-line1",
-            "address-line2",
-            "phone",
             "contact-Info_phone1_contactInfoLabel",
             "contact-Info_phone1_contactInfoNumber",
             "contactInfoNumber",
@@ -324,9 +314,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             "contact-Info_phone2_contactInfoNumber",
             "contact-Info_phone3_contactInfoLabel",
             "contact-Info_phone3_contactInfoNumber",
+            */
             "investigation-phone",
             "investigation-email",
-            "contactInfoLabel",
             "meteorologist-summary-disabled",
             "market-default-postal-code",
             "market-default-location-name",
@@ -339,12 +329,12 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             /*
             "app-id",
             */
-            "is-live-promotion",
-            "promotion-type",
-            "url-schema-ios",
-            "app-link-ios",
-            "url-schema-android",
-            "app-link-android"
+            "live-promotion_is-live-promotion",
+            "live-promotion_promotion-type",
+            "live-promotion_url-schema-ios",
+            "live-promotion_app-link-ios",
+            "live-promotion_url-schema-android",
+            "live-promotion_app-link-android"
         );
         
         collectionObject = {};
@@ -367,7 +357,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var rawContent = this.getHTML();
             
             // if (debugOutput) {console.log(rawContent)};
-            /*
+            
+            /******************************
                 Notes:
 
                 If sub-nested value, the key/value is built using parent + child + grandchild relationship of dictionary items. Objects are stored as "[keyName]: [value]"
@@ -395,7 +386,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     </dict>
                 </dict>
 
-             */
+             ******************************/
 
             if ( rawContent ) {
 
@@ -403,16 +394,21 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 xmlDoc = parser.parseFromString(rawContent,'text/xml');
 
                 // Grab first dictionay section on the XMl for parsing
-                var nodeDicts = xmlDoc.getElementsByTagName("dict");
+                var mainNodeDictionary = xmlDoc.getElementsByTagName("dict");
 
-                // console.log('nodes ' + nodeDicts.length);
+                // console.log('nodes ' + mainNodeDictionary.length);
 
-                for(var i = 0; i < nodeDicts.length; i++) {
-                    // console.log(i + ' || ' + nodeDicts[i].namespaceURI);
+                for(var i = 0; i < mainNodeDictionary.length; i++) {
+                    // if (i > 0 && mainNodeDictionary[i].nodeName == 'dict') {
+                    //     console.log('topMostKey: ' + mainNodeDictionary[i].previousElementSibling.textContent)
+                    // }
 
-                    var currentNode = nodeDicts[i];
+                    // console.log(i + ' || ' + mainNodeDictionary[i].nodeName);
+                    // console.log(i + ' || ' + mainNodeDictionary[i].textContent);
+
+                    var currentNode = mainNodeDictionary[i];
                     // var previousSiblingText = currentNode.previousSibling;
-                    // console.log(' >>> <<< ' + previousSiblingText);
+                    // console.log(' >>> <<< ' + previousSiblingText.textContent);
 
                     // console.log(previousSiblingText);
 
@@ -427,30 +423,37 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                                 if (debugOutput) {
                                     console.log('\n============= Debug =============\n');
+                                    
+                                    // if (children[b].previousElementSibling) {
+                                    //     console.log('baseParentName: ' + children[b].previousElementSibling.textContent);
+                                    // }
+
                                     console.log('key : ' + children[b].textContent);
                                 };
 
                                 var parentKeyName = children[b].textContent;
-                            }  /* else {
+                            } else {
                                 if (debugOutput) {
                                     if (children[b].nodeName == 'array') {
                                         console.log('dicks out in the  array');
                                     }
                                 }
-                            } */
+                            }
                             
                             
-                            // If children
+                            // If children of above @ children[b].nodeName == 'key'
                             if (children[b].childNodes.length > 1) {
 
-                                console.log(' -----');
-                                console.log('   [  Dict  ]');
+                                if (debugOutput) {
+                                    console.log(' -----');
+                                    console.log('   [  Dict  ]')
+                                };
                                 
                                 var subChildren = children[b].childNodes;
 
                                 for(var c = 0; c < subChildren.length; c++) {
 
-                                    if (subChildren[c].nodeName == 'key' || subChildren[c].nodeName == 'string' || subChildren[c].nodeName == 'integer' || subChildren[c].nodeName == 'real') {
+                                    if (subChildren[c].nodeName == 'key' || subChildren[c].nodeName == 'string' || subChildren[c].nodeName == 'integer' || subChildren[c].nodeName == 'real' || subChildren[c].nodeName == 'false' || subChildren[c].nodeName =='true') {
                                         // Find keys within data subset
                                         if (subChildren[c].nodeName == 'key') {
                                             if (debugOutput) {
@@ -459,25 +462,39 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                             }
                                             
                                             var combinedchildName = parentKeyName + '_' + subChildren[c].textContent;
-
                                         // Find value in data subset
-                                        }
-                                        if (subChildren[c].nodeName == 'string' || subChildren[c].nodeName == 'integer' || subChildren[c].nodeName == 'real') {
+                                        } else if (subChildren[c].nodeName == 'string' || subChildren[c].nodeName == 'integer' || subChildren[c].nodeName == 'real') {
+                                            
                                             if (debugOutput) {
                                                 console.log('    childVal = ' + subChildren[c].textContent + '\n');
 
                                             }
 
                                             var childVal = subChildren[c].textContent;
+
+                                        } else if (subChildren[c].nodeName == 'false' || subChildren[c].nodeName == 'true') {
+                                            
+                                            if (debugOutput) {
+                                                console.log('    childVal = ' + subChildren[c].nodeName + '\n');
+                                                console.log('    childVal = ' + subChildren[c].textContent + '\n');
+
+                                            }
+
+                                            var childVal = subChildren[c].nodeName;
                                         }
 
-                                        if (debugOutput) {
-                                            if (childVal) {
+                                        
+                                        if (childVal) {
+                                            // Add to collection object
+                                            collectionObject[combinedchildName] = childVal;
+
+                                            if (debugOutput) {
                                                 // console.log(subKeyName + ' : ' + grandchildVal)
                                                 console.log('    object => ' + combinedchildName + ' : ' + childVal);
                                                 console.log('    ---------------------\n');
                                                 var childVal = null;
                                             }
+
                                         }
                                     }  else if (children[b].nodeName == 'array') {
                                         var childArray = children[b];
@@ -491,44 +508,53 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                             
                                             for(var f = 0; f < arrayChildren.length; f++) {
 
-                                                // if (arrayChildren[f].nodeName == 'dict') {
-                                                    console.log('dick butts');
+                                                if (arrayChildren[f].nodeName == 'dict') {
+                                                    // console.log('dick butts');
 
-                                                    // arrayGrandChildren = arrayChildren[f].childNodes;
+                                                    arrayGrandChildren = arrayChildren[f].childNodes;
 
-                                                    // for(var d = 0; d < arrayGrandChildren.length; d++) {
-                                                    //     if (arrayGrandChildren[d].nodeName == 'key') {
+                                                    for(var d = 0; d < arrayGrandChildren.length; d++) {
+                                                        if (arrayGrandChildren[d].nodeName == 'key') {
 
-                                                    //         if (debugOutput) {
-                                                    //             console.log('       arrayGrandChildKeyName = ' + arrayGrandChildren[d].textContent + '\n');
-                                                    //             console.log('       arrayGrandchildCombinedKey = ' + arrayParentName + '_' + arrayGrandChildren[d].textContent);
-                                                    //         };
+                                                            if (debugOutput) {
+                                                                console.log('       arrayGrandChildKeyName = ' + arrayGrandChildren[d].textContent + '\n');
+                                                                console.log('       arrayGrandchildCombinedKey = ' + arrayParentName + '_' + arrayGrandChildren[d].textContent);
+                                                            };
 
-                                                    //         // Set array key name
-                                                    //         var arrayGrandchildCombinedKey = arrayParentName + '_' + arrayGrandChildren[d].textContent;
+                                                            // Set array key name
+                                                            var arrayGrandchildCombinedKey = arrayParentName + '_' + arrayGrandChildren[d].textContent;
 
-                                                    //     } else if (arrayGrandChildren[d].nodeName == 'string' || arrayGrandChildren[d].nodeName == 'integer' || arrayGrandChildren[d].nodeName == 'real') {
+                                                        } else if (arrayGrandChildren[d].nodeName == 'string' || arrayGrandChildren[d].nodeName == 'integer' || arrayGrandChildren[d].nodeName == 'real') {
                                                             
-                                                    //         if (debugOutput) {
-                                                    //             console.log('       arrayGrandChildValue = ' + arrayGrandChildren[d].textContent + '\n');
-                                                    //             // console.log('       object => ' + grandchildCombinedKey + ' : ' + grandchildVal + '\n');
+                                                            if (debugOutput) {
+                                                                console.log('dick butts 1');
+                                                                console.log('       arrayGrandChildValue = ' + arrayGrandChildren[d].textContent + '\n');
+                                                                console.log('       object => ' + grandchildCombinedKey + ' : ' + grandchildVal + '\n');
                                                                 
-                                                    //         };
+                                                            };
 
-                                                    //         // Set array key value
-                                                    //         var arrayGrandChildValue = arrayGrandChildren[d].textContent;
+                                                            // Add to collection object
+                                                            collectionObject[grandchildCombinedKey] = grandchildVal;
 
-                                                    //     }
+                                                            // Set array key value
+                                                            var arrayGrandChildValue = arrayGrandChildren[d].textContent;
+
+                                                        }
                                                         
-                                                    //     if (arrayGrandChildValue) {
-                                                    //         if (debugOutput) {
-                                                    //             console.log('       object => ' + arrayGrandchildCombinedKey + ' : ' + arrayGrandChildValue);
-                                                    //             console.log('       ------------------------------\n');
-                                                    //         }
-                                                    //         var arrayGrandChildValue = null;
-                                                    //     }
-                                                    // }
-                                                // }
+                                                        if (arrayGrandChildValue) {
+                                                            if (debugOutput) {
+                                                                console.log('dick butts 2');
+                                                                console.log('       object => ' + arrayGrandchildCombinedKey + ' : ' + arrayGrandChildValue);
+                                                                console.log('       ------------------------------\n');
+                                                            }
+
+                                                            // Add to collection object
+                                                            collectionObject[arrayGrandchildCombinedKey] = arrayGrandChildValue;
+
+                                                            var arrayGrandChildValue = null;
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
 
@@ -537,14 +563,14 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                                         if (debugOutput) {
 
-                                            // console.log('=== [dict] ===');
-                                            // console.log('\n============= Debug =============\n');
-                                            // console.log('   TopKey Name: ' + parentKeyName)
-                                            // console.log('   nodeType >> ' + subChildren[c].nodeType);
-                                            // console.log('   nodeName >> [  ' + subChildren[c].nodeName + '  ]');
-                                            // console.log('   textContent >> ' + JSON.stringify(subChildren[c].textContent));
-                                            // console.log('   nodeValue >> ' + subChildren[c].nodeValue);
-                                            // console.log('\n============= Debug =============\n');
+                                            console.log('=== [dict] ===');
+                                            console.log('\n============= Debug =============\n');
+                                            console.log('   TopKey Name: ' + parentKeyName)
+                                            console.log('   nodeType >> ' + subChildren[c].nodeType);
+                                            console.log('   nodeName >> [  ' + subChildren[c].nodeName + '  ]');
+                                            console.log('   textContent >> ' + JSON.stringify(subChildren[c].textContent));
+                                            console.log('   nodeValue >> ' + subChildren[c].nodeValue);
+                                            console.log('\n============= Debug =============\n');
                                         }
 
                                         // console.log(subChildren[c].previousElementSibling.textContent);
@@ -563,13 +589,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                             var thirdChildren = subChildren[c].childNodes;
 
                                             for(var d = 0; d < thirdChildren.length; d++) {
-                                                // if (debugOutput) {
-                                                //         console.log(' ---- third-child ' + thirdChildren[d].nodeName + ' // ' + ' -- content: ' + thirdChildren[d].textContent);
-                                                              
-                                                //     if (thirdChildren[d].nodeName == 'dict') {
-                                                //         console.log(' ** Subprev ** ' + thirdChildren[d].previousElementSibling.textContent);
-                                                //     }
-                                                // }
 
                                                 if (thirdChildren[d].nodeName == 'key') {
 
@@ -615,21 +634,22 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                         }
                                     } else {
                                         if (debugOutput) {
-                                            // console.log('        not a dictionary');
-                                            // console.log('        textContent >> ' + JSON.stringify(subChildren[c].textContent));
+                                            console.log('        not a dictionary');
+                                            console.log('        textContent >> ' + JSON.stringify(subChildren[c].textContent));
                                         }
                                     }
                                 }
                             } else if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real' || children[b].nodeName == 'false' || children[b].nodeName == 'true') {
-                                if (debugOutput) {console.log('val : ' + children[b].textContent + '\n')};
                                 
                                 if (children[b].nodeName == 'string' || children[b].nodeName == 'integer' || children[b].nodeName == 'real') {
+                                    
                                     // Push key/val into collection
                                     var __topVal = children[b].textContent;
 
                                     collectionObject[parentKeyName] = __topVal;
 
                                     if (debugOutput) {
+                                        console.log('val : ' + children[b].textContent + '\n')
                                         console.log('object => ' + parentKeyName + ' : ' + __topVal);
                                     };
 
@@ -640,6 +660,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                     collectionObject[parentKeyName] = __topVal;
 
                                     if (debugOutput) {
+                                        console.log('val : ' + children[b].nodeName + '\n')
                                         console.log('object => ' + parentKeyName + ' : ' + __topVal);
                                     };
 
@@ -671,9 +692,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     var dictionaryFile = 'manifest_dictionary/' + urlUri + '_dictionary.csv';
                     var localDictName =  urlUri + '_dictionary.csv';
 
-                    var dictionaryData = fs.read(dictionaryFile);
+                    var dictionaryManifestData = fs.read(dictionaryFile);
 
-                    rows = dictionaryData.split("\n");
+                    rows = dictionaryManifestData.split("\n");
                     rows.shift();
                     rows.reverse();
 
@@ -713,7 +734,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                        // console.log(JSON.stringify(collectionObject));
                        // this.exit();
 
-                       if (!(reqKeys[i] in collectionObject)) {
+                        if (!(reqKeys[i] in collectionObject)) {
                             if(!createDictionary){
                                 // throw new Error('Missing required API key! ' + reqKeys[i]);
                                 if (showOutput) {console.log(colorizer.colorize('FAIL: Missing required API key! ' + reqKeys[i], 'ERROR'))};
@@ -723,7 +744,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                 }
                             }
 
-                       } else {
+                        } else {
                             // console.log('found key:' + reqKeys[i]);
                             for (var key in collectionObject) {
 
@@ -743,11 +764,25 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                             } else {
                                                 //TVE key check
                                                 if(/* typeof val === 'undefined' || typeof val === null || val == "" ||*/ val.length <= 0) {
-                                                    if (url.indexOf('necn.com') && key == 'tve_url' || url.indexOf('telemundo') && key == 'tve_url') {
+                                                    if (url.indexOf('necn.com') && key == 'tve_url' || url.indexOf('necn.com') && key == 'web-links_tve_url' || url.indexOf('telemundo') && key == 'tve_url' || url.indexOf('telemundo') && key == 'web-links_tve_url') {
+                                                        
                                                         if (showOutput) {console.log(colorizer.colorize('TVE not requred for property', 'COMMENT'))};
+
                                                         if (!debugOutput) {
                                                             fs.write(save, ',\n' + 'TVE not requred for property. ', 'a+');
                                                             fs.write(save, testID + ',' + apiVersion + ',' +  key + ',"--//--",' + key + ',"--//--",' + 'Pass,TVE not requred for property ' + key + ',\n', 'a+');
+                                                        };
+                                                    } else if (url.indexOf('telemundo') && key == 'investigation-phone') {
+                                                        if (showOutput) {console.log(colorizer.colorize('Investigations phone not set for TSG property.', 'COMMENT'))};
+                                                        if (!debugOutput) {
+                                                            fs.write(save, ',\n' + 'Investigations not requred for property. ', 'a+');
+                                                            fs.write(save, testID + ',' + apiVersion + ',' +  key + ',"--//--",' + key + ',"--//--",' + 'Pass,Investigations phone not set for TSG property ' + key + ',\n', 'a+');
+                                                        };
+                                                    } else if (url.indexOf('telemundo') && key == 'investigation-email') {
+                                                        if (showOutput) {console.log(colorizer.colorize('Investigations email not set for TSG property.', 'COMMENT'))};
+                                                        if (!debugOutput) {
+                                                            fs.write(save, ',\n' + 'Investigations not requred for property. ', 'a+');
+                                                            fs.write(save, testID + ',' + apiVersion + ',' +  key + ',"--//--",' + key + ',"--//--",' + 'Pass,Investigations email not set for TSG property ' + key + ',\n', 'a+');
                                                         };
                                                     } else {
                                                         if (showOutput) {console.log(colorizer.colorize('FAIL:  API value missing for: ' + reqKeys[i], 'ERROR'))};
@@ -789,13 +824,12 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                     }
                                 }
 
-                                if(createDictionary){
-                                    console.log('Dictionary csv created.');
-                                }
-
                             }
-                       }
-                   } 
+                        }
+                        if(createDictionary){
+                            console.log('Dictionary csv created.');
+                        }
+                    }
                 }
 
             } else {
