@@ -444,6 +444,25 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
 
                                     if (typeof __innerItems[__items] === 'object') {
 
+                                        var articleContentID = __innerItems[__items].contentID;
+                                        var articleTitle = __innerItems[__items].title;
+                                        var articleByline = __innerItems[__items].byline;
+                                        var articleSummary = __innerItems[__items].summary;
+                                        var articleDisplayDate = __innerItems[__items].displayDate;
+                                        var articleUpdatedMessage = __innerItems[__items].updatedMessage;
+                                        var articleShareURL = __innerItems[__items].shareURL;
+                                        var articleTypeName = __innerItems[__items].typeName;
+                                        var articleFullsizeImageURL = __innerItems[__items].fullsizeImageURL;
+                                        var articleThumbnailImageURL = __innerItems[__items].thumbnailImageURL;
+                                        var articleFullsizeLeadImageURL = __innerItems[__items].fullsizeLeadImageURL;
+                                        var articleLeadImageURL = __innerItems[__items].leadImageURL;
+                                        var articleFeature = __innerItems[__items].feature;
+                                        var articleSponsored = __innerItems[__items].sponsored;
+                                        var articleLiveVideoEmbed = __innerItems[__items].liveVideoEmbed;
+                                        var articleLiveAppVideoEmbed = __innerItems[__items].liveAppVideoEmbed;
+                                        var articleContentBody = __innerItems[__items].contentBody;
+                                        var articleLeadMedia = __innerItems[__items].leadMedia;
+                                        
                                         if (debugOutput) {
                                             console.log('  -----------------');
                                             console.log('  >> article_contentID  : ' + __innerItems[__items].contentID);
@@ -464,6 +483,12 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                             console.log('  >> article_liveAppVideoEmbed  : ' + __innerItems[__items].liveAppVideoEmbed);
                                             // console.log('  >> article_contentBody  : ' + __innerItems[__items].contentBody);
                                             console.log('  >> article_leadMedia  : ' + __innerItems[__items].leadMedia);
+                                        }
+
+                                        if (__innerItems[__items].typeName == 'Gallery') {
+                                            console.log('    ------------------ ');
+                                            console.log('     Gallery\n');
+                                            console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
                                         }
 
                                         if (__innerItems[__items].fullsizeImageURL.indexOf('0*false') > -1) {
@@ -567,8 +592,10 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                                     console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
                                                 }
                                                 
-                                                if (__subItems[__indItems] === 'Gallery') {
-                                                    
+                                                if (__subItems[__indItems] == 'Gallery') {
+                                                    console.log('    ------------------ ');
+                                                    console.log('     Gallery\n');
+                                                    console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
                                                 }
                                             }
 

@@ -86,7 +86,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/manifest/?apiVersion=3';
+        url = url + '/apps/news-app/manifest/?apiVersion=4';
 
         // Start Test
         casper.start( url ).then(function(response) {
@@ -187,7 +187,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     var url = __moduleVals[i].toString();
 
                     if ( ! url.indexOf('/apps') ) {
-                        url = casper.cli.get('url') + url + '?apiVersion=3';
+                        url = casper.cli.get('url') + url + '?apiVersion=4';
                   
                         suite.__collected[key] = url;
                     }
@@ -272,9 +272,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             if (__thisItem[__i].indexOf('/apps') > -1) {
 
                                                 if (__thisItem[__i].indexOf('?') > -1) {
-                                                    var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=3'
+                                                    var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=4'
                                                 } else {
-                                                    var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=3'
+                                                    var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=4'
                                                 }
                                                 
                                                 if (debugOutput) {console.log(__keyUrl)};
@@ -328,9 +328,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                     if (__lastItem[__b].indexOf('/apps') > -1) {
 
                                                         if (__lastItem[__b].indexOf('?') > -1) {
-                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=3'
+                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=4'
                                                         } else {
-                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=3'
+                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=4'
                                                         }
                                                         
                                                         // if (debugOutput) {
