@@ -835,6 +835,11 @@ class DbHandler {
         }
     }
 
+    public function countTestFailuresByproperty($testID, $testResultsTable) {
+        //select all tests based
+
+    }
+
     public function getAllStations() {
         $stmt = $this->conn->prepare("SELECT * FROM stations");
         $stmt->execute();
