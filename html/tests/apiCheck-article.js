@@ -485,11 +485,11 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                             console.log('  >> article_leadMedia  : ' + __innerItems[__items].leadMedia);
                                         }
 
-                                        if (__innerItems[__items].typeName == 'Gallery') {
-                                            console.log('    ------------------ ');
-                                            console.log('     Gallery\n');
-                                            console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
-                                        }
+                                        // if (__innerItems[__items].typeName == 'Gallery') {
+                                        //     console.log('    ------------------ ');
+                                        //     console.log('     Gallery\n');
+                                        //     console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                        // }
 
                                         if (__innerItems[__items].fullsizeImageURL.indexOf('0*false') > -1) {
                                             console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + __innerItems[__items].fullsizeImageURL + '.', 'ERROR'));
@@ -592,11 +592,11 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                                     console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
                                                 }
                                                 
-                                                if (__subItems[__indItems] == 'Gallery') {
-                                                    console.log('    ------------------ ');
-                                                    console.log('     Gallery\n');
-                                                    console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
-                                                }
+                                                // if (__subItems[__indItems] == 'Gallery') {
+                                                //     console.log('    ------------------ ');
+                                                //     console.log('     Gallery\n');
+                                                //     console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                                // }
                                             }
 
                                             if (debugOutput) {console.log('  >---------------')};
