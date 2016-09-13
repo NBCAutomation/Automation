@@ -12,7 +12,7 @@ return [
 
         // Monolog settings
         'logger' => [
-            'name' => 'slim-app',
+            'name' => 'otsSpire',
             'path' => __DIR__ . '/../logs/app.log',
         ],
     ],
