@@ -849,7 +849,7 @@ $app->group('/utils', function () {
     	$allPostPutVars = $request->getQueryParams();
 
 		$file = $allPostPutVars['file'];
-		$__tempFile = __DIR__.'/../public'.$file;
+		$__tempFile = __DIR__.'/../html/tmp/'.$file;
 		return mhndev\slimFileResponse\FileResponse::getResponse($response, $__tempFile);
     });
 });

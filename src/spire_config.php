@@ -1,7 +1,7 @@
 <?php
 	/** Database config */
 	define('DB_USERNAME', '__spireUser');  
-	define('DB_PASSWORD', 'password');  
+	define('DB_PASSWORD', 'LTXaxWwnemXzzrcK');  
 	define('DB_HOST', 'localhost');  
 	define('DB_NAME', 'ots_spire');
 
