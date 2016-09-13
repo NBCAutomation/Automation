@@ -161,7 +161,7 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-8 col-sm-offset-2">
-					<input type="hidden" name="script" value="<?php echo $view; ?>">
+					<input type="hidden" name="script" value="#<?php //echo $view; ?>">
 					<button class="btn btn-primary" type="submit">Run Script</button>
 				</div>
 			</div>
