@@ -216,7 +216,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
         // var current = suite.__collected.shift();
 
-        var reqKeys = new Array("appTitle","sectionMapping","location");
+        var requiredManifestKeys = new Array("appTitle","sectionMapping","location");
 
         var __baseUrl = casper.cli.get('url');
 
@@ -250,44 +250,52 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 count++;
                             }
 
-                            var __thisItem = __output.items[count];
+                            var parsedOutputItems = __output.items[count];
 
-                            for (var __i in __thisItem) {
-                                if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+                            for (var currentItem in parsedOutputItems) {
+                                if (debugOutput) {
+                                    console.log(currentItem + ' : ' + parsedOutputItems[currentItem]);
+                                };
 
-                                if (reqKeys.indexOf(__i) > -1) {
+                                if (requiredManifestKeys.indexOf(currentItem) > -1) {
 
-                                    if (__thisItem.length <= 0) {
-                                        throw new Error('key blank ' + __i);
+                                    if (parsedOutputItems.length <= 0) {
+                                        throw new Error('key blank ' + currentItem);
                                     } else {
 
-                                        if (__i === 'appTitle') {
-                                            var __keyName = __thisItem[__i];
+                                        if (currentItem === 'appTitle') {
+                                            var navItemAppTitle = parsedOutputItems[currentItem];
                                         }
 
-                                        if (__i === 'location') {
+                                        if (currentItem === 'location') {
                                             
-                                            if (debugOutput) {console.log(__i + ' : ' + __thisItem[__i])};
+                                            if (debugOutput) {
+                                                console.log(currentItem + ' : ' + parsedOutputItems[currentItem]);
+                                            };
 
-                                            if (__thisItem[__i].indexOf('/apps') > -1) {
+                                            // Find actual links and append the corrent version string to the end of the url
+                                            if (parsedOutputItems[currentItem].indexOf('/apps') > -1) {
 
-                                                if (__thisItem[__i].indexOf('?') > -1) {
-                                                    var __keyUrl = __baseUrl + __thisItem[__i] + '&apiVersion=4'
+                                                if (parsedOutputItems[currentItem].indexOf('?') > -1) {
+                                                    var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '&apiVersion=4'
                                                 } else {
-                                                    var __keyUrl = __baseUrl + __thisItem[__i] + '?apiVersion=4'
+                                                    var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '?apiVersion=4'
                                                 }
                                                 
-                                                if (debugOutput) {console.log(__keyUrl)};
+                                                if (debugOutput) {
+                                                    console.log(navItemAppLocationURL);
+                                                };
                                             }
 
-                                            suite.checkHealth(__keyName, __keyUrl, testID);
+                                            // Test to ensure that the navigation urls are working properly
+                                            suite.checkHealth(navItemAppTitle, navItemAppLocationURL, testID);
                                         }
                                     }
                                 }
 
                                 // -------------------------------------
 
-                                if (__i === 'items' && typeof __thisItem[__i] === 'object') {
+                                if (currentItem === 'items' && typeof parsedOutputItems[currentItem] === 'object') {
 
                                     var __parent = __output.items[count].title;
 
@@ -314,11 +322,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         for (var __b in __lastItem) {
                                             if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
 
-                                            if (reqKeys.indexOf(__b) > -1) {
+                                            if (requiredManifestKeys.indexOf(__b) > -1) {
                                                 // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
                                                 
                                                 if (__b === 'appTitle') {
-                                                    var __lastKeyName = __lastItem[__b];
+                                                    var subNavItemAppTitle = __lastItem[__b];
                                                 }
 
                                                 if (__b === 'location') {
@@ -333,12 +341,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                             var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=4'
                                                         }
                                                         
-                                                        // if (debugOutput) {
-                                                            // console.log('>> ' + __lastKeyUrl);
-                                                        // };
+                                                        if (debugOutput) {
+                                                            console.log('>> ' + __lastKeyUrl);
+                                                        };
                                                     }
 
-                                                    suite.checkHealth(__lastKeyName, __lastKeyUrl, testID);
+                                                    suite.checkHealth(subNavItemAppTitle, __lastKeyUrl, testID);
                                                 }
                                             }
 
@@ -378,7 +386,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 var status = this.status().currentHTTPStatus;
 
                 if ( status == 200) {
-                    if (showOutput) {console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') )};
+                    if (showOutput) {
+                        console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
+                    };
 
                     if (url.indexOf('submit-your-photos') > -1) {
                         if (showOutput) {console.log('Skipping UGC url....')};
@@ -422,24 +432,24 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 } else {
                     if (showOutput) {console.log('...re-testing JSON')};
                     // var a = "<html><head></head><body>{'a': 123}</body></html>";
-                    // __catchJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
+                    // cleanedJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
                     
                     var reg = /\<body[^>]*\>([^]*)\<\/body/m;
 
-                    // __catchJson = output.match(reg)[1];
+                    // cleanedJson = output.match(reg)[1];
 
                     try {
-                        __catchJson = output.match(reg)[1];
+                        cleanedJson = output.match(reg)[1];
 
-                        if (__catchJson) {
+                        if (cleanedJson) {
                             try {
-                                __verifyOutput = JSON.parse(__catchJson);
+                                JSONTestOutput = JSON.parse(cleanedJson);
 
-                                if( __verifyOutput instanceof Object ) {
+                                if( JSONTestOutput instanceof Object ) {
                                     if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
                                     fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","PASS - JSON Validated",' + '\n', 'a+');
                                 } else {
-                                    if (showOutput) {console.log(__catchJson)};
+                                    if (showOutput) {console.log(cleanedJson)};
                                 }
                             } catch (e) {
                                 // ...

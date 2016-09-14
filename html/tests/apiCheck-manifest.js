@@ -158,7 +158,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         var output = this.getHTML();
                         var __dbID = casper.getElementInfo('body').text;
 
-                        suite.getContent(url, type, __dbID);
+                        // suite.getContent(url, type, __dbID);
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }
@@ -206,7 +206,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             "video-autoplay",
             "push-notification-url-key",
             "push-notification-flag-key",
-            "comscore-app-name",
+            // "comscore-app-name",
             /*
             "web-links_facebook_url",
             "web-links_google-plus_url",
@@ -245,7 +245,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             "advertising_video_backfill-app-id",
             "backfill-app-id",
             "wsi-map-id",
-            "wsi-market-default-layer",
+            // "wsi-market-default-layer",
             "app-urls_weather-branding",
             "app-urls_iteam-branding",
             "app-urls_alerts",
@@ -320,7 +320,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             "meteorologist-summary-disabled",
             "market-default-postal-code",
             "market-default-location-name",
-            "market-default-dma",
+            // "market-default-dma",
             "market-default-lat",
             "market-default-long",
             "scroll-down-animation-hour",
@@ -670,7 +670,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     }
                 }
 
-                // console.log(JSON.stringify(collectionObject));
+                console.log(JSON.stringify(collectionObject));
 
                 if (debugOutput) {
                     console.log(parentKeyName + ' : ' + __topVal)
