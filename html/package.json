@@ -4,8 +4,8 @@
 	"email": "deltrie.allen@nbcuni.com",
 	"version": "3.0.0",
 	"scripts": {
-		"runall": "npm run 5concurrent && npm run 5concurrent-nav && 5concurrent-article",
-		"runall-async": "npm run 1process && npm run 1process-nav && run 1process-article",
+		"runall": "npm run 5concurrent && npm run 5concurrent-nav && npm run 5concurrent-article",
+		"runall-async": "npm run 1process && npm run 1process-nav && npm run 1process-article",
 		"5concurrent": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
 		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
 		"5concurrent-nav": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
