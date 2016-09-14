@@ -20,6 +20,10 @@
 		} else {
 			$breadcrumbPath .= '<li><a href=/'.$page_name.'/'.$value.'>'. $value .'</a></li>';
 		}
+
+		if ($reportID) {
+			$breadcrumbPath .= '<li>record '.$reportID.'</li>';
+		}
 	}
 
 	if (!$hideBreadcrumbs) {

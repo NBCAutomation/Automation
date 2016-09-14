@@ -208,6 +208,7 @@ $app->group('/reports', function () {
 		    'title' => 'Reports',
 		    'page_name' => 'reports',
 		    'view' => 'single',
+		    'viewPath' => $args['view'],
 		    'viewType' => $currentRecord['type'],
 		    'singleView' => true,
 		    'reportClass' => true,
