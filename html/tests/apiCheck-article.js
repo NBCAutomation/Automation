@@ -121,7 +121,8 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = 'http://spire.app/utils/tasks?task=generate&testscript=apiCheck-article&property=' + stationProperty;
+        // var dbUrl = 'http://spire.app/utils/tasks?task=generate&testscript=apiCheck-article&property=' + stationProperty;
+        var dbUrl = 'http://45.55.209.68/utils/tasks?task=generate&testscript=apiCheck-article&property=' + stationProperty;
 
         if (dbUrl) {
             // casper.start( 'dbUrl' ).then(function(response) {
@@ -156,7 +157,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         var testResultFileLocation = encodeURIComponent(save);
 
         var suite = this;
-        var processUrl = 'http://spire.app/utils/tasks?task=upload&testType=apiArticle&fileLoc=' + testResultFileLocation;
+        var processUrl = 'http://45.55.209.68/utils/tasks?task=upload&testType=apiArticle&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
             casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
@@ -488,7 +489,14 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                         if (__innerItems[__items].typeName == 'Gallery') {
                                         //     console.log('    ------------------ ');
                                         //     console.log('     Gallery\n');
-                                        //     console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                            // console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID);
+                                            
+                                            // var galleeryURL = __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
+                                            // var galleryItem = 'gallery_' + articleContentID;
+
+                                            // console.log('galleeryURL: ' + galleeryURL +'\n'+ 'galleryItem: ' + galleryItem);
+
+                                            // suite.checkHealth(galleryItem, galleeryURL, testID);
                                         }
 
                                         if (__innerItems[__items].fullsizeImageURL.indexOf('0*false') > -1) {
@@ -635,27 +643,28 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         }
     }
 
-    apiSuite.prototype.checkHealth = function(__urlName, __url, testID) {
+    apiSuite.prototype.checkHealth = function(urlName, url, testID) {
 
         var suite = this;
         // var current = suite.__collected.shift();
 
         // require('utils').dump( current );
 
-        if (__url) {
-            casper.open(__url, {
+        if (url) {
+            casper.open(url, {
                 method: 'head'
             }).then(function(resp) {
                 resp = resp;
                 var status = this.status().currentHTTPStatus;
 
                 if ( status == 200) {
-                    if (showOutput) {console.log('> ' + __urlName + ' : ' + __url + colorizer.colorize(' // Status: ' + status, 'INFO') )};
+                    if (showOutput) {console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') )};
 
-                    if (__url.indexOf('submit-your-photos') > -1) {
+                    if (url.indexOf('submit-your-photos') > -1) {
                         if (showOutput) {console.log('Skipping UGC url....')};
                     } else {
-                        suite.validateJson(__urlName, __url, status, testID);
+                        // console.log('  ================  ready to validate JSON.');
+                        // suite.validateJson(urlName, url, status, testID);
                     }
                 }
             });
@@ -664,16 +673,16 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         }
     };
 
-    apiSuite.prototype.validateJson = function(__jurlName, __jUrl, __status, testID) {
+    apiSuite.prototype.validateJson = function(urlName, url, __status, testID) {
         var suite = this;
 
-        if (__jUrl) {
-            casper.open(__jUrl,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+        if (url) {
+            casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 resp = resp;
                 var validated = false;
                 var output = this.getPageContent();
 
-                if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
+                // if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
 
                 try {
                     // __output = JSON.parse(output);
@@ -689,8 +698,8 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                 }
 
                 if (validated) {
-                    if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
-                    fs.write(save, '"' + testID + '","' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'JSON Validated,' + '\n', 'a+');
+                    if (showOutput) {console.log(urlName + '   > JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
+                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + __status + ',' + 'JSON Validated,' + '\n', 'a+');
                 } else {
                     if (showOutput) {console.log('...re-testing JSON')};
                     
@@ -703,14 +712,14 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
 
                         if( __verifyOutput instanceof Object ) {
                             if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                            fs.write(save, '"' + testID + '","' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'JSON Validated,' + '\n', 'a+');
+                            fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + __status + ',' + 'JSON Validated,' + '\n', 'a+');
                         } else {
                             if (showOutput) {console.log(__catchJson)};
                         }
                     } catch (e) {
                         // ...
                         if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail also with removing HTML tags, possible False/Positive..check url manually.')};
-                        fs.write(save, '"' + testID + '","' + __jurlName + '","' + __jUrl + '",' + __status + ',' + 'FAIL - Possible False/Positive,' + '\n', 'a+');
+                        fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + __status + ',' + 'FAIL - Possible False/Positive,' + '\n', 'a+');
                     }
                 }
                 if (showOutput) {console.log('-----------------')};

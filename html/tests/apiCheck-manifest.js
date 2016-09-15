@@ -142,7 +142,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = 'http://spire.app/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty;
+        var dbUrl = 'http://45.55.209.68/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty;
 
         if(createDictionary){
             suite.getContent(url, type, 'xx');
@@ -174,7 +174,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
         var suite = this;
 
-        var processUrl = 'http://spire.app/utils/tasks?task=upload&testType=apiManifest&fileLoc=' + testResultFileLocation;
+        var processUrl = 'http://45.55.209.68/utils/tasks?task=upload&testType=apiManifest&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
             casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
