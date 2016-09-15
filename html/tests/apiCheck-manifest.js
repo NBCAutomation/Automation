@@ -21,6 +21,15 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
     var colorizer = require('colorizer').create('Colorizer');
     var logResults = true;
+    var config = casper.cli.get('output');
+
+    if (config === 'local') {
+        var configURL = 'http://spire.app';
+    } else if (config === 'dev') {
+        var configURL = 'http://45.55.209.68';
+    } else {
+        var configURL = 'http://45.55.209.68';
+    }
 
     var type = casper.cli.get('output');
         if (type === 'debug') {
@@ -142,7 +151,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = 'http://45.55.209.68/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty;
+        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty;
 
         if(createDictionary){
             suite.getContent(url, type, 'xx');
@@ -158,7 +167,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         var output = this.getHTML();
                         var __dbID = casper.getElementInfo('body').text;
 
-                        // suite.getContent(url, type, __dbID);
+                        suite.getContent(url, type, __dbID);
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }
@@ -174,7 +183,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
         var suite = this;
 
-        var processUrl = 'http://45.55.209.68/utils/tasks?task=upload&testType=apiManifest&fileLoc=' + testResultFileLocation;
+        var processUrl = configURL + '/utils/tasks?task=upload&testType=apiManifest&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
             casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {

@@ -16,6 +16,16 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var x2js = new xmlLib();
     var logResults = true;
 
+    var config = casper.cli.get('output');
+
+    if (config === 'local') {
+        var configURL = 'http://spire.app';
+    } else if (config === 'dev') {
+        var configURL = 'http://45.55.209.68';
+    } else {
+        var configURL = 'http://45.55.209.68';
+    }
+
     var type = casper.cli.get('output');
         if (type === 'debug') {
             var debugOutput = true;
@@ -116,7 +126,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = 'http://45.55.209.68/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty;
+        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty;
 
         if (dbUrl) {
             casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
@@ -145,7 +155,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         // require('utils').dump( current );
-        var processUrl = 'http://45.55.209.68/utils/tasks?task=upload&testType=apiNav&fileLoc=' + testResultFileLocation;
+        var processUrl = configURL + '/utils/tasks?task=upload&testType=apiNav&fileLoc=' + testResultFileLocation;
 
         if (processUrl) {
             casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
