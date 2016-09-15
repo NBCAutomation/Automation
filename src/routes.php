@@ -213,6 +213,8 @@ $app->group('/reports', function () {
 		    'singleView' => true,
 		    'reportClass' => true,
 		    'reportID' => $currentRecord['id'],
+		    'reportProperty' => $currentRecord['property'],
+		    'reportPropertyData' => $currentRecord,
 		    'reportData' => $currentRecordResults,
 		    
 		    //Auth Specific

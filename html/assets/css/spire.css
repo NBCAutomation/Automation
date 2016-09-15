@@ -13,6 +13,14 @@ h1 {
 	text-align: center;
 }
 
+.panel-body {
+
+}
+
+.panel-body .testing_steps {
+	list-style: disc;
+}
+
 .panel-body .api_results {
 	font-size: 0.9em;
 }
@@ -118,6 +126,7 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 	position: relative;
 	text-indent: -9999px;
 	overflow: hidden;
+	margin: 0px auto;
 }
 
 .api_results .report_status.fail {
@@ -135,4 +144,8 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 
 .api_results .report_row_status.fail a {
 	color: red;
+}
+
+.api_results .report_status.warn {
+	background: orange;
 }

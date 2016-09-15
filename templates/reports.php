@@ -63,16 +63,10 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">Reports</div>
 					<div class="panel-body">
-						<h5>Date filter</h5>
 						<table border="0" cellspacing="5" cellpadding="5">
 							<tbody>
 								<tr>
-									<td>Starting Date:</td>
-									<td>Ending Date:</td>
-								</tr>
-								<tr>
-									<td><input type="text" id="min" name="min"></td>
-									<td><input type="text" id="max" name="max"></td>
+									<td><p>Searching can be done with various combinations of text. For example [property] [date]</p></td>
 								</tr>
 							</tbody>
 						</table>
@@ -188,6 +182,8 @@
 		        $tableHeaders = '<th> Status</th><th>Endpoint</th><th>Content ID</th><th>Content Title</th><th>Content Error</th>';
 		        $articleData = true;
 		}
+
+		echo "<h3>".$reportPropertyData['property'].".com</h3>";
 	?>
 		<p>Errors displayed first</p>
 		<?php 
