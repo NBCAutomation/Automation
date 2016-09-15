@@ -16,11 +16,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var x2js = new xmlLib();
     var logResults = true;
 
-    var config = casper.cli.get('output');
+    var envConfig = casper.cli.get('env');
 
-    if (config === 'local') {
+    if (envConfig === 'local') {
         var configURL = 'http://spire.app';
-    } else if (config === 'dev') {
+    } else if (envConfig === 'dev') {
         var configURL = 'http://45.55.209.68';
     } else {
         var configURL = 'http://45.55.209.68';
