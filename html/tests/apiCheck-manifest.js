@@ -204,7 +204,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     apiSuite.prototype.getContent = function(url, type, testID) {
         
         var suite = this;
-        var apiVersion = '3';
+        var apiVersion = '4';
 
         // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
         var reqKeys = new Array(
