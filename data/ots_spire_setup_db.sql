@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 04, 2016 at 11:42 AM
+-- Generation Time: Sep 27, 2016 at 03:58 PM
 -- Server version: 5.5.33
 -- PHP Version: 5.5.3
 
@@ -27,6 +27,7 @@ CREATE TABLE `article_tests` (
   `content_id` varchar(255) NOT NULL,
   `content_title` varbinary(255) NOT NULL,
   `content_error` varchar(255) NOT NULL,
+  `status` varchar(255) DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
@@ -65,6 +66,7 @@ CREATE TABLE `nav_tests` (
   `link_url` text NOT NULL,
   `status_code` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
+  `info` text,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
