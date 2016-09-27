@@ -128,23 +128,27 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         // require('utils').dump( current );
         var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty;
 
-        if (dbUrl) {
-            casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                
-                var status = this.status().currentHTTPStatus;
+        if (!logResults){
+            suite.getContent(url, type, 'xx');
+        } else {
+            if (dbUrl) {
+                casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    
+                    var status = this.status().currentHTTPStatus;
 
-                if ( status == 200) {
-                    if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
+                    if ( status == 200) {
+                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
-                    var output = this.getHTML();
-                    var __dbID = casper.getElementInfo('body').text;
+                        var output = this.getHTML();
+                        var __dbID = casper.getElementInfo('body').text;
 
-                    suite.getContent(url, type, __dbID);
-                } else {
-                    throw new Error('Unable to get/store Test ID!');
-                }
-                
-            });
+                        suite.getContent(url, type, __dbID);
+                    } else {
+                        throw new Error('Unable to get/store Test ID!');
+                    }
+                    
+                });
+            }
         }
     };
 

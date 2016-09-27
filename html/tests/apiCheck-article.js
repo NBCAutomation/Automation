@@ -131,30 +131,36 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-article&property=' + stationProperty;
+        if (logResults) {
+            var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-article&property=' + stationProperty;
+        }
+        
+        if (!logResults){
+            suite.getContent(url, type, 'xx');
+        } else {
+            if (dbUrl) {
+                // casper.start( 'dbUrl' ).then(function(response) {
+                    casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                        
+                        var status = this.status().currentHTTPStatus;
 
-        if (dbUrl) {
-            // casper.start( 'dbUrl' ).then(function(response) {
-                casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    
-                    var status = this.status().currentHTTPStatus;
+                        if ( status == 200) {
+                            if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
-                    if ( status == 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
+                            var output = this.getHTML();
+                            var __dbID = casper.getElementInfo('body').text;
 
-                        var output = this.getHTML();
-                        var __dbID = casper.getElementInfo('body').text;
+                            suite.getContent(url, type, __dbID);
 
-                        suite.getContent(url, type, __dbID);
-
-                        // console.log('derp = '+__dbID);
-                        // return __dbID;
-                    } else {
-                        throw new Error('Unable to get/store Test ID!');
-                    }
-                    
-                });
-            // });
+                            // console.log('derp = '+__dbID);
+                            // return __dbID;
+                        } else {
+                            throw new Error('Unable to get/store Test ID!');
+                        }
+                        
+                    });
+                // });
+            }
         }
         // } else {
         //     // delete this.__collected;
@@ -496,15 +502,13 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                         }
 
                                         if (__innerItems[__items].typeName == 'Gallery') {
-                                        //     console.log('    ------------------ ');
-                                        //     console.log('     Gallery\n');
+                                            //     console.log('    ------------------ ');
+                                            //     console.log('     Gallery\n');
                                             // console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID);
+                                            // var galleryContentURL = __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
+                                            // console.log('      >  Gallery items = ' + galleryContentURL);
+                                            // var urlName = 'Gallery ID - ' + articleContentID;
                                             
-                                            // var galleeryURL = __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
-                                            // var galleryItem = 'gallery_' + articleContentID;
-
-                                            // console.log('galleeryURL: ' + galleeryURL +'\n'+ 'galleryItem: ' + galleryItem);
-
                                             // suite.checkHealth(galleryItem, galleeryURL, testID);
                                         }
 

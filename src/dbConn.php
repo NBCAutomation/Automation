@@ -17,7 +17,7 @@ class DbConnect {
     }
 
     // public function getConnection() {
-    //     $dbhost="internal-db.s135861.gridserver.com";
+    //     $dbhost="localhost";
     //     $dbuser="db135861_bec";
     //     $dbpass="B0U6X58X54GrRjC";
     //     $dbname="db135861_bec";
