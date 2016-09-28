@@ -1,5 +1,5 @@
 <?php
-// namespace Spire;
+// namespace Spire; 
 // use \InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 
