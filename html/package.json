@@ -1,0 +1,22 @@
+{
+	"name": "OTS-Spire",
+	"author": "Deltrie Allen",
+	"email": "deltrie.allen@nbcuni.com",
+	"version": "3.0.0",
+	"scripts": {
+		"runall": "npm run 5concurrent && npm run 5concurrent-nav && npm run 5concurrent-article",
+		"runall-async": "npm run 1process && npm run 1process-nav && npm run 1process-article",
+		"5concurrent": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
+		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\"",
+		"5concurrent-nav": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
+		"1process-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
+		"5concurrent-article": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-article.js\" --url=\"{}\"",
+		"1process-article": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-article.js\" --url=\"{}\"",
+		"create-dictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\" --output=dictionary"
+	},
+	"dependencies": {
+		"shelljs": "^0.6.0",
+		"casperjs": "~1.1.0-beta-3",
+		"phantomjs": "~1.9.8"
+	}
+}

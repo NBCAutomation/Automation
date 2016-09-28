@@ -1,0 +1,151 @@
+h1 {
+	font-family: 'Oswald', sans-serif;
+	font-size: 2em;
+	text-align: left;
+	padding: 0.5em;
+	margin: 0px;
+	float: left;
+}
+
+.tagline {
+	font-family: 'Roboto Condensed', sans-serif;
+	font-size: 1em;
+	text-align: center;
+}
+
+.panel-body {
+
+}
+
+.panel-body .testing_steps {
+	list-style: disc;
+}
+
+.panel-body .api_results {
+	font-size: 0.9em;
+}
+
+.panel-body .api_results ul {
+	list-style-type: disc;
+	list-style-position: inside;
+	font-size: 0.95em;
+}
+
+.panel-body .api_results ul li {
+	padding-left: 0.5em;
+}
+
+.panel-body .api_results .result.file {
+	border: solid 1px #ccc;
+	padding: 0.5em;
+	list-style-type: none;
+	margin-bottom: 0.2em;
+}
+
+.panel-body .api_results .result.file:hover {
+	border-color: #034287;
+	background: #eee;
+}
+
+.panel-body .api_results ul li div {
+	display: inline-table;
+	padding: 0.3em;
+}
+
+/*.panel-body table tr:nth-child(5) {
+	font-weight: bold;
+}*/
+
+.panel-body .test_fail {
+	color: red;
+	font-weight: bold;
+	background: #FFCCCC;
+}
+
+#breadcrumbs {
+	font-style: italic;
+	font-size: 0.9em;
+}
+
+#breadcrumbs ul li {
+	display: inline-table;
+	margin-right: 0.2em;
+}
+
+#breadcrumbs ul li::after {
+    content: " >";
+}
+
+#breadcrumbs ul li:last-child {
+	/*font-weight: bold;*/
+}
+
+#breadcrumbs ul li:last-child::after {
+    content: "";
+}
+
+.scripts-library .script_version {
+	text-align: right;
+	float: right;
+	font-size: 0.8em;	
+}
+
+.consoleOutput {
+    font-weight: bold;
+}
+
+.consoleOutput.green {
+	color: #2db300;
+}
+
+.consoleOutput.orange{
+	color: orange;	
+}
+
+.consoleOutput.red{
+	color: red;
+}
+
+.consoleOutput.blue{
+	color: #00ace6;
+}
+
+#register .ts-main-content .content-wrapper,
+#login .ts-main-content .content-wrapper {
+	margin: 60px auto;
+}
+
+table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
+	/*text-transform: capitalize;*/
+}
+
+.api_results .report_status {
+	border-radius: 100%;
+	width: 13px;
+	height: 13px;
+	position: relative;
+	text-indent: -9999px;
+	overflow: hidden;
+	margin: 0px auto;
+}
+
+.api_results .report_status.fail {
+	background: red;
+}
+
+.api_results .report_status.pass {
+	background: green;
+}
+
+.api_results .report_row_status.fail {
+	/*background: #ffd8d8 !important;*/
+	color: red;
+}
+
+.api_results .report_row_status.fail a {
+	color: red;
+}
+
+.api_results .report_status.warn {
+	background: orange;
+}
