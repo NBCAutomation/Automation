@@ -162,9 +162,6 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                 // });
             }
         }
-        // } else {
-        //     // delete this.__collected;
-        // }
     };
 
     // Log results in DB
