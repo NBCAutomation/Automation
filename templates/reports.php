@@ -1,4 +1,8 @@
-<?php include_once 'base/header.php'; ?>
+<?php
+	include_once 'base/header.php';
+
+	date_default_timezone_set('UTC');
+?>
 	<div class="panel-body api_results">
 	<?php if ($mainView) {
 		?>
