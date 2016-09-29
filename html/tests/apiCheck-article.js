@@ -19,7 +19,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
     } else if (envConfig === 'dev') {
         var configURL = 'http://45.55.209.68';
     } else {
-        var configURL = 'http://45.55.209.68';
+        var configURL = 'http://54.243.53.242/';
     }
 
     var debugOutput = false;
@@ -510,6 +510,91 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                             // var urlName = 'Gallery ID - ' + articleContentID;
                                             
                                             // suite.checkHealth(galleryItem, galleeryURL, testID);
+                                            var pageData = this.getPageContent();
+                                            galleryContentJSON = JSON.parse(pageData);
+
+                                            if( galleryContentJSON instanceof Object ) {
+
+                                                galleryOutput = JSON.parse(pageData);
+
+                                                var fullJSONObject = galleryOutput.items;
+
+                                                for (var jsonItem in fullJSONObject) {
+                                                    
+                                                    if(fullJSONObject.hasOwnProperty(jsonItem)){
+                                                        count++;
+                                                    }
+
+                                                    var thisContentItem = galleryOutput.items[count];
+
+                                                    for (var galKey in thisContentItem) {
+
+                                                        if (galKey === 'items' && typeof thisContentItem[galKey] === 'object') {
+
+                                                            var parentInfo = galleryOutput.items[count].title;
+
+                                                            if (debugOutput) {
+                                                                console.log('-----------------');
+                                                                console.log(parentInfo + ' sub links');
+                                                            }
+                                                            
+                                                            // var __subItem = galleryOutput.items[count].items;
+
+                                                            // var __count = 0;
+
+                                                            // for (var jsonItem in __subItem) {
+                                                                
+                                                            //     if(__subItem.hasOwnProperty(jsonItem)){
+                                                            //         __count++;
+
+                                                            //         __offset = (__count - 1);
+                                                            //         // console.log(__offset);
+                                                            //     }
+
+                                                            //     var __lastItem = galleryOutput.items[count].items[__offset];
+
+                                                            //     for (var __b in __lastItem) {
+                                                            //         if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
+
+                                                            //         if (reqKeys.indexOf(__b) > -1) {
+                                                            //             // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
+                                                                        
+                                                            //             if (__b === 'appTitle') {
+                                                            //                 var __lastKeyName = __lastItem[__b];
+                                                            //             }
+
+                                                            //             if (__b === 'location') {
+                                                                            
+                                                            //                 if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
+
+                                                            //                 if (__lastItem[__b].indexOf('/apps') > -1) {
+
+                                                            //                     if (__lastItem[__b].indexOf('?') > -1) {
+                                                            //                         var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=4'
+                                                            //                     } else {
+                                                            //                         var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=4'
+                                                            //                     }
+                                                                                
+                                                            //                     if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
+                                                            //                 }
+
+                                                            //                 // Set collections array
+                                                            //                 if (manifestTest) {
+                                                            //                     if (!(__lastKeyName in __contentSections)){
+                                                            //                         // console.log(' - '+__lastKeyName);
+                                                            //                         __contentSections[__lastKeyName] = __lastKeyUrl;
+                                                            //                     }
+                                                            //                 }
+                                                            //             }
+                                                            //         }
+
+                                                            //     }
+                                                            //     if (debugOutput) { console.log('    -----------------')};
+                                                            // }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
 
                                         if (__innerItems[__items].fullsizeImageURL.indexOf('0*false') > -1) {
