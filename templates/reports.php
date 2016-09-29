@@ -1,6 +1,7 @@
 <?php
 	include_once 'base/header.php';
 
+	// Set default server time zone
 	date_default_timezone_set('UTC');
 ?>
 	<div class="panel-body api_results">
