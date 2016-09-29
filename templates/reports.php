@@ -107,6 +107,12 @@
 							$testReportStatus = $db->checkForTestFailures($testReport['id'], $view);
 							$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
 
+							$usersTimezone = new DateTimeZone('America/New_York');
+							$l10nDate = new DateTime($testReportTime);
+							$l10nDate->setTimeZone($usersTimezone);
+							// echo $l10nDate->format('Y-m-d H:i:s');
+
+
 							$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
 							$reportCSVDateTime =  date('n_j_Y-H_i-A', strtotime($testReport['created']));
 
@@ -120,7 +126,8 @@
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['id'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['test_id'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'.com</a></td>';
-							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReportTime.'</a></td>';
+							    // echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReportTime.'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
 			                echo "</tr>";
 						}
 					?>
@@ -252,7 +259,11 @@
 			// var_dump($firstArray['created']);
 			$lastRunDT = date('n/d/Y, g:i A', strtotime($firstArray['created']));
 
-			echo 'Last run: '.$lastRunDT;
+			$usersTimezone = new DateTimeZone('America/New_York');
+			$l10nDate = new DateTime($lastRunDT);
+			$l10nDate->setTimeZone($usersTimezone);
+
+			echo 'Last run: '.$l10nDate->format('n/d/Y, g:i A');
 			echo "<hr />";
 		?>
 		<p><i>Results displayed are from the past hour, the property/test endpoint is variable.</i></p>
