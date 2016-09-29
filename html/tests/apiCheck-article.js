@@ -19,7 +19,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
     } else if (envConfig === 'dev') {
         var configURL = 'http://45.55.209.68';
     } else {
-        var configURL = 'http://54.243.53.242/';
+        var configURL = 'http://54.243.53.242';
     }
 
     var debugOutput = false;
@@ -471,6 +471,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                         var articleLeadImageURL = __innerItems[__items].leadImageURL;
                                         var articleFeature = __innerItems[__items].feature;
                                         var articleSponsored = __innerItems[__items].sponsored;
+                                        var articleIsLiveStream = __innerItems[__items].isLiveStream;
                                         var articleLiveVideoEmbed = __innerItems[__items].liveVideoEmbed;
                                         var articleLiveAppVideoEmbed = __innerItems[__items].liveAppVideoEmbed;
                                         var articleContentBody = __innerItems[__items].contentBody;
@@ -498,212 +499,219 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                             console.log('  >> article_leadMedia  : ' + __innerItems[__items].leadMedia);
                                         }
 
-                                        if (__innerItems[__items].typeName == 'Gallery') {
-                                            //     console.log('    ------------------ ');
-                                            //     console.log('     Gallery\n');
-                                            // console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID);
-                                            // var galleryContentURL = __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
-                                            // console.log('      >  Gallery items = ' + galleryContentURL);
-                                            // var urlName = 'Gallery ID - ' + articleContentID;
-                                            
-                                            // suite.checkHealth(galleryItem, galleeryURL, testID);
-                                            var pageData = this.getPageContent();
-                                            galleryContentJSON = JSON.parse(pageData);
-
-                                            if( galleryContentJSON instanceof Object ) {
-
-                                                galleryOutput = JSON.parse(pageData);
-
-                                                var fullJSONObject = galleryOutput.items;
-
-                                                for (var jsonItem in fullJSONObject) {
-                                                    
-                                                    if(fullJSONObject.hasOwnProperty(jsonItem)){
-                                                        count++;
-                                                    }
-
-                                                    var thisContentItem = galleryOutput.items[count];
-
-                                                    for (var galKey in thisContentItem) {
-
-                                                        if (galKey === 'items' && typeof thisContentItem[galKey] === 'object') {
-
-                                                            var parentInfo = galleryOutput.items[count].title;
-
-                                                            if (debugOutput) {
-                                                                console.log('-----------------');
-                                                                console.log(parentInfo + ' sub links');
-                                                            }
-                                                            
-                                                            // var __subItem = galleryOutput.items[count].items;
-
-                                                            // var __count = 0;
-
-                                                            // for (var jsonItem in __subItem) {
-                                                                
-                                                            //     if(__subItem.hasOwnProperty(jsonItem)){
-                                                            //         __count++;
-
-                                                            //         __offset = (__count - 1);
-                                                            //         // console.log(__offset);
-                                                            //     }
-
-                                                            //     var __lastItem = galleryOutput.items[count].items[__offset];
-
-                                                            //     for (var __b in __lastItem) {
-                                                            //         if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
-
-                                                            //         if (reqKeys.indexOf(__b) > -1) {
-                                                            //             // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
-                                                                        
-                                                            //             if (__b === 'appTitle') {
-                                                            //                 var __lastKeyName = __lastItem[__b];
-                                                            //             }
-
-                                                            //             if (__b === 'location') {
-                                                                            
-                                                            //                 if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
-
-                                                            //                 if (__lastItem[__b].indexOf('/apps') > -1) {
-
-                                                            //                     if (__lastItem[__b].indexOf('?') > -1) {
-                                                            //                         var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=4'
-                                                            //                     } else {
-                                                            //                         var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=4'
-                                                            //                     }
-                                                                                
-                                                            //                     if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
-                                                            //                 }
-
-                                                            //                 // Set collections array
-                                                            //                 if (manifestTest) {
-                                                            //                     if (!(__lastKeyName in __contentSections)){
-                                                            //                         // console.log(' - '+__lastKeyName);
-                                                            //                         __contentSections[__lastKeyName] = __lastKeyUrl;
-                                                            //                     }
-                                                            //                 }
-                                                            //             }
-                                                            //         }
-
-                                                            //     }
-                                                            //     if (debugOutput) { console.log('    -----------------')};
-                                                            // }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        if (__innerItems[__items].fullsizeImageURL.indexOf('0*false') > -1) {
-                                            console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + __innerItems[__items].fullsizeImageURL + '.', 'ERROR'));
-                                        }
-
-                                        if (__innerItems[__items].thumbnailImageURL.indexOf('0*false') > -1) {
-                                            console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + __innerItems[__items].thumbnailImageURL + '.', 'ERROR'));
-                                        }
-                                        
-                                        // Check for the Feature flag
-                                        if (__innerItems[__items].feature === true) {
-                                            
-                                            if (__innerItems[__items].featureName.length <= 0) {
-                                                setFail++;
-
-                                                var __curError = 'Feature flag set to TRUE but featureName empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + __innerItems[__items].contentID + ', but featureName empty.', 'ERROR'));
-
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
-
-                                                var __curError = '';
-
-                                            } else if (__innerItems[__items].featureId.length <= 0) {
-                                                setFail++;
-
-                                                var __curError = 'Feature flag set to TRUE but featureId empty.';
-                                                
-                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + __innerItems[__items].contentID + ', but featureId empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
-
-                                                var __curError = '';
-                                            }
-                                        }
-
-                                        // Check for the Sponsor flag
-                                        if (__innerItems[__items].sponsored === true) {
-                                            
-                                            if (__innerItems[__items].sponsorName.length <= 0) {
-                                                setFail++;
-                                                
-                                                var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + __innerItems[__items].contentID + ', but sponsorName empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
-
-                                                var __curError = '';
-
-
-                                            } else if (__innerItems[__items].sponsorID.length <= 0) {
-                                                setFail++;
-                                                
-                                                var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + __innerItems[__items].contentID + ', but sponsorID empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
-
-                                                var __curError = '';
-
-
-                                            }
-                                        }
-
-                                        // Check for the LiveStream flag
-                                        if (__innerItems[__items].isLiveStream === true) {
-                                            
-                                            if (__innerItems[__items].liveVideoEmbed.length <= 0) {
-                                                setFail++;
-
-                                                var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + __innerItems[__items].contentID + ', but liveVideoEmbed empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
-
-                                                var __curError = '';
-                                            } else if (__innerItems[__items].liveAppVideoEmbed.length <= 0) {
-                                                setFail++;
-                                                
-                                                var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + __innerItems[__items].contentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + __innerItems[__items].contentID + '","' + __innerItems[__items].title + '","' + __curError + '","Fail",' + '\n', 'a+');
-
-                                                var __curError = '';
-                                            }
-                                        }
-                                        
-                                        if (typeof __innerItems[__items].leadMedia === 'object') {
-
-                                            __subItems = __innerItems[__items].leadMedia;
-                                            
-                                            if (debugOutput) {
-                                                console.log('    ------------------ ');
-                                            }
-
-                                            for (var __indItems in __subItems) {
-                                                // if (typeof __subItems[__indItems] === 'object') {
-
-                                                if (debugOutput) {
-                                                    console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
-                                                }
-                                                
-                                                // if (__subItems[__indItems] == 'Gallery') {
+                                        if (__innerItems[__items].typeName !== 'FeaturePageHeader') {
+                                            if (__innerItems[__items].typeName == 'Gallery') {
                                                 //     console.log('    ------------------ ');
                                                 //     console.log('     Gallery\n');
-                                                //     console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                                // console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID);
+                                                // var galleryContentURL = __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
+                                                // console.log('      >  Gallery items = ' + galleryContentURL);
+                                                // var urlName = 'Gallery ID - ' + articleContentID;
+                                                
+                                                // suite.checkHealth(galleryItem, galleeryURL, testID);
+                                                var pageData = this.getPageContent();
+                                                // console.log('[begin page]' + pageData + '[end page]')
+                                                // galleryContentJSON = JSON.parse(pageData);
+
+                                                // if( galleryContentJSON instanceof Object ) {
+
+                                                //     galleryOutput = JSON.parse(pageData);
+
+                                                //     var fullJSONObject = galleryOutput.items;
+
+                                                //     for (var jsonItem in fullJSONObject) {
+                                                        
+                                                //         if(fullJSONObject.hasOwnProperty(jsonItem)){
+                                                //             count++;
+                                                //         }
+
+                                                //         var thisContentItem = galleryOutput.items[count];
+
+                                                //         for (var galKey in thisContentItem) {
+
+                                                //             if (galKey === 'items' && typeof thisContentItem[galKey] === 'object') {
+
+                                                //                 var parentInfo = galleryOutput.items[count].title;
+
+                                                //                 if (debugOutput) {
+                                                //                     console.log('-----------------');
+                                                //                     console.log(parentInfo + ' sub links');
+                                                //                 }
+                                                                
+                                                //                 // var __subItem = galleryOutput.items[count].items;
+
+                                                //                 // var __count = 0;
+
+                                                //                 // for (var jsonItem in __subItem) {
+                                                                    
+                                                //                 //     if(__subItem.hasOwnProperty(jsonItem)){
+                                                //                 //         __count++;
+
+                                                //                 //         __offset = (__count - 1);
+                                                //                 //         // console.log(__offset);
+                                                //                 //     }
+
+                                                //                 //     var __lastItem = galleryOutput.items[count].items[__offset];
+
+                                                //                 //     for (var __b in __lastItem) {
+                                                //                 //         if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
+
+                                                //                 //         if (reqKeys.indexOf(__b) > -1) {
+                                                //                 //             // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
+                                                                            
+                                                //                 //             if (__b === 'appTitle') {
+                                                //                 //                 var __lastKeyName = __lastItem[__b];
+                                                //                 //             }
+
+                                                //                 //             if (__b === 'location') {
+                                                                                
+                                                //                 //                 if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
+
+                                                //                 //                 if (__lastItem[__b].indexOf('/apps') > -1) {
+
+                                                //                 //                     if (__lastItem[__b].indexOf('?') > -1) {
+                                                //                 //                         var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=4'
+                                                //                 //                     } else {
+                                                //                 //                         var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=4'
+                                                //                 //                     }
+                                                                                    
+                                                //                 //                     if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
+                                                //                 //                 }
+
+                                                //                 //                 // Set collections array
+                                                //                 //                 if (manifestTest) {
+                                                //                 //                     if (!(__lastKeyName in __contentSections)){
+                                                //                 //                         // console.log(' - '+__lastKeyName);
+                                                //                 //                         __contentSections[__lastKeyName] = __lastKeyUrl;
+                                                //                 //                     }
+                                                //                 //                 }
+                                                //                 //             }
+                                                //                 //         }
+
+                                                //                 //     }
+                                                //                 //     if (debugOutput) { console.log('    -----------------')};
+                                                //                 // }
+                                                //             }
+                                                //         }
+                                                //     }
                                                 // }
                                             }
 
-                                            if (debugOutput) {console.log('  >---------------')};
+                                            if (articleFullsizeImageURL.indexOf('0*false') > -1) {
+                                                console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + articleFullsizeImageURL + '.', 'ERROR'));
+                                            }
 
+                                            if (articleThumbnailImageURL == null) {
+                                                console.log('  []> article_contentID  : ' + __innerItems[__items].contentID + '\n  []> article_typeName  : ' + __innerItems[__items].typeName + '\n  []> article_title  : ' + __innerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + __innerItems[__items].thumbnailImageURL);
+                                            }
+
+                                            if (articleThumbnailImageURL.indexOf('0*false') > -1) {
+                                                console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
+                                            }
+                                            
+                                            // Check for the Feature flag
+                                            if (articleFeature === true) {
+                                                
+                                                if (__innerItems[__items].featureName.length <= 0) {
+                                                    setFail++;
+
+                                                    var __curError = 'Feature flag set to TRUE but featureName empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
+
+                                                    fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+
+                                                    var __curError = '';
+
+                                                } else if (__innerItems[__items].featureId.length <= 0) {
+                                                    setFail++;
+
+                                                    var __curError = 'Feature flag set to TRUE but featureId empty.';
+                                                    
+                                                    console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
+                                                    fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+
+                                                    var __curError = '';
+                                                }
+                                            }
+
+                                            // Check for the Sponsor flag
+                                            if (articleSponsored === true) {
+                                                
+                                                if (__innerItems[__items].sponsorName.length <= 0) {
+                                                    setFail++;
+                                                    
+                                                    var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
+                                                    fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+
+                                                    var __curError = '';
+
+
+                                                } else if (__innerItems[__items].sponsorID.length <= 0) {
+                                                    setFail++;
+                                                    
+                                                    var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
+                                                    fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+
+                                                    var __curError = '';
+
+
+                                                }
+                                            }
+
+                                            // Check for the LiveStream flag
+                                            if (articleIsLiveStream === true) {
+                                                
+                                                if (articleLiveVideoEmbed.length <= 0) {
+                                                    setFail++;
+
+                                                    var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.', 'ERROR'));
+                                                    fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+
+                                                    var __curError = '';
+                                                } else if (articleLiveAppVideoEmbed.length <= 0) {
+                                                    setFail++;
+                                                    
+                                                    var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
+                                                    fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+
+                                                    var __curError = '';
+                                                }
+                                            }
+
+                                            if (typeof articleLeadMedia === 'object') {
+
+                                                __subItems = articleLeadMedia;
+                                                
+                                                if (debugOutput) {
+                                                    console.log('    ------------------ ');
+                                                }
+
+                                                for (var __indItems in __subItems) {
+                                                    // if (typeof __subItems[__indItems] === 'object') {
+
+                                                    if (debugOutput) {
+                                                        console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
+                                                    }
+                                                    
+                                                    // if (__subItems[__indItems] == 'Gallery') {
+                                                    //     console.log('    ------------------ ');
+                                                    //     console.log('     Gallery\n');
+                                                    //     console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                                    // }
+                                                }
+
+                                                if (debugOutput) {console.log('  >---------------')};
+
+                                            }
                                         }
 
                                         if (debugOutput) {console.log('  -----------------')};

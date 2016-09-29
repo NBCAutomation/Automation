@@ -28,7 +28,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     } else if (envConfig === 'dev') {
         var configURL = 'http://45.55.209.68';
     } else {
-        var configURL = 'http://54.243.53.242/';
+        var configURL = 'http://54.243.53.242';
     }
 
     var type = casper.cli.get('output');
