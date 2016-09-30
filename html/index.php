@@ -21,6 +21,9 @@ $sessTimeout = 3600;
 $settings = require __DIR__ . '/../src/settings.php';
 $app = new \Slim\App($settings);
 
+// App cache
+$app->add(new \Slim\HttpCache\Cache('public', 86400));
+
 $spire = new Spire();
 
 // Set up dependencies
