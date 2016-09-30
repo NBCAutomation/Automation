@@ -33,8 +33,7 @@ $app->get('/', function ($request, $response, $args) {
 // === Dashboard ===
 $app->group('/dashboard', function () use ($app) {
 	$this->get('/main', function ($request, $response, $args) {
-		$resWithEtag = $this->cache->withEtag($res, 'sprct');
-
+		
 		$permissions = $request->getAttribute('spPermissions');
 
 		return $this->renderer->render($response, 'home.php', [
@@ -50,7 +49,6 @@ $app->group('/dashboard', function () use ($app) {
 	        'uAthMessage' => $permissions['uAthMessage']
 	    // ]);
 	    ]);
-	    return $resWithEtag;
 	})->setName('dashboard')->add( new SpireAuth() );
 
 	$this->get('/account', function ($request, $response, $args) {
@@ -131,7 +129,6 @@ $app->group('/dashboard', function () use ($app) {
 $app->group('/reports', function () {
 
 	$this->get('/{view}', function ($request, $response, $args) {
-		$resWithEtag = $this->cache->withExpires($res, time() + 7200);
 		$db = new DbHandler();
 
 		// $getReports = $db->getAllTests('20');
@@ -189,13 +186,10 @@ $app->group('/reports', function () {
 	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
         ]);
-        return $resWithEtag;
     })->setName('directory-reports-view')->add( new SpireAuth() );
 
     
     $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {
-    	$resWithEtag = $this->cache->withEtag($res, 'sprct');
-
     	$db = new DbHandler();
 
     	$permissions = $request->getAttribute('spPermissions');
@@ -229,7 +223,6 @@ $app->group('/reports', function () {
 	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
 		]);
-		return $resWithEtag;
     })->setName('reports-view')->add( new SpireAuth() );
 
 });
