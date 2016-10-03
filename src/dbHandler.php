@@ -677,6 +677,49 @@ class DbHandler {
         }
     }
 
+    public function getCurrentTestsFromToday($testType) {
+        switch ($testType) {
+            
+            case "api_manifest_audits":
+                $testTypeName = 'apiCheck-manifest';
+                break;
+
+            case "api_navigation_audits":
+                $testTypeName = 'apiCheck-nav';
+                break;
+
+            case "api_article_audits":
+                $testTypeName = 'apiCheck-article';
+                break;
+            default:
+                $testTypeName = 'none-existent';
+        }
+
+        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 12 HOUR AND type = ?");
+        $stmt->bind_param("s", $testTypeName);
+
+        $tests = array();
+
+        if ($stmt->execute()) {
+            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+
+            while (mysqli_stmt_fetch($stmt)){
+                
+                foreach( $test as $key => $value ){
+                    $tests[$key] = $value;
+
+                }
+
+                $apiTestsArray[] = $tests;
+            }
+
+            $stmt->close();
+            return $apiTestsArray;
+        } else {
+            return NULL;
+        }
+    }
+
     public function getCurrentTestsByType($testType) {
         // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
         $stmt = $this->conn->prepare("SELECT * FROM tests WHERE ");

@@ -129,10 +129,11 @@ $app->group('/dashboard', function () use ($app) {
 $app->group('/reports', function () {
 
 	$this->get('/{view}', function ($request, $response, $args) {
+		
 		$db = new DbHandler();
 
 		// $getReports = $db->getAllTests('20');
-		$getReports = $db->getAllTestByType($args['view']);
+		$getReports = $db->getCurrentTestsFromToday($args['view']);
 
 		$permissions = $request->getAttribute('spPermissions');
 
