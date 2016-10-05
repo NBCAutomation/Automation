@@ -45,7 +45,7 @@ class Spire {
 	public function getConnection() {
 	    $dbhost = "localhost";
 	    $dbuser = "__spireUser";
-	    $dbpass = "password";
+	    $dbpass = "LTXaxWwnemXzzrcK";
 	    $dbname = "ots_spire";
 	    $dbh = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
 	    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -165,24 +165,40 @@ class Spire {
 		return $userPerms;
 	}
 
+	/**
+	 * Get cached data and set data if expired.
+	 * 
+	 * @param  String   Cache key
+	 * @param  Integer  Expiration in seconds
+	 * @param  Closure  Callback used for data
+	 * @return String   Cached data
+	 */
+	public static function spireCache($key, $expTime, Closure $callback) {
+	    $cacheKey = sha1($key);
+	    $cacheDir = './tmp/' . implode('/', array_slice(str_split($cacheKey, 2), 0, 3));
+	    $cacheFile = $cacheDir . '/' . $cacheKey;
 
-// **********
+	    if(! is_dir($cacheDir)) {
+	        mkdir(dirname($cacheFile), 0777, true);
+	    }
 
-	public static function Foo($val, $valThis) {
-		$thisVal = ($val + $valThis);
-		$returnVal = Spire::assertThis($thisVal, 4);
-		return ($returnVal);
+	    $modifedTime = file_exists($cacheFile) ? filemtime($cacheFile) : 0;
+
+	    if($modifedTime + intval($expTime) < time()) {
+	        $data = call_user_func($callback);
+
+	        file_put_contents($cacheFile, json_encode($data));
+
+	        // var_dump('miss!');
+	    }
+	    else {
+	        $data = json_decode(file_get_contents($cacheFile));
+
+	        // var_dump('hit!');
+	    }
+
+	    return $data;
 	}
 
-	public static function assertThis($val, $valThis) {
-		$thisVal = ($val == $valThis);
-
-		if ($thisVal < 2) {
-			$returnVal = '<h1 style="color:red;">false</h1>';
-		} else {
-			$returnVal = '<h1 style="color:green;">true</h1>';
-		}
-		return ($returnVal);
-	}
 }
 ?>

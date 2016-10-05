@@ -133,7 +133,6 @@ $app->group('/reports', function () {
 
 		// $getReports = $db->getAllTests('20');  
 		// $getReports = $db->getAllTestByType($args['view']);
-		$getReports = $db->getCurrentTestsByTypeForToday($args['view']);
 
 		$permissions = $request->getAttribute('spPermissions');
 
@@ -167,6 +166,10 @@ $app->group('/reports', function () {
 		    default:
 		        $testTypeName = 'none-existent';
 		}
+
+		// if ($args['view'] != 'main') {
+		// 	$getReports = $db->getCurrentTestsByTypeForToday($args['view']);
+		// }
 		
         return $this->renderer->render($response, 'reports.php', [
             'title' => 'Reports',
@@ -179,7 +182,7 @@ $app->group('/reports', function () {
             'overView' => $overView,
             'fileView' => $fileView,
             'reportClass' => true,
-    		'results' => $getReports,
+    		// 'results' => $getReports,
     		
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),
@@ -713,6 +716,8 @@ $app->group('/login', function () use ($app) {
 		$formResponse = array();
 		$uResponse = array();
 		$db = new DbHandler();
+
+		// var_dump($db->checkLogin());
 
 		// check for correct email and password
 		if ($db->checkLogin($email, $password)) {

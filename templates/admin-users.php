@@ -14,7 +14,7 @@
 			}
 
 			if ($uAuth && $userView) {
-				// var_dump($spireUsers);
+				// var_dump($spireUsers[0]);
 			?>
 		<div class="panel panel-default">
 			<div class="panel-heading">All Users</div>
@@ -46,7 +46,8 @@
 					</tfoot>
 					<tbody>
 			<?php
-				foreach ($spireUsers as $spireUser) {
+
+				foreach ($spireUsers[0] as $spireUser) {
 				    echo "<tr>";
 				    echo "<td><a href=\"/admin/users/update/".$spireUser['id']."\"><i class=\"fa fa-cog\" style=\"font-size:20px;\"></i></a></td>";
 				    echo "<td><a href=\"/admin/users/update/".$spireUser['id']."\">".$spireUser['id']."</a></td>";
@@ -102,12 +103,12 @@
 									</tr>
 									<tr>
 										<td>
-											<!-- <b>Status</b>: <?php echo ($editingUser['status'] === 1 ? '<span class="active">Active</span>' : '<span class="disabled">Disabled</span>'); ?> -->
+											<!-- <b>Status</b>: <?php echo ($editingUser['status'] == 1 ? '<span class="active">Active</span>' : '<span class="disabled">Disabled</span>'); ?> -->
 											<div class="form_field">
 												<label class="text">Status:</label>
 												<select name="u_status" class="form_select">
-													<option value="1" <?php echo ($editingUser['status'] === 1 ? 'selected="selected"' : ''); ?>>Active</option>
-													<option value="0" <?php echo ($editingUser['status'] === 0 ? 'selected="selected"' : ''); ?>>Disabled</option>
+													<option value="1" <?php echo ($editingUser['status'] == 1 ? 'selected="selected"' : ''); ?>>Active</option>
+													<option value="0" <?php echo ($editingUser['status'] == 0 ? 'selected="selected"' : ''); ?>>Disabled</option>
 												</select>
 												<div class="clear"></div>
 											</div>
@@ -119,11 +120,11 @@
 											<div class="form_field">
 												<label class="text">Role:</label>
 												<select name="u_role" class="form_select">
-													<option value="0" <?php echo ($editingUser['roleID'] === 0 ? 'selected="selected"' : ''); ?>> admin</option>
-													<option value="1" <?php echo ($editingUser['roleID'] === 1 ? 'selected="selected"' : ''); ?>> manager</option>
-													<option value="2" <?php echo ($editingUser['roleID'] === 2 ? 'selected="selected"' : ''); ?>> developer</option>
-													<option value="3" <?php echo ($editingUser['roleID'] === 3 ? 'selected="selected"' : ''); ?>> operations</option>
-													<option value="4" <?php echo ($editingUser['roleID'] === 4 ? 'selected="selected"' : ''); ?>> user</option>
+													<option value="0" <?php echo ($editingUser['role'] == 0 ? 'selected="selected"' : ''); ?>> admin</option>
+													<option value="1" <?php echo ($editingUser['role'] == 1 ? 'selected="selected"' : ''); ?>> manager</option>
+													<option value="2" <?php echo ($editingUser['role'] == 2 ? 'selected="selected"' : ''); ?>> developer</option>
+													<option value="3" <?php echo ($editingUser['role'] == 3 ? 'selected="selected"' : ''); ?>> operations</option>
+													<option value="4" <?php echo ($editingUser['role'] == 4 ? 'selected="selected"' : ''); ?>> user</option>
 												</select>
 												<div class="clear"></div>
 											</div>

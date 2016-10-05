@@ -4,16 +4,18 @@ error_reporting(E_ALL);
 
 class DbHandler {
 
-    private $conn;
+    // private $conn;
 
     function __construct() {
-        require_once dirname(__FILE__) . '/dbConn.php';
+    //     $spire = new Spire();
+        require_once dirname(__FILE__) . '/spire.php';
 
-        // opening db connection
-        $db = new DbConnect();
-        $this->conn = $db->connect();
-
-        // $dbcon->conn = $db->getConnection();
+    // //     // opening db connection
+    // //     $db = new DbConnect();
+    // //     // $this->conn = $db->connect();
+        
+    // //     $db_con = $db->getConnection();
+    //     $db_con = $spire->getConnection();
     }
 
     /* ------------- `users` table method ------------------ */
@@ -40,7 +42,7 @@ class DbHandler {
             // exit();
 
             // insert query
-            $stmt = $this->conn->prepare("INSERT INTO users(first_name, last_name, email, password_hash, api_key, status, role) values(?, ?, ?, ?, ?, 1, 4)");
+            $stmt = $db_con->prepare("INSERT INTO users(first_name, last_name, email, password_hash, api_key, status, role) values(?, ?, ?, ?, ?, 1, 4)");
             $stmt->bind_param("sssss", $first_name, $last_name, $email, $password_hash, $api_key);
 
             $result = $stmt->execute();
@@ -70,17 +72,23 @@ class DbHandler {
      * @return boolean User login status success/fail
      */
     public function checkLogin($email, $password) {
+
+        $db_con = Spire::getConnection();
+
         // fetching user by email
-        $stmt = $this->conn->prepare("SELECT password_hash FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->bind_result($password_hash);
-        $stmt->store_result();
-        if ($stmt->num_rows > 0) {
+        $stmt = $db_con->prepare("SELECT `password_hash` FROM `users` WHERE `email` = ?");
+        $stmt->execute(array($email));
+        
+        $rows = $stmt->fetchAll();
+        $totalRows = count($rows);
+
+        $password_hash = $rows[0][0];
+
+        // echo $password_hash;
+
+        if ($totalRows > 0) {
             // Found user with the email
             // Now verify the password
-            $stmt->fetch();
-            $stmt->close();
             if (PassHash::check_password($password_hash, $password)) {
                 // User password is correct
                 return TRUE;
@@ -88,6 +96,7 @@ class DbHandler {
                 // user password is incorrect
                 return FALSE;
             }
+            $stmt->close();
         } else {
             $stmt->close();
             // user not existed with the email
@@ -101,13 +110,17 @@ class DbHandler {
      * @return boolean
      */
     private function isUserExists($email) {
-        $stmt = $this->conn->prepare("SELECT id from users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
-        $num_rows = $stmt->num_rows;
-        $stmt->close();
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("SELECT id from users WHERE email = ?");
+        $stmt->execute(array($email));
+
+        $rows = $stmt->fetchAll();
+        $num_rows = count($rows);
+
         return $num_rows > 0;
+
+        $stmt->close();
     }
 
     /**
@@ -115,28 +128,30 @@ class DbHandler {
      * @param String $email User email id
     */
     public function getUserByEmail($email) {
-        $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role, created_at FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("SELECT id, first_name, last_name, email, api_key, status, role, created_at FROM users WHERE email = ?");
+        $stmt->execute(array($email));
 
         if ($stmt->execute()) {
-            $stmt->bind_result($id, $first_name, $last_name, $email, $api_key, $status, $role, $created_at);
+            $userData = $stmt->fetch();
 
             $user = array();
 
             /* fetch values */
-            mysqli_stmt_fetch($stmt);
+            // mysqli_stmt_fetch($stmt);
 
             /* set values */
-            $user['id'] = $id;
-            $user['first_name'] = $first_name;
-            $user['last_name'] = $last_name;
-            $user['email'] = $email;
-            $user['api_key'] = $api_key;
-            $user['role'] = $role;
-            $user['created_at'] = $created_at;
+            $user['id'] = $userData['id'];
+            $user['first_name'] = $userData['first_name'];
+            $user['last_name'] = $userData['last_name'];
+            $user['email'] = $userData['email'];
+            $user['api_key'] = $userData['api_key'];
+            $user['role'] = $userData['role'];
+            $user['created_at'] = $userData['created_at'];
 
-            $stmt->close();
             return $user;
+            $stmt->close();
         } else {
             return NULL;
         }
@@ -147,29 +162,19 @@ class DbHandler {
      * @param String $user_id user id primary key in user table
      */
     public function getApiKeyById($user_id) {
-        $stmt = $this->conn->prepare("SELECT api_key FROM users WHERE id = ?");
-        $stmt->bind_param("i", $user_id);
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("SELECT api_key FROM users WHERE id = ?");
+        $stmt->execute(array($user_id));
+
         if ($stmt->execute()) {
-            $api_key = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
+            $api_key = $stmt->fetch();
+
             return $api_key;
+            $stmt->close();
         } else {
             return NULL;
         }
-
-        // if ($stmt->execute()) {
-        //     $stmt->bind_result($api_key);
-
-        //     $api_key = array();
-
-        //     /* fetch values */
-        //     mysqli_stmt_fetch($stmt);
-        //     var_dump($api_key)
-        //     $stmt->close();
-        //     return $api_key;
-        // } else {
-        //     return NULL;
-        // }
     }
 
     /**
@@ -177,13 +182,16 @@ class DbHandler {
      * @param String $api_key user api key
      */
     public function getUserId($api_key) {
-        $stmt = $this->conn->prepare("SELECT id FROM users WHERE api_key = ?");
-        $stmt->bind_param("s", $api_key);
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("SELECT id FROM users WHERE api_key = ?");
+        $stmt->execute(array($api_key));
 
         if ($stmt->execute()) {
-            $user_id = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
+            $user_id = $stmt->fetch();
+
             return $user_id;
+            $stmt->close();
         } else {
             return NULL;
         }
@@ -195,8 +203,9 @@ class DbHandler {
      */
 
     public function getUserRole($api_key) {
-        $stmt = $this->conn->prepare("SELECT role FROM users WHERE api_key = ?");
-        $stmt->bind_param("s", $api_key);
+        $db_con = Spire::getConnection();
+        $stmt = $db_con->prepare("SELECT role FROM users WHERE api_key = ?");
+        $stmt->execute(array($api_key));
 
         if ($stmt->execute()) { 
             $stmt->bind_result($user_role);
@@ -213,25 +222,25 @@ class DbHandler {
 
 
     public function getAllUsers() {
-        // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
-        $stmt = $this->conn->prepare("SELECT `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`email`, `users`.`api_key`, `user_roles`.`role_name`, `users`.`status` FROM `users` INNER JOIN `user_roles` ON `users`.`role` = `user_roles`.`role`");
+        $db_con = Spire::getConnection();
+
+        // $stmt = $db_con->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
+        $stmt = $db_con->prepare("SELECT `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`email`, `users`.`api_key`, `user_roles`.`role_name`, `users`.`status` FROM `users` INNER JOIN `user_roles` ON `users`.`role` = `user_roles`.`role`");
         $stmt->execute();
+
         $users = array();
+        $allUserData = $stmt->fetchAll();
 
         if ($stmt->execute()) {
-            $stmt->bind_result($user->id, $user->first_name, $user->last_name, $user->email, $user->api_key, $user->role, $user->status);
-
-            while (mysqli_stmt_fetch($stmt)){
                 
-                foreach( $user as $key => $value ){
-                    $users[$key] = $value;
-                }
-
-                $usersArray[] = $users;
+            foreach( $allUserData as $key => $value ){
+                $users[$key] = $value;
             }
 
-            $stmt->close();
+            $usersArray[] = $users;
+
             return $usersArray;
+            $stmt->close();
         } else {
             return NULL;
         }
@@ -239,31 +248,31 @@ class DbHandler {
 
 
     public function getUserById($userID) {
-        // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role, created_at FROM users WHERE email = ?");
-        $stmt = $this->conn->prepare("SELECT `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`email`, `users`.`api_key`, `users`.`role`, `user_roles`.`role_name`, `users`.`status`, `users`.`created_at` FROM `users` INNER JOIN `user_roles` ON `users`.`role` = `user_roles`.`role` WHERE `users`.`id` = ?");
-        $stmt->bind_param("s", $userID);
+        $db_con = Spire::getConnection();
+
+        // $stmt = $db_con->prepare("SELECT id, first_name, last_name, email, api_key, status, role, created_at FROM users WHERE email = ?");
+        $stmt = $db_con->prepare("SELECT `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`email`, `users`.`api_key`, `users`.`role`, `user_roles`.`role_name`, `users`.`status`, `users`.`created_at` FROM `users` INNER JOIN `user_roles` ON `users`.`role` = `user_roles`.`role` WHERE `users`.`id` = ?");
+        $stmt->execute(array($userID));
 
         $user = array();
 
         if ($stmt->execute()) {
-            $stmt->bind_result($id, $first_name, $last_name, $email, $api_key, $roleID, $role, $status, $created_at);
-
-            /* fetch values */
-            mysqli_stmt_fetch($stmt);
+            // Get data
+            $allUserData = $stmt->fetch();
 
             /* set values */
-            $user['id'] = $id;
-            $user['first_name'] = $first_name;
-            $user['last_name'] = $last_name;
-            $user['email'] = $email;
-            $user['api_key'] = $api_key;
-            $user['roleID'] = $roleID;
-            $user['role'] = $role;
-            $user['status'] = $status;
-            $user['created_at'] = $created_at;
+            $user['id'] = $allUserData['id'];
+            $user['first_name'] = $allUserData['first_name'];
+            $user['last_name'] = $allUserData['last_name'];
+            $user['email'] = $allUserData['email'];
+            $user['api_key'] = $allUserData['api_key'];
+            $user['roleID'] = $allUserData['roleID'];
+            $user['role'] = $allUserData['role'];
+            $user['status'] = $allUserData['status'];
+            $user['created_at'] = $allUserData['created_at'];
 
-            $stmt->close();
             return $user;
+            $stmt->close();
         } else {
             return NULL;
         }
@@ -274,40 +283,40 @@ class DbHandler {
      * Update User Password
     */
     public function updateUserPassword($user_id, $new_password) {
-        // var_dump($user_id, $new_password);
-        // exit();
+        $db_con = Spire::getConnection();
 
         require_once 'passHash.php';
         $password_hash = PassHash::hash($new_password);
-        $stmt = $this->conn->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
-        $stmt->bind_param("si", $password_hash, $user_id);
-        $stmt->execute();
-        $num_affected_rows = $stmt->affected_rows;
+        $stmt = $db_con->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
+        $stmtStatus = $stmt->execute(array($password_hash, $user_id));
+
+        return $stmtStatus;
+
         $stmt->close();
-        return $num_affected_rows > 0;
     }
 
     /**
      * Update User info
     */
     public function updateUser($user_id, $new_password, $role, $status) {
+        $db_con = Spire::getConnection();
         // var_dump($user_id, $new_password, $role, $status);
         
         if ( strlen($new_password) > 0 ){
             require_once 'passHash.php';
             $password_hash = PassHash::hash($new_password);
 
-            $stmt = $this->conn->prepare("UPDATE users SET password_hash = ?, status = ?, role = ? WHERE id = ?");
-            $stmt->bind_param("siii", $password_hash, $status, $role, $user_id);
+            $stmt = $db_con->prepare("UPDATE users SET password_hash = ?, status = ?, role = ? WHERE id = ?");
+            $stmtStatus = $stmt->execute(array($password_hash, $status, $role, $user_id));
         } else {
-            $stmt = $this->conn->prepare("UPDATE users SET status = ?, role = ? WHERE id = ?");
-            $stmt->bind_param("iii", $status, $role, $user_id);
+            $stmt = $db_con->prepare("UPDATE users SET status = ?, role = ? WHERE id = ?");
+            $stmtStatus = $stmt->execute(array($status, $role, $user_id));
+
         }
-        
-        $stmt->execute();
-        $num_affected_rows = $stmt->affected_rows;
+
+        return $stmtStatus;
+
         $stmt->close();
-        return $num_affected_rows > 0;
     }
 
     /**
@@ -317,11 +326,12 @@ class DbHandler {
      * @return boolean
      */
     public function isValidApiKey($api_key) {
-        $stmt = $this->conn->prepare("SELECT id from users WHERE api_key = ?");
+        $stmt = $db_con->prepare("SELECT id from users WHERE api_key = ?");
         $stmt->bind_param("s", $api_key);
         $stmt->execute();
         $stmt->store_result();
-        $num_rows = $stmt->num_rows;
+        $rows = $stmt->fetchAll();
+        $num_rows = count($rows);
         $stmt->close();
         return $num_rows > 0;
     }
@@ -333,109 +343,6 @@ class DbHandler {
         return md5(uniqid(rand(), true));
     }
 
-    /* ------------- `tasks` table method ------------------ */
-
-    /**
-     * Creating new task
-     * @param String $user_id user id to whom task belongs to
-     * @param String $task task text
-     */
-    public function createTask($user_id, $task) {
-        $stmt = $this->conn->prepare("INSERT INTO tasks(task) VALUES(?)");
-        $stmt->bind_param("s", $task);
-        $result = $stmt->execute();
-        $stmt->close();
-
-        if ($result) {
-            // task row created
-            // now assign the task to user
-            $new_task_id = $this->conn->insert_id;
-            $res = $this->createUserTask($user_id, $new_task_id);
-            if ($res) {
-                // task created successfully
-                return $new_task_id;
-            } else {
-                // task failed to create
-                return NULL;
-            }
-        } else {
-            // task failed to create
-            return NULL;
-        }
-    }
-
-    /**
-     * Fetching single task
-     * @param String $task_id id of the task
-     */
-    public function getTask($task_id, $user_id) {
-        $stmt = $this->conn->prepare("SELECT t.id, t.task, t.status, t.created_at from tasks t, user_tasks ut WHERE t.id = ? AND ut.task_id = t.id AND ut.user_id = ?");
-        $stmt->bind_param("ii", $task_id, $user_id);
-        if ($stmt->execute()) {
-            $task = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
-            return $task;
-        } else {
-            return NULL;
-        }
-    }
-
-    /**
-     * Fetching all user tasks
-     * @param String $user_id id of the user
-     */
-    public function getAllUserTasks($user_id) {
-        $stmt = $this->conn->prepare("SELECT t.* FROM tasks t, user_tasks ut WHERE t.id = ut.task_id AND ut.user_id = ?");
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $tasks = $stmt->get_result();
-        $stmt->close();
-        return $tasks;
-    }
-
-    /**
-     * Updating task
-     * @param String $task_id id of the task
-     * @param String $task task text
-     * @param String $status task status
-     */
-    public function updateTask($user_id, $task_id, $task, $status) {
-        $stmt = $this->conn->prepare("UPDATE tasks t, user_tasks ut set t.task = ?, t.status = ? WHERE t.id = ? AND t.id = ut.task_id AND ut.user_id = ?");
-        $stmt->bind_param("siii", $task, $status, $task_id, $user_id);
-        $stmt->execute();
-        $num_affected_rows = $stmt->affected_rows;
-        $stmt->close();
-        return $num_affected_rows > 0;
-    }
-
-    /**
-     * Deleting a task
-     * @param String $task_id id of the task to delete
-     */
-    public function deleteTask($user_id, $task_id) {
-        $stmt = $this->conn->prepare("DELETE t FROM tasks t, user_tasks ut WHERE t.id = ? AND ut.task_id = t.id AND ut.user_id = ?");
-        $stmt->bind_param("ii", $task_id, $user_id);
-        $stmt->execute();
-        $num_affected_rows = $stmt->affected_rows;
-        $stmt->close();
-        return $num_affected_rows > 0;
-    }
-
-    /* ------------- `user_tasks` table method ------------------ */
-
-    /**
-     * Function to assign a task to user
-     * @param String $user_id id of the user
-     * @param String $task_id id of the task
-     */
-    public function createUserTask($user_id, $task_id) {
-        $stmt = $this->conn->prepare("INSERT INTO user_tasks(user_id, task_id) values(?, ?)");
-        $stmt->bind_param("ii", $user_id, $task_id);
-        $result = $stmt->execute();
-        $stmt->close();
-        return $result;
-    }
-
     /* ------------- Scripting and Testing DB Queries ------------------ */
 
     /**
@@ -443,16 +350,15 @@ class DbHandler {
      */
     
     public function createTestID($testID, $stationProperty, $testType) {
-        $stmt = $this->conn->prepare("INSERT INTO tests(test_id, property, type) VALUES(?, ?, ?)");
-        $stmt->bind_param("iss", $testID, $stationProperty, $testType);
+        $db_con = Spire::getConnection();
 
-        $result = $stmt->execute();
-        $stmt->close();
+        $stmt = $db_con->prepare("INSERT INTO tests(test_id, property, type) VALUES(?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($testID, $stationProperty, $testType));
 
-        if ($result) {
+        if ($stmtStatus) {
             // task row created
             // now assign the task to user
-            $new_test_id = $this->conn->insert_id;
+            $new_test_id = $db_con->lastInsertId();
 
             if ($new_test_id != NULL) {
                 // task created successfully
@@ -465,6 +371,8 @@ class DbHandler {
             // task failed to create
             return NULL;
         }
+
+        $stmt->close();
     }
 
 
@@ -472,13 +380,15 @@ class DbHandler {
      * Insert Test Results
      */
     public function navigationAuditInsert($resultsFile) {
+        $db_con = Spire::getConnection();
+
         // print_r($resultsFile);
         $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status, info)";
         
 
 
-        if ( !($stmt = $this->conn->query($uploadQuery)) ) {
-            // echo "\nQuery execute failed: ERRNO: (" . $this->conn->errno . ") " . $this->conn->error;
+        if ( !($stmt = $db_con->query($uploadQuery)) ) {
+            // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
             return 0;
         } else {
             return 1;
@@ -486,11 +396,13 @@ class DbHandler {
     }
 
     public function articleAuditInsert($resultsFile) {
+        $db_con = Spire::getConnection();
+
         // print_r($resultsFile);
         $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE article_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, endpoint, content_id, content_title, content_error, status)";
 
-        if ( !($stmt = $this->conn->query($uploadQuery)) ) {
-            // echo "\nQuery execute failed: ERRNO: (" . $this->conn->errno . ") " . $this->conn->error;
+        if ( !($stmt = $db_con->query($uploadQuery)) ) {
+            // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
             return 0;
         } else {
             return 1;
@@ -498,11 +410,13 @@ class DbHandler {
     }
 
     public function manifestAuditInsert($resultsFile) {
+        $db_con = Spire::getConnection();
+
         // print_r($resultsFile);
         $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE manifest_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, apiVersion, expected_key, expected_value, live_key, live_value, status, info)";
 
-        if ( !($stmt = $this->conn->query($uploadQuery)) ) {
-            // echo "\nQuery execute failed: ERRNO: (" . $this->conn->errno . ") " . $this->conn->error;
+        if ( !($stmt = $db_con->query($uploadQuery)) ) {
+            // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
             return 0;
         } else {
             return 1;
@@ -514,7 +428,9 @@ class DbHandler {
      */
     
     public function getAllTests() {
-        $stmt = $this->conn->prepare("SELECT * FROM tests");
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("SELECT * FROM tests");
         $tests = array();
 
         if ($stmt->execute()) {
@@ -537,7 +453,9 @@ class DbHandler {
     }
 
     public function getAllRecentTests() {
-        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR GROUP BY type");
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 12 HOUR GROUP BY type");
         $tests = array();
 
         if ($stmt->execute()) {
@@ -561,7 +479,7 @@ class DbHandler {
     }
 
     public function getAllRecentTests30Days() {
-        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created BETWEEN NOW() - INTERVAL 30 DAY AND NOW() GROUP BY type");
+        $stmt = $db_con->prepare("SELECT * FROM tests WHERE created BETWEEN NOW() - INTERVAL 30 DAY AND NOW() GROUP BY type");
         $tests = array();
 
         if ($stmt->execute()) {
@@ -585,7 +503,7 @@ class DbHandler {
     }
 
     public function getAllTestsFromToday() {
-        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR GROUP BY type");
+        $stmt = $db_con->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR GROUP BY type");
         $tests = array();
 
         if ($stmt->execute()) {
@@ -610,7 +528,7 @@ class DbHandler {
 
 
     public function getTestById($testID) {
-        $stmt = $this->conn->prepare("SELECT id, test_id, property, type, created FROM tests WHERE id = ?");
+        $stmt = $db_con->prepare("SELECT id, test_id, property, type, created FROM tests WHERE id = ?");
         $tests = array();
 
         $stmt->bind_param("i", $testID);
@@ -653,7 +571,7 @@ class DbHandler {
                 $testTypeName = 'none-existent';
         }
 
-        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE type = ?");
+        $stmt = $db_con->prepare("SELECT * FROM tests WHERE type = ?");
         $stmt->bind_param("s", $testTypeName);
         
         $tests = array();
@@ -678,6 +596,7 @@ class DbHandler {
     }
 
     public function getCurrentTestsByTypeForToday($testType) {
+        $db_con = Spire::getConnection();
 
         switch ($testType) {
             
@@ -696,27 +615,24 @@ class DbHandler {
                 $testTypeName = 'none-existent';
         }
 
-        // $stmt = $this->conn->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
-        // $stmt = $this->conn->prepare("SELECT * FROM tests WHERE ");
-        $stmt = $this->conn->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR AND type = ?");
-        $stmt->bind_param("s", $testTypeName);
-        // $stmt->execute();
+        $stmt = $db_con->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR AND type = ?");
+        $testResults = $stmt->execute(array($testTypeName));
+        
         $tests = array();
+        $allTestData = $stmt->fetchAll();
 
-        if ($stmt->execute()) {
-            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
+        var_dump($allTestData);
 
-            while (mysqli_stmt_fetch($stmt)){
-                
-                foreach( $test as $key => $value ){
-                    $tests[$key] = $value;
-                }
+        if ($testResults) {
 
-                $apiTestsArray[] = $tests;
+            foreach( $allTestData as $key => $value ){
+                $tests[$key] = $value;
             }
 
-            $stmt->close();
+            $apiTestsArray[] = $tests;
+
             return $apiTestsArray;
+            $stmt->close();
         } else {
             return NULL;
         }
@@ -762,7 +678,7 @@ class DbHandler {
         }
 
 
-        $stmt = $this->conn->prepare("SELECT * FROM ".$testTableName." WHERE test_id = ".$testID);
+        $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE test_id = ".$testID);
         
         $tests = array();
 
@@ -831,7 +747,7 @@ class DbHandler {
                 $testTableName = 'none-existent';
         }
 
-        $stmt = $this->conn->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
+        $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
         
         $tests = array();
 
@@ -855,13 +771,126 @@ class DbHandler {
         }
     }
 
-    public function countTestFailuresByproperty($testID, $testResultsTable) {
-        //select all tests based
+    public function checkForTestFailuresToday($testResultsTable) {
+        $db_con = Spire::getConnection();
+        
+        switch ($testResultsTable) {
+            
+            case "api_manifest_audits":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "apiCheck-manifest":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "api_navigation_audits":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "apiCheck-nav":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "api_article_audits":
+                $testTableName = 'article_tests';
+                break;
+
+            case "apiCheck-article":
+                $testTableName = 'article_tests';
+                break;
+
+            default:
+                $testTableName = 'none-existent';
+        }
+
+        // $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
+        $stmt = $db_con->prepare("SELECT status, COUNT(*) AS totalFailures FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
+
+
+        if ($stmt->execute()) {
+            $errorCount = $stmt->fetchAll();
+            
+            if ($errorCount[0]['totalFailures'] > 0) {
+                $totalErrors = $errorCount[0]['totalFailures'];
+            } else {
+                $totalErrors = '0';
+            }
+
+            // foreach ($errorCount[0] as $key => $value) {
+            //     echo "key => ".$key." \ value => ".$value."\n";
+            // }
+
+            return $totalErrors;
+
+            $stmt->close();
+        } else {
+            return NULL;
+        }
+    }
+
+
+    public function allFailureReportsFromToday($testResultsTable) {
+        $db_con = Spire::getConnection();
+        
+        switch ($testResultsTable) {
+            
+            case "api_manifest_audits":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "apiCheck-manifest":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "api_navigation_audits":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "apiCheck-nav":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "api_article_audits":
+                $testTableName = 'article_tests';
+                break;
+
+            case "apiCheck-article":
+                $testTableName = 'article_tests';
+                break;
+
+            default:
+                $testTableName = 'none-existent';
+        }
+
+        $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
+
+
+        if ($stmt->execute()) {
+            $errorReports = $stmt->fetchAll();
+
+            // var_dump($errorReports);
+
+            foreach ($errorReports as $errorReport) {
+                // echo $errorReport['test_id']."\n";
+
+                $testInfo = $this->getTestById($errorReport['test_id']);
+
+                var_dump($testInfo);
+            }
+            
+            
+            // return $totalErrors;
+
+            $stmt->close();
+        } else {
+            return NULL;
+        }
 
     }
 
     public function getAllStations() {
-        $stmt = $this->conn->prepare("SELECT * FROM stations");
+        $stmt = $db_con->prepare("SELECT * FROM stations");
         $stmt->execute();
         $stations = array();
 
@@ -885,7 +914,7 @@ class DbHandler {
     }
 
     public function getStationById($stationID) {
-        $stmt = $this->conn->prepare("SELECT * FROM stations WHERE id = ?");
+        $stmt = $db_con->prepare("SELECT * FROM stations WHERE id = ?");
         $stmt->bind_param("i", $stationID);
 
         $station = array();

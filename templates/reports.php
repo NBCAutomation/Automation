@@ -63,7 +63,73 @@
 	<?php
 		if ($reportsView) {
 	?>
-			<!-- date range search - https://datatables.net/examples/plug-ins/range_filtering.html -->
+			
+			<?php 
+				$db = new DbHandler();
+				$todayTotalFailures = $db->checkForTestFailuresToday($view);
+				
+				// $todayTotalFailureReports = $db->allFailureReportsFromToday($view);
+				
+			?>
+
+			<div class="api_results">
+				<div class="panel panel-default">
+					<div class="panel-heading">Reports</div>
+					<div class="panel-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="row">
+									<div class="col-md-3">
+										<div class="panel panel-default">
+											<div class="panel-body bk-primary text-light">
+												<div class="stat-panel text-center">
+													<div class="stat-panel-number h1 "><?php echo $todayTotalFailures; ?></div>
+													<div class="stat-panel-title text-uppercase">Error Reports Today</div>
+												</div>
+											</div>
+											<a href="#" class="block-anchor panel-footer">Full Detail <i class="fa fa-arrow-right"></i></a>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="panel panel-default">
+											<div class="panel-body bk-success text-light">
+												<div class="stat-panel text-center">
+													<div class="stat-panel-number h1 ">8</div>
+													<div class="stat-panel-title text-uppercase">Support Tickets</div>
+												</div>
+											</div>
+											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="panel panel-default">
+											<div class="panel-body bk-info text-light">
+												<div class="stat-panel text-center">
+													<div class="stat-panel-number h1 ">58</div>
+													<div class="stat-panel-title text-uppercase">New Orders</div>
+												</div>
+											</div>
+											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="panel panel-default">
+											<div class="panel-body bk-warning text-light">
+												<div class="stat-panel text-center">
+													<div class="stat-panel-number h1 ">18</div>
+													<div class="stat-panel-title text-uppercase">New Comments</div>
+												</div>
+											</div>
+											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="api_results">
 				<div class="panel panel-default">
 					<div class="panel-heading">Reports</div>
