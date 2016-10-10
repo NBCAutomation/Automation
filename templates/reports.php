@@ -150,14 +150,6 @@
 							$articleData = true;
 						}
 					?>
-						<table border="0" cellspacing="5" cellpadding="5">
-							<tbody>
-								<tr>
-									<td><p>Searching can be done with various combinations of text. For example [property] [date]</p></td>
-								</tr>
-							</tbody>
-						</table>
-						<hr />
 						<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 							<thead>
 								<tr>
@@ -172,37 +164,7 @@
 							<tr>
 								<div class="panel-body">
 					<?php
-
-						// echo "todayTotalFailureReports<br />";
-						// var_dump($todayTotalFailureReports);
-
-						
 						foreach ($todayTotalFailureReports as $testReport) {
-							// echo $testReport['testInfoId'];
-							echo "<h4>Test Info</h4>";
-							echo "<hr />";
-							echo "<p>testInfoId => " . $testReport['testInfoId']."</p>";
-							echo "<p>testInfoProperty => " . $testReport['testInfoProperty']."</p>";
-							// echo "<p>testInfoType => " . $testReport['testInfoType']."</p>";
-							echo "<p>testInfoCreated => " . $testReport['testInfoCreated']."</p>";
-							echo "<hr />";
-							
-							// echo "<table>";
-							// echo "<tr>";
-								// echo "<td>id => " . $testReport['id']."</td>";
-								// echo "<td>test_id => " . $testReport['test_id']."</td>";
-								// echo "<td>apiVersion => " . $testReport['apiVersion']."</td>";
-							// echo "<td>expected_key => " . $testReport['expected_key']."</td>";
-							// echo "<td>expected_value => " . $testReport['expected_value']."</td>";
-							// echo "<td>live_key => " . $testReport['live_key']."</td>";
-							// echo "<td>live_value => " . $testReport['live_value']."</td>";
-							// echo "<td>status => " . $testReport['status']."</td>";
-							// echo "<td>info => " . $testReport['info']."</td>";
-							// echo "<td>created => " . $testReport['created']."</td>";
-							// echo "</tr>";
-							// echo "</table>";
-
-							// $db = new DbHandler();
 							$testReportStatus = $db->checkForTestFailures($testReport['testInfoId'], $view);
 							$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
 
@@ -226,7 +188,7 @@
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['testInfoId'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['expected_key'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['expected_value'].'</a></td>';
-							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['live_key'].'.com</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['live_key'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['live_value'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['info'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
