@@ -67,24 +67,24 @@
 			<?php 
 				$db = new DbHandler();
 				$todayTotalFailures = $db->checkForTestFailuresToday($view);
+				$todayTotalWarnings = $db->checkForTestWarningsToday($view);
 				
-				// $todayTotalFailureReports = $db->allFailureReportsFromToday($view);
-				
+				$todayTotalFailureReports = $db->allFailureReportsFromToday($view);
 			?>
 
 			<div class="api_results">
 				<div class="panel panel-default">
-					<div class="panel-heading">Reports</div>
+					<div class="panel-heading">Today's Reports</div>
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-md-12">
 								<div class="row">
 									<div class="col-md-3">
 										<div class="panel panel-default">
-											<div class="panel-body bk-primary text-light">
+											<div class="panel-body bk-danger text-light">
 												<div class="stat-panel text-center">
 													<div class="stat-panel-number h1 "><?php echo $todayTotalFailures; ?></div>
-													<div class="stat-panel-title text-uppercase">Error Reports Today</div>
+													<div class="stat-panel-title text-uppercase">Error Reports</div>
 												</div>
 											</div>
 											<a href="#" class="block-anchor panel-footer">Full Detail <i class="fa fa-arrow-right"></i></a>
@@ -92,10 +92,10 @@
 									</div>
 									<div class="col-md-3">
 										<div class="panel panel-default">
-											<div class="panel-body bk-success text-light">
+											<div class="panel-body bk-warning text-light">
 												<div class="stat-panel text-center">
-													<div class="stat-panel-number h1 ">8</div>
-													<div class="stat-panel-title text-uppercase">Support Tickets</div>
+													<div class="stat-panel-number h1 "><?php echo $todayTotalWarnings; ?></div>
+													<div class="stat-panel-title text-uppercase">Warnings</div>
 												</div>
 											</div>
 											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
@@ -114,7 +114,7 @@
 									</div>
 									<div class="col-md-3">
 										<div class="panel panel-default">
-											<div class="panel-body bk-warning text-light">
+											<div class="panel-body bk-primary text-light">
 												<div class="stat-panel text-center">
 													<div class="stat-panel-number h1 ">18</div>
 													<div class="stat-panel-title text-uppercase">New Comments</div>
@@ -132,7 +132,7 @@
 
 			<div class="api_results">
 				<div class="panel panel-default">
-					<div class="panel-heading">Reports</div>
+					<div class="panel-heading">Error Reports</div>
 					<div class="panel-body">
 						<table border="0" cellspacing="5" cellpadding="5">
 							<tbody>
@@ -172,10 +172,11 @@
 						} elseif ( strpos($view, 'article') ) {
 							$testTypeFolder = 'article';
 						}
-
-						foreach ($results as $testReport) {
+						var_dump($todayTotalFailureReports);
+						
+						foreach ($todayTotalFailureReports as $testReport) {
 							$db = new DbHandler();
-							$testReportStatus = $db->checkForTestFailures($testReport['id'], $view);
+							// $testReportStatus = $db->checkForTestFailures($testReport['id'], $view);
 							$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
 
 							$usersTimezone = new DateTimeZone('America/New_York');
@@ -206,10 +207,92 @@
 						</table>
 					</div>
 				</div>
-
+			</div>
 		<?php
-		} else { ?>
-			
+		} ?>
+	
+	<?php if ($errorsView) { ?>
+	<?php
+		
+		
+	?>
+		<div class="api_results">
+			<div class="panel panel-default">
+				<div class="panel-heading">Error Reports</div>
+				<div class="panel-body">
+					<table border="0" cellspacing="5" cellpadding="5">
+						<tbody>
+							<tr>
+								<td><p>Searching can be done with various combinations of text. For example [property] [date]</p></td>
+							</tr>
+						</tbody>
+					</table>
+					<hr />
+					<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Status</th>
+								<th>CSV</th>
+								<th>ID</th>
+								<th>Test ID</th>
+								<th>Property</th>
+								<th>Created</th>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<th>Status</th>
+								<th>CSV</th>
+								<th>ID</th>
+								<th>Test ID</th>
+								<th>Property</th>
+								<th>Created</th>
+							</tr>
+						</tfoot>
+						<tbody>
+				<?php
+					if ( strpos($view, 'manifest') ) {
+						$testTypeFolder = 'manifest';
+					} elseif ( strpos($view, 'nav') ) {
+						$testTypeFolder = 'navigation';
+					} elseif ( strpos($view, 'article') ) {
+						$testTypeFolder = 'article';
+					}
+
+					foreach ($todayTotalFailureReports as $testReport) {
+						$db = new DbHandler();
+						$testReportStatus = $db->checkForTestFailures($testReport['id'], $view);
+						$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
+
+						$usersTimezone = new DateTimeZone('America/New_York');
+						$l10nDate = new DateTime($testReportTime);
+						$l10nDate->setTimeZone($usersTimezone);
+						// echo $l10nDate->format('Y-m-d H:i:s');
+
+
+						$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
+						$reportCSVDateTime =  date('n_j_Y-H_i-A', strtotime($testReport['created']));
+
+						$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
+
+						$fileLocation = urlencode($reportCSVFile);
+
+					    echo '<tr class="report_row_status '.$testReportStatus.'">';
+						    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+						    echo '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+						    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['id'].'</a></td>';
+						    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['test_id'].'</a></td>';
+						    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'.com</a></td>';
+						    // echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReportTime.'</a></td>';
+						    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+		                echo "</tr>";
+					}
+				?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
 	<?php } ?>
 		
 	<?php if ($fileView) { ?>

@@ -384,8 +384,10 @@ class DbHandler {
 
         // print_r($resultsFile);
         $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status, info)";
-        
 
+        $stmt = $db_con->query($uploadQuery);
+
+        // var_dump($db_con->query($uploadQuery));
 
         if ( !($stmt = $db_con->query($uploadQuery)) ) {
             // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
@@ -528,24 +530,28 @@ class DbHandler {
 
 
     public function getTestById($testID) {
+        $db_con = Spire::getConnection();
+        
         $stmt = $db_con->prepare("SELECT id, test_id, property, type, created FROM tests WHERE id = ?");
+        $stmt->execute(array($testID));
+
         $tests = array();
+        $testData = $stmt->fetch();
 
-        $stmt->bind_param("i", $testID);
-
-        if ($stmt->execute()) { 
-            $stmt->bind_result($thisTestID, $testRefID, $property, $type, $created);
+        if ($stmt->execute()) {
 
             /* fetch values */
-            mysqli_stmt_fetch($stmt);
-            $tests['id'] = $thisTestID;
-            $tests['refId'] = $testRefID;
-            $tests['property'] = $property;
-            $tests['type'] = $type;
-            $tests['created'] = $created;
+            
+            $tests['id'] = $testData['id'];
+            $tests['refId'] = $testData['refId'];
+            $tests['property'] = $testData['property'];
+            $tests['type'] = $testData['type'];
+            $tests['created'] = $testData['created'];
 
-            $stmt->close();
+            // var_dump($tests);
+
             return $tests;
+            $stmt->close();
         } else {
             return NULL;
         }
@@ -599,7 +605,6 @@ class DbHandler {
         $db_con = Spire::getConnection();
 
         switch ($testType) {
-            
             case "api_manifest_audits":
                 $testTypeName = 'apiCheck-manifest';
                 break;
@@ -640,9 +645,9 @@ class DbHandler {
 
 
     public function getCurrentTestResults($testID, $testType) {
+        $db_con = Spire::getConnection();
 
         switch ($testType) {
-            
             case "api_manifest_audits":
                 $testTableName = 'manifest_tests';
                 $manifestBind = true;
@@ -829,8 +834,7 @@ class DbHandler {
         }
     }
 
-
-    public function allFailureReportsFromToday($testResultsTable) {
+    public function checkForTestWarningsToday($testResultsTable) {
         $db_con = Spire::getConnection();
         
         switch ($testResultsTable) {
@@ -863,24 +867,91 @@ class DbHandler {
                 $testTableName = 'none-existent';
         }
 
-        $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
+        // $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
+        $stmt = $db_con->prepare("SELECT status, COUNT(*) AS totalFailures FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Warn'");
 
+
+        if ($stmt->execute()) {
+            $errorCount = $stmt->fetchAll();
+            
+            if ($errorCount[0]['totalFailures'] > 0) {
+                $totalErrors = $errorCount[0]['totalFailures'];
+            } else {
+                $totalErrors = '0';
+            }
+
+            // foreach ($errorCount[0] as $key => $value) {
+            //     echo "key => ".$key." \ value => ".$value."\n";
+            // }
+
+            return $totalErrors;
+
+            $stmt->close();
+        } else {
+            return NULL;
+        }
+    }
+
+
+    public function allFailureReportsFromToday($testResultsTable) {
+        $db_con = Spire::getConnection();
+
+        switch ($testResultsTable) {
+            
+            case "api_manifest_audits":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "apiCheck-manifest":
+                $testTableName = 'manifest_tests';
+                break;
+
+            case "api_navigation_audits":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "apiCheck-nav":
+                $testTableName = 'nav_tests';
+                break;
+
+            case "api_article_audits":
+                $testTableName = 'article_tests';
+                break;
+
+            case "apiCheck-article":
+                $testTableName = 'article_tests';
+                break;
+
+            default:
+                $testTableName = 'none-existent';
+        }
+
+        $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
+        $failureReports = array();
 
         if ($stmt->execute()) {
             $errorReports = $stmt->fetchAll();
 
             // var_dump($errorReports);
 
-            foreach ($errorReports as $errorReport) {
-                // echo $errorReport['test_id']."\n";
+            foreach ($errorReports as $key => $val) {
+                $currentTestInfo = $this->getTestById( $val['test_id'] );
 
-                $testInfo = $this->getTestById($errorReport['test_id']);
+                $failureReports['testInfoId'] = $currentTestInfo['id'];
+                $failureReports['testInfoProperty'] = $currentTestInfo['property'];
+                $failureReports['testInfoType'] = $currentTestInfo['type'];
+                $failureReports['testInfoCreated'] = $currentTestInfo['created'];
 
-                var_dump($testInfo);
+                foreach ($val as $subKey => $value) {
+                    // echo "subKey -> ".$subKey." | val -> ".$value."\n<br />";
+                    if (! is_int($subKey)) {
+                        $failureReports[$subKey] = $value;
+                    }
+                }
             }
-            
-            
-            // return $totalErrors;
+
+            $allFailureReports[] = $failureReports;
+            return $allFailureReports;
 
             $stmt->close();
         } else {

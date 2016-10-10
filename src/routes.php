@@ -192,13 +192,80 @@ $app->group('/reports', function () {
         ]);
     })->setName('directory-reports-view')->add( new SpireAuth() );
 
-    
-    $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {
+
+    $this->get('/{view}/{subView}', function ($request, $response, $args) {
     	$db = new DbHandler();
 
     	$permissions = $request->getAttribute('spPermissions');
 
+    	$allPostPutVars = $request->getQueryParams();
+    	// $currentRecord = $db->getTestById($args['page']);
 
+    	// $currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type']);
+
+		// View path
+		$__viewPath = $args['view']."/".$args['subView'];
+
+		switch ($args['subView']) {
+		    
+		    case "main":
+		        $mainView = true;
+		        break;
+
+		    case "overview":
+		        $overView = true;	
+		        break;
+
+		    case "api_article_audits":
+		        $reportsView = true;
+		        break;
+
+		    case "api_navigation_audits":
+		        $reportsView = true;
+		        break;
+
+	        case "api_manifest_audits":
+	            $reportsView = true;
+	            break;
+
+            case "today-error-reports":
+                $errorsView = true;
+                break;
+
+		    default:
+		        $testTypeName = 'none-existent';
+		}
+
+
+		// Report View
+		return $this->renderer->render($response, 'reports.php', [
+		    'title' => 'Reports',
+		    'page_name' => 'reports',
+		    'view' => 'single',
+		    'viewPath' => $args['subView'],
+		    'mainView' => $mainView,
+		    'reportsView' => $reportsView,
+		    'errorsView' => $errorsView,
+		    'viewType' => $currentRecord['type'],
+		    'reportClass' => true,
+		    'reportID' => $currentRecord['id'],
+		    'reportProperty' => $currentRecord['property'],
+		    'reportPropertyData' => $currentRecord,
+		    'reportData' => $currentRecordResults,
+		    
+		    //Auth Specific
+		    'user' => $request->getAttribute('spAuth'),
+	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
+	        'uAthMessage' => $permissions['uAthMessage']
+		]);
+    })->setName('reports-view')->add( new SpireAuth() );
+
+    $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {
+    	$db = new DbHandler();
+
+    	$permissions = $request->getAttribute('spPermissions');
+var_dump("page " . $args['page']);
     	$allPostPutVars = $request->getQueryParams();
     	$currentRecord = $db->getTestById($args['page']);
 
@@ -227,7 +294,7 @@ $app->group('/reports', function () {
 	        'uRole' => $permissions['role'],
 	        'uAthMessage' => $permissions['uAthMessage']
 		]);
-    })->setName('reports-view')->add( new SpireAuth() );
+    })->setName('report-view')->add( new SpireAuth() );
 
 });
 
@@ -804,14 +871,15 @@ $app->group('/utils', function () {
 
 			// Check test type -- Needs refactoring
 			if ($utilReqParams['testType'] == 'apiNav') {
-				$db->navigationAuditInsert($testResultsFile);
+				// $db->navigationAuditInsert($testResultsFile);
 				// $thisupload = $db->navigationAuditInsert($testResultsFile);	
+				
 				if ($db->navigationAuditInsert($testResultsFile)) {
 					echo 'inserted';
 					$this->logger->info("Nav Test results imported");
 				} else {
-					echo 'fail insert';
-					$this->logger->info("DB import failed");
+					echo 'DB nav import failed';
+					$this->logger->info("DB nav import failed");
 				}
 			}
 
@@ -820,8 +888,8 @@ $app->group('/utils', function () {
 					echo 'Article test results imported';
 					$this->logger->info("Article test results imported");
 				} else {
-					echo 'DB import failed';
-					$this->logger->info("DB import failed");
+					echo 'DB article import failed';
+					$this->logger->info("DB article import failed");
 				}
 			}
 
@@ -832,8 +900,8 @@ $app->group('/utils', function () {
 					echo 'inserted';
 					$this->logger->info("Manifest test results imported");
 				} else {
-					echo 'fail insert';
-					$this->logger->info("DB import failed");
+					echo 'DB manifest import failed';
+					$this->logger->info("DB manifest import failed");
 				}
 			}
 
