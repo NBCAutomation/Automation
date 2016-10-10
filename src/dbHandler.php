@@ -720,244 +720,257 @@ class DbHandler {
 
 
     public function checkForTestFailures($testID, $testResultsTable) {
-        // var_dump($testID, $testResultsTable);
+        $output = Spire::spireCache('checkForTestFailures_'.$testResultsTable, 100, function() use ($testID, $testResultsTable) {
         
-        switch ($testResultsTable) {
+            $db_con = Spire::getConnection();
             
-            case "api_manifest_audits":
-                $testTableName = 'manifest_tests';
-                break;
-
-            case "apiCheck-manifest":
-                $testTableName = 'manifest_tests';
-                break;
-
-            case "api_navigation_audits":
-                $testTableName = 'nav_tests';
-                break;
-
-            case "apiCheck-nav":
-                $testTableName = 'nav_tests';
-                break;
-
-            case "api_article_audits":
-                $testTableName = 'article_tests';
-                break;
-
-            case "apiCheck-article":
-                $testTableName = 'article_tests';
-                break;
-
-            default:
-                $testTableName = 'none-existent';
-        }
-
-        $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
-        
-        $tests = array();
-
-        if ($stmt->execute()) {
-            $stmt->bind_result($test->status, $test->total);
-
-            while (mysqli_stmt_fetch($stmt)){
+            switch ($testResultsTable) {
                 
-                if ($test->total > 0) {
+                case "api_manifest_audits":
+                    $testTableName = 'manifest_tests';
+                    break;
+
+                case "apiCheck-manifest":
+                    $testTableName = 'manifest_tests';
+                    break;
+
+                case "api_navigation_audits":
+                    $testTableName = 'nav_tests';
+                    break;
+
+                case "apiCheck-nav":
+                    $testTableName = 'nav_tests';
+                    break;
+
+                case "api_article_audits":
+                    $testTableName = 'article_tests';
+                    break;
+
+                case "apiCheck-article":
+                    $testTableName = 'article_tests';
+                    break;
+
+                default:
+                    $testTableName = 'none-existent';
+            }
+
+            $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
+
+            if ($stmt->execute()) {
+                $errorCount = $stmt->fetchAll();
+                    
+                if ($errorCount > 0) {
                     return 'fail';
                     echo 'fail';
                 } else {
                     return 'pass';
                     echo 'pass';
                 }
-            }
 
-            $stmt->close();
-        } else {
-            return NULL;
-        }
+                $stmt->close();
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
     }
 
     public function checkForTestFailuresToday($testResultsTable) {
-        $db_con = Spire::getConnection();
-        
-        switch ($testResultsTable) {
+        $output = Spire::spireCache('checkForTestFailuresToday_'.$testResultsTable, 100, function() use ($testResultsTable) {
+            $db_con = Spire::getConnection();
             
-            case "api_manifest_audits":
-                $testTableName = 'manifest_tests';
-                break;
+            switch ($testResultsTable) {
+                
+                case "api_manifest_audits":
+                    $testTableName = 'manifest_tests';
+                    break;
 
-            case "apiCheck-manifest":
-                $testTableName = 'manifest_tests';
-                break;
+                case "apiCheck-manifest":
+                    $testTableName = 'manifest_tests';
+                    break;
 
-            case "api_navigation_audits":
-                $testTableName = 'nav_tests';
-                break;
+                case "api_navigation_audits":
+                    $testTableName = 'nav_tests';
+                    break;
 
-            case "apiCheck-nav":
-                $testTableName = 'nav_tests';
-                break;
+                case "apiCheck-nav":
+                    $testTableName = 'nav_tests';
+                    break;
 
-            case "api_article_audits":
-                $testTableName = 'article_tests';
-                break;
+                case "api_article_audits":
+                    $testTableName = 'article_tests';
+                    break;
 
-            case "apiCheck-article":
-                $testTableName = 'article_tests';
-                break;
+                case "apiCheck-article":
+                    $testTableName = 'article_tests';
+                    break;
 
-            default:
-                $testTableName = 'none-existent';
-        }
-
-        // $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
-        $stmt = $db_con->prepare("SELECT status, COUNT(*) AS totalFailures FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
-
-
-        if ($stmt->execute()) {
-            $errorCount = $stmt->fetchAll();
-            
-            if ($errorCount[0]['totalFailures'] > 0) {
-                $totalErrors = $errorCount[0]['totalFailures'];
-            } else {
-                $totalErrors = '0';
+                default:
+                    $testTableName = 'none-existent';
             }
 
-            // foreach ($errorCount[0] as $key => $value) {
-            //     echo "key => ".$key." \ value => ".$value."\n";
-            // }
+            // $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
+            $stmt = $db_con->prepare("SELECT status, COUNT(*) AS totalFailures FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
 
-            return $totalErrors;
 
-            $stmt->close();
-        } else {
-            return NULL;
-        }
+            if ($stmt->execute()) {
+                $errorCount = $stmt->fetchAll();
+                
+                if ($errorCount[0]['totalFailures'] > 0) {
+                    $totalErrors = $errorCount[0]['totalFailures'];
+                } else {
+                    $totalErrors = '0';
+                }
+
+                // foreach ($errorCount[0] as $key => $value) {
+                //     echo "key => ".$key." \ value => ".$value."\n";
+                // }
+
+                return $totalErrors;
+
+                $stmt->close();
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
     }
 
     public function checkForTestWarningsToday($testResultsTable) {
-        $db_con = Spire::getConnection();
-        
-        switch ($testResultsTable) {
+        $output = Spire::spireCache('checkForTestWarningsToday_'.$testResultsTable, 100, function() use ($testResultsTable) {
+            $db_con = Spire::getConnection();
             
-            case "api_manifest_audits":
-                $testTableName = 'manifest_tests';
-                break;
+            switch ($testResultsTable) {
+                
+                case "api_manifest_audits":
+                    $testTableName = 'manifest_tests';
+                    break;
 
-            case "apiCheck-manifest":
-                $testTableName = 'manifest_tests';
-                break;
+                case "apiCheck-manifest":
+                    $testTableName = 'manifest_tests';
+                    break;
 
-            case "api_navigation_audits":
-                $testTableName = 'nav_tests';
-                break;
+                case "api_navigation_audits":
+                    $testTableName = 'nav_tests';
+                    break;
 
-            case "apiCheck-nav":
-                $testTableName = 'nav_tests';
-                break;
+                case "apiCheck-nav":
+                    $testTableName = 'nav_tests';
+                    break;
 
-            case "api_article_audits":
-                $testTableName = 'article_tests';
-                break;
+                case "api_article_audits":
+                    $testTableName = 'article_tests';
+                    break;
 
-            case "apiCheck-article":
-                $testTableName = 'article_tests';
-                break;
+                case "apiCheck-article":
+                    $testTableName = 'article_tests';
+                    break;
 
-            default:
-                $testTableName = 'none-existent';
-        }
-
-        // $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
-        $stmt = $db_con->prepare("SELECT status, COUNT(*) AS totalFailures FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Warn'");
-
-
-        if ($stmt->execute()) {
-            $errorCount = $stmt->fetchAll();
-            
-            if ($errorCount[0]['totalFailures'] > 0) {
-                $totalErrors = $errorCount[0]['totalFailures'];
-            } else {
-                $totalErrors = '0';
+                default:
+                    $testTableName = 'none-existent';
             }
 
-            // foreach ($errorCount[0] as $key => $value) {
-            //     echo "key => ".$key." \ value => ".$value."\n";
-            // }
+            // $stmt = $db_con->prepare("SELECT status, COUNT(*) FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
+            $stmt = $db_con->prepare("SELECT status, COUNT(*) AS totalFailures FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Warn'");
 
-            return $totalErrors;
 
-            $stmt->close();
-        } else {
-            return NULL;
-        }
+            if ($stmt->execute()) {
+                $errorCount = $stmt->fetchAll();
+                
+                if ($errorCount[0]['totalFailures'] > 0) {
+                    $totalErrors = $errorCount[0]['totalFailures'];
+                } else {
+                    $totalErrors = '0';
+                }
+
+                // foreach ($errorCount[0] as $key => $value) {
+                //     echo "key => ".$key." \ value => ".$value."\n";
+                // }
+
+                return $totalErrors;
+
+                $stmt->close();
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
     }
 
 
     public function allFailureReportsFromToday($testResultsTable) {
-        $db_con = Spire::getConnection();
-
-        switch ($testResultsTable) {
+        // $output = Spire::spireCache('allFailureReportsFromToday_'.$testResultsTable, 9000, function() use ($testResultsTable) {
+        // $output = Spire::spireCache('allFailureReportsFromToday_'.$testResultsTable, 100, function() use ($testResultsTable) {
             
-            case "api_manifest_audits":
-                $testTableName = 'manifest_tests';
-                break;
+            $db_con = Spire::getConnection();
 
-            case "apiCheck-manifest":
-                $testTableName = 'manifest_tests';
-                break;
+            switch ($testResultsTable) {
+                
+                case "api_manifest_audits":
+                    $testTableName = 'manifest_tests';
+                    break;
 
-            case "api_navigation_audits":
-                $testTableName = 'nav_tests';
-                break;
+                case "apiCheck-manifest":
+                    $testTableName = 'manifest_tests';
+                    break;
 
-            case "apiCheck-nav":
-                $testTableName = 'nav_tests';
-                break;
+                case "api_navigation_audits":
+                    $testTableName = 'nav_tests';
+                    break;
 
-            case "api_article_audits":
-                $testTableName = 'article_tests';
-                break;
+                case "apiCheck-nav":
+                    $testTableName = 'nav_tests';
+                    break;
 
-            case "apiCheck-article":
-                $testTableName = 'article_tests';
-                break;
+                case "api_article_audits":
+                    $testTableName = 'article_tests';
+                    break;
 
-            default:
-                $testTableName = 'none-existent';
-        }
+                case "apiCheck-article":
+                    $testTableName = 'article_tests';
+                    break;
 
-        $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
-        $failureReports = array();
-
-        if ($stmt->execute()) {
-            $errorReports = $stmt->fetchAll();
-
-            // var_dump($errorReports);
-
-            foreach ($errorReports as $key => $val) {
-                $currentTestInfo = $this->getTestById( $val['test_id'] );
-
-                $failureReports['testInfoId'] = $currentTestInfo['id'];
-                $failureReports['testInfoProperty'] = $currentTestInfo['property'];
-                $failureReports['testInfoType'] = $currentTestInfo['type'];
-                $failureReports['testInfoCreated'] = $currentTestInfo['created'];
-
-                foreach ($val as $subKey => $value) {
-                    // echo "subKey -> ".$subKey." | val -> ".$value."\n<br />";
-                    if (! is_int($subKey)) {
-                        $failureReports[$subKey] = $value;
-                    }
-                }
+                default:
+                    $testTableName = 'none-existent';
             }
 
-            $allFailureReports[] = $failureReports;
-            return $allFailureReports;
+            $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
+            $failureReports = array();
 
-            $stmt->close();
-        } else {
-            return NULL;
-        }
+            if ($stmt->execute()) {
+                $errorReports = $stmt->fetchAll();
 
+                // var_dump($errorReports);
+
+                foreach ($errorReports as $key => $val) {
+                    $currentTestInfo = $this->getTestById( $val['test_id'] );
+
+                    $failureReports['testInfoId'] = $currentTestInfo['id'];
+                    $failureReports['testInfoProperty'] = $currentTestInfo['property'];
+                    $failureReports['testInfoType'] = $currentTestInfo['type'];
+                    $failureReports['testInfoCreated'] = $currentTestInfo['created'];
+
+                    foreach ($val as $subKey => $value) {
+                        // echo "subKey -> ".$subKey." | val -> ".$value."\n<br />";
+                        if (! is_int($subKey)) {
+                            $failureReports[$subKey] = $value;
+                        }
+                    }
+                    $allFailureReports[] = $failureReports;
+                }
+                // var_dump($allFailureReports);
+                return $allFailureReports;
+
+                $stmt->close();
+            } else {
+                return NULL;
+            }
+        // });
+
+        // return $output;
     }
 
     public function getAllStations() {

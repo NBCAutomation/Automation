@@ -66,9 +66,9 @@
 			
 			<?php 
 				$db = new DbHandler();
+				
 				$todayTotalFailures = $db->checkForTestFailuresToday($view);
 				$todayTotalWarnings = $db->checkForTestWarningsToday($view);
-				
 				$todayTotalFailureReports = $db->allFailureReportsFromToday($view);
 			?>
 
@@ -106,7 +106,7 @@
 											<div class="panel-body bk-info text-light">
 												<div class="stat-panel text-center">
 													<div class="stat-panel-number h1 ">58</div>
-													<div class="stat-panel-title text-uppercase">New Orders</div>
+													<div class="stat-panel-title text-uppercase">Total Reports Today</div>
 												</div>
 											</div>
 											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
@@ -117,7 +117,7 @@
 											<div class="panel-body bk-primary text-light">
 												<div class="stat-panel text-center">
 													<div class="stat-panel-number h1 ">18</div>
-													<div class="stat-panel-title text-uppercase">New Comments</div>
+													<div class="stat-panel-title text-uppercase">Errors Yesterday</div>
 												</div>
 											</div>
 											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
@@ -134,6 +134,22 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">Error Reports</div>
 					<div class="panel-body">
+					<?php 
+
+						if ( strpos($view, 'manifest') ) {
+							$testTypeFolder = 'manifest';
+							$tableHeaders = '<th>Status</th><th>CSV</th><th>Property</th><th>ID</th><th>Expected Key</th><th>Expected Value</th><th>Live Key</th><th>Live Value</th><th>Failure</th><th>Test Date/Time</th>';
+							$manifestData = true;
+						} elseif ( strpos($view, 'nav') ) {
+							$testTypeFolder = 'navigation';
+							$tableHeaders = '<th> Status</th><th>Link</th><th>URL</th><th>HTTP Status Code</th><th>Info</th>';
+							$navData = true;
+						} elseif ( strpos($view, 'article') ) {
+							$testTypeFolder = 'article';
+							$tableHeaders = '<th> Status</th><th>Endpoint</th><th>Content ID</th><th>Content Title</th><th>Content Error</th>';
+							$articleData = true;
+						}
+					?>
 						<table border="0" cellspacing="5" cellpadding="5">
 							<tbody>
 								<tr>
@@ -145,44 +161,55 @@
 						<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 							<thead>
 								<tr>
-									<th>Status</th>
-									<th>CSV</th>
-									<th>ID</th>
-									<th>Test ID</th>
-									<th>Property</th>
-									<th>Created</th>
+									<?php echo $tableHeaders; ?>
 								</tr>
 							</thead>
 							<tfoot>
 								<tr>
-									<th>Status</th>
-									<th>CSV</th>
-									<th>ID</th>
-									<th>Test ID</th>
-									<th>Property</th>
-									<th>Created</th>
+									<?php echo $tableHeaders; ?>
 								</tr>
 							</tfoot>
-							<tbody>
+							<tr>
+								<div class="panel-body">
 					<?php
-						if ( strpos($view, 'manifest') ) {
-							$testTypeFolder = 'manifest';
-						} elseif ( strpos($view, 'nav') ) {
-							$testTypeFolder = 'navigation';
-						} elseif ( strpos($view, 'article') ) {
-							$testTypeFolder = 'article';
-						}
-						var_dump($todayTotalFailureReports);
+
+						// echo "todayTotalFailureReports<br />";
+						// var_dump($todayTotalFailureReports);
+
 						
 						foreach ($todayTotalFailureReports as $testReport) {
-							$db = new DbHandler();
-							// $testReportStatus = $db->checkForTestFailures($testReport['id'], $view);
+							// echo $testReport['testInfoId'];
+							echo "<h4>Test Info</h4>";
+							echo "<hr />";
+							echo "<p>testInfoId => " . $testReport['testInfoId']."</p>";
+							echo "<p>testInfoProperty => " . $testReport['testInfoProperty']."</p>";
+							// echo "<p>testInfoType => " . $testReport['testInfoType']."</p>";
+							echo "<p>testInfoCreated => " . $testReport['testInfoCreated']."</p>";
+							echo "<hr />";
+							
+							// echo "<table>";
+							// echo "<tr>";
+								// echo "<td>id => " . $testReport['id']."</td>";
+								// echo "<td>test_id => " . $testReport['test_id']."</td>";
+								// echo "<td>apiVersion => " . $testReport['apiVersion']."</td>";
+							// echo "<td>expected_key => " . $testReport['expected_key']."</td>";
+							// echo "<td>expected_value => " . $testReport['expected_value']."</td>";
+							// echo "<td>live_key => " . $testReport['live_key']."</td>";
+							// echo "<td>live_value => " . $testReport['live_value']."</td>";
+							// echo "<td>status => " . $testReport['status']."</td>";
+							// echo "<td>info => " . $testReport['info']."</td>";
+							// echo "<td>created => " . $testReport['created']."</td>";
+							// echo "</tr>";
+							// echo "</table>";
+
+							// $db = new DbHandler();
+							$testReportStatus = $db->checkForTestFailures($testReport['testInfoId'], $view);
 							$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
 
 							$usersTimezone = new DateTimeZone('America/New_York');
 							$l10nDate = new DateTime($testReportTime);
 							$l10nDate->setTimeZone($usersTimezone);
-							// echo $l10nDate->format('Y-m-d H:i:s');
+							// // echo $l10nDate->format('Y-m-d H:i:s');
 
 
 							$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
@@ -195,15 +222,19 @@
 						    echo '<tr class="report_row_status '.$testReportStatus.'">';
 							    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
 							    echo '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
-							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['id'].'</a></td>';
-							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['test_id'].'</a></td>';
-							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['property'].'.com</a></td>';
-							    // echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReportTime.'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['testInfoProperty'].'.com</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['testInfoId'].'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['expected_key'].'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['expected_value'].'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['live_key'].'.com</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['live_value'].'</a></td>';
+							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$testReport['info'].'</a></td>';
 							    echo '<td><a href="/reports/'.$view.'/record/'.$testReport['id'].'?refID='.$testReport['test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
 			                echo "</tr>";
 						}
-					?>
-							</tbody>
+					?>	
+								</div>
+							</tr>
 						</table>
 					</div>
 				</div>
