@@ -261,13 +261,14 @@ $app->group('/reports', function () {
 		]);
     })->setName('reports-view')->add( new SpireAuth() );
 
+    // Individual Report View
     $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {
     	$db = new DbHandler();
 
     	$permissions = $request->getAttribute('spPermissions');
-var_dump("page " . $args['page']);
+
     	$allPostPutVars = $request->getQueryParams();
-    	$currentRecord = $db->getTestById($args['page']);
+    	$currentRecord = $db->getTestById($allPostPutVars['refID']);
 
     	$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type']);
 
@@ -894,8 +895,6 @@ $app->group('/utils', function () {
 			}
 
 			if ($utilReqParams['testType'] == 'apiManifest') {
-				$db->manifestAuditInsert($testResultsFile);
-
 				if ($db->manifestAuditInsert($testResultsFile)) {
 					echo 'inserted';
 					$this->logger->info("Manifest test results imported");
@@ -922,11 +921,23 @@ $app->group('/utils', function () {
 		// }
     });
 
+
     $this->get('/download', function ($request, $response) {
     	$allPostPutVars = $request->getQueryParams();
 
-		$file = $allPostPutVars['file'];
-		$__tempFile = __DIR__.'/../html/tmp/'.$file;
-		return mhndev\slimFileResponse\FileResponse::getResponse($response, $__tempFile);
+		$refFile = $allPostPutVars['file'];
+		$file = __DIR__.'/../html'.$refFile;
+
+        $response = $response->withHeader('Content-Description', 'File Transfer')
+       ->withHeader('Content-Type', 'application/octet-stream')
+       ->withHeader('Content-Disposition', 'attachment;filename="'.basename($file).'"')
+       ->withHeader('Expires', '0')
+       ->withHeader('Cache-Control', 'must-revalidate')
+       ->withHeader('Pragma', 'public')
+       ->withHeader('Content-Length', filesize($file));
+
+    readfile($file);
+    return $response;
     });
+
 });

@@ -26,8 +26,9 @@
 		"order": [[ 2, "desc" ]],
 		"iDisplayLength": 25
 	});
+
 	 
-	$('#report-table').DataTable({
+	$('.report_data_table').DataTable({
 		"scrollX": true,
 		"iDisplayLength": 100
 	});
