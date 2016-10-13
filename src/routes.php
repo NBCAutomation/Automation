@@ -270,7 +270,9 @@ $app->group('/reports', function () {
     	$allPostPutVars = $request->getQueryParams();
     	$currentRecord = $db->getTestById($allPostPutVars['refID']);
 
-    	$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type']);
+    	$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type'], $args['page']);
+
+    	// var_dump($currentRecordResults);
 
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];

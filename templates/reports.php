@@ -63,10 +63,17 @@
 			<?php 
 				$db = new DbHandler();
 				
-				$todayTotalFailures = $db->checkForTestFailuresToday($view);
-				$todayTotalWarnings = $db->checkForTestWarningsToday($view);
+				$todayReports = $db->getAllTestsFromToday($view);
 				$todayTotalFailureReports = $db->allFailureReportsFromToday($view);
 				$todayTotalWarningReports = $db->allWarningReportsFromToday($view);
+				$yesterdayTotalFailureReports = $db->allFailureReportsFromYesterday($view);
+				$yesterdayTotalWarningReports = $db->allWarningReportsFromToday($view);
+				
+				$todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($view));
+				$todayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromToday($view));				
+
+				$yesterdayTotalErrors = Spire::countDataResults($db->allFailureReportsFromYesterday($view));
+				$yesterdayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromYesterday($view));
 
 				if ( strpos($view, 'manifest') ) {
 					$testTypeFolder = 'manifest';
@@ -84,7 +91,7 @@
 
 			<div class="api_results">
 				<div class="panel panel-default">
-					<div class="panel-heading">Today's Reports</div>
+					<div class="panel-heading">Overview</div>
 					<div class="panel-body">
 						<div class="row">
 							<div class="col-md-12">
@@ -115,8 +122,8 @@
 										<div class="panel panel-default">
 											<div class="panel-body bk-info text-light">
 												<div class="stat-panel text-center">
-													<div class="stat-panel-number h1 ">58</div>
-													<div class="stat-panel-title text-uppercase">Total Reports Today</div>
+													<div class="stat-panel-number h1 "><?php echo $yesterdayTotalErrors; ?></div>
+													<div class="stat-panel-title text-uppercase">Errors Yesterday</div>
 												</div>
 											</div>
 											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
@@ -126,8 +133,8 @@
 										<div class="panel panel-default">
 											<div class="panel-body bk-primary text-light">
 												<div class="stat-panel text-center">
-													<div class="stat-panel-number h1 ">18</div>
-													<div class="stat-panel-title text-uppercase">Errors Yesterday</div>
+													<div class="stat-panel-number h1 "><?php echo $yesterdayTotalWarnings; ?></div>
+													<div class="stat-panel-title text-uppercase">Warnings Yesterday</div>
 												</div>
 											</div>
 											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
@@ -142,11 +149,12 @@
 
 			<div class="api_results">
 				<div class="panel panel-default">
-					<div class="panel-heading">Error Reports &amp; Warnings</div>
+					<div class="panel-heading">Today's Reports</div>
 					<div class="panel-body">
 						<ul class="nav nav-tabs">
 							<li class="active"><a href="#errors_tab" data-toggle="tab" aria-expanded="false">Errors</a></li>
 							<li class=""><a href="#warnings_tab" data-toggle="tab" aria-expanded="true">Warnings</a></li>
+							<li class=""><a href="#all_reports_tab" data-toggle="tab" aria-expanded="true">All</a></li>
 						</ul>
 						<br>
 						<div class="tab-content">
@@ -203,6 +211,35 @@
 								?>
 							</div>
 							<!-- // End warnings tab -->
+							<!-- // All reports tab -->
+							<div class="tab-pane" id="all_reports_tab">
+								<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+									<thead>
+										<tr>
+											<th>Status</th>
+											<th>ID</th>
+											<th>Test ID</th>
+											<th>Property</th>
+											<th>Created</th>
+										</tr>
+									</thead>
+									<tfoot>
+										<tr>
+											<th>Status</th>
+											<th>ID</th>
+											<th>Test ID</th>
+											<th>Property</th>
+											<th>Created</th>
+										</tr>
+									</tfoot>
+									<tr>
+										<div class="panel-body">
+										<?php Spire::returnFormattedDataTable($todayReports[0], 'all', $view); ?>
+										</div>
+									</tr>
+								</table>
+							</div>
+							<!-- // End all reports tab -->
 						</div>
 					</div>
 				</div>
@@ -256,7 +293,7 @@
 
 					foreach ($todayTotalFailureReports as $testReport) {
 						$db = new DbHandler();
-						$testReportStatus = $db->checkForTestFailures($testReport['id'], $view);
+						// $testReportStatus = $db->checkForTestFailures($testReport['id'], $view);
 						$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
 
 						$usersTimezone = new DateTimeZone('America/New_York');
@@ -364,28 +401,28 @@
 				</tfoot>
 				<tbody>
 				<?php
-
+					// var_dump($reportData);
 					foreach ($reportData as $thisReport) {
-					    echo '<tr class="report_row_status '.strtolower($thisReport->status).'">';
-					    echo '<td><div class="report_status '.strtolower($thisReport->status).'">'.$thisReport->status.'</div></td>';
+					    echo '<tr class="report_row_status '.strtolower($thisReport['status']).'">';
+					    echo '<td><div class="report_status '.strtolower($thisReport['status']).'">'.$thisReport['status'].'</div></td>';
 
 					    if ($manifestData) {
-						    echo '<td>'.$thisReport->expected_key.'</td>';
-						    echo '<td>'.$thisReport->expected_value.'</td>';
-						    echo '<td>'.$thisReport->live_key.'</td>';
-						    echo '<td>'.$thisReport->live_value.'</td>';
-						    echo '<td>'.$thisReport->info.'</td>';
-						    echo '<td>'.$thisReport->api_version.'</td>';
+						    echo '<td>'.$thisReport['expected_key'].'</td>';
+						    echo '<td>'.$thisReport['expected_value'].'</td>';
+						    echo '<td>'.$thisReport['live_key'].'</td>';
+						    echo '<td>'.$thisReport['live_value'].'</td>';
+						    echo '<td>'.$thisReport['info'].'</td>';
+						    echo '<td>'.$thisReport['api_version'].'</td>';
 					    } elseif ($navData) {
-						    echo '<td>'.$thisReport->link_name.'</td>';
-						    echo '<td>'.$thisReport->link_url.'</td>';
-						    echo '<td>'.$thisReport->status_code.'</td>';
-						    echo '<td>'.$thisReport->info.'</td>';
+						    echo '<td>'.$thisReport['link_name'].'</td>';
+						    echo '<td>'.$thisReport['link_url'].'</td>';
+						    echo '<td>'.$thisReport['status_code'].'</td>';
+						    echo '<td>'.$thisReport['info'].'</td>';
 					    } elseif ($articleData) {
-						    echo '<td>'.$thisReport->endpoint.'</td>';
-						    echo '<td>'.$thisReport->content_id.'</td>';
-						    echo '<td>'.$thisReport->content_title.'</td>';
-						    echo '<td>'.$thisReport->content_error.'</td>';
+						    echo '<td>'.$thisReport['endpoint'].'</td>';
+						    echo '<td>'.$thisReport['content_id'].'</td>';
+						    echo '<td>'.$thisReport['content_title'].'</td>';
+						    echo '<td>'.$thisReport['content_error'].'</td>';
 					    }
 						    
 		                echo "</tr>";
@@ -445,7 +482,7 @@
 					}
 
 					
-					$testReportStatus = $db->checkForTestFailures($testReport['id'], $testReport['type']);
+					// $testReportStatus = $db->checkForTestFailures($testReport['id'], $testReport['type']);
 
 				    echo '<tr class="report_row_status '.$testReportStatus.'">';
 					    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';

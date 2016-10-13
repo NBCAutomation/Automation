@@ -37,7 +37,7 @@
 	
 	<div class="ts-main-content">
 		<?php if ($user) { ?>
-		<nav class="ts-sidebar">
+		<nav class="ts-sidebar" style="display: none;">
 			<!-- class="open" -->
 			<ul class="ts-sidebar-menu ts-profile-nav">
 				<li class="ts-label">User Menu</li>

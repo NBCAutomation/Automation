@@ -184,24 +184,40 @@ class Spire {
 	    if($modifedTime + intval($expTime) < time()) {
 	        $data = call_user_func($callback);
 
-	        file_put_contents($cacheFile, json_encode($data));
+	        file_put_contents($cacheFile, serialize($data));
 
 	        // var_dump('miss!');
+	        // var_dump($data);
 	    } else {
-	        $data = json_decode(file_get_contents($cacheFile));
-
+	        $data = unserialize(file_get_contents($cacheFile));
 	        // var_dump('hit!');
+	        // var_dump($data);
+	    }
+
+	    if (is_array($data) && count($data) > 0 && is_array($data[0])) {
+	    	foreach ($data as $key => $value) {
+	    		$data[$key] = (object)$value;
+	    	}
 	    }
 
 	    return $data;
 	}
 
-	public static function returnFormattedDataTable($data, $view){
+	public static function returnFormattedDataTable($data, $view, $ref){
+
+		// var_dump($data);
+		// exit();
+
 		$db = new DbHandler();
 
 		foreach ($data as $testReport) {
 
-			$testReportStatus = strtolower($testReport->status);
+			if ( $view == 'all' ) {
+				$testReportStatus = $db->checkForTestFailures($testReport->id, $ref, $view);
+			} else {
+				$testReportStatus = strtolower($testReport->status);
+			}
+
 			$testReportTime = date('n/d/Y, g:i A', strtotime($testReport->created));
 
 			$usersTimezone = new DateTimeZone('America/New_York');
@@ -217,6 +233,7 @@ class Spire {
 
 			} elseif ( strpos($view, 'article') ) {
 		    	$testTypeFolder = 'article';
+			
 			}
 
 
@@ -263,6 +280,13 @@ class Spire {
 	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->content_error.'</a></td>';
 	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->status.'</a></td>';
 	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+		    
+		    } elseif ( $view == 'all' ) {
+		    	$testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport->test_id.'?refID='.$testReport->id.'">'.$testReport->id.'</a></td>';
+		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport->test_id.'?refID='.$testReport->id.'">'.$testReport->test_id.'</a></td>';
+		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport->test_id.'?refID='.$testReport->id.'">'.$testReport->property.'.com</a></td>';
+		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport->test_id.'?refID='.$testReport->id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';	
 		    }
             
             $testReportViewData .= "</tr>";
@@ -270,6 +294,16 @@ class Spire {
             print($testReportViewData);
 		}
 
+	}
+
+	public static function countDataResults($data, $view){
+		$c = 0;
+		foreach ($data as $key => $value) {
+			// echo "key: ".$key." // val: ".$value."\n\n";
+			$c++;
+		}
+
+		return $c;
 	}
 
 }
