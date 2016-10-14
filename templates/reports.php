@@ -10,7 +10,7 @@
 		<h3></h3>
 		
 		<ul>
-			<li>
+			<li style="display: none;">
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<i class="fa fa-folder" aria-hidden="true"></i> 
@@ -56,25 +56,9 @@
 			</li>
 		</ul>
 	<?php } ?>
-	<?php
-		if ($reportsView) {
-	?>
+	<?php if ($reportsView) { ?>
 			
 			<?php 
-				$db = new DbHandler();
-				
-				$todayReports = $db->getAllTestsFromToday($view);
-				$todayTotalFailureReports = $db->allFailureReportsFromToday($view);
-				$todayTotalWarningReports = $db->allWarningReportsFromToday($view);
-				$yesterdayTotalFailureReports = $db->allFailureReportsFromYesterday($view);
-				$yesterdayTotalWarningReports = $db->allWarningReportsFromToday($view);
-				
-				$todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($view));
-				$todayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromToday($view));				
-
-				$yesterdayTotalErrors = Spire::countDataResults($db->allFailureReportsFromYesterday($view));
-				$yesterdayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromYesterday($view));
-
 				if ( strpos($view, 'manifest') ) {
 					$testTypeFolder = 'manifest';
 					$tableHeaders = '<th>Status</th><th>CSV</th><th>Property</th><th>ID</th><th>Expected Key</th><th>Expected Value</th><th>Live Key</th><th>Live Value</th><th>Failure</th><th>Test Date/Time</th>';
@@ -104,40 +88,36 @@
 													<div class="stat-panel-title text-uppercase">Error Reports</div>
 												</div>
 											</div>
-											<a href="#" class="block-anchor panel-footer">See Below</a>
 										</div>
 									</div>
 									<div class="col-md-3">
 										<div class="panel panel-default">
-											<div class="panel-body bk-warning text-light">
+											<div class="panel-body bk-warning-alt text-light">
 												<div class="stat-panel text-center">
 													<div class="stat-panel-number h1 "><?php echo $todayTotalWarnings; ?></div>
 													<div class="stat-panel-title text-uppercase">Warnings</div>
 												</div>
 											</div>
-											<a href="#" class="block-anchor panel-footer text-center">See Below</a>
-										</div>
-									</div>
-									<div class="col-md-3">
-										<div class="panel panel-default">
-											<div class="panel-body bk-info text-light">
-												<div class="stat-panel text-center">
-													<div class="stat-panel-number h1 "><?php echo $yesterdayTotalErrors; ?></div>
-													<div class="stat-panel-title text-uppercase">Errors Yesterday</div>
-												</div>
-											</div>
-											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
 										</div>
 									</div>
 									<div class="col-md-3">
 										<div class="panel panel-default">
 											<div class="panel-body bk-primary text-light">
 												<div class="stat-panel text-center">
+													<div class="stat-panel-number h1 "><?php echo $yesterdayTotalErrors; ?></div>
+													<div class="stat-panel-title text-uppercase">Errors Yesterday</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="panel panel-default">
+											<div class="panel-body bk-info text-light">
+												<div class="stat-panel text-center">
 													<div class="stat-panel-number h1 "><?php echo $yesterdayTotalWarnings; ?></div>
 													<div class="stat-panel-title text-uppercase">Warnings Yesterday</div>
 												</div>
 											</div>
-											<a href="#" class="block-anchor panel-footer text-center">See All &nbsp; <i class="fa fa-arrow-right"></i></a>
 										</div>
 									</div>
 								</div>
@@ -148,75 +128,173 @@
 			</div>
 
 			<div class="api_results">
-				<div class="panel panel-default">
-					<div class="panel-heading">Today's Reports</div>
-					<div class="panel-body">
+				<!-- <div class="panel panel-default"> -->
+					<!-- <div class="panel-body"> -->
 						<ul class="nav nav-tabs">
-							<li class="active"><a href="#errors_tab" data-toggle="tab" aria-expanded="false">Errors</a></li>
-							<li class=""><a href="#warnings_tab" data-toggle="tab" aria-expanded="true">Warnings</a></li>
-							<li class=""><a href="#all_reports_tab" data-toggle="tab" aria-expanded="true">All</a></li>
+							<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Today's Reports</a></li>
+							<li class=""><a href="#yesterday_reports_tab" data-toggle="tab" aria-expanded="true">Yesterday's Reports</a></li>
+							<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
 						</ul>
-						<br>
+						<br />
 						<div class="tab-content">
-							<div class="tab-pane fade active in" id="errors_tab">
-								<?php if ($todayTotalFailureReports) { ?>
-								<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-									<thead>
-										<tr>
-											<?php echo $tableHeaders; ?>
-										</tr>
-									</thead>
-									<tfoot>
-										<tr>
-											<?php echo $tableHeaders; ?>
-										</tr>
-									</tfoot>
-									<tr>
-										<div class="panel-body">
-										<?php Spire::returnFormattedDataTable($todayTotalFailureReports, $view); ?>
+							<div class="tab-pane fade active in" id="today_reports_tab">
+								<div class="panel-body">
+									<ul class="nav nav-tabs">
+										<li class="active"><a href="#errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
+										<li class=""><a href="#warnings_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;Warnings</a></li>
+										<li class=""><a href="#all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
+									</ul>
+									<br>
+									<div class="tab-content">
+										<div class="tab-pane fade active in" id="errors_tab">
+											<?php if ($todayTotalFailureReports) { ?>
+											<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+												<thead>
+													<tr>
+														<?php echo $tableHeaders; ?>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<?php echo $tableHeaders; ?>
+													</tr>
+												</tfoot>
+												<tbody>
+													<?php Spire::returnFormattedDataTable($todayTotalFailureReports, $view); ?>	
+												</tbody>
+											</table>
+											<?php
+												} else {
+													echo "No error reports currently.";
+												}
+											?>
 										</div>
-									</tr>
-								</table>
-								<?php
-									} else {
-										echo "No error reports currently.";
-									}
-								?>
-							</div>
-							<!-- // End errors tab -->
-							<!-- Warnings tab -->
-							<div class="tab-pane" id="warnings_tab">
-								<?php if ($todayTotalWarningReports) { ?>
-								<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-									<thead>
-										<tr>
-											<?php echo $tableHeaders; ?>
-										</tr>
-									</thead>
-									<tfoot>
-										<tr>
-											<?php echo $tableHeaders; ?>
-										</tr>
-									</tfoot>
-									<tr>
-										<div class="panel-body">
-										<?php Spire::returnFormattedDataTable($todayTotalWarningReports, $view); ?>
+										<!-- // End errors tab -->
+										<!-- Warnings tab -->
+										<div class="tab-pane" id="warnings_tab">
+											<?php if ($todayTotalWarningReports) { ?>
+											<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+												<thead>
+													<tr>
+														<?php echo $tableHeaders; ?>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<?php echo $tableHeaders; ?>
+													</tr>
+												</tfoot>
+												<tbody>
+													<?php Spire::returnFormattedDataTable($todayTotalWarningReports, $view); ?>
+												</tbody>
+											</table>
+											<?php
+												} else {
+													echo "No warnings currently.";
+												}
+											?>
 										</div>
-									</tr>
-								</table>
-								<?php
-									} else {
-										echo "No warnings currently.";
-									}
-								?>
+										<!-- // End warnings tab -->
+										<!-- // All reports tab -->
+										<div class="tab-pane" id="all_reports_tab">
+											<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+												<thead>
+													<tr>
+														<th>Status</th>
+														<th>CSV</th>
+														<th>ID</th>
+														<th>Test ID</th>
+														<th>Property</th>
+														<th>Created</th>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<th>Status</th>
+														<th>CSV</th>
+														<th>ID</th>
+														<th>Test ID</th>
+														<th>Property</th>
+														<th>Created</th>
+													</tr>
+												</tfoot>
+												<tbody>
+													<?php Spire::returnFormattedDataTable($todayReports[0], 'all', $view); ?>
+												</tbody>
+											</table>	
+										</div>
+										<!-- // End all reports tab -->
+									</div>
+								</div>
 							</div>
-							<!-- // End warnings tab -->
-							<!-- // All reports tab -->
-							<div class="tab-pane" id="all_reports_tab">
-								<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+							<div class="tab-pane" id="yesterday_reports_tab">
+								<div class="tab-pane fade active in" id="today_reports_tab">
+									<div class="panel-body">
+										<ul class="nav nav-tabs">
+											<li class="active"><a href="#yesterday_errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
+											<li class=""><a href="#yesterday_warnings_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;Warnings</a></li>
+										</ul>
+										<br>
+										<div class="tab-content">
+											<div class="tab-pane fade active in" id="yesterday_errors_tab">
+												<?php if ($todayTotalFailureReports) { ?>
+												<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+													<thead>
+														<tr>
+															<?php echo $tableHeaders; ?>
+														</tr>
+													</thead>
+													<tfoot>
+														<tr>
+															<?php echo $tableHeaders; ?>
+														</tr>
+													</tfoot>
+													<tbody>
+														<?php Spire::returnFormattedDataTable($yesterdayTotalFailureReports, $view); ?>	
+													</tbody>
+												</table>
+												<?php
+													} else {
+														echo "No error reports currently.";
+													}
+												?>
+											</div>
+											<!-- // End errors tab -->
+											<!-- Warnings tab -->
+											<div class="tab-pane" id="yesterday_warnings_tab">
+												<?php if ($todayTotalWarningReports) { ?>
+												<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+													<thead>
+														<tr>
+															<?php echo $tableHeaders; ?>
+														</tr>
+													</thead>
+													<tfoot>
+														<tr>
+															<?php echo $tableHeaders; ?>
+														</tr>
+													</tfoot>
+													<tbody>
+														<?php Spire::returnFormattedDataTable($yesterdayTotalWarningReports, $view); ?>
+													</tbody>
+												</table>
+												<?php
+													} else {
+														echo "No warnings currently.";
+													}
+												?>
+											</div>
+											<!-- // End warnings tab -->
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane" id="alltime_reports_tab">
+								<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 									<thead>
 										<tr>
 											<th>Status</th>
+											<th>CSV</th>
 											<th>ID</th>
 											<th>Test ID</th>
 											<th>Property</th>
@@ -226,23 +304,21 @@
 									<tfoot>
 										<tr>
 											<th>Status</th>
+											<th>CSV</th>
 											<th>ID</th>
 											<th>Test ID</th>
 											<th>Property</th>
 											<th>Created</th>
 										</tr>
 									</tfoot>
-									<tr>
-										<div class="panel-body">
-										<?php Spire::returnFormattedDataTable($todayReports[0], 'all', $view); ?>
-										</div>
-									</tr>
+									<tbody>
+										<?php Spire::returnFormattedDataTable($allReports[0], 'all', $view); ?>
+									</tbody>
 								</table>
 							</div>
-							<!-- // End all reports tab -->
-						</div>
-					</div>
-				</div>
+						</div>					
+					<!-- </div>					 -->
+				<!-- </div> -->
 			</div>
 		<?php
 		} ?>
@@ -342,7 +418,7 @@
 			        break;
 
 			    case "apiCheck-nav":
-			        $tableHeaders = '<th> Status</th><th>Link</th><th>URL</th><th>HTTP Status Code</th><th>Info</th>';
+			        $tableHeaders = '<th> Status</th><th>Link</th><th>URL (click to open)</th><th>HTTP Status Code</th><th>Info</th>';
 			        $navData = true;
 			        $testTypeFolder = 'navigation';
 			        break;
@@ -403,26 +479,27 @@
 				<?php
 					// var_dump($reportData);
 					foreach ($reportData as $thisReport) {
-					    echo '<tr class="report_row_status '.strtolower($thisReport['status']).'">';
-					    echo '<td><div class="report_status '.strtolower($thisReport['status']).'">'.$thisReport['status'].'</div></td>';
+
+					    echo '<tr class="report_row_status '.strtolower($thisReport->status).'">';
+					    echo '<td><div class="report_status '.strtolower($thisReport->status).'">'.$thisReport->status.'</div></td>';
 
 					    if ($manifestData) {
-						    echo '<td>'.$thisReport['expected_key'].'</td>';
-						    echo '<td>'.$thisReport['expected_value'].'</td>';
-						    echo '<td>'.$thisReport['live_key'].'</td>';
-						    echo '<td>'.$thisReport['live_value'].'</td>';
-						    echo '<td>'.$thisReport['info'].'</td>';
-						    echo '<td>'.$thisReport['api_version'].'</td>';
+						    echo '<td>'.$thisReport->expected_key.'</td>';
+						    echo '<td>'.$thisReport->expected_value.'</td>';
+						    echo '<td>'.$thisReport->live_key.'</td>';
+						    echo '<td>'.$thisReport->live_value.'</td>';
+						    echo '<td>'.$thisReport->info.'</td>';
+						    echo '<td>'.$thisReport->api_version.'</td>';
 					    } elseif ($navData) {
-						    echo '<td>'.$thisReport['link_name'].'</td>';
-						    echo '<td>'.$thisReport['link_url'].'</td>';
-						    echo '<td>'.$thisReport['status_code'].'</td>';
-						    echo '<td>'.$thisReport['info'].'</td>';
+						    echo '<td>'.$thisReport->link_name.'</td>';
+						    echo '<td><a href="'.$thisReport->link_url.'" target="_blank">'.$thisReport->link_url.'</a></td>';
+						    echo '<td>'.$thisReport->status_code.'</td>';
+						    echo '<td>'.$thisReport->info.'</td>';
 					    } elseif ($articleData) {
-						    echo '<td>'.$thisReport['endpoint'].'</td>';
-						    echo '<td>'.$thisReport['content_id'].'</td>';
-						    echo '<td>'.$thisReport['content_title'].'</td>';
-						    echo '<td>'.$thisReport['content_error'].'</td>';
+						    echo '<td>'.$thisReport->endpoint.'</td>';
+						    echo '<td>'.$thisReport->content_id.'</td>';
+						    echo '<td>'.$thisReport->content_title.'</td>';
+						    echo '<td>'.$thisReport->content_error.'</td>';
 					    }
 						    
 		                echo "</tr>";

@@ -213,36 +213,50 @@ class Spire {
 		foreach ($data as $testReport) {
 
 			if ( $view == 'all' ) {
-				$testReportStatus = $db->checkForTestFailures($testReport->id, $ref, $view);
+				if ( strpos($ref, 'manifest') ) {
+			    	$testTypeFolder = 'manifest';
+
+		    	} elseif ( strpos($ref, 'nav') ) {
+			    	$testTypeFolder = 'navigation';
+
+				} elseif ( strpos($ref, 'article') ) {
+			    	$testTypeFolder = 'article';
+				
+				}
+
+				$testReportStatus = $db->checkForTestFailures($testReport['id'], $ref, $view);
+				$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
+
+				$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
+				$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport['created']));
+				$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
+
 			} else {
+				if ( strpos($view, 'manifest') ) {
+			    	$testTypeFolder = 'manifest';
+
+		    	} elseif ( strpos($view, 'nav') ) {
+			    	$testTypeFolder = 'navigation';
+
+				} elseif ( strpos($view, 'article') ) {
+			    	$testTypeFolder = 'article';
+				
+				}
+
 				$testReportStatus = strtolower($testReport->status);
+				$testReportTime = date('n/d/Y, g:i A', strtotime($testReport->created));
+
+				$reportCSVDate =  date('n_j_Y', strtotime($testReport->created));
+				$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport->created));
+				$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport->testInfoProperty.'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
 			}
 
-			$testReportTime = date('n/d/Y, g:i A', strtotime($testReport->created));
+			$fileLocation = urlencode($reportCSVFile);
 
 			$usersTimezone = new DateTimeZone('America/New_York');
 			$l10nDate = new DateTime($testReportTime);
 			$l10nDate->setTimeZone($usersTimezone);
-			// echo $l10nDate->format('Y-m-d H:i:s');
-
-			if ( strpos($view, 'manifest') ) {
-		    	$testTypeFolder = 'manifest';
-
-	    	} elseif ( strpos($view, 'nav') ) {
-		    	$testTypeFolder = 'navigation';
-
-			} elseif ( strpos($view, 'article') ) {
-		    	$testTypeFolder = 'article';
-			
-			}
-
-
-			$reportCSVDate =  date('n_j_Y', strtotime($testReport->created));
-			$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport->created));
-
-			$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport->testInfoProperty.'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
-
-			$fileLocation = urlencode($reportCSVFile);
+			// echo $l10nDate->format('Y-m-d H:i:s')."<br />";
 
 		    $testReportViewData = '<tr class="report_row_status '.$testReportStatus.'">';
 
@@ -283,10 +297,11 @@ class Spire {
 		    
 		    } elseif ( $view == 'all' ) {
 		    	$testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport->test_id.'?refID='.$testReport->id.'">'.$testReport->id.'</a></td>';
-		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport->test_id.'?refID='.$testReport->id.'">'.$testReport->test_id.'</a></td>';
-		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport->test_id.'?refID='.$testReport->id.'">'.$testReport->property.'.com</a></td>';
-		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport->test_id.'?refID='.$testReport->id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';	
+		    	$testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['id'].'</a></td>';
+		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['test_id'].'</a></td>';
+		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['property'].'.com</a></td>';
+		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';	
 		    }
             
             $testReportViewData .= "</tr>";
