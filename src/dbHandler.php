@@ -375,7 +375,7 @@ class DbHandler {
         $db_con = Spire::getConnection();
 
         // print_r($resultsFile);
-        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status, info)";
+        $uploadQuery = "LOAD DATA INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status, info)";
 
         $stmt = $db_con->query($uploadQuery);
 
@@ -393,7 +393,7 @@ class DbHandler {
         $db_con = Spire::getConnection();
 
         // print_r($resultsFile);
-        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE article_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, endpoint, content_id, content_title, content_error, status)";
+        $uploadQuery = "LOAD DATA INFILE '".$resultsFile."' INTO TABLE article_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, endpoint, content_id, content_title, content_error, status)";
 
         if ( !($stmt = $db_con->query($uploadQuery)) ) {
             // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
@@ -407,8 +407,9 @@ class DbHandler {
         $db_con = Spire::getConnection();
 
         // print_r($resultsFile);
-        $uploadQuery = "LOAD DATA LOCAL INFILE '".$resultsFile."' INTO TABLE manifest_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, apiVersion, expected_key, expected_value, live_key, live_value, status, info)";
+        $uploadQuery = "LOAD DATA INFILE '".$resultsFile."' INTO TABLE manifest_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, apiVersion, expected_key, expected_value, live_key, live_value, status, info)";
 
+        // if ( !($stmt = $db_con->query($uploadQuery)) ) {
         if ( !($stmt = $db_con->query($uploadQuery)) ) {
             // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
             return 0;
