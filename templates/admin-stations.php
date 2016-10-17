@@ -1,34 +1,24 @@
 <?php include_once 'base/header.php'; ?>
 	<div class="panel-body">
-	<?php if ($stationsView){ ?>
+	<?php
+		$tableHeaders = '<th><i class="fa fa-cog"></i></th><th>ID</th><th>Call Letters</th><th>Brand</th><th>Shortname</th><th>URL</th><th>Group</th><th>API Ver.</th>';
+
+		if ($stationsView){
+	?>
 		<table id="stations-table" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 			<thead>
 				<tr>
-					<th><i class="fa fa-cog"></i></th>
-					<th>ID</th>
-					<th>Call Letters</th>
-					<th>Brand</th>
-					<th>Shortname</th>
-					<th>URL</th>
-					<th>Group</th>
-					<th>API Ver.</th>
+					<?php echo $tableHeaders; ?>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-					<th><i class="fa fa-cog"></i></th>
-					<th>ID</th>
-					<th>Call Letters</th>
-					<th>Brand</th>
-					<th>Shortname</th>
-					<th>URL</th>
-					<th>Group</th>
-					<th>API Ver.</th>
+					<?php echo $tableHeaders; ?>
 				</tr>
 			</tfoot>
 			<tbody>
 			<?php
-				foreach ($stations as $stationProperty) {
+				foreach ($stations[0] as $stationProperty) {
 					
 				    echo '<tr class="report_row">';
 				    	echo '<td><a href="/admin/stations/update/'.$stationProperty['id'].'?brand='.$stationProperty['shortname'].'"><i class="fa fa-cog" style="font-size:20px;"></i></a></td>';
@@ -47,7 +37,7 @@
 	
 	<?php } elseif ($stationEditView) { ?>
 		<div id="station_update_panel" class="panel-body">
-			<h4>Editing: <?php echo $editingStation['brand']; ?></h4>
+			<h4>Editing: <?php echo $editingStation->brand; ?></h4>
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<div class="table-responsive">
@@ -67,12 +57,12 @@
 								</div>
 							<?php } ?>
 						<?php } ?>
-						<form action="/admin/stations/update/<?php echo $editingStation['id']; ?>" method="post" id="user_main_entry_form" class="mt">
+						<form action="/admin/stations/update/<?php echo $editingStation->id; ?>" method="post" id="user_main_entry_form" class="mt">
 							<table class="table table-bordered table">
 								<tbody>
 									<tr>
 										<td>
-											<h3><?php echo $editingStation['brand']; ?></h3>
+											<h3><?php echo $editingStation->brand; ?></h3>
 										</td>
 									</tr>
 									<tr>
@@ -80,8 +70,8 @@
 											<div class="form_field">
 												<label class="text">Status:</label>
 												<select name="u_status" class="form_select">
-													<option value="1" <?php echo ($editingStation['status'] === 1 ? 'selected="selected"' : ''); ?>>Active</option>
-													<option value="0" <?php echo ($editingStation['status'] === 0 ? 'selected="selected"' : ''); ?>>Disabled</option>
+													<option value="1" <?php echo ($editingStation->status === 1 ? 'selected="selected"' : ''); ?>>Active</option>
+													<option value="0" <?php echo ($editingStation->status === 0 ? 'selected="selected"' : ''); ?>>Disabled</option>
 												</select>
 												<div class="clear"></div>
 											</div>
@@ -126,10 +116,10 @@
 										</td>
 									</tr>
 									<tr>
-										<td><b>URL</b>: <?php echo $editingStation['url']; ?></td>
+										<td><b>URL</b>: <?php echo $editingStation->url; ?></td>
 									</tr>
 									<tr>
-										<td><b>Shortname</b>: <?php echo $editingStation['shortname']; ?></td>
+										<td><b>Shortname</b>: <?php echo $editingStation->shortname; ?></td>
 									</tr>
 									<tr>
 										<td>

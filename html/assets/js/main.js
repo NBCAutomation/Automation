@@ -27,7 +27,8 @@
 		"iDisplayLength": 25
 	});
 
-	 
+ 	$('.data_table').DataTable();
+
 	$('.report_data_table').DataTable({
 		"scrollX": true,
 		"iDisplayLength": 100

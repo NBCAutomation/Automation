@@ -149,3 +149,24 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 .api_results .report_status.warn {
 	background: orange;
 }
+
+.nav-tabs>li>a {
+	border-color: #ddd;
+}
+
+.panel-body .api_results .nav.nav-tabs li {
+	padding-left: 0px;
+}
+
+.nav-tabs>li>a {
+    background-color: #f8f5f0;
+    border-color: #dfd7ca;
+    color: #98978b;
+}
+
+.tab-content .nav-tabs>li.active>a,
+.tab-content .nav-tabs>li.active>a:focus,
+.tab-content .nav-tabs>li.active>a:hover {
+	background-color: #325d88;
+	color: #fff;
+}

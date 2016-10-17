@@ -531,8 +531,8 @@ class DbHandler {
 
                 $apiTestsArray[] = $tests;
 
+                $stmt->closeCursor();
                 return $apiTestsArray;
-                $stmt->close();
             } else {
                 return NULL;
             }
@@ -572,93 +572,53 @@ class DbHandler {
     }
 
     public function getAllTestByType($testType) {
-        
-        switch ($testType) {
-            
-            case "api_manifest_audits":
-                $testTypeName = 'apiCheck-manifest';
-                break;
+        $output = Spire::spireCache('getAllTestByType_'.$testType, 21600, function() use ($testType) {
+            $db_con = Spire::getConnection();
 
-            case "api_navigation_audits":
-                $testTypeName = 'apiCheck-nav';
-                break;
-
-            case "api_article_audits":
-                $testTypeName = 'apiCheck-article';
-                break;
-            default:
-                $testTypeName = 'none-existent';
-        }
-
-        $stmt = $db_con->prepare("SELECT * FROM tests WHERE type = ?");
-        $stmt->bind_param("s", $testTypeName);
-        
-        $tests = array();
-
-        if ($stmt->execute()) {
-            $stmt->bind_result($test->id, $test->test_id, $test->property, $test->type, $test->created);
-
-            while (mysqli_stmt_fetch($stmt)){
+            switch ($testType) {
                 
-                foreach( $test as $key => $value ){
+                case "api_manifest_audits":
+                    $testTypeName = 'apiCheck-manifest';
+                    break;
+
+                case "api_navigation_audits":
+                    $testTypeName = 'apiCheck-nav';
+                    break;
+
+                case "api_article_audits":
+                    $testTypeName = 'apiCheck-article';
+                    break;
+                default:
+                    $testTypeName = 'none-existent';
+            }
+
+            $stmt = $db_con->prepare("SELECT * FROM tests WHERE type = ?");
+            $stmt->execute(array($testTypeName));
+            
+            $tests = array();
+
+            if ($stmt->execute()) {
+                
+                $results = $stmt->fetchAll();
+                    
+                foreach( $results as $key => $value ){
                     $tests[$key] = $value;
                 }
 
                 $apiTestsArray[] = $tests;
+
+                $stmt->closeCursor();
+                return $apiTestsArray;
+            } else {
+                return NULL;
             }
+        });
 
-            $stmt->close();
-            return $apiTestsArray;
-        } else {
-            return NULL;
-        }
+        return $output;
     }
-
-    public function getCurrentTestsByTypeForToday($testType) {
-        $db_con = Spire::getConnection();
-
-        switch ($testType) {
-            case "api_manifest_audits":
-                $testTypeName = 'apiCheck-manifest';
-                break;
-
-            case "api_navigation_audits":
-                $testTypeName = 'apiCheck-nav';
-                break;
-
-            case "api_article_audits":
-                $testTypeName = 'apiCheck-article';
-                break;
-            default:
-                $testTypeName = 'none-existent';
-        }
-
-        $stmt = $db_con->prepare("SELECT * FROM tests WHERE created >= NOW() - INTERVAL 6 HOUR AND type = ?");
-        $testResults = $stmt->execute(array($testTypeName));
-        
-        $tests = array();
-        $allTestData = $stmt->fetchAll();
-
-        var_dump($allTestData);
-
-        if ($testResults) {
-
-            foreach( $allTestData as $key => $value ){
-                $tests[$key] = $value;
-            }
-
-            $apiTestsArray[] = $tests;
-
-            return $apiTestsArray;
-            $stmt->close();
-        } else {
-            return NULL;
-        }
-    }
-
 
     public function getCurrentTestResults($testID, $testType, $refId) {
-        $output = Spire::spireCache('getCurrentTestResults_'.$testType.'-'.$refId.'_'.$testID, 0, function() use ($testID, $testType) {
+        $output = Spire::spireCache('getCurrentTestResults_'.$testType.'-'.$refId.'_'.$testID, 9000, function() use ($testID, $testType) {
             $db_con = Spire::getConnection();
 
             switch ($testType) {
@@ -692,32 +652,7 @@ class DbHandler {
 
 
             $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE test_id = ".$testID);
-            
-            // $tests = array();
-
-            // if ($stmt->execute()) {
-
-            //     $results = $stmt->fetchAll();
-
-            //     foreach ($results as $key => $val) {
-
-            //         foreach ($val as $subKey => $value) {
-            //             // echo "subKey -> ".$subKey." | val -> ".$value."\n<br />";
-            //             if (! is_int($subKey)) {
-            //                 $tests[$subKey] = $value;
-            //             }
-            //         }
-
-            //         $apiTestsArray[] = $tests;
-            //     }
-                
-            //     return $apiTestsArray;
-            //     // var_dump($apiTestsArray);
-            //     $stmt->close();
-            // } else {
-            //     return NULL;
-            // }
-            
+                        
             $failureReports = array();
 
             if ($stmt->execute()) {
@@ -736,23 +671,21 @@ class DbHandler {
                     $allFailureReports[] = $failureReports;
                 }
                 
+                $stmt->closeCursor();
                 return $allFailureReports;
-
-                $stmt->close();
             } else {
                 return NULL;
             }
 
         });
 
-        // var_dump($output);
         return $output;
     }
 
 
     public function checkForTestFailures($testID, $testResultsTable, $refId) {
         $output = Spire::spireCache('checkForTestFailures_'.$testResultsTable.'-'.$refId.'-'.$testID, 21600, function() use ($testID, $testResultsTable) {
-        
+
             $db_con = Spire::getConnection();
             
             switch ($testResultsTable) {
@@ -784,16 +717,16 @@ class DbHandler {
                 default:
                     $testTableName = 'none-existent';
             }
-
             
-            // $stmt = $db_con->prepare("SELECT COUNT(*) AS totalFailures FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
-            $stmt = $db_con->prepare("SELECT COUNT(*) AS totalFailures FROM ? WHERE test_id = ? AND status = 'Fail'");
+            $stmt = $db_con->prepare("SELECT COUNT(*) AS totalFailures FROM ".$testTableName." WHERE test_id = ".$testID." AND status = 'Fail'");
+            
+            if ($stmt->execute()) {
 
-            if ($stmt->execute($testTableName, $testID)) {
                 $errorCount = $stmt->fetch();
 
                 $totalFailures = $errorCount[0]['totalFailures'];
-                    
+                $stmt->closeCursor();
+
                 if ($totalFailures > 0) {
                     return 'fail';
                     // echo 'fail';
@@ -801,8 +734,6 @@ class DbHandler {
                     return 'pass';
                     // echo 'pass';
                 }
-
-                $stmt->close();
             } else {
                 return NULL;
             }
@@ -869,10 +800,9 @@ class DbHandler {
                     }
                     $allFailureReports[] = $failureReports;
                 }
+                $stmt->closeCursor();
                 // var_dump($allFailureReports);
                 return $allFailureReports;
-
-                $stmt->close();
             } else {
                 return NULL;
             }
@@ -941,10 +871,10 @@ class DbHandler {
                     }
                     $allFailureReports[] = $failureReports;
                 }
+
+                $stmt->closeCursor();
                 // var_dump($allFailureReports);
                 return $allFailureReports;
-
-                $stmt->close();
             } else {
                 return NULL;
             }
@@ -1012,10 +942,11 @@ class DbHandler {
                     }
                     $allFailureReports[] = $failureReports;
                 }
+                
+                $stmt->closeCursor();
+
                 // var_dump($allFailureReports);
                 return $allFailureReports;
-
-                $stmt->close();
             } else {
                 return NULL;
             }
@@ -1084,10 +1015,11 @@ class DbHandler {
                     }
                     $allFailureReports[] = $failureReports;
                 }
+                
+                $stmt->closeCursor();
+
                 // var_dump($allFailureReports);
                 return $allFailureReports;
-
-                $stmt->close();
             } else {
                 return NULL;
             }
@@ -1097,55 +1029,53 @@ class DbHandler {
     }
 
     public function getAllStations() {
-        $stmt = $db_con->prepare("SELECT * FROM stations");
-        $stmt->execute();
-        $stations = array();
+        $output = Spire::spireCache('getAllStations', 86400, function() {
+            
+            $db_con = Spire::getConnection();
 
-        if ($stmt->execute()) {
-            $stmt->bind_result($station->id, $station->call_letters, $station->brand, $station->shortname, $station->url, $station->group, $station->api_version);
+            $stmt = $db_con->prepare("SELECT * FROM stations");
+            $stations = array();
 
-            while (mysqli_stmt_fetch($stmt)){
-                
-                foreach( $station as $key => $value ){
+            if ($stmt->execute()) {
+                $stationData = $stmt->fetchAll();
+                    
+                foreach( $stationData as $key => $value ){
                     $stations[$key] = $value;
                 }
 
                 $stationsArray[] = $stations;
-            }
 
-            $stmt->close();
-            return $stationsArray;
-        } else {
-            return NULL;
-        }
+                $stmt->closeCursor();
+                return $stationsArray;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
     }
 
     public function getStationById($stationID) {
-        $stmt = $db_con->prepare("SELECT * FROM stations WHERE id = ?");
-        $stmt->bind_param("i", $stationID);
+        $output = Spire::spireCache('getStationById_'.$stationID, 86400, function() use ($stationID) {
+            $db_con = Spire::getConnection();
 
-        $station = array();
+            $stmt = $db_con->prepare("SELECT * FROM stations WHERE id = ".$stationID);
+            
+            $station = array();
 
-        if ($stmt->execute()) {
-            $stmt->bind_result($id, $call_letters, $brand, $shortname, $url, $group, $api_version);
+            if ($stmt->execute()) {
 
-            /* fetch values */
-            mysqli_stmt_fetch($stmt);
+                /* fetch values */
+                $stationData = $stmt->fetchAll();
+                $stmt->closeCursor();
+                return $stationData;
+            } else {
+                return NULL;
+            }
+        });
 
-            /* set values */
-            $station['id'] = $id;
-            $station['call_letters'] = $call_letters;
-            $station['brand'] = $brand;
-            $station['shortname'] = $shortname;
-            $station['url'] = $url;
-            $station['group'] = $group;
-            $station['api_version'] = $api_version;
-
-            $stmt->close();
-            return $station;
-        } else {
-            return NULL;
-        }
+        return $output;
     }
 
 }
