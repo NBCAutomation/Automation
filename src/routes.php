@@ -166,7 +166,6 @@ $app->group('/reports', function () {
 
 		if (! $mainView) {
 			// Reporting Data
-			// $allReports = $db->getAllTestByType($args['view']	);
 			$todayReports = $db->getAllTestsFromToday($args['view']);
 
 			$todayTotalFailureReports = $db->allFailureReportsFromToday($args['view']);
@@ -212,6 +211,38 @@ $app->group('/reports', function () {
 	        'uAthMessage' => $permissions['uAthMessage']
         ]);
     })->setName('directory-reports-view')->add( new SpireAuth() );
+
+    
+    // All reports view
+    $this->get('/{view}/{subView}', function ($request, $response, $args) {
+    	$db = new DbHandler();
+
+    	$permissions = $request->getAttribute('spPermissions');
+
+    	$allPostPutVars = $request->getQueryParams();
+    	// Reporting Data
+    	$allReports = $db->getAllTestByType($args['view']);
+
+		// View path
+		$__viewPath = $args['view']."/".$args['subView'];
+
+		// Report View
+		return $this->renderer->render($response, 'reports.php', [
+		    'title' => ' All Reports',
+		    'page_name' => 'reports',
+		    'view' => 'all',
+		    'viewPath' => $args['view'],
+		    'allView' => true,
+		    'reportClass' => true,
+		    'reportData' => $allReports,
+		    
+		    //Auth Specific
+		    'user' => $request->getAttribute('spAuth'),
+	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
+	        'uAthMessage' => $permissions['uAthMessage']
+		]);
+    })->setName('report-subview')->add( new SpireAuth() );
 
     // Report View
     $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {

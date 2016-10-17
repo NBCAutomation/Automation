@@ -508,7 +508,7 @@
 				</tbody>
 			</table>
 		<?php } ?>
-	</div>
+		</div>
 	<?php if ($overView) { ?>
 		<h3>Overview</h3>
 		<p></p>
@@ -572,6 +572,71 @@
 			</tbody>
 		</table>
 
+	<?php } ?>
+	<?php
+		if ($allView) {
+			$db = new DbHandler();
+
+			switch ($viewType) {
+			    
+			    case "apiCheck-manifest":
+			        $tableHeaders = '<th>Status</th><th>Expected Key</th><th>Expected Value</th><th>Live Key</th><th>Live Value</th><th>Info</th><th>API Version</th>';
+			        $manifestData = true;
+			        $testTypeFolder = 'manifest';
+			        break;
+
+			    case "apiCheck-nav":
+			        $tableHeaders = '<th> Status</th><th>Link</th><th>URL (click to open)</th><th>HTTP Status Code</th><th>Info</th>';
+			        $navData = true;
+			        $testTypeFolder = 'navigation';
+			        break;
+
+			    default:
+			        $tableHeaders = '<th> Status</th><th>Endpoint</th><th>Content ID</th><th>Content Title</th><th>Content Error</th>';
+			        $articleData = true;
+			        $testTypeFolder = 'article';
+			}
+
+			$testReportTime = date('n/d/Y, g:i A', strtotime($reportPropertyData['created']));
+
+			$usersTimezone = new DateTimeZone('America/New_York');
+			$l10nDate = new DateTime($testReportTime);
+			$l10nDate->setTimeZone($usersTimezone);
+
+			$reportCSVDate =  date('n_j_Y', strtotime($reportPropertyData['created']));
+			$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($reportPropertyData['created']));
+
+			$reportCSVFile = '/test_results/'.$viewPath.'/'.$reportCSVDate.'/'.$reportPropertyData['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
+
+			$fileLocation = urlencode($reportCSVFile);
+	?>
+		<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+			<thead>
+				<tr>
+					<th>Status</th>
+					<th>CSV</th>
+					<th>ID</th>
+					<th>Test ID</th>
+					<th>Property</th>
+					<th>Created</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>Status</th>
+					<th>CSV</th>
+					<th>ID</th>
+					<th>Test ID</th>
+					<th>Property</th>
+					<th>Created</th>
+				</tr>
+			</tfoot>
+			<tbody>
+				<?php 
+				var_dump($reportData);
+				// Spire::returnFormattedDataTable($reportData[0], 'all', $viewPath); ?>
+			</tbody>
+		</table>	
 	<?php } ?>
 	</div><!-- panel-body api_results -->
 
