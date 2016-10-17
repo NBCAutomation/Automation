@@ -166,7 +166,7 @@ $app->group('/reports', function () {
 
 		if (! $mainView) {
 			// Reporting Data
-			$allReports = $db->getAllTestByType($args['view']	);
+			// $allReports = $db->getAllTestByType($args['view']	);
 			$todayReports = $db->getAllTestsFromToday($args['view']);
 
 			$todayTotalFailureReports = $db->allFailureReportsFromToday($args['view']);
