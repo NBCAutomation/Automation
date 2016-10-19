@@ -149,6 +149,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     apiSuite.prototype.createTestID = function(url, type, stationProperty) {
 
         var suite = this;
+        var testResultFileLocation = encodeURIComponent(save);
 
         // require('utils').dump( current );
         var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty + '&fileLoc=' + testResultFileLocation;

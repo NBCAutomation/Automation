@@ -129,6 +129,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
     apiSuite.prototype.createTestID = function(url, type, stationProperty) {
 
         var suite = this;
+        var testResultFileLocation = encodeURIComponent(save);
 
         // require('utils').dump( current );
         if (logResults) {
