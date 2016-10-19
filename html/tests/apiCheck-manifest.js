@@ -151,7 +151,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var suite = this;
 
         // require('utils').dump( current );
-        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty;
+        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty + '&fileLoc=' + testResultFileLocation;
 
         if (!logResults){
             suite.getContent(url, type, 'xx');

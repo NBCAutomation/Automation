@@ -104,7 +104,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             if ( response.status == 200 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
 
-                suite.createTestID(url, type, urlUri);
+                suite.createTestID(url, type, urlUri, save);
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
@@ -121,12 +121,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     // Create test id in DB
-    apiSuite.prototype.createTestID = function(url, type, stationProperty) {
+    apiSuite.prototype.createTestID = function(url, type, stationProperty, fileLocation) {
 
         var suite = this;
+        var testResultFileLocation = encodeURIComponent(save);
 
-        // require('utils').dump( current );
-        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty;
+        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty + '&fileLoc=' + testResultFileLocation;
 
         if (!logResults){
             suite.getContent(url, type, 'xx');

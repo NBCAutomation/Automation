@@ -833,6 +833,7 @@ $app->group('/utils', function () {
 		$stationProperty = $utilReqParams['property'];
 		
 		$testType = $utilReqParams['testscript'];
+		$testResultsFile = $utilReqParams['fileLoc'];
 		
 		if ($utilReqParams['task'] == 'generate'){
 			$createTestID = true;
@@ -844,7 +845,7 @@ $app->group('/utils', function () {
 
 		if ($createTestID) {
 			// Create test ID
-			$thisID = $db->createTestID($randTestID, $stationProperty, $testType);
+			$thisID = $db->createTestID($randTestID, $stationProperty, $testType, $testResultsFile);
 
 			if ($thisID != NULL) {
 				echo $thisID;
@@ -853,7 +854,6 @@ $app->group('/utils', function () {
 			}	
 		} elseif ($uploadResultsFile) {
 			// Updload results file
-			$testResultsFile = $utilReqParams['fileLoc'];
 
 			echo "...importing csv to db<br />";
 

@@ -341,11 +341,11 @@ class DbHandler {
      * Creating Test ID
      */
     
-    public function createTestID($testID, $stationProperty, $testType) {
+    public function createTestID($testID, $stationProperty, $testType, $testResultsFile) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("INSERT INTO tests(test_id, property, type) VALUES(?, ?, ?)");
-        $stmtStatus = $stmt->execute(array($testID, $stationProperty, $testType));
+        $stmt = $db_con->prepare("INSERT INTO tests(test_id, property, type, results_csv) VALUES(?, ?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($testID, $stationProperty, $testType, $testResultsFile));
 
         if ($stmtStatus) {
             // task row created

@@ -132,7 +132,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
 
         // require('utils').dump( current );
         if (logResults) {
-            var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-article&property=' + stationProperty;
+            var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-article&property=' + stationProperty + '&fileLoc=' + testResultFileLocation;
         }
         
         if (!logResults){
