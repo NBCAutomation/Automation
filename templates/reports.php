@@ -7,8 +7,6 @@
 	<div class="panel-body api_results">
 	<?php if ($mainView) {
 		?>
-		<h3></h3>
-		
 		<ul>
 			<li style="display: none;">
 				<div class="panel panel-default">
@@ -233,11 +231,12 @@
 										<ul class="nav nav-tabs">
 											<li class="active"><a href="#yesterday_errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
 											<li class=""><a href="#yesterday_warnings_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;Warnings</a></li>
+											<li class=""><a href="#yesterday_all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
 										</ul>
 										<br>
 										<div class="tab-content">
 											<div class="tab-pane fade active in" id="yesterday_errors_tab">
-												<?php if ($todayTotalFailureReports) { ?>
+												<?php if ($yesterdayTotalFailureReports) { ?>
 												<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 													<thead>
 														<tr>
@@ -262,7 +261,7 @@
 											<!-- // End errors tab -->
 											<!-- Warnings tab -->
 											<div class="tab-pane" id="yesterday_warnings_tab">
-												<?php if ($todayTotalWarningReports) { ?>
+												<?php if ($yesterdayTotalWarningReports) { ?>
 												<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 													<thead>
 														<tr>
@@ -285,36 +284,44 @@
 												?>
 											</div>
 											<!-- // End warnings tab -->
+											<!-- // All reports tab -->
+											<div class="tab-pane" id="all_reports_tab">
+												<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+													<thead>
+														<tr>
+															<th>Status</th>
+															<th>CSV</th>
+															<th>ID</th>
+															<th>Test ID</th>
+															<th>Property</th>
+															<th>Created</th>
+														</tr>
+													</thead>
+													<tfoot>
+														<tr>
+															<th>Status</th>
+															<th>CSV</th>
+															<th>ID</th>
+															<th>Test ID</th>
+															<th>Property</th>
+															<th>Created</th>
+														</tr>
+													</tfoot>
+													<tbody>
+														<?php Spire::returnFormattedDataTable($yesterdayReports[0], 'all', $view); ?>
+													</tbody>
+												</table>	
+											</div>
+											<!-- // End all reports tab -->
 										</div>
 									</div>
 								</div>
 							</div>
 							<div class="tab-pane" id="alltime_reports_tab">
-								<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-									<thead>
-										<tr>
-											<th>Status</th>
-											<th>CSV</th>
-											<th>ID</th>
-											<th>Test ID</th>
-											<th>Property</th>
-											<th>Created</th>
-										</tr>
-									</thead>
-									<tfoot>
-										<tr>
-											<th>Status</th>
-											<th>CSV</th>
-											<th>ID</th>
-											<th>Test ID</th>
-											<th>Property</th>
-											<th>Created</th>
-										</tr>
-									</tfoot>
-									<tbody>
-										<?php Spire::returnFormattedDataTable($allReports[0], 'all', $view); ?>
-									</tbody>
-								</table>
+								<div class="alert alert-dismissible alert-info">
+									<p><i class="fa fa-info-circle" aria-hidden="true"></i> This page may take a few moments to load after clicking the linke. Once the page/query cache is built, subsequent loads should load faster.</p>
+								</div>
+								<a href="/reports/<?php echo $view; ?>/all" class="btn btn-primary">View all reports</a>
 							</div>
 						</div>					
 					<!-- </div>					 -->
@@ -610,6 +617,7 @@
 
 			$fileLocation = urlencode($reportCSVFile);
 	?>
+	<div class="api_results">
 		<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 			<thead>
 				<tr>
@@ -633,8 +641,8 @@
 			</tfoot>
 			<tbody>
 				<?php 
-				var_dump($reportData);
-				// Spire::returnFormattedDataTable($reportData[0], 'all', $viewPath); ?>
+				//var_dump($reportData);
+				Spire::returnFormattedDataTable($reportData[0], 'all', $viewPath); ?>
 			</tbody>
 		</table>	
 	<?php } ?>

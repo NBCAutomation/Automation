@@ -542,6 +542,51 @@ class DbHandler {
         return $output;
     }
 
+    public function getAllTestsFromYesterday($testType) {
+        $output = Spire::spireCache('getAllTestsFromYesterday_'.$testType, 9000, function() use ($testType) {
+
+            $db_con = Spire::getConnection();
+            
+            $tests = array();
+
+            switch ($testType) {
+                case "api_manifest_audits":
+                    $testTypeName = 'apiCheck-manifest';
+                    break;
+
+                case "api_navigation_audits":
+                    $testTypeName = 'apiCheck-nav';
+                    break;
+
+                case "api_article_audits":
+                    $testTypeName = 'apiCheck-article';
+                    break;
+                default:
+                    $testTypeName = 'none-existent';
+            }
+
+            $stmt = $db_con->prepare("SELECT * FROM tests WHERE `type` = '".$testTypeName."' AND DATE(created) = CURDATE()-1");
+
+            if ($stmt->execute()) {
+                $allTests = $stmt->fetchAll();
+
+                foreach( $allTests as $key => $value ){
+                    // echo "key: ".$key." // val: ".$value."\n\n";
+                    $tests[$key] = $value;
+                }
+
+                $apiTestsArray[] = $tests;
+
+                $stmt->closeCursor();
+                return $apiTestsArray;
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
 
     public function getTestById($testID) {
         $db_con = Spire::getConnection();

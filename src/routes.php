@@ -167,6 +167,7 @@ $app->group('/reports', function () {
 		if (! $mainView) {
 			// Reporting Data
 			$todayReports = $db->getAllTestsFromToday($args['view']);
+			$yesterdayReports = $db->getAllTestsFromYesterday($args['view']);
 
 			$todayTotalFailureReports = $db->allFailureReportsFromToday($args['view']);
 			$todayTotalWarningReports = $db->allWarningReportsFromToday($args['view']);
@@ -195,6 +196,7 @@ $app->group('/reports', function () {
     		// 'results' => $getReports,
     		'allReports' => $allReports,
     		'todayReports' => $todayReports,
+    		'yesterdayReports' => $yesterdayReports,
     		'todayTotalFailureReports' => $todayTotalFailureReports,
     		'todayTotalWarningReports' => $todayTotalWarningReports,
     		'yesterdayTotalFailureReports' => $yesterdayTotalFailureReports,

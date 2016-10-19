@@ -10,6 +10,7 @@
 
 	foreach ($urlPath as $key => $value) {
 			// echo $key." >> ".$value;
+			
 		if ($key > 0) {
 			if ($value == $__endItem) {
 				$breadcrumbPath .= '<li>'. $value .'</li>';
@@ -23,6 +24,10 @@
 
 		if ($reportID) {
 			$breadcrumbPath .= '<li>record '.$reportID.'</li>';
+		}
+
+		if ($view == 'all') {
+			$breadcrumbPath .= '<li>'.$view.'</li>';
 		}
 	}
 
