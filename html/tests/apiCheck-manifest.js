@@ -85,7 +85,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var curFolder = month + '_' + day + '_' + year;
         
         if(createDictionary){
-            // var saveLocation = fs.pathJoin(fs.workingDirectory, 'manifest_dictionary');
             var saveLocation = 'manifest_dictionary/';
 
             fs.makeDirectory(saveLocation, 775);
@@ -95,9 +94,13 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         } else {
             var saveLocation = 'test_results/api_manifest_audits/' + curFolder;
             fs.makeDirectory(saveLocation, 775);
-            if (envConfig != 'local' || envConfig != 'dev'){
-                fs.chown(save,'222', '48');
+
+            if (['local', 'dev'].indexOf(envConfig) < 0) {
+                var process = require("child_process"),
+                    spawn = process.spawn,
+                    child = spawn("chown", ["-hR", "ec2-user:apache", saveLocation]);
             }
+
             var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
         }
     }

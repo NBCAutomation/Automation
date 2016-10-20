@@ -71,9 +71,13 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
 
     var saveLocation = 'test_results/api_article_audits/' + curFolder;
     fs.makeDirectory(saveLocation, 775);
-    if (envConfig != 'local' || envConfig != 'dev'){
-        fs.chown(save,'222', '48');
+
+    if (['local', 'dev'].indexOf(envConfig) < 0) {
+        var process = require("child_process"),
+            spawn = process.spawn,
+            child = spawn("chown", ["-hR", "ec2-user:apache", saveLocation]);
     }
+    
     var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
 
     // Write file headers
