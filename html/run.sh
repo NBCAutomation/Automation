@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 TYPE_BOLD=`tput bold; tput setaf 7`
 TYPE_GREEN=`tput setaf 2`
 TYPE_NORMAL=`tput sgr0`
