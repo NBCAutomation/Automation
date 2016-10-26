@@ -3,9 +3,52 @@
 		<?php if ($user) { ?>
 			<h4>Welcome, <?php echo $user['first_name']; ?></h4>
 			<hr />
+
+			<!-- todayManifestTotalFailureReports
+			todayManifestTotalWarningReports
+			todayNavTotalFailureReports
+			todayNavTotalWarningReports
+			todayContentTotalFailureReports
+			todayContentTotalWarningReports -->
 		<?php } ?>
 		<div class="row">
-			<a href="https://nbclocalmedia.quickbase.com/db/bd3dkzuga?a=dr&rid=1417" target="_blank">Automation QB Tickets</a>
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-xs-6 col-sm-3">
+						<div class="panel panel-default">
+							<div class="panel-body bk-danger text-light">
+								<div class="stat-panel text-center">
+									<div class="stat-panel-number h1 "><?php echo $todayManifestTotalFailureReports; ?></div>
+									<div class="stat-panel-title text-uppercase">Manifest errors</div>
+								</div>
+							</div>
+							<a href="/reports/api_manifest_audits" class="block-anchor panel-footer text-center">See Reports &nbsp; <i class="fa fa-arrow-right"></i></a>
+						</div>
+					</div>
+					<div class="col-xs-6 col-sm-3">
+						<div class="panel panel-default">
+							<div class="panel-body bk-warning-alt text-light">
+								<div class="stat-panel text-center">
+									<div class="stat-panel-number h1 "><?php echo $todayNavTotalFailureReports; ?></div>
+									<div class="stat-panel-title text-uppercase">Navigation Errors</div>
+								</div>
+							</div>
+							<a href="/reports/api_navigation_audits" class="block-anchor panel-footer text-center">See Reports &nbsp; <i class="fa fa-arrow-right"></i></a>
+						</div>
+					</div>
+					<div class="col-xs-6 col-sm-3">
+						<div class="panel panel-default">
+							<div class="panel-body bk-primary text-light">
+								<div class="stat-panel text-center">
+									<div class="stat-panel-number h1 "><?php echo $todayContentTotalFailureReports; ?></div>
+									<div class="stat-panel-title text-uppercase">Content errors</div>
+								</div>
+							</div>
+							<a href="/reports/api_article_audits" class="block-anchor panel-footer text-center">See Reports &nbsp; <i class="fa fa-arrow-right"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 <?php include_once 'base/footer.php' ?>

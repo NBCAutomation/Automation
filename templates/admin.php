@@ -167,6 +167,20 @@
 			</div>
 		</div>
 
-		<?php } ?>
+		<?php
+			}
+
+			if ($uAuth && $mainView) {
+		?>
+		<div class="row">
+			<ul>
+				<li><a href="https://nbclocalmedia.quickbase.com/db/bd3dkzuga?a=dr&rid=1417" target="_blank">Automation QB Tickets</a></li>
+				<li><a href="https://nbclocalmedia.quickbase.com/db/bd7ds2sk5?a=API_GenAddRecordForm&_fid_23=1417&z=k3szm" target="_blank">Add Automation QB Tickets</a></li>
+			</ul>
+		</div>
+		<?php
+			}
+
+		 ?>
 	</div>
 <?php include_once 'base/footer.php' ?>

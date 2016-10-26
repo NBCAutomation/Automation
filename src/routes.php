@@ -6,22 +6,24 @@
 // === Home ===
 $app->get('/', function ($request, $response, $args) {
 	
-	$this->logger->info("Spire homepage '/' route");
+	// $this->logger->info("Spire homepage '/' route");
 
 	$permissions = $request->getAttribute('spPermissions');
 
     if ($request->getAttribute('spAuth')) {
-    	return $this->renderer->render($response, 'home.php', [
-    	    'title' => 'OTS Spire Web App',
-    	    'page_name' => 'home',
-    	    'hideBreadcrumbs' => true,
+    	// return $this->renderer->render($response, 'home.php', [
+    	//     'title' => 'OTS Spire Web App',
+    	//     'page_name' => 'home',
+    	//     'hideBreadcrumbs' => true,
 
-    	    //Auth Specific
-    	    'user' => $request->getAttribute('spAuth'),
-	        'uAuth' => $permissions['auth'],
-	        'uRole' => $permissions['role'],
-	        'uAthMessage' => $permissions['uAthMessage']
-    	]);	
+    	//     //Auth Specific
+    	//     'user' => $request->getAttribute('spAuth'),
+	    //     'uAuth' => $permissions['auth'],
+	    //     'uRole' => $permissions['role'],
+	    //     'uAthMessage' => $permissions['uAthMessage']
+    	// ]);	
+	    $uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
+		return $response = $response->withRedirect($uri);
     } else {
 	    $uri = $request->getUri()->withPath($this->router->pathFor('login-view'));
 		return $response = $response->withRedirect($uri, 403);
@@ -34,13 +36,33 @@ $app->get('/', function ($request, $response, $args) {
 $app->group('/dashboard', function () use ($app) {
 	$this->get('/main', function ($request, $response, $args) {
 		
+		$db = new DbHandler();
 		$permissions = $request->getAttribute('spPermissions');
+
+		// Today report data
+		// Manifest
+		$todayManifestTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_manifest_audits'));
+		$todayManifestTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_manifest_audits'));
+
+		// Nav
+		$todayNavTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_navigation_audits'));
+		$todayNavTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_navigation_audits'));
+
+		// Content
+		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
+		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
 
 		return $this->renderer->render($response, 'home.php', [
 	        'title' => 'Dashboard',
 	        'page_name' => 'home',
 	        'dashClass' => true,
 	        'hideBreadcrumbs' => true,
+	        'todayManifestTotalFailureReports' => $todayManifestTotalFailureReports,
+			'todayManifestTotalWarningReports' => $todayManifestTotalWarningReports,
+			'todayNavTotalFailureReports' => $todayNavTotalFailureReports,
+			'todayNavTotalWarningReports' => $todayNavTotalWarningReports,
+			'todayContentTotalFailureReports' => $todayContentTotalFailureReports,
+			'todayContentTotalWarningReports' => $todayContentTotalWarningReports,
 	        
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
@@ -69,7 +91,7 @@ $app->group('/dashboard', function () use ($app) {
 	        'uAthMessage' => $permissions['uAthMessage']
 	    // ]);
 	    ]);
-	})->setName('dashboard')->add( new SpireAuth() );
+	})->setName('account-dashboard')->add( new SpireAuth() );
 
 	// 
 	// Account update

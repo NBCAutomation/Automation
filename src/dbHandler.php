@@ -520,7 +520,7 @@ class DbHandler {
                     $testTypeName = 'none-existent';
             }
 
-            $stmt = $db_con->prepare("SELECT * FROM tests WHERE `type` = '".$testTypeName."' AND created >= NOW() - INTERVAL 12 HOUR");
+            $stmt = $db_con->prepare("SELECT * FROM tests WHERE `type` = '".$testTypeName."' AND DATE(created) >= CURDATE()");
 
             if ($stmt->execute()) {
                 $allTests = $stmt->fetchAll();
