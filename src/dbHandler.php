@@ -377,8 +377,6 @@ class DbHandler {
         // print_r($resultsFile);
         $uploadQuery = "LOAD DATA INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status, info)";
 
-        $stmt = $db_con->query($uploadQuery);
-
         // var_dump($db_con->query($uploadQuery));
 
         if ( !($stmt = $db_con->query($uploadQuery)) ) {
