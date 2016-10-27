@@ -198,7 +198,7 @@
 											<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 												<thead>
 													<tr>
-														<th>Status</th>
+														<!-- <th>Status</th> -->
 														<th>CSV</th>
 														<th>ID</th>
 														<th>Test ID</th>
@@ -208,7 +208,7 @@
 												</thead>
 												<tfoot>
 													<tr>
-														<th>Status</th>
+														<!-- <th>Status</th> -->
 														<th>CSV</th>
 														<th>ID</th>
 														<th>Test ID</th>
@@ -621,7 +621,7 @@
 		<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 			<thead>
 				<tr>
-					<th>Status</th>
+					<!-- <th>Status</th> -->
 					<th>CSV</th>
 					<th>ID</th>
 					<th>Test ID</th>
@@ -631,7 +631,7 @@
 			</thead>
 			<tfoot>
 				<tr>
-					<th>Status</th>
+					<!-- <th>Status</th> -->
 					<th>CSV</th>
 					<th>ID</th>
 					<th>Test ID</th>
