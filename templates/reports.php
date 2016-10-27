@@ -285,11 +285,11 @@
 											</div>
 											<!-- // End warnings tab -->
 											<!-- // All reports tab -->
-											<div class="tab-pane" id="all_reports_tab">
+											<div class="tab-pane" id="yesterday_all_reports_tab">
 												<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 													<thead>
 														<tr>
-															<th>Status</th>
+															<!-- <th>Status</th> -->
 															<th>CSV</th>
 															<th>ID</th>
 															<th>Test ID</th>
@@ -299,7 +299,7 @@
 													</thead>
 													<tfoot>
 														<tr>
-															<th>Status</th>
+															<!-- <th>Status</th> -->
 															<th>CSV</th>
 															<th>ID</th>
 															<th>Test ID</th>

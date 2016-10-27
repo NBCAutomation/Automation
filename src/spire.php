@@ -224,7 +224,7 @@ class Spire {
 				
 				}
 
-				$testReportStatus = $db->checkForTestFailures($testReport['id'], $ref, $view);
+				// $testReportStatus = $db->checkForTestFailures($testReport['id'], $ref, $view);
 				$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
 
 				$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
@@ -296,7 +296,7 @@ class Spire {
 	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
 		    
 		    } elseif ( $view == 'all' ) {
-		    	$testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+		    	// $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
 		    	$testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
 		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['id'].'</a></td>';
 		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['test_id'].'</a></td>';
