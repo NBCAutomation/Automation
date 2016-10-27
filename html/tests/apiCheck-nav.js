@@ -49,10 +49,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             minutes = "0" + minutes;
         }
 
-        if(hours > 11){
+        if (hours > 11){
             var toD = "PM";
         } else {
             var toD = "AM";
+        }
+
+        if (hours === '0'){
+            var hours = "12";
         }
 
 

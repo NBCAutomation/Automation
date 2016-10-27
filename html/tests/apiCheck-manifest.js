@@ -64,6 +64,11 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 var toD = "AM";
             }
 
+            if (hours === '0'){
+                var hours = "12";
+            }
+
+
 
         var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
 
