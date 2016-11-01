@@ -43,25 +43,48 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                 casper.open(siteUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
 
+                // document.getElementsByTagName("body")[0].id;
+
+
+                // var pageItem = document.getElementById('home');
+                var pageItem = casper.getElementInfo('body');
+                console.log('this');
+                console.log('page item > ' + pageItem);
+                // console.log('obj keys > ' + Object.entries(pageItem));
+                // console.log('obj vals > ' + Object.values(pageItem));
+
+                for (var prop in pageItem) {
+                    // console.log("obj." + prop + " = " + pageItem[prop]);
+                    if (prop == 'tag') {
+                        // console.log(pageItem[prop].substring(0,100));
+                        var initBodyTag = pageItem[prop].substring(0,100);
+                    }
+                }
+
                 
-                var propertyType = document.getElementsByTagName("body");
-                console.log(propertyType);
-                console.log(propertyType.classList.item("nbc"));
-                
-                for(var i = 0; i < propertyType.length; i++) {
-                    console.log( propertyType[i].nodeName );
+                // for(var i = 0; i < pageItem.length; i++) {
+                //     console.log('i count >> ' + i);
+                //     console.log( 'textContent >> ' + pageItem[i].textContent );
+                //     console.log( 'nodeName >> ' + pageItem[i].nodeName );
+                //     console.log( 'nodeType >> ' + pageItem[i].nodeType );
+                //     console.log( 'nodeValue >> ' + pageItem[i].nodeValue );
+
+                //     // hasClass('body', 'nbc');
+
+                //     // console.log(propertyType.classList.contains("nbc"));
                     
-                }
+                // }
 
-                if ( propertyType.className.indexOf === 'nbc' ) {
-                    console.log('ots property...');
+                if ( initBodyTag.indexOf('nbc') > -1 ) {
+                    console.log('OTS property...');
                 } else {
-                    console.log('tlm property...');
+                    console.log('TLM property...');
                 }
 
-                // console.log('Page title: >> ' + this.getTitle());
+                console.log('Page title: >> ' + this.getTitle());
                 ;
-        // this.test.assertNotEquals('body', 'nbc', 'PASS');
+                
+                // this.test.assertNotEquals('body', 'nbc', 'PASS');
 
                 // test.assertSelectorHasText('body', 'home', "Homepage loaded");
 
