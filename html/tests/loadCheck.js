@@ -46,14 +46,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                 casper.open(siteUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
 
-                // document.getElementsByTagName("body")[0].id;
-
-
-                // var pageItem = document.getElementById('home');
                 var pageItem = casper.getElementInfo('body');
-                // console.log('page item > ' + pageItem);
-                // console.log('obj keys > ' + Object.entries(pageItem));
-                // console.log('obj vals > ' + Object.values(pageItem));
 
                 for (var prop in pageItem) {
                     // console.log("obj." + prop + " = " + pageItem[prop]);
@@ -62,20 +55,6 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                         var initBodyTag = pageItem[prop].substring(0,100);
                     }
                 }
-
-                
-                // for(var i = 0; i < pageItem.length; i++) {
-                //     console.log('i count >> ' + i);
-                //     console.log( 'textContent >> ' + pageItem[i].textContent );
-                //     console.log( 'nodeName >> ' + pageItem[i].nodeName );
-                //     console.log( 'nodeType >> ' + pageItem[i].nodeType );
-                //     console.log( 'nodeValue >> ' + pageItem[i].nodeValue );
-
-                //     // hasClass('body', 'nbc');
-
-                //     // console.log(propertyType.classList.contains("nbc"));
-                    
-                // }
 
                 if ( initBodyTag.indexOf('nbc') > -1 ) {
                     console.log('OTS property...');
@@ -100,9 +79,15 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                     test.assertExists('.navbar', "The nav loaded correctly.");
                         test.assertVisible('.navbar', "...is visible.");
 
+                    // Weather module
+                    .weather-module
+                    
+
                     test.assertExists('.footer', "The footer area loaded correctly.");
                         test.assertVisible('.footer', "...is visible.");
                     
+                    // casper.capture('screenshots/this-screenshot.png');
+
                     console.log('[ -- clicking logo -- ]');
                     this.click('.brand a');
 
@@ -113,6 +98,12 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                     test.assertExists('#nav', "The nav loaded correctly.");
                         test.assertVisible('#nav', "...is visible.");
+
+                    // Weather module
+                    .weather-module-wrapper
+                    .icon-temp-wrapper
+                    .temperature
+
 
                     test.assertExists('.page_footer', "The footer area loaded correctly.");
                         test.assertVisible('.page_footer', "...is visible.");
@@ -127,7 +118,12 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
         // Action tests
         casper.then(function() {
-            console.log('clicked ok, new location is ' + this.getCurrentUrl());
+            if (otsTestSuite) {
+                console.log('clicked ok, new location is ' + this.getCurrentUrl());
+            } else {
+
+            }
+            
 
             
 
