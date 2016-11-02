@@ -5,13 +5,15 @@
 // Use: casperjs [file_name] --url="[site_url]"
 
 
-var utils = require('utils');
-var siteUrl = casper.cli.get("url");
-var saveLoc = ('screenshots/');
-var otsTestSuite = false;
-var tlmTestSuite = false;
-
 casper.test.begin('Page laod/wrapper tests', function suite(test) {
+
+    var utils = require('utils');
+    var siteUrl = casper.cli.get("url");
+    var mouse = require("mouse").create(casper);
+    var saveLoc = ('screenshots/');
+    var otsTestSuite = false;
+    var tlmTestSuite = false;
+    // viewportSize : { width: 1280, height: 5000 }
 
     // Output variables
     var type = casper.cli.get('output');
@@ -72,15 +74,37 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                     this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
                     
                     test.assertExists('.site-header', "The site header loaded correctly.");
-                    test.assertVisible('.site-header', "...is also visible.");
+                        test.assertVisible('.site-header', "...is also visible.");
+                    
                     test.assertExists('.brand a img', "The logo loaded correctly.");
-                    test.assertVisible('.brand a', "...is also visible.");
+                        test.assertVisible('.brand a', "...is also visible.");
 
                     test.assertExists('.navbar', "The nav loaded correctly.");
                         test.assertVisible('.navbar', "...is visible.");
 
-                    // Weather module
-                    .weather-module
+                    test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
+                        test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
+
+                        casper.mouse.move('.nav-small-section.nav-live-tv');
+                        
+                        // casper.waitUntilVisible('.nav-small-section.nav-live-tv .nav-small-sub', function(){
+                        //     // this.click(expectedElementSelector);
+                        //     test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                        //     casper.capture('screenshots/mouse-hover-screenshot.png');
+                        // });
+
+                        casper.on('mouse.move', function() {
+                            console.log('mouse moved');
+                            // phantomcss.screenshot('.selector', 'screenshotname-hover');
+                            casper.capture('screenshots/mouse-hover-screenshot.png');
+                        });
+
+
+                    test.assertExists('.weather-module', "The weather module loaded correctly.");
+                        test.assertVisible('.weather-module', "...is visible.");
+                    
+                    test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
+                        test.assertVisible('.weather-module-radar iframe', "...is visible.");
                     
 
                     test.assertExists('.footer', "The footer area loaded correctly.");
@@ -89,7 +113,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                     // casper.capture('screenshots/this-screenshot.png');
 
                     console.log('[ -- clicking logo -- ]');
-                    this.click('.brand a');
+                    this.click('.nav-small-section.nav-live-tv a');
 
                 } else {
                     this.test.assertNotEquals('body', 'tlm', 'TLM Body class set');
@@ -100,9 +124,9 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                         test.assertVisible('#nav', "...is visible.");
 
                     // Weather module
-                    .weather-module-wrapper
-                    .icon-temp-wrapper
-                    .temperature
+                    // .weather-module-wrapper
+                    // .icon-temp-wrapper
+                    // .temperature
 
 
                     test.assertExists('.page_footer', "The footer area loaded correctly.");
@@ -118,26 +142,12 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
         // Action tests
         casper.then(function() {
-            if (otsTestSuite) {
+            // if (otsTestSuite) {
                 console.log('clicked ok, new location is ' + this.getCurrentUrl());
-            } else {
-
-            }
-            
-
-            
-
-            
+            // } else {
+ 
+            // } 
         });
-
-        // // Page body tests
-        // casper.then(function() {
-        //     test.assertExists('#spotlight', "The spotlight area loaded correctly.");
-        //     test.assertExists('#top-stories', "The top stories area loaded correctly.");
-        //     test.assertExists('#primary', "The top stories area loaded correctly.");
-        //     test.assertExists('#footer', "The footer area loaded correctly.");
-        // });
-
     }).run(function() {
         test.done();
     });
