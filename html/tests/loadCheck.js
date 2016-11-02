@@ -8,6 +8,8 @@
 var utils = require('utils');
 var siteUrl = casper.cli.get("url");
 var saveLoc = ('screenshots/');
+var otsTestSuite = false;
+var tlmTestSuite = false;
 
 casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
@@ -38,6 +40,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
             this.exit();
         }
 
+        // Load and visible tests
         casper.then(function() {
             if ( no_error ) {
 
@@ -48,8 +51,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                 // var pageItem = document.getElementById('home');
                 var pageItem = casper.getElementInfo('body');
-                console.log('this');
-                console.log('page item > ' + pageItem);
+                // console.log('page item > ' + pageItem);
                 // console.log('obj keys > ' + Object.entries(pageItem));
                 // console.log('obj vals > ' + Object.values(pageItem));
 
@@ -77,40 +79,59 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                 if ( initBodyTag.indexOf('nbc') > -1 ) {
                     console.log('OTS property...');
+                    var otsTestSuite = true;
                 } else {
                     console.log('TLM property...');
+                    var tlmTestSuite = true;
                 }
 
                 console.log('Page title: >> ' + this.getTitle());
-                ;
-                
-                // this.test.assertNotEquals('body', 'nbc', 'PASS');
+                test.assertSelectorHasText('body', 'home', "Homepage loaded");
 
-                // test.assertSelectorHasText('body', 'home', "Homepage loaded");
+                // Set testing item
+                if (otsTestSuite) {
+                    this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
+                    
+                    test.assertExists('.site-header', "The site header loaded correctly.");
+                    test.assertVisible('.site-header', "...is also visible.");
+                    test.assertExists('.brand a img', "The logo loaded correctly.");
+                    test.assertVisible('.brand a', "...is also visible.");
 
-                // test.assertExists('.site-header', "The site header loaded correctly.");
-                // test.assertVisible('.site-header', "...is also visible.");
-                // test.assertExists('.brand a img', "The logo loaded correctly.");
-                // test.assertVisible('.brand a', "...is also visible.");
-                // console.log('[ -- clicking logo -- ]');
-                // this.click('.brand a');
+                    test.assertExists('.navbar', "The nav loaded correctly.");
+                        test.assertVisible('.navbar', "...is visible.");
+
+                    test.assertExists('.footer', "The footer area loaded correctly.");
+                        test.assertVisible('.footer', "...is visible.");
+                    
+                    console.log('[ -- clicking logo -- ]');
+                    this.click('.brand a');
+
+                } else {
+                    this.test.assertNotEquals('body', 'tlm', 'TLM Body class set');
+                    test.assertExists('#logocont a img', "The logo loaded correctly.");
+                    test.assertVisible('#logocont a', "...is also visible.");
+
+                    test.assertExists('#nav', "The nav loaded correctly.");
+                        test.assertVisible('#nav', "...is visible.");
+
+                    test.assertExists('.page_footer', "The footer area loaded correctly.");
+                        test.assertVisible('.page_footer', "...is visible.");
+
+                    console.log('[ -- clicking logo -- ]');
+                    this.click('#logocont a');
+                }
 
                 });
             }
         });
 
-        // Hader tests
+        // Action tests
         casper.then(function() {
-            // console.log('clicked ok, new location is ' + this.getCurrentUrl());
+            console.log('clicked ok, new location is ' + this.getCurrentUrl());
 
-            // test.assertExists('#body', "The body area loaded correctly.");
-            //     test.assertVisible('#body', "...is visible.");
+            
 
-            // test.assertExists('#nav', "The nav loaded correctly.");
-            //     test.assertVisible('#nav', "...is visible.");
-
-            // test.assertExists('#footer', "The footer area loaded correctly.");
-            //     test.assertVisible('#footer', "...is visible.");
+            
         });
 
         // // Page body tests
