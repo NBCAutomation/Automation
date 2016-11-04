@@ -71,49 +71,54 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                 // Set testing item
                 if (otsTestSuite) {
-                    this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
-                    
-                    test.assertExists('.site-header', "The site header loaded correctly.");
-                        test.assertVisible('.site-header', "...is also visible.");
-                    
-                    test.assertExists('.brand a img', "The logo loaded correctly.");
-                        test.assertVisible('.brand a', "...is also visible.");
+                    casper.waitUntilVisible('.sfbox', function(){
+                            this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
+                            
+                            test.assertExists('.site-header', "The site header loaded correctly.");
+                                test.assertVisible('.site-header', "...is also visible.");
+                            
+                            test.assertExists('.brand a img', "The logo loaded correctly.");
+                                test.assertVisible('.brand a', "...is also visible.");
 
-                    test.assertExists('.navbar', "The nav loaded correctly.");
-                        test.assertVisible('.navbar', "...is visible.");
+                            test.assertExists('.navbar', "The nav loaded correctly.");
+                                test.assertVisible('.navbar', "...is visible.");
 
-                    test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
-                        test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
+                            test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
+                                test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
 
-                        casper.mouse.move('.nav-small-section.nav-live-tv');
+                                
                         
+                            console.log('sfbox visible');
+                            casper.mouse.move('.nav-small-section.nav-live-tv');
+                            
                         // casper.waitUntilVisible('.nav-small-section.nav-live-tv .nav-small-sub', function(){
-                        //     // this.click(expectedElementSelector);
-                        //     test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
-                        //     casper.capture('screenshots/mouse-hover-screenshot.png');
-                        // });
+                            // this.click(expectedElementSelector);
+                            // test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                            // casper.capture('screenshots/mouse-hover-screenshot.png');
+                        
 
-                        casper.on('mouse.move', function() {
+                        this.on('mouse.move', function() {
                             console.log('mouse moved');
                             // phantomcss.screenshot('.selector', 'screenshotname-hover');
                             casper.capture('screenshots/mouse-hover-screenshot.png');
                         });
 
 
-                    test.assertExists('.weather-module', "The weather module loaded correctly.");
-                        test.assertVisible('.weather-module', "...is visible.");
-                    
-                    test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
-                        test.assertVisible('.weather-module-radar iframe', "...is visible.");
-                    
+                        test.assertExists('.weather-module', "The weather module loaded correctly.");
+                            test.assertVisible('.weather-module', "...is visible.");
+                        
+                        test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
+                            test.assertVisible('.weather-module-radar iframe', "...is visible.");
+                        
 
-                    test.assertExists('.footer', "The footer area loaded correctly.");
-                        test.assertVisible('.footer', "...is visible.");
-                    
-                    // casper.capture('screenshots/this-screenshot.png');
+                        test.assertExists('.footer', "The footer area loaded correctly.");
+                            test.assertVisible('.footer', "...is visible.");
+                        
+                        // casper.capture('screenshots/this-screenshot.png');
 
-                    console.log('[ -- clicking logo -- ]');
-                    this.click('.nav-small-section.nav-live-tv a');
+                        console.log('[ -- clicking logo -- ]');
+                        this.click('.nav-small-section.nav-live-tv a');
+                    });
 
                 } else {
                     this.test.assertNotEquals('body', 'tlm', 'TLM Body class set');
