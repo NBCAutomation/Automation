@@ -126,7 +126,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var urlUri = sourceString.replace('.','_');
 
         // Add manifest url    
-        url = url + '/apps/news-app/manifest/?apiVersion=5';
+        url = url + '/apps/news-app/manifest/?apiVersion=4';
 
         // Start Test
         casper.start( url ).then(function(response) {
@@ -286,7 +286,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             "app-urls_weather-maps",
             "app-base-urls_advertising-display",
             "app-base-urls_advertising-video",
-            "app-base-urls_home-top-stories",
+            "app-base-urls_home-top-storie",
             "app-base-urls_content",
             "app-base-urls_gallery",
             "app-base-urls_recommended",
@@ -317,12 +317,12 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             /*
             "adtest",
             */
-            "advertising_stage",
+            "advertising_advertising_stage",
             "advertising_article-interstitial",
             "advertising_gallery-interstitial",
             "advertising_default-iab-category-tier1",
             "advertising_default-iab-category-tier2",
-            "advertising_splash_display-duration",
+            "advertising_splash_display-duratio",
             "contact_name",
             "contact_address-line1",
             "contact_address-line2",

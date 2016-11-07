@@ -109,7 +109,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/manifest/?apiVersion=4';
+        url = url + '/apps/news-app/manifest/?apiVersion=5';
 
         // Start Test
         casper.start( url ).then(function(response) {
@@ -214,7 +214,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     var url = __moduleVals[i].toString();
 
                     if ( ! url.indexOf('/apps') ) {
-                        url = casper.cli.get('url') + url + '?apiVersion=4';
+                        url = casper.cli.get('url') + url + '?apiVersion=5';
                   
                         suite.__collected[key] = url;
                     }
@@ -304,9 +304,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             if (parsedOutputItems[currentItem].indexOf('/apps') > -1) {
 
                                                 if (parsedOutputItems[currentItem].indexOf('?') > -1) {
-                                                    var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '&apiVersion=4'
+                                                    var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '&apiVersion=5'
                                                 } else {
-                                                    var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '?apiVersion=4'
+                                                    var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '?apiVersion=5'
                                                 }
                                                 
                                                 if (debugOutput) {
@@ -363,9 +363,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                     if (__lastItem[__b].indexOf('/apps') > -1) {
 
                                                         if (__lastItem[__b].indexOf('?') > -1) {
-                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=4'
+                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=5'
                                                         } else {
-                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=4'
+                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=5'
                                                         }
                                                         
                                                         if (debugOutput) {
