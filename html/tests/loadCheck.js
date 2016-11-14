@@ -75,7 +75,6 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
     // Start testing
     casper.start( siteUrl, function() {
-
         casper.open(siteUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
             if ( response.status == 200 ) {
                 no_error = true;
@@ -86,92 +85,105 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
         });
 
         // Load and visible tests
-        casper.then(function() {
+        casper.then(function(no_error) {
             if ( no_error ) {
+                    var pageItem = casper.getElementInfo('body');
 
-                casper.open(siteUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-
-                var pageItem = casper.getElementInfo('body');
-
-                for (var prop in pageItem) {
-                    // console.log("obj." + prop + " = " + pageItem[prop]);
-                    if (prop == 'tag') {
-                        // console.log(pageItem[prop].substring(0,100));
-                        var initBodyTag = pageItem[prop].substring(0,100);
+                    for (var prop in pageItem) {
+                        // console.log("obj." + prop + " = " + pageItem[prop]);
+                        if (prop == 'tag') {
+                            // console.log(pageItem[prop].substring(0,100));
+                            var initBodyTag = pageItem[prop].substring(0,100);
+                        }
                     }
-                }
 
-                if ( initBodyTag.indexOf('nbc') > -1 ) {
-                    console.log('OTS property...');
-                    var otsTestSuite = true;
-                } else {
-                    console.log('TLM property...');
-                    var tlmTestSuite = true;
-                }
+                    if ( initBodyTag.indexOf('nbc') > -1 ) {
+                        console.log('OTS property...');
+                        var otsTestSuite = true;
+                    } else {
+                        console.log('TLM property...');
+                        var tlmTestSuite = true;
+                    }
 
-                test.comment('Page title: >> ' + this.getTitle());
+                    test.comment('Page title: >> ' + this.getTitle());
 
-                // Set testing item
-                if (otsTestSuite) {
-                    casper.waitUntilVisible('.sfbox', function(){
-                        test.comment('Visual assertions/tests');
-                        test.comment('loading done.....');
-                        test.assertSelectorHasText('body', 'home', "Homepage loaded");
+                    // Set testing item
+                    if (otsTestSuite) {
+                        // casper.wait(7000, function() {
+                        //     this.echo("I've waited for a second.");
+                        // });
 
-                        this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
-                        
-                        test.assertExists('.site-header', "The site header loaded correctly.");
-                            test.assertVisible('.site-header', "...is also visible.");
-                        
-                        test.assertExists('.brand a img', "The logo loaded correctly.");
-                            test.assertVisible('.brand a', "...is also visible.");
+                        // this.waitForSelector("#sfcontentFill",
+                        this.waitForSelector(".sfbox",
+                            function pass () {
+                                test.comment('Visual assertions/tests');
 
-                        test.assertExists('.breaking-bar', "The breaking-bar is enabled and loaded correctly.");
-                            test.assertVisible('.breaking-bar', "...is visible.");
+                                test.comment('loading done.....');
+                                test.assertSelectorHasText('body', 'home', "Homepage loaded");
 
-                        test.assertExists('.navbar', "The nav loaded correctly.");
-                            test.assertVisible('.navbar', "...is visible.");
+                                this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
 
-                        test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
-                            test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
+                                test.assertExists('.site-header', "The site header loaded correctly.");
+                                test.assertVisible('.site-header', "...is also visible.");
 
-                        this.mouse.move('.nav-small-section.nav-live-tv a');
-                            test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
-                            this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
-                            test.comment('tv subnav screenshot captured.');
+                                test.assertExists('.brand a img', "The logo loaded correctly.");
+                                test.assertVisible('.brand a', "...is also visible.");
 
-                        test.assertExists('.weather-module', "The weather module loaded correctly.");
-                            test.assertVisible('.weather-module', "...is visible.");
-                        
-                        test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
-                            test.assertVisible('.weather-module-radar iframe', "...is visible.");
+                                // test.assertExists('.breaking-bar', "The breaking-bar is enabled and loaded correctly.");
+                                //     test.assertVisible('.breaking-bar', "...is visible.");
 
-                        test.assertExists('.sfbox', "The spreadfast modules loaded correctly.");
-                            test.assertVisible('.sfbox', "...is visible.");
+                                test.assertExists('.navbar', "The nav loaded correctly.");
+                                test.assertVisible('.navbar', "...is visible.");
 
-                        test.assertExists('.footer', "The footer area loaded correctly.");
-                            test.assertVisible('.footer', "...is visible.");
-                    });
+                                test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
+                                test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
 
-                } else {
-                    this.test.assertNotEquals('body', 'tlm', 'TLM Body class set');
-                    test.assertExists('#logocont a img', "The logo loaded correctly.");
-                    test.assertVisible('#logocont a', "...is also visible.");
+                                this.mouse.move('.nav-small-section.nav-live-tv a');
+                                test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                                this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
+                                test.comment('tv subnav screenshot captured.');
 
-                    test.assertExists('#nav', "The nav loaded correctly.");
-                        test.assertVisible('#nav', "...is visible.");
+                                test.assertExists('.weather-module', "The weather module loaded correctly.");
+                                test.assertVisible('.weather-module', "...is visible.");
 
-                    // Weather module
-                    // .weather-module-wrapper
-                    // .icon-temp-wrapper
-                    // .temperature
+                                test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
+                                test.assertVisible('.weather-module-radar iframe', "...is visible.");
+
+                                test.assertExists('.sfbox', "The spreadfast modules loaded correctly.");
+                                test.assertVisible('.sfbox', "...is visible.");
+
+                                test.assertExists('.footer', "The footer area loaded correctly.");
+                                test.assertVisible('.footer', "...is visible.");
+                            },
+                            function fail () {
+                                test.fail("Did not load element .sfbox");
+                            },
+                            20000 // timeout limit in milliseconds
+                        );
+
+                        // casper.waitUntilVisible('.sfbox', function(){
+                        //    
+                        // });
+
+                    } else {
+                        this.test.assertNotEquals('body', 'tlm', 'TLM Body class set');
+                        test.assertExists('#logocont a img', "The logo loaded correctly.");
+                        test.assertVisible('#logocont a', "...is also visible.");
+
+                        test.assertExists('#nav', "The nav loaded correctly.");
+                            test.assertVisible('#nav', "...is visible.");
+
+                        // Weather module
+                        // .weather-module-wrapper
+                        // .icon-temp-wrapper
+                        // .temperature
 
 
-                    test.assertExists('.page_footer', "The footer area loaded correctly.");
-                        test.assertVisible('.page_footer', "...is visible.");
-                }
+                        test.assertExists('.page_footer', "The footer area loaded correctly.");
+                            test.assertVisible('.page_footer', "...is visible.");
+                    }
 
-                });
+                
             }
         });
 
