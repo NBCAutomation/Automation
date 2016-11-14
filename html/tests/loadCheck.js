@@ -74,14 +74,16 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
     }
 
     // Start testing
-    casper.start( siteUrl, function(response) {
+    casper.start( siteUrl, function() {
 
-        if ( response.status == 200 ) {
-            no_error = true;
-        } else {
-            throw new Error('Page not loaded correctly. Response: ' + response.status);
-            this.exit();
-        }
+        casper.open(siteUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+            if ( response.status == 200 ) {
+                no_error = true;
+            } else {
+                throw new Error('Page not loaded correctly. Response: ' + response.status);
+                this.exit();
+            }
+        });
 
         // Load and visible tests
         casper.then(function() {
