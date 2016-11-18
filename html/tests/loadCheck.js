@@ -219,22 +219,6 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                 // casper.wait(2700, function() {
 
-
-if (time >= 4) {brain.smart(stop())};
-
-if (fucks) {
-    brain.smart(start());
-
-    if (friday || time >= 4) {
-        brain.smart(stop());
-        alert('yay!');
-    } else {
-        brain.smart(continue());
-        console.log('sigh');
-    };
-};
-
-
                     // casper.withFrame(1, function() {
                     //     this.test.assertTitle('WSI Map Widget');
 
@@ -242,6 +226,21 @@ if (fucks) {
                         test.assertVisible('.wxmap--layers__toggle-button', '.wxmap--layers__toggle-button visible');
 
                         this.mouse.click('.wxmap--layers__toggle-button');
+
+                        var nameCount = this.evaluate(function() {
+                            // var names = $('span.author-name')
+                            // return names.length;
+                            var iframe = $('.wx-standalone-map').contents();
+                            
+                            iframe.find(".wxmap--layers-modal__root").click(function(){
+                               return("test inside eval");
+                            });
+                        });
+                        this.comment(nameCount);
+
+                        // $('.wx-standalone-map').contents().find('.wxmap--layers-modal__root').click()
+
+
 
                         test.assertVisible('.wxmap--layers-modal__root', '1 layers option visible');
                         // Capture screenshot of current state
