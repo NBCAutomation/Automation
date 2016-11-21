@@ -117,52 +117,58 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                     // Set testing item
                     // NBC OTS Testing
                     if (otsTestSuite) {
-                        casper.wait(60000, function() {
+                        casper.wait(47000, function() {
                             this.waitForSelector("#sfcontentFill",
                                 function pass () {
                                     test.comment('Visual assertions/tests');
 
-                                    test.comment('loading done.....');
-                                    test.assertSelectorHasText('body', 'home', "Homepage loaded");
+                                    console.log();
 
-                                    this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
+                                    // test.comment('loading done.....');
+                                    // test.assertSelectorHasText('body', 'home', "Homepage loaded");
 
-                                    test.assertExists('.site-header', "The site header loaded correctly.");
-                                    test.assertVisible('.site-header', "...is also visible.");
+                                    // this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
 
-                                    test.assertExists('.brand a img', "The logo loaded correctly.");
-                                    test.assertVisible('.brand a', "...is also visible.");
+                                    // test.assertExists('.site-header', "The site header loaded correctly.");
+                                    // test.assertVisible('.site-header', "...is also visible.");
 
-                                    // if (this.visible()) {
-                                    //     test.assertExists('.breaking-bar', "The breaking-bar is enabled and loaded correctly.");
-                                    //         test.assertVisible('.breaking-bar', "...is visible.");
-                                    // };
+                                    // test.assertExists('.brand a img', "The logo loaded correctly.");
+                                    // test.assertVisible('.brand a', "...is also visible.");
 
-                                    test.assertExists('.navbar', "The nav loaded correctly.");
-                                    test.assertVisible('.navbar', "...is visible.");
+                                    // // ## Nav tests
+                                    // //
+                                    // // ######################
+                                    // test.comment('...testing nav and capturing screenshots');
+                                    // this.mouse.move('.nav-small-section.nav-live-tv a');
+                                    // test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
 
-                                    test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
-                                    test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
-
-                                    // Move the mouse to the top TVE nav
-                                    this.mouse.move('.nav-small-section.nav-live-tv a');
-                                    test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                                    // // Move the mouse to the top TVE nav
+                                    // this.mouse.move('.nav-small-section.nav-live-tv a');
+                                    // test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
                                     
-                                    // Capture screenshot of current state
-                                    this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
-                                    test.comment('tv subnav screenshot captured.');
+                                    // this.mouse.move('.nav-small-section.nav-live-tv a');
+                                    // test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                                    //     // Capture screenshot of current state
+                                    //     // this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
+                                    //     // test.comment('tv subnav screenshot captured.');
 
-                                    test.assertExists('.weather-module', "The weather module loaded correctly.");
-                                    test.assertVisible('.weather-module', "...is visible.");
+                                    // test.assertExists('.navbar', "The nav loaded correctly.");
+                                    // test.assertVisible('.navbar', "...is visible.");
 
-                                    test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
-                                    test.assertVisible('.weather-module-radar iframe', "...is visible.");
+                                    // test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
+                                    // test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
 
-                                    test.assertExists('.sfbox', "The spredfast modules loaded correctly.");
-                                    test.assertVisible('.sfbox', "...is visible.");
+                                    // test.assertExists('.weather-module', "The weather module loaded correctly.");
+                                    // test.assertVisible('.weather-module', "...is visible.");
 
-                                    test.assertExists('.footer', "The footer area loaded correctly.");
-                                    test.assertVisible('.footer', "...is visible.");
+                                    // test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
+                                    // test.assertVisible('.weather-module-radar iframe', "...is visible.");
+
+                                    // test.assertExists('.sfbox', "The spredfast modules loaded correctly.");
+                                    // test.assertVisible('.sfbox', "...is visible.");
+
+                                    // test.assertExists('.footer', "The footer area loaded correctly.");
+                                    // test.assertVisible('.footer', "...is visible.");
                                 },
                                 function fail () {
                                     this.captureSelector('screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.png', 'body');
@@ -219,70 +225,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                 // casper.wait(2700, function() {
 
-                    // casper.withFrame(1, function() {
-                    //     this.test.assertTitle('WSI Map Widget');
-
-                        test.assertVisible('.wxmap--map-ui__navbar', 'test.assertVisible is visible');
-                        test.assertVisible('.wxmap--layers__toggle-button', '.wxmap--layers__toggle-button visible');
-
-                        this.mouse.click('.wxmap--layers__toggle-button');
-
-                        var nameCount = this.evaluate(function() {
-                            // var names = $('span.author-name')
-                            // return names.length;
-                            var iframe = $('.wx-standalone-map').contents();
-                            
-                            iframe.find(".wxmap--layers-modal__root").click(function(){
-                               return("test inside eval");
-                            });
-                        });
-                        this.comment(nameCount);
-
-                        // $('.wx-standalone-map').contents().find('.wxmap--layers-modal__root').click()
-
-
-
-                        test.assertVisible('.wxmap--layers-modal__root', '1 layers option visible');
-                        // Capture screenshot of current state
-                        this.captureSelector('screenshots/' + urlUri + '_map_layers-1-screenshot' + timeStamp + '.png', 'body');
-                        test.comment('weather layers screenshot captured.');
-
-                    // });
-                    // casper.withFrame(1, function() {
-                    //     this.mouse.click('.wxmap--button__root');
-                    //     test.assertVisible('.wxmap--layers-modal__root', '2 layers option visible');
-                    //     // Capture screenshot of current state
-                    //     this.captureSelector('screenshots/' + urlUri + '_map_layers-2-screenshot' + timeStamp + '.png', 'body');
-                    //     test.comment('weather layers screenshot captured.');
-
-                    // });
-                    // casper.withFrame(1, function() {
-                    //     this.mouse.click('button.wxmap--layers__toggle-button');
-                    //     test.assertVisible('.wxmap--layers-modal__root', '3 layers option visible');
-                    //     // Capture screenshot of current state
-                    //     this.captureSelector('screenshots/' + urlUri + '_map_layers-3-screenshot' + timeStamp + '.png', 'body');
-                    //     test.comment('weather layers screenshot captured.');
-                    // });
-                    // casper.withFrame(1, function() {
-                    //     this.mouse.click('button.wxmap--button__root');
-                    //     test.assertVisible('.wxmap--layers-modal__root', '4 layers option visible');
-
-
-                    //     // Capture screenshot of current state
-                    //     this.captureSelector('screenshots/' + urlUri + '_map_layers-4-screenshot' + timeStamp + '.png', 'body');
-                    //     test.comment('weather layers screenshot captured.');
-                    // });
-
-
-
-                    // var iframe = document.getElementsByClassName('wx-standalone-map');
-                    // doc = iframe.contentDocument;
-                    // console.log(doc);
-                    // doc.getElementsByTagName('a')[10].click();
-
-
-                    // this.page.switchToChildFrame('.wx-standalone-map');
-                    
+                                      
                 // });
 
             } else {
