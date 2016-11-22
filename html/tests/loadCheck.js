@@ -10,6 +10,7 @@
 // ./run.sh loadCheck --url=http://www.nbcmiami.com --output=console --env=local
 
 // Tests are set explicitly against ids/classes of page objects
+// NBC_PageReload.interruptReload() in console to disable refresh
 
 
 casper.test.begin('Page laod/wrapper tests', function suite(test) {
@@ -122,53 +123,60 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                                 function pass () {
                                     test.comment('Visual assertions/tests');
 
-                                    console.log();
+                                    test.comment('loading done.....');
+                                    test.assertSelectorHasText('body', 'home', "Homepage loaded");
 
-                                    // test.comment('loading done.....');
-                                    // test.assertSelectorHasText('body', 'home', "Homepage loaded");
+                                    this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
 
-                                    // this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
+                                    test.assertExists('.site-header', "The site header loaded correctly.");
+                                    test.assertVisible('.site-header', "...is also visible.");
 
-                                    // test.assertExists('.site-header', "The site header loaded correctly.");
-                                    // test.assertVisible('.site-header', "...is also visible.");
+                                    test.assertExists('.brand a img', "The logo loaded correctly.");
+                                    test.assertVisible('.brand a', "...is also visible.");
 
-                                    // test.assertExists('.brand a img', "The logo loaded correctly.");
-                                    // test.assertVisible('.brand a', "...is also visible.");
+                                    // ## Nav tests
+                                    //
+                                    // ######################
+                                    test.comment('...testing nav and capturing screenshots');
+                                    this.mouse.move('.nav-small-section.nav-live-tv a');
+                                    test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
 
-                                    // // ## Nav tests
-                                    // //
-                                    // // ######################
-                                    // test.comment('...testing nav and capturing screenshots');
-                                    // this.mouse.move('.nav-small-section.nav-live-tv a');
-                                    // test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
-
-                                    // // Move the mouse to the top TVE nav
-                                    // this.mouse.move('.nav-small-section.nav-live-tv a');
-                                    // test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                                    // Move the mouse to the top TVE nav
+                                    this.mouse.move('.nav-small-section.nav-live-tv a');
+                                    test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
                                     
-                                    // this.mouse.move('.nav-small-section.nav-live-tv a');
-                                    // test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
-                                    //     // Capture screenshot of current state
-                                    //     // this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
-                                    //     // test.comment('tv subnav screenshot captured.');
+                                    this.mouse.move('.nav-small-section.nav-live-tv a');
+                                    test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                                        // Capture screenshot of current state
+                                        // this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
+                                        // test.comment('tv subnav screenshot captured.');
 
-                                    // test.assertExists('.navbar', "The nav loaded correctly.");
-                                    // test.assertVisible('.navbar', "...is visible.");
+                                    test.assertExists('.navbar', "The nav loaded correctly.");
+                                    test.assertVisible('.navbar', "...is visible.");
 
-                                    // test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
-                                    // test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
+                                    test.assertExists('.nav-small-section.nav-live-tv', ".nav-small-section.nav-live-tv loaded correctly.");
+                                    test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
 
-                                    // test.assertExists('.weather-module', "The weather module loaded correctly.");
-                                    // test.assertVisible('.weather-module', "...is visible.");
+                                    if(casper.exists('.weather-module')){
+                                        test.assertExists('.weather-module', "The weather module loaded correctly.");
+                                        test.assertVisible('.weather-module', "...is visible.");
+                                        var weatherNorm = true;
+                                    // If severe weather module is displayed
+                                    } else if(casper.exists('.weather-module-severe')){
+                                        test.comment('.weather-module-severe is set....');
+                                        test.assertExists('.weather-module-severe', "The severe weather module loaded correctly.");
+                                        test.assertExists('.weather-alert-info', "The severe weather module alerts loaded correctly.");
+                                        test.assertVisible('.weather-module-severe', "...is visible.");
+                                    }
 
-                                    // test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
-                                    // test.assertVisible('.weather-module-radar iframe', "...is visible.");
+                                    test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
+                                    test.assertVisible('.weather-module-radar iframe', "...is visible.");
 
-                                    // test.assertExists('.sfbox', "The spredfast modules loaded correctly.");
-                                    // test.assertVisible('.sfbox', "...is visible.");
+                                    test.assertExists('.sfbox', "The spredfast modules loaded correctly.");
+                                    test.assertVisible('.sfbox', "...is visible.");
 
-                                    // test.assertExists('.footer', "The footer area loaded correctly.");
-                                    // test.assertVisible('.footer', "...is visible.");
+                                    test.assertExists('.footer', "The footer area loaded correctly.");
+                                    test.assertVisible('.footer', "...is visible.");
                                 },
                                 function fail () {
                                     this.captureSelector('screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.png', 'body');
@@ -209,7 +217,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
         });
 
         // Action tests
-        casper.then(function(otsTestSuite) {
+        casper.then(function(otsTestSuite, weatherNorm) {
 
             if (otsTestSuite) {
                 test.comment('[ -- clicking logo -- ]');
@@ -218,10 +226,35 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                 test.comment('[ -- map layers -- ]');
                 
+                if (weatherNorm) {
+                    this.mouse.move('.weather-btn-text');
+                    test.assertVisible('.weather-module-btn', "weather module expand button...is visible.");
+                } else {
+                    test.comment('[ --  clicking weather alerts -- ]');
+                    // this.clickLabel('Weather Alerts', 'a');
+                    
+                    // this.mouse.click('.search-logo');
+                    // this.captureSelector('screenshots/' + urlUri + 'search_Mouseclick-screenshot' + timeStamp + '.png', 'body');
 
-                this.mouse.move('.weather-btn-text');
-                test.assertVisible('.weather-module-btn', "weather module expand button...is visible.");
-                this.mouse.click('.weather-module-btn');
+
+
+                    casper.mouse.move('.nav-search');
+                    casper.click('.nav-search');
+                    test.assertVisible('.search-logo-close', 'search close button');
+                    test.assertVisible('.search-container', 'search container');
+
+                    casper.mouse.click('.nav-search');
+                    test.assertVisible('.search-logo-close', 'search close button');
+                    test.assertVisible('.search-container', 'search container');
+
+                    this.captureSelector('screenshots/' + urlUri + 'search_click-screenshot' + timeStamp + '.png', 'body');
+                    test.comment('clicked ok, new location is ' + this.getCurrentUrl());
+
+                    
+                    // test.comment('[ --  going back to home -- ]');
+                    //     this.mouse.click('.brand a');
+                    // test.comment('clicked ok, new location is ' + this.getCurrentUrl());
+                };
 
                 // casper.wait(2700, function() {
 
