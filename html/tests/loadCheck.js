@@ -33,6 +33,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
     var year = currentTime.getFullYear();
     var hours = currentTime.getHours();
     var minutes = currentTime.getMinutes();
+    var baseUrl = siteUrl.replace(/\/$/, '');
 
         if (minutes < 10){
             minutes = "0" + minutes;
@@ -115,6 +116,58 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                     test.comment('Page title: >> ' + this.getTitle());
 
+                    // console.log(document.querySelectorAll('.nav-section a').length);
+                    var selector = '.nav-section a';
+                    var destinations = [];
+
+                    var evaluatedUrls = this.evaluate(function(siteUrl, selector) {
+
+                        // Grab the current url data, href and link text
+                        return __utils__.findAll(selector).map(function(element) {
+                            return {
+                                url: element.getAttribute('href'),
+                                innerText: element.innerText
+                            };
+                        }).map(function(elementObj) {
+                            // if (!protocolRegex.test(elementObj.url)) {
+                                elementObj.url = siteUrl + ('/' + elementObj.url).replace(/\/{2,}/g, '/');
+                            // }
+
+                            return elementObj;
+                        });
+                    }, siteUrl, selector);
+
+                    // Add the link information to our testing array
+                    evaluatedUrls.forEach(function(elementObj) {
+                        var url = elementObj.url;
+                        var innerText = elementObj.innerText;
+
+                        // console.log(innerText);
+
+                        if (destinations.indexOf(url) === -1) {
+                            destinations.push({
+                                url: url,
+                                linkText: innerText
+                            });
+                        }
+                    });
+
+                    if (debugOutput) {
+                        test.comment('Navigation links ' + destinations.length);
+                        test.comment('...links collected for testing.');
+
+                        destinations.reverse();
+
+                        for (i = destinations.length - 1; i >= 0; i--) {
+                            console.log(' --  linkText > ' + destinations[i].linkText);
+                            console.log(' --  url      > ' + destinations[i].url);
+                        }
+                    };
+
+                    
+
+                    test.exit();
+
                     // Set testing item
                     // NBC OTS Testing
                     if (otsTestSuite) {
@@ -137,16 +190,13 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                                     // ## Nav tests
                                     //
                                     // ######################
+                                    
+                                    // Move the mouse to the top TVE nav
                                     test.comment('...testing nav and capturing screenshots');
                                     this.mouse.move('.nav-small-section.nav-live-tv a');
                                     test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
 
-                                    // Move the mouse to the top TVE nav
-                                    this.mouse.move('.nav-small-section.nav-live-tv a');
-                                    test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
-                                    
-                                    this.mouse.move('.nav-small-section.nav-live-tv a');
-                                    test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                                        // // Screenshot capture
                                         // Capture screenshot of current state
                                         // this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
                                         // test.comment('tv subnav screenshot captured.');
@@ -171,6 +221,14 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                                     test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
                                     test.assertVisible('.weather-module-radar iframe', "...is visible.");
+
+
+                                    // Spredfast modules loaded.
+                                    
+                                    // Capture screenshot if not loaded.
+                                    if(casper.exists('.weather-module')){
+
+                                    }
 
                                     test.assertExists('.sfbox', "The spredfast modules loaded correctly.");
                                     test.assertVisible('.sfbox', "...is visible.");
@@ -207,7 +265,6 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                         // .icon-temp-wrapper
                         // .temperature
 
-
                         test.assertExists('.page_footer', "The footer area loaded correctly.");
                             test.assertVisible('.page_footer', "...is visible.");
                     }
@@ -223,38 +280,6 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                 test.comment('[ -- clicking logo -- ]');
                     this.mouse.click('.brand a');
                 test.comment('clicked ok, new location is ' + this.getCurrentUrl());
-
-                test.comment('[ -- map layers -- ]');
-                
-                if (weatherNorm) {
-                    this.mouse.move('.weather-btn-text');
-                    test.assertVisible('.weather-module-btn', "weather module expand button...is visible.");
-                } else {
-                    test.comment('[ --  clicking weather alerts -- ]');
-                    // this.clickLabel('Weather Alerts', 'a');
-                    
-                    // this.mouse.click('.search-logo');
-                    // this.captureSelector('screenshots/' + urlUri + 'search_Mouseclick-screenshot' + timeStamp + '.png', 'body');
-
-
-
-                    casper.mouse.move('.nav-search');
-                    casper.click('.nav-search');
-                    test.assertVisible('.search-logo-close', 'search close button');
-                    test.assertVisible('.search-container', 'search container');
-
-                    casper.mouse.click('.nav-search');
-                    test.assertVisible('.search-logo-close', 'search close button');
-                    test.assertVisible('.search-container', 'search container');
-
-                    this.captureSelector('screenshots/' + urlUri + 'search_click-screenshot' + timeStamp + '.png', 'body');
-                    test.comment('clicked ok, new location is ' + this.getCurrentUrl());
-
-                    
-                    // test.comment('[ --  going back to home -- ]');
-                    //     this.mouse.click('.brand a');
-                    // test.comment('clicked ok, new location is ' + this.getCurrentUrl());
-                };
 
                 // casper.wait(2700, function() {
 
