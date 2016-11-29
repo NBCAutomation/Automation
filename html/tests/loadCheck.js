@@ -116,75 +116,6 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
 
                     test.comment('Page title: >> ' + this.getTitle());
 
-                    // console.log(document.querySelectorAll('.nav-section a').length);
-                    var selector = '.nav-section a.nav-section-title';
-
-                    var evaluatedUrls = this.evaluate(function(siteUrl, selector) {
-
-                        // Grab the current url data, href and link text
-                        return __utils__.findAll(selector).map(function(element) {
-                            return {
-                                url: element.getAttribute('href'),
-                                // aTag: element,
-                                // aTag: element.getElementsByTagName('a'),
-                                innerText: element.innerText,
-                                html: element.innerHTML,
-                                // attribs: element.attributes
-
-                            };
-                        }).map(function(elementObj) {
-                            // if (!protocolRegex.test(elementObj.url)) {
-                                // elementObj.url = siteUrl + ('/' + elementObj.url).replace(/\/{2,}/g, '/');
-                            // }
-
-                            return elementObj;
-                        });
-                    }, siteUrl, selector);
-
-                    // Add the link information to our testing array
-                    var destinations = [];
-
-                    evaluatedUrls.forEach(function(elementObj) {
-                        var url = elementObj.url;
-                        var innerText = elementObj.innerText;
-                        var html = elementObj.html;
-                        // var attribs = elementObj.attribs;
-                        // var aTag = elementObj.aTag;
-
-                        // console.log(innerText);
-
-                        console.log(url, elementObj);
-
-                        if (url.length > 0 && destinations.indexOf(url) === -1) {
-                            destinations.push({
-                                url: url,
-                                linkText: innerText,
-                                code: html,
-                                // attribs: attribs,
-                                // aTag: aTag
-                            });
-                        }
-                    });
-
-                    // if (debugOutput) {
-                        test.comment('Navigation links ' + destinations.length);
-                        test.comment('...links collected for testing.');
-
-                        destinations.reverse();
-
-                        for (i = destinations.length - 1; i >= 0; i--) {
-                            console.log(' --  linkText > ' + destinations[i].linkText);
-                            console.log(' --  url      > ' + destinations[i].url);
-                            console.log(' --  code     > ' + destinations[i].code);
-                            // console.log(' --  attribs     > ' + destinations[i].attribs);
-                            // console.log(' --  aTag     > ' + destinations[i].aTag);
-                        }
-                    // };
-
-
-
-                    this.exit();
-
                     // Set testing item
                     // NBC OTS Testing
                     if (otsTestSuite) {
@@ -291,22 +222,95 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
         });
 
         // Action tests
-        casper.then(function(otsTestSuite, weatherNorm) {
+        casper.then(function(siteUrl, otsTestSuite, weatherNorm) {
 
-            if (otsTestSuite) {
+            // if (otsTestSuite) {
                 test.comment('[ -- clicking logo -- ]');
                     this.mouse.click('.brand a');
                 test.comment('clicked ok, new location is ' + this.getCurrentUrl());
 
                 // casper.wait(2700, function() {
-
-                                      
                 // });
 
-            } else {
-                test.comment('[ -- clicking logo -- ]');
-                this.click('#logocont a');
-            } 
+                // console.log(document.querySelectorAll('.nav-section a').length);
+                var selector = '.nav-section a.nav-section-title';
+
+                var evaluatedUrls = this.evaluate(function(siteUrl, selector) {
+
+                    // Grab the current url data, href and link text
+                    return __utils__.findAll(selector).map(function(element) {
+                        return {
+                            url: element.getAttribute('href'),
+                            innerText: element.innerText
+
+                        };
+                    }).map(function(elementObj) {
+                        // if (!protocolRegex.test(elementObj.url)) {
+                            // elementObj.url = siteUrl + ('/' + elementObj.url).replace(/\/{2,}/g, '/');
+                        // }
+
+                        return elementObj;
+                    });
+                }, siteUrl, selector);
+
+                // Add the link information to our testing array
+                var destinations = [];
+
+                evaluatedUrls.forEach(function(elementObj) {
+                    var url = elementObj.url;
+                    var innerText = elementObj.innerText;
+
+                    // console.log(url, elementObj);
+
+                    if (url.length > 0 && destinations.indexOf(url) === -1) {
+                        destinations.push({
+                            url: url,
+                            linkText: innerText
+                        });
+                    }
+                });
+
+                test.comment('Navigation links ' + destinations.length);
+                test.comment('...links collected for testing.');
+
+                destinations.reverse();
+
+                for (i = destinations.length - 1; i >= 0; i--) {
+                    // console.log(' --  linkText > ' + destinations[i].linkText);
+                    console.log(' --  url      > ' + destinations[i].url);
+
+
+                    if ( destinations[i].url.indexOf(siteUrl) > -1 ) {
+                        var currentNavUrl = destinations[i].url;
+                    } else {
+                        var currentNavUrl = siteUrl + destinations[i].url;
+                    }
+
+                    test.comment('currentNavUrl: ' + currentNavUrl);
+
+                    casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                        console.log(response);
+                        // if ( response.status == 200 || response.status == 304 ) {
+                        //     casper.wait(47000, function() {
+                        //         if ( !linkText.indexOf('Home') ) {
+                        //             test.assertVisible('.subnav-section-landing', "...is also visible.");
+                        //         } else {
+                        //             test.comment('Home link...skipping subnav test');
+                        //         }
+
+                        //         this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                        //     });    
+                        // } else {
+                        //     throw new Error('Page not loaded correctly. Response: ' + response.status);
+                        //     this.exit();
+                        // }
+                    });
+                }
+
+            // } else {
+            //     test.comment('[ -- clicking logo 2 -- ]');
+                // this.click('#logocont a');
+            // } 
         });
     }).run(function() {
         test.done();
