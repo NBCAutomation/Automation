@@ -117,8 +117,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                     test.comment('Page title: >> ' + this.getTitle());
 
                     // console.log(document.querySelectorAll('.nav-section a').length);
-                    var selector = '.nav-section a';
-                    var destinations = [];
+                    var selector = '.nav-section a.nav-section-title';
 
                     var evaluatedUrls = this.evaluate(function(siteUrl, selector) {
 
@@ -126,11 +125,16 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                         return __utils__.findAll(selector).map(function(element) {
                             return {
                                 url: element.getAttribute('href'),
-                                innerText: element.innerText
+                                // aTag: element,
+                                // aTag: element.getElementsByTagName('a'),
+                                innerText: element.innerText,
+                                html: element.innerHTML,
+                                // attribs: element.attributes
+
                             };
                         }).map(function(elementObj) {
                             // if (!protocolRegex.test(elementObj.url)) {
-                                elementObj.url = siteUrl + ('/' + elementObj.url).replace(/\/{2,}/g, '/');
+                                // elementObj.url = siteUrl + ('/' + elementObj.url).replace(/\/{2,}/g, '/');
                             // }
 
                             return elementObj;
@@ -138,21 +142,31 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                     }, siteUrl, selector);
 
                     // Add the link information to our testing array
+                    var destinations = [];
+
                     evaluatedUrls.forEach(function(elementObj) {
                         var url = elementObj.url;
                         var innerText = elementObj.innerText;
+                        var html = elementObj.html;
+                        // var attribs = elementObj.attribs;
+                        // var aTag = elementObj.aTag;
 
                         // console.log(innerText);
 
-                        if (destinations.indexOf(url) === -1) {
+                        console.log(url, elementObj);
+
+                        if (url.length > 0 && destinations.indexOf(url) === -1) {
                             destinations.push({
                                 url: url,
-                                linkText: innerText
+                                linkText: innerText,
+                                code: html,
+                                // attribs: attribs,
+                                // aTag: aTag
                             });
                         }
                     });
 
-                    if (debugOutput) {
+                    // if (debugOutput) {
                         test.comment('Navigation links ' + destinations.length);
                         test.comment('...links collected for testing.');
 
@@ -161,12 +175,15 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                         for (i = destinations.length - 1; i >= 0; i--) {
                             console.log(' --  linkText > ' + destinations[i].linkText);
                             console.log(' --  url      > ' + destinations[i].url);
+                            console.log(' --  code     > ' + destinations[i].code);
+                            // console.log(' --  attribs     > ' + destinations[i].attribs);
+                            // console.log(' --  aTag     > ' + destinations[i].aTag);
                         }
-                    };
+                    // };
 
-                    
 
-                    test.exit();
+
+                    this.exit();
 
                     // Set testing item
                     // NBC OTS Testing
