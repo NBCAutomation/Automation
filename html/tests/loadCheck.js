@@ -289,7 +289,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                     test.comment('currentNavUrl: ' + currentNavUrl);
 
                     casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-                        console.log(response);
+                        console.log(response.status);
                         // if ( response.status == 200 || response.status == 304 ) {
                         //     casper.wait(47000, function() {
                         //         if ( !linkText.indexOf('Home') ) {
