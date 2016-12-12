@@ -293,21 +293,22 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                         test.comment('Current url > ' + currentNavUrl);
                         
                         console.log('HTTP Response - ' + response.status);
+                        test.assertVisible('.subnav-section-landing', "...is also visible.");
+                        
+                        // if ( response.status == 200 || response.status == 304 ) {
+                        //     // casper.wait(10000, function() {
+                        //         if ( !linkText.indexOf('Home') ) {
+                        //             test.assertVisible('.subnav-section-landing', "...is also visible.");
+                        //         } else {
+                        //             test.comment('Home link...skipping subnav test');
+                        //         }
 
-                        if ( response.status == 200 || response.status == 304 ) {
-                            // casper.wait(10000, function() {
-                                if ( !linkText.indexOf('Home') ) {
-                                    test.assertVisible('.subnav-section-landing', "...is also visible.");
-                                } else {
-                                    test.comment('Home link...skipping subnav test');
-                                }
-
-                                this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                            // });    
-                        } else {
-                            throw new Error('Page not loaded correctly. Response: ' + response.status);
-                            this.exit();
-                        }
+                        //         this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                        //     // });    
+                        // } else {
+                        //     throw new Error('Page not loaded correctly. Response: ' + response.status);
+                        //     this.exit();
+                        // }
                     });
                 }
 
