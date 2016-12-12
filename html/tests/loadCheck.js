@@ -140,7 +140,7 @@ casper.test.begin('Page laod/wrapper tests', function suite(test) {
                                     // ######################
                                     
                                     // Move the mouse to the top TVE nav
-                                    test.comment('...testing nav and capturing screenshots');
+                                    // test.comment('...testing nav and capturing screenshots');
                                     this.mouse.move('.nav-small-section.nav-live-tv a');
                                     test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
 

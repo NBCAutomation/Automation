@@ -19,6 +19,26 @@
 
 casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
+    // Config vars
+    var utils = require('utils');
+    var siteUrl = casper.cli.get("url");
+    var mouse = require("mouse").create(casper);
+    var saveLoc = ('screenshots/');
+    var otsTestSuite = false;
+    var tlmTestSuite = false;
+    casper.options.viewportSize = { width: 1280, height: 5000 };
+
+
+    // Util vars
+    var currentTime = new Date();
+
+    var month = currentTime.getMonth() + 1;
+    var day = currentTime.getDate();
+    var year = currentTime.getFullYear();
+    var hours = currentTime.getHours();
+    var minutes = currentTime.getMinutes();
+    var baseUrl = siteUrl.replace(/\/$/, '');
+
     var regressionSuite = function(url) {
 
         if (!url) {
@@ -34,30 +54,33 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
 
-        var pageItem = casper.getElementInfo('body');
-
-        for (var prop in pageItem) {
-            // console.log("obj." + prop + " = " + pageItem[prop]);
-            if (prop == 'tag') {
-                // console.log(pageItem[prop].substring(0,100));
-                var initBodyTag = pageItem[prop].substring(0,100);
-            }
-        }
-
-        if ( initBodyTag.indexOf('nbc') > -1 ) {
-            console.log('OTS property...');
-            var testProperty = 'otsTestSuite';
-        } else {
-            console.log('TLM property...');
-            var testProperty = 'tlmTestSuite';
-        }
-
         /*******************
         // Start Test
         *******************/
         casper.start( url ).then(function(response) {
-            if ( response.status == 200 ) {
-                suite.visualTests(testProperty);
+            if ( response.status == 200 || response.status == 304 || response.status == 302 ) {
+                var pageItem = casper.getElementInfo('body');
+
+                for (var prop in pageItem) {
+                    // console.log("obj." + prop + " = " + pageItem[prop]);
+                    if (prop == 'tag') {
+                        // console.log(pageItem[prop].substring(0,100));
+                        var initBodyTag = pageItem[prop].substring(0,100);
+                    }
+                }
+
+                if ( initBodyTag.indexOf('nbc') > -1 ) {
+                    console.log('OTS property...');
+                    var testProperty = 'otsTestSuite';
+                } else if ( initBodyTag.indexOf('tlmd') > -1 ) {
+                    console.log('TLM property...');
+                    var testProperty = 'tlmTestSuite';
+                } else {
+                    console.log( JSON.stringify() );
+                }
+
+                suite.visualTests(testProperty, url);
+
             } else {
                 casper.test.fail('Page did not load correctly. Response: ' + response.status);
             }
@@ -77,6 +100,255 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             // }
             this.exit();
             test.done();
+        });
+    };
+
+    // Regression visual tests
+    regressionSuite.prototype.visualTests = function(testProperty, url) {
+        var suite = this;
+
+        // Set testing item
+        if (testProperty == 'otsTestSuite') {
+            var otsTestSuite = true;
+        } else {
+            var tlmTestSuite = true;
+        }
+
+        // NBC OTS Testing
+        if (otsTestSuite) {
+            casper.wait(47000, function() {
+                this.waitForSelector("#sfcontentFill",
+                    function pass () {
+                        test.comment('Visual assertions/tests');
+
+                        test.comment('loading done.....');
+                        test.assertSelectorHasText('body', 'home', "Homepage loaded");
+
+                        this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
+
+                        test.assertExists('.site-header', "The site header loaded correctly.");
+                        test.assertVisible('.site-header', "...is also visible.");
+
+                        test.assertExists('.brand a img', "The logo loaded correctly.");
+                        test.assertVisible('.brand a', "...is also visible.");
+
+                        // ######################
+                        // # Nav tests
+                        // ######################
+
+                        // // Screenshot capture
+                        // Capture screenshot of current state
+                        // this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
+                        // test.comment('tv subnav screenshot captured.');
+
+                        test.assertExists('.navbar', "The nav loaded correctly.");
+                        test.assertVisible('.navbar', "...is visible.");
+
+                        // Move the mouse to the top TVE nav
+                        test.assertExists('.nav-small-section.nav-live-tv', "live tv icon loaded correctly.");
+                        test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
+
+                        this.mouse.move('.nav-small-section.nav-live-tv a');
+                        test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+
+                        if(casper.exists('.weather-module')){
+                            test.assertExists('.weather-module', "The weather module loaded correctly.");
+                            test.assertVisible('.weather-module', "...is visible.");
+                            var weatherNorm = true;
+                        // If severe weather module is displayed
+                        } else if(casper.exists('.weather-module-severe')){
+                            test.comment('.weather-module-severe is set....');
+                            test.assertExists('.weather-module-severe', "The severe weather module loaded correctly.");
+                            test.assertExists('.weather-alert-info', "The severe weather module alerts loaded correctly.");
+                            test.assertVisible('.weather-module-severe', "...is visible.");
+                        }
+
+                        test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
+                        test.assertVisible('.weather-module-radar iframe', "...is visible.");
+                        
+                        // Capture screenshot if not loaded.
+                        if(casper.exists('.weather-module')){
+
+                        }
+
+                        // Spredfast modules
+                        test.assertExists('.sfbox', "The spredfast modules loaded correctly.");
+                        test.assertVisible('.sfbox', "...is visible.");
+
+                        test.assertExists('.footer', "The footer area loaded correctly.");
+                        test.assertVisible('.footer', "...is visible.");
+
+                        suite.actionTests(testProperty, url);
+                    },
+                    function fail () {
+                        this.captureSelector('screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.png', 'body');
+                        test.fail("Unable to test page elements. Did not load element .sfbox");
+                    },
+                    null // timeout limit in milliseconds
+                );
+            });
+
+            // this.waitForSelector("#sfcontentFill",
+            
+
+            // casper.waitUntilVisible('.sfbox', function(){
+            //    
+            // });
+
+        } else if (tlmTestSuite) {
+        // TLM Testing
+            this.test.assertNotEquals('body', 'tlm', 'TLM Body class set');
+            test.assertExists('#logocont a img', "The logo loaded correctly.");
+            test.assertVisible('#logocont a', "...is also visible.");
+
+            test.assertExists('#nav', "The nav loaded correctly.");
+                test.assertVisible('#nav', "...is visible.");
+
+            // Weather module
+            // .weather-module-wrapper
+            // .icon-temp-wrapper
+            // .temperature
+
+            test.assertExists('.page_footer', "The footer area loaded correctly.");
+                test.assertVisible('.page_footer', "...is visible.");
+        }
+    };
+
+
+    // Regressiong test actions
+    regressionSuite.prototype.actionTests = function(testProperty, url) {
+
+        var suite = this;
+
+        casper.start( url ).then(function(response) {
+
+        // );
+
+        // casper.open(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+            var mainURL = this.getCurrentUrl().slice(0,-1);
+            console.log('main url ' + mainURL);
+
+            test.comment('[ -- clicking logo -- ]');
+                this.mouse.click('.brand a');
+            test.comment('clicked ok, new location is ' + this.getCurrentUrl());
+
+            // casper.wait(2700, function() {
+            // });
+
+            // console.log(document.querySelectorAll('.nav-section a').length);
+            var selector = '.nav-section a.nav-section-title';
+
+            var evaluatedUrls = this.evaluate(function(mainURL, selector) {
+
+                // Grab the current url data, href and link text
+                return __utils__.findAll(selector).map(function(element) {
+                    return {
+                        url: element.getAttribute('href'),
+                        innerText: element.innerText
+
+                    };
+                }).map(function(elementObj) {
+                    // if (!protocolRegex.test(elementObj.url)) {
+                        // elementObj.url = mainURL + ('/' + elementObj.url).replace(/\/{2,}/g, '/');
+                    // }
+
+                    return elementObj;
+                });
+            }, mainURL, selector);
+
+            // Add the link information to our testing array
+            var destinations = [];
+
+            evaluatedUrls.forEach(function(elementObj) {
+                var url = elementObj.url;
+                var innerText = elementObj.innerText;
+
+                // console.log(url, elementObj);
+
+                if (url.length > 0 && destinations.indexOf(url) === -1) {
+                    destinations.push({
+                        url: url,
+                        linkText: innerText
+                    });
+                }
+            });
+
+            test.comment('Navigation links testing; Links collected > ' + destinations.length);
+            test.comment('...links collected for testing.');
+
+            destinations.reverse();
+
+            for (i = destinations.length - 1; i >= 0; i--) {
+                // console.log(' --  linkText > ' + destinations[i].linkText);
+                // console.log(' --  url      > ' + destinations[i].url);
+
+                var linkText = destinations[i].linkText;
+
+                if ( destinations[i].url.indexOf(mainURL) > -1 ) {
+                    var currentNavUrl = destinations[i].url;
+                } else {
+                    var currentNavUrl = mainURL + destinations[i].url;
+                }
+
+
+                casper.open(url, {
+                    method: 'get'
+                }).then(function(response) {
+                    console.log('HTTP Response - ' + response.status);
+                    
+                    test.assertVisible('.subnav-section-landing', "...is also visible.");
+                    
+                    console.log('loops + test');
+                    if ( response.status == 200 || response.status == 304 ) {
+
+                        this.waitForSelector("#promotional-boxes",
+                            function pass () {
+                                test.pass("Found #promotional-boxes");
+                            },
+                            function fail () {
+                                test.fail("Did not load element {myElement}");
+                            },
+                            20000 // timeout limit in milliseconds
+                        );
+
+                        // casper.wait(10000, function() {
+                        //     if ( !linkText.indexOf('Home') ) {
+                        //         test.assertVisible('.subnav-section-landing', "...is also visible.");
+                        //     } else {
+                        //         test.comment('Home link...skipping subnav test');
+                        //     }
+
+                        //     this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                        // });
+                    } else {
+                        throw new Error('Page not loaded correctly. Response: ' + response.status);
+                        this.exit();
+                    }
+                });
+
+                // casper.open(url, {
+                // // casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                //     // test.comment('Current url > ' + currentNavUrl);
+                    
+                //     console.log('HTTP Response - ' + response.status);
+                //     test.assertVisible('.subnav-section-landing', "...is also visible.");
+                    
+                //     if ( response.status == 200 || response.status == 304 ) {
+                //         // casper.wait(10000, function() {
+                //             if ( !linkText.indexOf('Home') ) {
+                //                 test.assertVisible('.subnav-section-landing', "...is also visible.");
+                //             } else {
+                //                 test.comment('Home link...skipping subnav test');
+                //             }
+
+                //             this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                //         // });    
+                //     } else {
+                //         throw new Error('Page not loaded correctly. Response: ' + response.status);
+                //         this.exit();
+                //     }
+                // });
+            }
         });
     };
 
