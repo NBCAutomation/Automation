@@ -37,6 +37,24 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var year = currentTime.getFullYear();
     var hours = currentTime.getHours();
     var minutes = currentTime.getMinutes();
+
+        if (minutes < 10){
+            minutes = "0" + minutes;
+        }
+
+        if (hours > 11){
+            var toD = "PM";
+        } else {
+            var toD = "AM";
+        }
+
+        if (hours === '0'){
+            var hours = "12";
+        }
+
+
+    var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
+
     var baseUrl = siteUrl.replace(/\/$/, '');
 
     var regressionSuite = function(url) {
@@ -286,126 +304,44 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         
         destinations.reverse();
 
-        destinations.forEach(function(res) {
-            if (res.status != 200) {
+        for (var i = destinations.length - 1; i >= 0; i--) {
 
-                if (res.linkText != null) {
-                    var currentLink = res.url;
-                } else {
-                    var currentLink = "[Possible image link]";
-                }
+            if ( destinations[i].url.indexOf(mainURL) > -1 ) {
+                // console.log('          url found');
+                var currentNavUrl = destinations[i].url;
+            } else {
+                // console.log('         no');
+                var currentNavUrl = mainURL + destinations[i].url;
+            }
 
-                if ( res.url.indexOf(mainURL) > -1 ) {
-                    // console.log('          url found');
-                    var currentNavUrl = res.url;
-                } else {
-                    // console.log('         no');
-                    var currentNavUrl = mainURL + res.url;
-                }
+            // console.log('mainURL ~ ' + mainURL);
+            // console.log('destinations[i].url ~ ' + destinations[i].linkText);
+            // console.log('destinations[i].url ~ ' + destinations[i].url);
+            // console.log('testUrl ~ ' + currentNavUrl);
 
-                // console.log('mainURL ~ ' + mainURL);
-                // console.log('res.url ~ ' + res.url);
-                // console.log('testUrl ~ ' + currentNavUrl);
+            casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                // casper.options.onResourceRequested = function(casper, requestData, request) {
 
-                casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-                    // casper.options.onResourceRequested = function(casper, requestData, request) {
+                // if ( destinations[i].linkText.indexOf('Home') ==! -1 ) {
+                    this.waitForSelector(".subnav-large-container",
+                        function pass () {
+                            test.comment('Current url > ' + currentNavUrl + '\n');
+                            console.log('HTTP Response - ' + response.status);
 
-                    //     // If the outgoing request doesn't equal [site_url], end and skip the request
-                    //     if (requestData.url.indexOf( sourceString ) == -1 ) {
-                    //         request.abort();
-                    //         // Uncomment to see skipped outgoing requests
-                    //         // console.log( 'skipping --  ' + requestData.url );
-                    //     }
-                    // }
+                            this.captureSelector('screenshots/sub-nav_' + destinations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                            test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
+                        },
+                        function fail () {
+                            this.captureSelector('screenshots/sub-nav_' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                            test.fail("Unable to test page elements. Did not load element .sfbox");
+                        },
+                        null // timeout limit in milliseconds
+                    )
+                // }
 
-                    // if ( res.linkText.indexOf('Home') ==! -1 ) {
-                        this.waitForSelector(".subnav-large-container",
-                            function pass () {
-                                test.comment('Current url > ' + currentNavUrl + '\n');
-                                console.log('HTTP Response - ' + response.status);
+            });
 
-                                this.captureSelector('screenshots/sub-nav_' + res.linkText.toLowerCase() + '-screenshot.png', 'body');
-                                test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
-                            },
-                            function fail () {
-                                this.captureSelector('screenshots/sub-nav_' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                                test.fail("Unable to test page elements. Did not load element .sfbox");
-                            },
-                            null // timeout limit in milliseconds
-                        )
-                    // }
-
-
-                    
-                    
-                    // test.assertVisible('.subnav-section-landing', "...is also visible.");
-                    
-                    // if ( response.status == 200 || response.status == 304 ) {
-                    //     // casper.wait(10000, function() {
-                    //         if ( !linkText.indexOf('Home') ) {
-                    //             test.assertVisible('.subnav-section-landing', "...is also visible.");
-                    //         } else {
-                    //             test.comment('Home link...skipping subnav test');
-                    //         }
-
-                            
-                    //     // });    
-                    // } else {
-                    //     throw new Error('Page not loaded correctly. Response: ' + response.status);
-                    //     this.exit();
-                    // }
-                });
-
-                //Write text log
-                // fs.write(save, ',\n' + res.from + ',' + res.status + ',' + currentLink + ',' + res.url, 'a+');
-            };
-        });
-
-        // for (i = destinations.length - 1; i >= 0; i--) {
-        //     console.log(' --  linkText > ' + destinations[i].linkText);
-        //     console.log(' --  url      > ' + destinations[i].url);
-
-        //     var linkText = destinations[i].linkText;
-
-            // if ( destinations[i].url.indexOf(mainURL) > -1 ) {
-            //     var currentNavUrl = destinations[i].url;
-            // } else {
-            //     var currentNavUrl = mainURL + destinations[i].url;
-            // }
-
-        //     // casper.open(url, {
-            // casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-            //     casper.options.onResourceRequested = function(casper, requestData, request) {
-
-            //         // If the outgoing request doesn't equal [site_url], end and skip the request
-            //         if (requestData.url.indexOf( sourceString ) == -1 ) {
-            //             request.abort();
-            //             // Uncomment to see skipped outgoing requests
-            //             // console.log( 'skipping --  ' + requestData.url );
-            //         }
-            //     }
-
-            //     test.comment('Current url > ' + currentNavUrl);
-                
-            //     console.log('HTTP Response - ' + response.status);
-            //     test.assertVisible('.subnav-section-landing', "...is also visible.");
-                
-            //     if ( response.status == 200 || response.status == 304 ) {
-            //         // casper.wait(10000, function() {
-            //             if ( !linkText.indexOf('Home') ) {
-            //                 test.assertVisible('.subnav-section-landing', "...is also visible.");
-            //             } else {
-            //                 test.comment('Home link...skipping subnav test');
-            //             }
-
-            //             this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-            //         // });    
-            //     } else {
-            //         throw new Error('Page not loaded correctly. Response: ' + response.status);
-            //         this.exit();
-            //     }
-            // });
-        // }
+        };
     };
 
     new regressionSuite(casper.cli.get('url'));
