@@ -84,9 +84,10 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             } else {
                 casper.test.fail('Page did not load correctly. Response: ' + response.status);
             }
+
         }).then(function () {
             test.comment('step 2');
-            // suite.createTestID(url, type, urlUri);
+
         }).run(function() {
             test.comment('step 3');
             //Process file to DB
@@ -178,7 +179,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         test.assertExists('.footer', "The footer area loaded correctly.");
                         test.assertVisible('.footer', "...is visible.");
 
-                        suite.actionTests(testProperty, url);
+                        var testLinks = suite.collectNavigation(testProperty, url);
+                        console.log(testLinks);
                     },
                     function fail () {
                         this.captureSelector('screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.png', 'body');
@@ -216,21 +218,21 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
 
     // Regressiong test actions
-    regressionSuite.prototype.actionTests = function(testProperty, url) {
+    regressionSuite.prototype.collectNavigation = function(url) {
 
         var suite = this;
 
-        casper.start( url ).then(function(response) {
+        // casper.start( url ).then(function(response) {
 
         // );
 
-        // casper.open(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+        casper.open(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
             var mainURL = this.getCurrentUrl().slice(0,-1);
             console.log('main url ' + mainURL);
 
-            test.comment('[ -- clicking logo -- ]');
-                this.mouse.click('.brand a');
-            test.comment('clicked ok, new location is ' + this.getCurrentUrl());
+            // test.comment('[ -- clicking logo -- ]');
+            //     this.mouse.click('.brand a');
+            // test.comment('clicked ok, new location is ' + this.getCurrentUrl());
 
             // casper.wait(2700, function() {
             // });
@@ -273,83 +275,137 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 }
             });
 
-            test.comment('Navigation links testing; Links collected > ' + destinations.length);
-            test.comment('...links collected for testing.');
+            // Send items to be tested
+            suite.testNavigationItems(mainURL, destinations);
+        });
+    };
 
-            destinations.reverse();
 
-            for (i = destinations.length - 1; i >= 0; i--) {
-                // console.log(' --  linkText > ' + destinations[i].linkText);
-                // console.log(' --  url      > ' + destinations[i].url);
 
-                var linkText = destinations[i].linkText;
+    regressionSuite.prototype.testNavigationItems = function(mainURL, destinations) {
+        
+        destinations.reverse();
 
-                if ( destinations[i].url.indexOf(mainURL) > -1 ) {
-                    var currentNavUrl = destinations[i].url;
+        destinations.forEach(function(res) {
+            if (res.status != 200) {
+
+                if (res.linkText != null) {
+                    var currentLink = res.url;
                 } else {
-                    var currentNavUrl = mainURL + destinations[i].url;
+                    var currentLink = "[Possible image link]";
                 }
 
+                if ( res.url.indexOf(mainURL) > -1 ) {
+                    // console.log('          url found');
+                    var currentNavUrl = res.url;
+                } else {
+                    // console.log('         no');
+                    var currentNavUrl = mainURL + res.url;
+                }
 
-                casper.open(url, {
-                    method: 'get'
-                }).then(function(response) {
-                    console.log('HTTP Response - ' + response.status);
-                    
-                    test.assertVisible('.subnav-section-landing', "...is also visible.");
-                    
-                    console.log('loops + test');
-                    if ( response.status == 200 || response.status == 304 ) {
+                // console.log('mainURL ~ ' + mainURL);
+                // console.log('res.url ~ ' + res.url);
+                // console.log('testUrl ~ ' + currentNavUrl);
 
-                        this.waitForSelector("#promotional-boxes",
+                casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                    // casper.options.onResourceRequested = function(casper, requestData, request) {
+
+                    //     // If the outgoing request doesn't equal [site_url], end and skip the request
+                    //     if (requestData.url.indexOf( sourceString ) == -1 ) {
+                    //         request.abort();
+                    //         // Uncomment to see skipped outgoing requests
+                    //         // console.log( 'skipping --  ' + requestData.url );
+                    //     }
+                    // }
+
+                    // if ( res.linkText.indexOf('Home') ==! -1 ) {
+                        this.waitForSelector(".subnav-large-container",
                             function pass () {
-                                test.pass("Found #promotional-boxes");
+                                test.comment('Current url > ' + currentNavUrl + '\n');
+                                console.log('HTTP Response - ' + response.status);
+
+                                this.captureSelector('screenshots/sub-nav_' + res.linkText.toLowerCase() + '-screenshot.png', 'body');
+                                test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
                             },
                             function fail () {
-                                test.fail("Did not load element {myElement}");
+                                this.captureSelector('screenshots/sub-nav_' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                                test.fail("Unable to test page elements. Did not load element .sfbox");
                             },
-                            20000 // timeout limit in milliseconds
-                        );
+                            null // timeout limit in milliseconds
+                        )
+                    // }
 
-                        // casper.wait(10000, function() {
-                        //     if ( !linkText.indexOf('Home') ) {
-                        //         test.assertVisible('.subnav-section-landing', "...is also visible.");
-                        //     } else {
-                        //         test.comment('Home link...skipping subnav test');
-                        //     }
 
-                        //     this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                        // });
-                    } else {
-                        throw new Error('Page not loaded correctly. Response: ' + response.status);
-                        this.exit();
-                    }
+                    
+                    
+                    // test.assertVisible('.subnav-section-landing', "...is also visible.");
+                    
+                    // if ( response.status == 200 || response.status == 304 ) {
+                    //     // casper.wait(10000, function() {
+                    //         if ( !linkText.indexOf('Home') ) {
+                    //             test.assertVisible('.subnav-section-landing', "...is also visible.");
+                    //         } else {
+                    //             test.comment('Home link...skipping subnav test');
+                    //         }
+
+                            
+                    //     // });    
+                    // } else {
+                    //     throw new Error('Page not loaded correctly. Response: ' + response.status);
+                    //     this.exit();
+                    // }
                 });
 
-                // casper.open(url, {
-                // // casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-                //     // test.comment('Current url > ' + currentNavUrl);
-                    
-                //     console.log('HTTP Response - ' + response.status);
-                //     test.assertVisible('.subnav-section-landing', "...is also visible.");
-                    
-                //     if ( response.status == 200 || response.status == 304 ) {
-                //         // casper.wait(10000, function() {
-                //             if ( !linkText.indexOf('Home') ) {
-                //                 test.assertVisible('.subnav-section-landing', "...is also visible.");
-                //             } else {
-                //                 test.comment('Home link...skipping subnav test');
-                //             }
-
-                //             this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                //         // });    
-                //     } else {
-                //         throw new Error('Page not loaded correctly. Response: ' + response.status);
-                //         this.exit();
-                //     }
-                // });
-            }
+                //Write text log
+                // fs.write(save, ',\n' + res.from + ',' + res.status + ',' + currentLink + ',' + res.url, 'a+');
+            };
         });
+
+        // for (i = destinations.length - 1; i >= 0; i--) {
+        //     console.log(' --  linkText > ' + destinations[i].linkText);
+        //     console.log(' --  url      > ' + destinations[i].url);
+
+        //     var linkText = destinations[i].linkText;
+
+            // if ( destinations[i].url.indexOf(mainURL) > -1 ) {
+            //     var currentNavUrl = destinations[i].url;
+            // } else {
+            //     var currentNavUrl = mainURL + destinations[i].url;
+            // }
+
+        //     // casper.open(url, {
+            // casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+            //     casper.options.onResourceRequested = function(casper, requestData, request) {
+
+            //         // If the outgoing request doesn't equal [site_url], end and skip the request
+            //         if (requestData.url.indexOf( sourceString ) == -1 ) {
+            //             request.abort();
+            //             // Uncomment to see skipped outgoing requests
+            //             // console.log( 'skipping --  ' + requestData.url );
+            //         }
+            //     }
+
+            //     test.comment('Current url > ' + currentNavUrl);
+                
+            //     console.log('HTTP Response - ' + response.status);
+            //     test.assertVisible('.subnav-section-landing', "...is also visible.");
+                
+            //     if ( response.status == 200 || response.status == 304 ) {
+            //         // casper.wait(10000, function() {
+            //             if ( !linkText.indexOf('Home') ) {
+            //                 test.assertVisible('.subnav-section-landing', "...is also visible.");
+            //             } else {
+            //                 test.comment('Home link...skipping subnav test');
+            //             }
+
+            //             this.captureSelector('screenshots/' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+            //         // });    
+            //     } else {
+            //         throw new Error('Page not loaded correctly. Response: ' + response.status);
+            //         this.exit();
+            //     }
+            // });
+        // }
     };
 
     new regressionSuite(casper.cli.get('url'));
