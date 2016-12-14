@@ -301,8 +301,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
 
     regressionSuite.prototype.testNavigationItems = function(mainURL, destinations) {
-        
-        destinations.reverse();
 
         for (var i = destinations.length - 1; i >= 0; i--) {
 
@@ -313,35 +311,40 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 // console.log('         no');
                 var currentNavUrl = mainURL + destinations[i].url;
             }
+            var currentNavTitle = destinations[i].linkText;
 
             // console.log('mainURL ~ ' + mainURL);
-            // console.log('destinations[i].url ~ ' + destinations[i].linkText);
+            // console.log('destinations[i].linkText ~ ' + destinations[i].linkText);
             // console.log('destinations[i].url ~ ' + destinations[i].url);
             // console.log('testUrl ~ ' + currentNavUrl);
-
-            casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-                // casper.options.onResourceRequested = function(casper, requestData, request) {
-
-                // if ( destinations[i].linkText.indexOf('Home') ==! -1 ) {
-                    this.waitForSelector(".subnav-large-container",
-                        function pass () {
-                            test.comment('Current url > ' + currentNavUrl + '\n');
-                            console.log('HTTP Response - ' + response.status);
-
-                            this.captureSelector('screenshots/sub-nav_' + destinations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                            test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
-                        },
-                        function fail () {
-                            this.captureSelector('screenshots/sub-nav_' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                            test.fail("Unable to test page elements. Did not load element .sfbox");
-                        },
-                        null // timeout limit in milliseconds
-                    )
-                // }
-
-            });
+            var suite = this;
+            suite.testNavigationItems(currentNavUrl, currentNavTitle);
 
         };
+    };
+
+    regressionSuite.prototype.checkForSubnav = function(mainURL, urlName) {
+        var suite = this;
+        casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+            // casper.options.onResourceRequested = function(casper, requestData, request) {
+            // if ( destinations[i].linkText.indexOf('Home') ==! -1 ) {
+                this.waitForSelector(".subnav-large-container",
+                    function pass () {
+                        test.comment('Current url > ' + currentNavUrl + '\n');
+                        console.log('HTTP Response - ' + response.status);
+
+                        // this.captureSelector('screenshots/sub-nav_' + destiations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                        test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
+                    },
+                    function fail () {
+                        this.captureSelector('screenshots/sub-nav_' + linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                        test.fail("Unable to test page elements. Did not load element .sfbox");
+                    },
+                    null // timeout limit in milliseconds
+                )
+            // }
+
+        });
     };
 
     new regressionSuite(casper.cli.get('url'));
