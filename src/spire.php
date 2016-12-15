@@ -321,5 +321,35 @@ class Spire {
 		return $c;
 	}
 
+	public static function sendEmailNotification($alertData){
+		///////////HEADERS INFORMATION////////////
+		// main header (multipart mandatory) message
+		$headers = 'Spire' . $email . "\r\n" . 'Reply-To: ' . $email . "\r\n";
+		$emailto = $a_email;
+		$emailsubject = mb_convert_encoding('Automation Alert/Failures', 'ISO-8859-1', 'UTF-8');
+		$headers .= "MIME-Version: 1.0".$eol;
+		$headers .= "Content-Type: multipart/mixed; boundary=\"".$separator."\"".$eol.$eol;
+		$headers .= "Content-Transfer-Encoding: 7bit".$eol;
+		$headers .= "This is a MIME encoded message.".$eol.$eol;
+
+		// message
+		$message =  '';
+		$headers .= "--".$separator.$eol;
+		$headers .= "Content-Type: text/html; charset=\"iso-8859-1\"".$eol;
+		$headers .= "Content-Transfer-Encoding: 8bit".$eol.$eol;
+		$headers .= $message.$eol.$eol;
+
+		// attachment
+		$headers .= "--".$separator.$eol;
+		$headers .= "Content-Type: application/octet-stream; name=\"".$filename."\"".$eol;
+		$headers .= "Content-Transfer-Encoding: base64".$eol;
+		$headers .= "Content-Disposition: attachment".$eol.$eol;
+		$headers .= "--".$separator."--";
+
+
+		//Email message
+		mail($emailto, $emailsubject, $message, $headers);
+	}
+
 }
 ?>
