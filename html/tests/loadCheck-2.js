@@ -103,12 +103,16 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     console.log( JSON.stringify() );
                 }
 
-                suite.visualTests(testProperty, url);
+                // suite.visualTests(testProperty, url);
+                test.comment('herw');
 
             } else {
                 casper.test.fail('Page did not load correctly. Response: ' + response.status);
             }
 
+        }).then(function(testProperty, url) {
+            test.comment('step 2');
+            suite.pageTests(testProperty, url);
         }).run(function() {
             test.comment('step 3');
             //Process file to DB
@@ -138,8 +142,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
         // NBC OTS Testing
         if (otsTestSuite) {
-            casper.wait(7000, function() {
-            // casper.wait(47000, function() {
+            casper.wait(47000, function() {
                 this.waitForSelector("#sfcontentFill",
                     function pass () {
                         test.comment('Visual assertions/tests');
@@ -233,7 +236,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
 
     // Regressiong test actions
-    regressionSuite.prototype.collectNavigation = function(url) {
+    regressionSuite.prototype.collectNavigation = function(testProperty, url) {
 
         var suite = this;
 
@@ -289,13 +292,13 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             });
 
             // Send items to be tested
-            suite.testNavigationItems(mainURL, destinations);
+            suite.testNavigationItems(mainURL, destinations, testProperty);
         });
     };
 
 
 
-    regressionSuite.prototype.testNavigationItems = function(mainURL, destinations) {
+    regressionSuite.prototype.testNavigationItems = function(mainURL, destinations, testProperty) {
 
         for (var i = destinations.length - 1; i >= 0; i--) {
 
@@ -338,10 +341,89 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             }
 
         };
+
+
+
+
     };
 
-    regressionSuite.prototype.checkForSubnav = function(mainURL, urlName) {
+    regressionSuite.prototype.pageTests = function(testProperty, url) {
         var suite = this;
+
+        // Set testing item
+        if (testProperty == 'otsTestSuite') {
+            var otsTestSuite = true;
+
+            var addtnlDestinations = [
+                '/contact-us',
+                '/traffic',
+                '/weather',
+                '/investigations'
+            ];
+
+        } else {
+            var tlmTestSuite = true;
+
+            var addtnlDestinations = [
+                '/envia-tus-comentarios',
+                '/trafico'
+            ];
+        }
+
+        addtnlDestinations.reverse();
+
+        for (var i = addtnlDestinations.length - 1; i >= 0; i--) {
+            var currentNavUrl = url + addtnlDestinations[i];
+
+            casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+
+                // console.log(testProperty);
+
+                test.comment('Current url > ' +  response.url);
+                console.log('HTTP Response - ' + response.status);
+
+                // OTS Checks
+                if ( response.url.indexOf('traffic') > -1 ) {
+                    test.assertVisible('#navteqTrafficOneContainer', "traffic map container loaded...");
+                }
+
+                if ( response.url.indexOf('contact-us') > -1 ) {
+                    test.assertVisible('.about_module', "contact page loaded, about module seen/loaded....");
+                }
+
+                if ( response.url.indexOf('weather') > -1 ) {
+                    test.assertVisible('.wx-standalone-map', "weather page interactive radar seen/loaded....");
+                }
+
+                if ( response.url.indexOf('investigations') > -1 ) {
+                    test.assertVisible('.leadMediaThumbnail', "lead video thumb displayed.");
+
+                    test.comment('[ -- clicking lead video -- ]');
+
+                    this.mouse.move('#leadVideo');
+                    this.mouse.click('.playButtonLarge', "clicked play icon");
+
+                    casper.wait(80000, function() {
+                        this.waitForSelector("#leadVideo",
+                            function pass () {
+                                this.captureSelector('screenshots/investigations_lead-screenshot.png', 'body');
+
+                                test.assertResourceExists(function(resource) {
+                                    return resource.url.match('akamai');
+                                });
+
+                                test.assertVisible('.player', "lead video displayed.");
+                            },
+                            function fail () {
+                                test.fail("Video player not loaded.");
+                            },
+                            null // timeout limit in milliseconds
+                        )
+                    })
+                }
+
+            })
+        };
         
     };
 
