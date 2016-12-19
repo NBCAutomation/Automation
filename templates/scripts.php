@@ -74,6 +74,7 @@
 						$bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>');
 
 						$output = shell_exec($execCmd);
+						var_dump($output);
 						
 						$lines = split("[\r|\n]", trim($output));
 						array_shift($lines);

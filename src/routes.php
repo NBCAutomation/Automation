@@ -372,7 +372,7 @@ $app->group('/scripts', function () {
     	$permissions = $request->getAttribute('spPermissions');
 
     	// Temp File
-    	$__tmpFile = './tmp/__tempSites_'. rand() .'.txt';
+    	$__tmpFile = BASEPATH .'/tmp/__tempSites_'. rand() .'.txt';
     	$__data = file_get_contents($__tmpFile);
     	// var_dump($__tmpFile);
 
@@ -380,7 +380,7 @@ $app->group('/scripts', function () {
     	$allPostPutVars = $request->getParsedBody();
 
     	foreach($allPostPutVars as $key => $param){
-    		var_dump($key, $param);
+    		// var_dump($key, $param);
 
     		if ($key == 'script') {
     			$__runScript = $param;
@@ -420,13 +420,13 @@ $app->group('/scripts', function () {
 		if ($__runScript == 'spire-run') {
 			$__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. BASEPATH .'/run.sh apiCheck-manifest --url="{}"'.$__output;
+			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} '. BASEPATH .'/run.sh apiCheck-manifest --url="{}"'.$__output;
 		} elseif ($__runScript == 'apiCheck-nav') {
-			$__runCommand = 'cat ' . $__tmpFile .' | xargs -P1 -I{} '. BASEPATH .'/run.sh apiCheck-nav --url="{}"'.$__output;
+			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} '. BASEPATH .'/run.sh apiCheck-nav --url="{}"'.$__output;
 		}
 
 		sleep(1);
-
+		var_dump($__runCommand);
 		$setThisEnv = getenv('PATH');
 
 		if ($request->isPost()) {
@@ -440,7 +440,7 @@ $app->group('/scripts', function () {
 		        'setEnv' => putenv("PATH={$setThisEnv}:/usr/local/bin"),
 		        // 'setEnv' => putenv("PATH={$setThisEnv}"),
 				'execCmd' => $__runCommand,
-				'delCmd' => $__delCMD
+				// 'delCmd' => $__delCMD
 	        ]);
 	    }
     })->setName('scripts-run');
