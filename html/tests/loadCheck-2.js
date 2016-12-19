@@ -397,29 +397,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 if ( response.url.indexOf('investigations') > -1 ) {
                     test.assertVisible('.leadMediaThumbnail', "lead video thumb displayed.");
-
-                    test.comment('[ -- clicking lead video -- ]');
-
-                    this.mouse.move('#leadVideo');
-                    this.mouse.click('.playButtonLarge', "clicked play icon");
-
-                    casper.wait(80000, function() {
-                        this.waitForSelector("#leadVideo",
-                            function pass () {
-                                this.captureSelector('screenshots/investigations_lead-screenshot.png', 'body');
-
-                                test.assertResourceExists(function(resource) {
-                                    return resource.url.match('akamai');
-                                });
-
-                                test.assertVisible('.player', "lead video displayed.");
-                            },
-                            function fail () {
-                                test.fail("Video player not loaded.");
-                            },
-                            null // timeout limit in milliseconds
-                        )
-                    })
                 }
 
             })
