@@ -73,18 +73,25 @@
 						$bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m');
 						$bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>');
 
-						$output = shell_exec($execCmd);
-						var_dump($output);
+						exec($execCmd, $output, $retval);
+						// echo '<pre>';
+						// var_dump($output);
+						// echo '</pre>';
 						
-						$lines = split("[\r|\n]", trim($output));
-						array_shift($lines);
+						$lines = $output;
+
 						echo "<table class=\"table table-bordered table-striped\">";
 						foreach($lines as $drive) {
 						    $formattedText = str_replace($bashOutput, $bashOutputStyle, $drive);
 						    echo "<tr><td>".$formattedText."</td></tr>";
 						}
 						echo "</table>";
-						echo shell_exec($delCmd);
+
+						$output = "";
+						$retval = -1;
+
+						exec($delCmd, $output, $retval);
+						// var_dump($retval, $output);
 						
 					?>
 				</div>	

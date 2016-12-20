@@ -374,7 +374,6 @@ $app->group('/scripts', function () {
     	// Temp File
     	$__tmpFile = BASEPATH .'/tmp/__tempSites_'. rand() .'.txt';
     	$__data = file_get_contents($__tmpFile);
-    	// var_dump($__tmpFile);
 
 
     	$allPostPutVars = $request->getParsedBody();
@@ -387,7 +386,7 @@ $app->group('/scripts', function () {
     		}
 
     		if ($key == 'output'){
-    			$__output = ' --output=console';
+    			$__output = ' --output=console --env=local';
     		}
 
 	    	if ($key == 'brand_test' && $param == 'all') {
@@ -401,6 +400,7 @@ $app->group('/scripts', function () {
 	    		$__tmpFile = './sites-tsg.txt';
 	    	} else {
 	    		$writeTempFile = true;
+
 	    		if ($key == 'test_site' && is_array($param)) {
 					foreach ($param as $__key => $__value) {
 						$__data .= 'http://www.'.$__value.'.com';
@@ -420,14 +420,19 @@ $app->group('/scripts', function () {
 		if ($__runScript == 'spire-run') {
 			$__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} '. BASEPATH .'/run.sh apiCheck-manifest --url="{}"'.$__output;
+			// $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} "'. BASEPATH .'/run.sh" apiCheck-manifest --url="{}"'.$__output;
+			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
 		} elseif ($__runScript == 'apiCheck-nav') {
-			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} '. BASEPATH .'/run.sh apiCheck-nav --url="{}"'.$__output;
+			// $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} "'. BASEPATH .'/run.sh" apiCheck-nav --url="{}"'.$__output;
+			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-nav.js" --url="{}"'.$__output;
 		}
 
 		sleep(1);
-		var_dump($__runCommand);
+		
+		
 		$setThisEnv = getenv('PATH');
+		$spEnv = putenv("PATH=".$setThisEnv.":/usr/local/bin");
+		// var_dump("PATH=".$setThisEnv.":/usr/local/bin");
 
 		if ($request->isPost()) {
 	        return $this->renderer->render($response, 'scripts.php', [
@@ -437,10 +442,10 @@ $app->group('/scripts', function () {
 		        'viewPath' => $args['view'],
 		        'scriptRunView' => true,
 		        'scriptClass' => true,
-		        'setEnv' => putenv("PATH={$setThisEnv}:/usr/local/bin"),
+		        'setEnv' => $spEnv,
 		        // 'setEnv' => putenv("PATH={$setThisEnv}"),
 				'execCmd' => $__runCommand,
-				// 'delCmd' => $__delCMD
+				'delCmd' => $__delCMD
 	        ]);
 	    }
     })->setName('scripts-run');
