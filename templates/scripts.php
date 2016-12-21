@@ -73,6 +73,8 @@
 						$bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m');
 						$bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>');
 
+						var_dump($execCmd);
+
 						exec($execCmd, $output, $retval);
 						// echo '<pre>';
 						// var_dump($output);
