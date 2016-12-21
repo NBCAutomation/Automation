@@ -17,7 +17,7 @@
 //
 
 
-casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
+casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     // Config vars
     var utils = require('utils');
@@ -61,7 +61,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var showOutput = true;
         }
 
-    var baseUrl = siteUrl.replace(/\/$/, '');
+    // var baseUrl = siteUrl.replace(/\/$/, '');
 
     var regressionSuite = function(url) {
 
@@ -103,8 +103,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     console.log( JSON.stringify() );
                 }
 
-                // suite.visualTests(testProperty, url);
-                test.comment('herw');
+                suite.visualTests(testProperty, url);
 
             } else {
                 casper.test.fail('Page did not load correctly. Response: ' + response.status);
@@ -112,7 +111,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
         }).then(function(testProperty, url) {
             test.comment('step 2');
-            suite.pageTests(testProperty, url);
+            // suite.pageTests(testProperty, url);
         }).run(function() {
             test.comment('step 3');
             //Process file to DB
@@ -142,7 +141,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
         // NBC OTS Testing
         if (otsTestSuite) {
-            casper.wait(47000, function() {
+            casper.wait(700, function() {
+            // casper.wait(47000, function() {
                 this.waitForSelector("#sfcontentFill",
                     function pass () {
                         test.comment('Visual assertions/tests');
@@ -204,7 +204,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         test.assertExists('.footer', "The footer area loaded correctly.");
                         test.assertVisible('.footer', "...is visible.");
 
-                        var testLinks = suite.collectNavigation(testProperty, url);
+                        suite.collectNavigation(testProperty, url);
                         // console.log(testLinks);
                     },
                     function fail () {
@@ -318,11 +318,11 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 console.log('testUrl ~ ' + currentNavUrl);
             }
             
-            if ( destinations[i].url.indexOf(mainURL) > -1 ) {
+            if ( currentNavUrl != mainURL+'/' ) {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                     this.waitForSelector(".subnav-large-container",
                         function pass () {
-                            test.comment('Current url > ' +  response.url);
+                            console.log('Current url > ' +  response.url);
                             console.log('HTTP Response - ' + response.status);
 
                             // this.captureSelector('screenshots/sub-nav_' + destiations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
