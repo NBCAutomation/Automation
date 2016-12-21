@@ -169,7 +169,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             suite.getContent(url, type, 'xx');
         } else {
             if (dbUrl) {
-                casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                casper.open(dbUrl).then(function(resp) {
                     
                     var status = this.status().currentHTTPStatus;
 

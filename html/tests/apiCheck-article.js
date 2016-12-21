@@ -153,7 +153,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
         } else {
             if (dbUrl) {
                 // casper.start( 'dbUrl' ).then(function(response) {
-                    casper.open(dbUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    casper.open(dbUrl).then(function(resp) {
                         
                         var status = this.status().currentHTTPStatus;
 
