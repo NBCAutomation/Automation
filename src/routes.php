@@ -427,12 +427,12 @@ $app->group('/scripts', function () {
 		if ($__runScript == 'spire-run') {
 		        $__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | ' . ($sudo_cmd ? $sudo_cmd . ' ' : '') . 'xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} ' . $sudo_cmd . ' casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
 		} elseif ($__runScript == 'apiCheck-nav') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | ' . ($sudo_cmd ? $sudo_cmd . ' ' : '') . 'xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-nav.js" --url="{}"'.$__output;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} ' . $sudo_cmd . ' casperjs test "'. BASEPATH .'/tests/apiCheck-nav.js" --url="{}"'.$__output;
 		} elseif ($__runScript == 'regressionTest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | ' . ($sudo_cmd ? $sudo_cmd . ' ' : '') . 'xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output;
-		} 
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} ' . $sudo_cmd . ' casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output;
+		}
 
 		sleep(1);
 		
