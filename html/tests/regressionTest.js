@@ -31,6 +31,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     // Util vars
     var currentTime = new Date();
+    var colorizer = require('colorizer').create('Colorizer');
 
     var month = currentTime.getMonth() + 1;
     var day = currentTime.getDate();
@@ -103,26 +104,19 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     console.log( JSON.stringify() );
                 }
 
+                console.log(url);
                 suite.visualTests(testProperty, url);
 
             } else {
                 casper.test.fail('Page did not load correctly. Response: ' + response.status);
             }
 
-        }).then(function(testProperty, url) {
-            test.comment('step 2');
-            // suite.pageTests(testProperty, url);
+        }).then(function() {
+            console.log('step');
+
         }).run(function() {
-            test.comment('step 3');
-            //Process file to DB
-            // if (logResults) {
-            //     suite.processTestResults(save);
-            // }
-            // if(createDictionary){
-            //     console.log('Dictionary creation ended.');
-            // } else {
-            //     console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
-            // }
+            console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
+            
             this.exit();
             test.done();
         });
@@ -157,15 +151,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                         test.assertExists('.brand a img', "The logo loaded correctly.");
                         test.assertVisible('.brand a', "...is also visible.");
-
-                        // ######################
-                        // # Nav tests
-                        // ######################
-
-                        // // Screenshot capture
-                        // Capture screenshot of current state
-                        // this.captureSelector('screenshots/' + urlUri + '_mouse-hover-screenshot' + timeStamp + '.png', 'body');
-                        // test.comment('tv subnav screenshot captured.');
 
                         test.assertExists('.navbar', "The nav loaded correctly.");
                         test.assertVisible('.navbar', "...is visible.");
@@ -205,7 +190,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         test.assertVisible('.footer', "...is visible.");
 
                         suite.collectNavigation(testProperty, url);
-                        // console.log(testLinks);
                     },
                     function fail () {
                         this.captureSelector('screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.png', 'body');
@@ -239,10 +223,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.collectNavigation = function(testProperty, url) {
 
         var suite = this;
-
-        // casper.start( url ).then(function(response) {
-
-        // );
+        console.log('//////////////////////');
 
         casper.thenOpen(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
             var mainURL = this.getCurrentUrl().slice(0,-1);
@@ -252,7 +233,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             test.comment('[ -- clicking logo -- ]');
                 this.mouse.click('.brand a');
-            test.comment('clicked ok, new location is ' + this.getCurrentUrl());
+            console.log('clicked ok, new location is ' + this.getCurrentUrl());
+            console.log('...testing pages');
 
             var selector = '.nav-section a.nav-section-title';
 
@@ -266,10 +248,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     };
                 }).map(function(elementObj) {
-                    // if (!protocolRegex.test(elementObj.url)) {
-                        // elementObj.url = mainURL + ('/' + elementObj.url).replace(/\/{2,}/g, '/');
-                    // }
-
                     return elementObj;
                 });
             }, mainURL, selector);
@@ -300,6 +278,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     regressionSuite.prototype.testNavigationItems = function(mainURL, destinations, testProperty) {
 
+        var suite = this;
+
         for (var i = destinations.length - 1; i >= 0; i--) {
 
             if ( destinations[i].url.indexOf(mainURL) > -1 ) {
@@ -322,7 +302,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                     this.waitForSelector(".subnav-large-container",
                         function pass () {
-                            console.log('Current url > ' +  response.url);
+                            console.log('-------------');
+                            test.comment('Current url > ' +  response.url);
                             console.log('HTTP Response - ' + response.status);
 
                             // this.captureSelector('screenshots/sub-nav_' + destiations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
@@ -339,12 +320,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             } else {
                 test.comment('homepage skipping subnav check...');
             }
+        }
 
+        if (i == -1) {
+            suite.pageTests(testProperty, mainURL);
         };
-
-
-
-
     };
 
     regressionSuite.prototype.pageTests = function(testProperty, url) {
@@ -378,16 +358,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
 
                 // console.log(testProperty);
-
+                console.log('-------------');
                 test.comment('Current url > ' +  response.url);
                 console.log('HTTP Response - ' + response.status);
 
                 // OTS Checks
-                if ( response.url.indexOf('traffic') > -1 ) {
+                if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
                     test.assertVisible('#navteqTrafficOneContainer', "traffic map container loaded...");
                 }
 
-                if ( response.url.indexOf('contact-us') > -1 ) {
+                if ( response.url.indexOf('contact-us') > -1 || response.url.indexOf('envia-tus-comentarios') > -1 ) {
                     test.assertVisible('.about_module', "contact page loaded, about module seen/loaded....");
                 }
 
