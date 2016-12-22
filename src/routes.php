@@ -418,15 +418,21 @@ $app->group('/scripts', function () {
     		$__delCMD = '';
     	}
 
-		if ($__runScript == 'spire-run') {
-			$__runCommand = 'npm run runall';
-		} elseif ($__runScript == 'apiCheck-manifest') {
-			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
-		} elseif ($__runScript == 'apiCheck-nav') {
-			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-nav.js" --url="{}"'.$__output;
-		} elseif ($__runScript == 'regressionTest') {
-			$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output;
+		$sudo_cmd = false;
+
+		if (gethostname() == 'ip-10-9-169-143') {
+		    $sudo_cmd = 'sudo -u ec2-user';
 		}
+
+		if ($__runScript == 'spire-run') {
+		        $__runCommand = 'npm run runall';
+		} elseif ($__runScript == 'apiCheck-manifest') {
+		        $__runCommand = 'cat "' . $__tmpFile .'" | ' . ($sudo_cmd ? $sudo_cmd . ' ' : '') . 'xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
+		} elseif ($__runScript == 'apiCheck-nav') {
+		        $__runCommand = 'cat "' . $__tmpFile .'" | ' . ($sudo_cmd ? $sudo_cmd . ' ' : '') . 'xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-nav.js" --url="{}"'.$__output;
+		} elseif ($__runScript == 'regressionTest') {
+		        $__runCommand = 'cat "' . $__tmpFile .'" | ' . ($sudo_cmd ? $sudo_cmd . ' ' : '') . 'xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output;
+		} 
 
 		sleep(1);
 		
