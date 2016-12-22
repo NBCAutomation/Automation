@@ -40,7 +40,6 @@
 						<a href="/scripts/spire-run">spire-run.sh</a>
 					</div>
 					<div class="panel-body">
-						<p><b>Manual running from web-app is currently disabled due to memory leaks.</b></p>
 						<span class="note">Bash script is set to run automated test scripts every 4 hours.</span>
 					</div>
 				</div>
@@ -85,7 +84,13 @@
 		<h3><?php echo $view ?></h3>
 
 		<div class="panel panel-default">
-		<?php if($view != 'spire-run'){include_once 'base/script_config.php';} ?>
+		<?php
+			if($view == 'regressionTest'){
+				include_once 'base/script_config.php';
+			} else {
+				echo '<div class="panel-body"><span><b>Script set to run on cron every 4 hours, manual starting/testing is disabled.</b></span></div>';
+			}
+		?>
 		</div>
 	<?php } ?>
 	<?php if ($scriptRunView) { ?>
