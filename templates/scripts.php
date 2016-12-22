@@ -7,11 +7,41 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<i class="fa fa-file" aria-hidden="true"></i> 
+						<a href="/scripts/regressionTest">regressionTest.js</a>
+					</div>
+					<div class="panel-body">
+						<span class="note">Manully run regression test. Tests the following list:</span>
+						
+						<ul class="defaultList">
+							<li>Logo is clickable</li>
+							<li>Weather module appears on HP and map loads</li>
+							<li>Right rail has Spredfast</li>
+							<li>Watch live TVE dropdown appears</li>
+							<li>News page loads along with sub nav</li>
+							<li>Weather page loads along with sub nav</li>
+							<li>Investigations page loads along with sub navs</li>
+							<li>Entertainment page loads along with sub nav</li>
+							<li>Traffic page loads</li>
+							<li>Interactive radar loads map</li>
+							<li>Contact us loads</li>
+						</ul>
+
+						<span class="note">will also load check telexitos and cozi</span>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<hr />
+		<ul>
+			<li>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<i class="fa fa-file" aria-hidden="true"></i> 
 						<a href="/scripts/spire-run">spire-run.sh</a>
 					</div>
 					<div class="panel-body">
-						<p><b>Running from web-app is currently disabled due to memory leaks and sever stability.</b></p>
-						<span class="note">Bash script to run all automated test scripts. This script currently runs on a cron daily at 9:30 AM EST.</span>
+						<p><b>Manual running from web-app is currently disabled due to memory leaks.</b></p>
+						<span class="note">Bash script is set to run automated test scripts every 4 hours.</span>
 					</div>
 				</div>
 			</li>

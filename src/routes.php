@@ -445,10 +445,16 @@ $app->group('/scripts', function () {
 		        'setEnv' => $spEnv,
 		        // 'setEnv' => putenv("PATH={$setThisEnv}"),
 				'execCmd' => $__runCommand,
-				'delCmd' => $__delCMD
+				'delCmd' => $__delCMD,
+
+	    		//Auth Specific
+	    		'user' => $request->getAttribute('spAuth'),
+		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
+		        'uAthMessage' => $permissions['uAthMessage']				
 	        ]);
 	    }
-    })->setName('scripts-run');
+    })->setName('scripts-run')->add( new SpireAuth() );
 });
 
 

@@ -329,6 +329,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     regressionSuite.prototype.pageTests = function(testProperty, url) {
         var suite = this;
+        var addtnlDestinations = [];
 
         // Set testing item
         if (testProperty == 'otsTestSuite') {
@@ -338,7 +339,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 '/contact-us',
                 '/traffic',
                 '/weather',
-                '/investigations'
+                '/investigations',
+
+                'http://www.telexitos.com',
+                'http://www.cozitv.com'
             ];
 
         } else {
@@ -346,14 +350,21 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             var addtnlDestinations = [
                 '/envia-tus-comentarios',
-                '/trafico'
+                '/trafico',
+
+                'http://www.telexitos.com',
+                'http://www.cozitv.com'
             ];
         }
 
         addtnlDestinations.reverse();
 
         for (var i = addtnlDestinations.length - 1; i >= 0; i--) {
-            var currentNavUrl = url + addtnlDestinations[i];
+            if ( addtnlDestinations[i].indexOf('cozi') > -1 || addtnlDestinations[i].indexOf('telexitos') > -1 ) {
+                var currentNavUrl = addtnlDestinations[i];
+            } else {
+                var currentNavUrl = url + addtnlDestinations[i];
+            }
 
             casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
 
@@ -377,6 +388,21 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                 if ( response.url.indexOf('investigations') > -1 ) {
                     test.assertVisible('.leadMediaThumbnail', "lead video thumb displayed.");
+                }
+
+                // Telexitos testing
+                if ( response.url.indexOf('telexitos') > -1 ) {
+                    test.assertVisible('.primary', "main page loaded and displayed.");
+                }
+
+                // Cozi testing
+                if ( response.url.indexOf('cozi') > -1 ) {
+                    test.assertVisible('.headerLogo', "logo loaded and is visible.");
+                    test.assertVisible('#bodyContainer', "main page loaded and displayed.");
+
+                    this.mouse.move('.playButtonLarge');
+                    this.mouse.click('.playButtonLarge');
+                    test.assertVisible('#_VODPlayer108PdkSwfObject', "video player laoded, test manually to ensure video plays.");
                 }
 
             })

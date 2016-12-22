@@ -170,3 +170,10 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 	background-color: #325d88;
 	color: #fff;
 }
+
+.defaultList {}
+
+.defaultList li {
+    list-style-type: disc;
+    list-style-position: inside;
+}
