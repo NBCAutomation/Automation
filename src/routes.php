@@ -386,7 +386,8 @@ $app->group('/scripts', function () {
     		}
 
     		if ($key == 'output'){
-    			$__output = ' --output=console --env=local';
+    			// $__output = ' --output=console --env=local';
+    			$__output = ' --output=console';
     		}
 
 	    	if ($key == 'brand_test' && $param == 'all') {
