@@ -432,7 +432,10 @@ $app->group('/scripts', function () {
 		
 		$setThisEnv = getenv('PATH');
 		$spEnv = putenv("PATH=".$setThisEnv.":/usr/local/bin");
-		// var_dump("PATH=".$setThisEnv.":/usr/local/bin");
+		
+		if (gethostname() == 'ip-10-9-169-143') {
+		    putenv('PATH=/home/ec2-user/.nvm/versions/node/v4.6.0/bin:'.getenv('PATH'));
+		}
 
 		if ($request->isPost()) {
 	        return $this->renderer->render($response, 'scripts.php', [
