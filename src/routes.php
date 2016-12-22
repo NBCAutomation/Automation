@@ -430,7 +430,6 @@ $app->group('/scripts', function () {
 
 		sleep(1);
 		
-		
 		$setThisEnv = getenv('PATH');
 		$spEnv = putenv("PATH=".$setThisEnv.":/usr/local/bin");
 		// var_dump("PATH=".$setThisEnv.":/usr/local/bin");
