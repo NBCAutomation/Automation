@@ -5,7 +5,7 @@
 
 // === Home ===
 $app->get('/', function ($request, $response, $args) {
-	
+
 	// $this->logger->info("Spire homepage '/' route");
 
 	$permissions = $request->getAttribute('spPermissions');
@@ -21,7 +21,7 @@ $app->get('/', function ($request, $response, $args) {
 	    //     'uAuth' => $permissions['auth'],
 	    //     'uRole' => $permissions['role'],
 	    //     'uAthMessage' => $permissions['uAthMessage']
-    	// ]);	
+    	// ]);
 	    $uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
 		return $response = $response->withRedirect($uri);
     } else {
@@ -35,7 +35,7 @@ $app->get('/', function ($request, $response, $args) {
 // === Dashboard ===
 $app->group('/dashboard', function () use ($app) {
 	$this->get('/main', function ($request, $response, $args) {
-		
+
 		$db = new DbHandler();
 		$permissions = $request->getAttribute('spPermissions');
 
@@ -63,7 +63,7 @@ $app->group('/dashboard', function () use ($app) {
 			'todayNavTotalWarningReports' => $todayNavTotalWarningReports,
 			'todayContentTotalFailureReports' => $todayContentTotalFailureReports,
 			'todayContentTotalWarningReports' => $todayContentTotalWarningReports,
-	        
+
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
@@ -77,13 +77,13 @@ $app->group('/dashboard', function () use ($app) {
 		$db = new DbHandler();
 
 		$permissions = $request->getAttribute('spPermissions');
-		
+
 		return $this->renderer->render($response, 'account.php', [
 	        'title' => 'Dashboard - My Account',
 	        'page_name' => 'account',
 	        'accountClass' => true,
 	        'hideBreadcrumbs' => true,
-	        
+
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
@@ -93,7 +93,7 @@ $app->group('/dashboard', function () use ($app) {
 	    ]);
 	})->setName('account-dashboard')->add( new SpireAuth() );
 
-	// 
+	//
 	// Account update
 
 	$this->post('/{view}', function ($request, $response, $args) {
@@ -101,7 +101,7 @@ $app->group('/dashboard', function () use ($app) {
 		$__postVars = $request->getParsedBody();
 
 	  	verifyRequiredParams(array('email', 'password'));
-	  
+
 		// reading post params
 		$email = $__postVars['email'];
 		$uid = $__postVars['uid'];
@@ -116,11 +116,11 @@ $app->group('/dashboard', function () use ($app) {
 		if ($db->checkLogin($email, $password)) {
 			// get the user by email
 			$user = $db->getUserByEmail($email);
-			
+
 			if ($user != NULL) {
-				
+
 				$pwUpdate = $db->updateUserPassword($uid, $new_password);
-				
+
 				$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
 				return $response = $response->withRedirect($uri, 403);
 			} else {
@@ -161,13 +161,13 @@ $app->group('/reports', function () {
 		$__viewPath = $args['view']."/".$args['subView'];
 
 		switch ($args['view']) {
-		    
+
 		    case "main":
 		        $mainView = true;
 		        break;
 
 		    case "overview":
-		        $overView = true;	
+		        $overView = true;
 		        break;
 
 		    case "api_article_audits":
@@ -193,17 +193,17 @@ $app->group('/reports', function () {
 
 			$todayTotalFailureReports = $db->allFailureReportsFromToday($args['view']);
 			$todayTotalWarningReports = $db->allWarningReportsFromToday($args['view']);
-			
+
 			$yesterdayTotalFailureReports = $db->allFailureReportsFromYesterday($args['view']);
 			$yesterdayTotalWarningReports = $db->allWarningReportsFromYesterday($args['view']);
 
 			$todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($args['view']));
-			$todayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromToday($args['view']));				
+			$todayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromToday($args['view']));
 
 			$yesterdayTotalErrors = Spire::countDataResults($db->allFailureReportsFromYesterday($args['view']));
 			$yesterdayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromYesterday($args['view']));
 		}
-		
+
         return $this->renderer->render($response, 'reports.php', [
             'title' => 'Reports',
             'page_name' => 'reports',
@@ -227,7 +227,7 @@ $app->group('/reports', function () {
 			'todayTotalWarnings' => $todayTotalWarnings,
 			'yesterdayTotalErrors' => $yesterdayTotalErrors,
 			'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
-    		
+
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
@@ -236,7 +236,7 @@ $app->group('/reports', function () {
         ]);
     })->setName('directory-reports-view')->add( new SpireAuth() );
 
-    
+
     // All reports view
     $this->get('/{view}/{subView}', function ($request, $response, $args) {
     	$db = new DbHandler();
@@ -259,7 +259,7 @@ $app->group('/reports', function () {
 		    'allView' => true,
 		    'reportClass' => true,
 		    'reportData' => $allReports,
-		    
+
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
@@ -297,7 +297,7 @@ $app->group('/reports', function () {
 		    'reportProperty' => $currentRecord['property'],
 		    'reportPropertyData' => $currentRecord,
 		    'reportData' => $currentRecordResults,
-		    
+
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
@@ -315,7 +315,7 @@ $app->group('/scripts', function () {
 		$permissions = $request->getAttribute('spPermissions');
 
 		$testDir = 'test_results/'.$args['view'];
-		
+
 		if ($args['view'] != 'spire-run') {
 			$showOutput = true;
 		} else {
@@ -337,7 +337,7 @@ $app->group('/scripts', function () {
 	            'scriptClass' => true,
 	    		'results' => $files_array,
 	    		'configureOutput' => $showOutput,
-	    		
+
 	    		//Auth Specific
 	    		'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
@@ -357,7 +357,7 @@ $app->group('/scripts', function () {
 	            'scriptClass' => true,
 	    		'results' => $files_array,
 	    		'configureOutput' => $showOutput,
-	    		
+
 	    		//Auth Specific
 	    		'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
@@ -408,7 +408,7 @@ $app->group('/scripts', function () {
 						$__data .= "\r\n";
 					}
 				}
-	    	}	
+	    	}
     	}
 
     	if ($writeTempFile) {
@@ -418,27 +418,21 @@ $app->group('/scripts', function () {
     		$__delCMD = '';
     	}
 
-		$sudo_cmd = false;
-
-		if (gethostname() == 'ip-10-9-169-143') {
-		    $sudo_cmd = 'sudo -u ec2-user';
-		}
-
 		if ($__runScript == 'spire-run') {
 		        $__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} ' . $sudo_cmd . ' casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
 		} elseif ($__runScript == 'apiCheck-nav') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} ' . $sudo_cmd . ' casperjs test "'. BASEPATH .'/tests/apiCheck-nav.js" --url="{}"'.$__output;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-nav.js" --url="{}"'.$__output;
 		} elseif ($__runScript == 'regressionTest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} ' . $sudo_cmd . ' casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output;
 		}
 
 		sleep(1);
-		
+
 		$setThisEnv = getenv('PATH');
 		$spEnv = putenv("PATH=".$setThisEnv.":/usr/local/bin");
-		
+
 		if (gethostname() == 'ip-10-9-169-143') {
 		    putenv('PATH=/home/ec2-user/.nvm/versions/node/v4.6.0/bin:'.getenv('PATH'));
 		}
@@ -460,7 +454,7 @@ $app->group('/scripts', function () {
 	    		'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
 		        'uRole' => $permissions['role'],
-		        'uAthMessage' => $permissions['uAthMessage']				
+		        'uAthMessage' => $permissions['uAthMessage']
 	        ]);
 	    }
     })->setName('scripts-run')->add( new SpireAuth() );
@@ -476,7 +470,7 @@ $app->get('/help', function ($request, $response, $args) {
         'page_name' => 'help',
         'helpClass' => true,
         'hideBreadcrumbs' => true,
-        
+
         //Auth Specific
         'user' => $request->getAttribute('spAuth'),
         'uAuth' => $permissions['auth'],
@@ -513,7 +507,7 @@ $app->group('/register', function () {
 		$last_name = $__postVars['last_name'];
 		$email = $__postVars['email'];
 		$password = $__postVars['password'];
-		
+
 		// check for form required params
 		verifyRequiredParams(array('first_name', 'last_name', 'email', 'password'));
 		$formResponse = array();
@@ -552,7 +546,7 @@ $app->group('/register', function () {
 
 // === Admin ===
 $app->group('/admin', function () use ($app) {
-	
+
 	// === Admin Deashboard ===
 	$this->get('/main', function ($request, $response, $args) {
 
@@ -564,7 +558,7 @@ $app->group('/admin', function () use ($app) {
 	        'admin_dashClass' => true,
 	        'hideBreadcrumbs' => true,
 	        'mainView' => true,
-	        
+
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
 	        'uAuth' => $permissions['auth'],
@@ -590,7 +584,7 @@ $app->group('/admin', function () use ($app) {
 		        'hideBreadcrumbs' => true,
 		        'userView' => true,
 		        'spireUsers' => $users,
-		        
+
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
@@ -617,7 +611,7 @@ $app->group('/admin', function () use ($app) {
 		        'hideBreadcrumbs' => true,
 		        'userEditView' => true,
 		        'editingUser' => $editingUser,
-		        
+
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
@@ -636,7 +630,7 @@ $app->group('/admin', function () use ($app) {
 			// exit();
 
 		 //  	verifyRequiredParams(array('email', 'password'));
-		  
+
 			// // reading post params
 			$user_id = $__postVars['u_id'];
 			$new_password = $__postVars['u_password'];
@@ -652,7 +646,7 @@ $app->group('/admin', function () use ($app) {
 			if ( $db->updateUser($user_id, $new_password, $role, $status) ) {
 				$formResponse['error'] = false;
 				$formResponse['message'] = 'User information updated';
-				
+
 			} elseif ( ! $db->updateUser($user_id, $new_password, $role, $status) ) {
 				$formResponse['error'] = true;
 				$formResponse['message'] = 'User information not updated. If page refresh, stahp';
@@ -667,7 +661,7 @@ $app->group('/admin', function () use ($app) {
 		        'editingUser' => $editingUser,
 		        'message_e' => $formResponse['error'],
 		        'messages' => $formResponse["message"],
-		        
+
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
@@ -695,7 +689,7 @@ $app->group('/admin', function () use ($app) {
 		        'hideBreadcrumbs' => true,
 		        'stationsView' => true,
 		        'stations' => $stations,
-		        
+
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
@@ -721,7 +715,7 @@ $app->group('/admin', function () use ($app) {
 		        'hideBreadcrumbs' => false,
 		        'stationEditView' => true,
 		        'editingStation' => $editingStation[0],
-		        
+
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
@@ -740,7 +734,7 @@ $app->group('/admin', function () use ($app) {
 			// exit();
 
 		 	//verifyRequiredParams(array('email', 'password'));
-		  
+
 			// // reading post params
 			$user_id = $__postVars['u_id'];
 			$new_password = $__postVars['u_password'];
@@ -756,7 +750,7 @@ $app->group('/admin', function () use ($app) {
 			if ( $db->updateUser($user_id, $new_password, $role, $status) ) {
 				$formResponse['error'] = false;
 				$formResponse['message'] = 'User information updated';
-				
+
 			} elseif ( ! $db->updateUser($user_id, $new_password, $role, $status) ) {
 				$formResponse['error'] = true;
 				$formResponse['message'] = 'User information not updated. If page refresh, stahp';
@@ -771,7 +765,7 @@ $app->group('/admin', function () use ($app) {
 		        'editingUser' => $editingUser,
 		        'message_e' => $formResponse['error'],
 		        'messages' => $formResponse["message"],
-		        
+
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
 		        'uAuth' => $permissions['auth'],
@@ -806,7 +800,7 @@ $app->group('/login', function () use ($app) {
 		$__postVars = $request->getParsedBody();
 
 	  	verifyRequiredParams(array('email', 'password'));
-	  
+
 		// reading post params
 		$email = $__postVars['email'];
 		$password = $__postVars['password'];
@@ -820,7 +814,7 @@ $app->group('/login', function () use ($app) {
 		if ($db->checkLogin($email, $password)) {
 			// get the user by email
 			$user = $db->getUserByEmail($email);
-			
+
 			if ($user != NULL) {
 
 				$_SESSION['spUser']   = $user['email'];
@@ -828,7 +822,7 @@ $app->group('/login', function () use ($app) {
 				// $uResponse['name'] = $user['name'];
 				// $uResponse['email'] = $user['email'];
 				// $uResponse['apiKey'] = $user['api_key'];
-				
+
 				$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
 				return $response = $response->withRedirect($uri, 403);
 			} else {
@@ -873,10 +867,10 @@ $app->group('/utils', function () {
 		$randTestID = rand(0, 9999);
 
 		$stationProperty = $utilReqParams['property'];
-		
+
 		$testType = $utilReqParams['testscript'];
 		$testResultsFile = $utilReqParams['fileLoc'];
-		
+
 		if ($utilReqParams['task'] == 'generate'){
 			$createTestID = true;
 		}
@@ -893,7 +887,7 @@ $app->group('/utils', function () {
 				echo $thisID;
 			} else {
 				echo('che le derp');
-			}	
+			}
 		} elseif ($uploadResultsFile) {
 			// Updload results file
 
@@ -902,8 +896,8 @@ $app->group('/utils', function () {
 			// Check test type -- Needs refactoring
 			if ($utilReqParams['testType'] == 'apiNav') {
 				// $db->navigationAuditInsert($testResultsFile);
-				// $thisupload = $db->navigationAuditInsert($testResultsFile);	
-				
+				// $thisupload = $db->navigationAuditInsert($testResultsFile);
+
 				if ($db->navigationAuditInsert($testResultsFile)) {
 					echo 'inserted';
 					$this->logger->info("Nav Test results imported");
@@ -939,7 +933,7 @@ $app->group('/utils', function () {
 			    'page_name' => 'utils',
 			    'mainView' => true,
 			    'hideBreadcrumbs' => true
-			]);	
+			]);
 		}
 
 		//POST or PUT

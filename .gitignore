@@ -7,7 +7,6 @@ logs/
 screenshots/
 logs/app.log
 composer.phar
-composer.lock
 .DS_Store
 
 Archive.zip
