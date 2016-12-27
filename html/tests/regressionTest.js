@@ -112,7 +112,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
 
         }).then(function() {
-            console.log('step');
+            // console.log('step');
 
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
