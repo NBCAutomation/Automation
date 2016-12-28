@@ -984,26 +984,27 @@ $app->group('/utils', function () {
     		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
     		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
 
-    		$emailContent .= '<table align="center" width="500" cellpadding="10">';
-    		$emailContent .= '<tr><td colspan="3"><h4>Automation Error/Warnings</h4></td></tr>';
-    		$emailContent .= '<tr><th>Manifest</th><th>Navigation</th><th>Content</th></tr>';
+    		$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
+    		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
+    		$emailContent .= '<tr><td colspan="3"><a href="http://54.243.53.242/">Dashbaord</a></td></tr>';
+    		$emailContent .= '<tr bgcolor="#ddd"><th>Manifest</th><th>Navigation</th><th>Content</th></tr>';
     		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="#cc0000">'.$todayManifestTotalFailureReports.'</td>';
     		$emailContent .= '<td bgcolor="#cc0000">'.$todayNavTotalFailureReports.'</td>';
     		$emailContent .= '<td bgcolor="#cc0000">'.$todayContentTotalFailureReports.'</td></tr>';
     		$emailContent .= '<tr style="color: #000; text-align: center;"><td bgcolor="#ffd000">'.$todayManifestTotalWarningReports.'</td>';
     		$emailContent .= '<td bgcolor="#ffd000">'.$todayNavTotalWarningReports.'</td>';
     		$emailContent .= '<td bgcolor="#ffd000">'.$todayContentTotalWarningReports.'</td></tr>';
-    		$emailContent .= '<tr><td><a href="http://54.243.53.242/reports/api_manifest_audits">reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">reports</a></td></tr>';
+    		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">see reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">see reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">see reports</a></td></tr>';
     		$emailContent .= '<tr><td colspan="3"><p>The email will be sent every 4 hours following the cron. The totals are a current total throughout the day.</p></td></tr>';
     		$emailContent .= '</table>';
-
-    		Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent);	
+    		echo $emailContent;
+    		// Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent);	
     	} else {
    			 		
     	}
 
-		$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
-		return $response = $response->withRedirect($uri);
+		// $uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
+		// return $response = $response->withRedirect($uri);
         
     });
 
