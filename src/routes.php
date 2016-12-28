@@ -776,6 +776,28 @@ $app->group('/admin', function () use ($app) {
 		})->setName('admin-users')->add( new SpireAuth() );
 
 	});
+
+	// === Admin Logger ===
+	// Staging log viewer
+	$this->get('/logger', function ($request, $response, $args) {
+
+		$permissions = $request->getAttribute('spPermissions');
+
+		return $this->renderer->render($response, 'admin.php', [
+	        'title' => 'Admin Dashboard',
+	        'page_name' => 'admin-main',
+	        'admin_dashClass' => true,
+	        'hideBreadcrumbs' => true,
+	        'mainView' => true,
+
+	        //Auth Specific
+	        'user' => $request->getAttribute('spAuth'),
+	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
+	        'uAthMessage' => $permissions['uAthMessage']
+	    // ]);
+	    ]);
+	})->setName('admin-dashboard')->add( new SpireAuth() );
 });
 
 
@@ -822,6 +844,8 @@ $app->group('/login', function () use ($app) {
 				// $uResponse['name'] = $user['name'];
 				// $uResponse['email'] = $user['email'];
 				// $uResponse['apiKey'] = $user['api_key'];
+
+				$this->logger->info("User login - ". $user['email'] );
 
 				$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
 				return $response = $response->withRedirect($uri, 403);
@@ -900,7 +924,7 @@ $app->group('/utils', function () {
 
 				if ($db->navigationAuditInsert($testResultsFile)) {
 					echo 'inserted';
-					$this->logger->info("Nav Test results imported");
+					$this->logger->info("Nav Test results imported - ". $testResultsFile );
 				} else {
 					echo 'DB nav import failed';
 					$this->logger->info("DB nav import failed");
@@ -910,7 +934,7 @@ $app->group('/utils', function () {
 			if ($utilReqParams['testType'] == 'apiArticle') {
 				if ($db->articleAuditInsert($testResultsFile)) {
 					echo 'Article test results imported';
-					$this->logger->info("Article test results imported");
+					$this->logger->info("Article test results imported - ". $testResultsFile );
 				} else {
 					echo 'DB article import failed';
 					$this->logger->info("DB article import failed");
@@ -920,7 +944,7 @@ $app->group('/utils', function () {
 			if ($utilReqParams['testType'] == 'apiManifest') {
 				if ($db->manifestAuditInsert($testResultsFile)) {
 					echo 'inserted';
-					$this->logger->info("Manifest test results imported");
+					$this->logger->info("Manifest test results imported - ". $testResultsFile );
 				} else {
 					echo 'DB manifest import failed';
 					$this->logger->info("DB manifest import failed");
@@ -994,17 +1018,16 @@ $app->group('/utils', function () {
     		$emailContent .= '<tr style="color: #000; text-align: center;"><td bgcolor="#ffd000">'.$todayManifestTotalWarningReports.'</td>';
     		$emailContent .= '<td bgcolor="#ffd000">'.$todayNavTotalWarningReports.'</td>';
     		$emailContent .= '<td bgcolor="#ffd000">'.$todayContentTotalWarningReports.'</td></tr>';
-    		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">see reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">see reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">see reports</a></td></tr>';
+    		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">view reports</a></td></tr>';
     		$emailContent .= '<tr><td colspan="3"><p>The email will be sent every 4 hours following the cron. The totals are a current total throughout the day.</p></td></tr>';
     		$emailContent .= '</table>';
-    		echo $emailContent;
-    		// Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent);	
+
+    		Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent);
+    		$this->logger->info("Alert notification email sent");
     	} else {
    			 		
     	}
-
-		// $uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
-		// return $response = $response->withRedirect($uri);
+		return $response->withRedirect('/dashboard/main');
         
     });
 
