@@ -816,59 +816,82 @@ $app->group('/login', function () use ($app) {
         ]);
     })->setName('login-view');
 
+    $this->get('/forgot', function ($request, $response, $args) {
+
+        return $this->renderer->render($response, 'login.php', [
+            'title' => 'Forgot password',
+            'page_name' => 'forgot',
+            'view' => $args['view'],
+            'viewPath' => $args['view'],
+            'passResetView' => true,
+            'hideBreadcrumbs' => true
+        ]);
+    })->setName('login-view');
+
 
 	$this->post('/{view}', function ($request, $response, $args) {
 
 		$__postVars = $request->getParsedBody();
 
-	  	verifyRequiredParams(array('email', 'password'));
+		var_dump($__postVars);
+		
 
-		// reading post params
-		$email = $__postVars['email'];
-		$password = $__postVars['password'];
-		$formResponse = array();
-		$uResponse = array();
-		$db = new DbHandler();
+		if ($__postVars['method'] == 'login') {
+		  	verifyRequiredParams(array('email', 'password'));
 
-		// var_dump($db->checkLogin());
+			// reading post params
+			$email = $__postVars['email'];
+			$password = $__postVars['password'];
+			$formResponse = array();
+			$uResponse = array();
+			$db = new DbHandler();
 
-		// check for correct email and password
-		if ($db->checkLogin($email, $password)) {
-			// get the user by email
-			$user = $db->getUserByEmail($email);
+			// var_dump($db->checkLogin());
 
-			if ($user != NULL) {
+			// check for correct email and password
+			if ($db->checkLogin($email, $password)) {
+				// get the user by email
+				$user = $db->getUserByEmail($email);
 
-				$_SESSION['spUser']   = $user['email'];
-				// $uResponse["error"] = false;
-				// $uResponse['name'] = $user['name'];
-				// $uResponse['email'] = $user['email'];
-				// $uResponse['apiKey'] = $user['api_key'];
+				if ($user != NULL) {
 
-				$this->logger->info("User login - ". $user['email'] );
+					$_SESSION['spUser']   = $user['email'];
+					// $uResponse["error"] = false;
+					// $uResponse['name'] = $user['name'];
+					// $uResponse['email'] = $user['email'];
+					// $uResponse['apiKey'] = $user['api_key'];
 
-				$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
-				return $response = $response->withRedirect($uri, 403);
+					$this->logger->info("User login - ". $user['email'] );
+
+					$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
+					return $response = $response->withRedirect($uri, 403);
+				} else {
+					// unknown error occurred
+					$uResponse['error'] = true;
+					$uResponse['message'] = "An error occurred. Please try again";
+				}
 			} else {
-				// unknown error occurred
-				$uResponse['error'] = true;
-				$uResponse['message'] = "An error occurred. Please try again";
-			}
-		} else {
-			// user credentials are wrong
-			$formResponse['error'] = true;
-			$formResponse['message'] = 'Login failed. Incorrect credentials';
+				// user credentials are wrong
+				$formResponse['error'] = true;
+				$formResponse['message'] = 'Login failed. Incorrect credentials';
 
-			return $this->renderer->render($response, 'login.php', [
-			    'title' => 'Login',
-			    'page_name' => 'login',
-			    'view' => $args['view'],
-			    'viewPath' => $args['view'],
-			    'mainView' => true,
-			    'hideBreadcrumbs' => true,
-			    'messages' => $formResponse["message"]
-			]);
+				return $this->renderer->render($response, 'login.php', [
+				    'title' => 'Login',
+				    'page_name' => 'login',
+				    'view' => $args['view'],
+				    'viewPath' => $args['view'],
+				    'mainView' => true,
+				    'hideBreadcrumbs' => true,
+				    'messages' => $formResponse["message"]
+				]);
+			}	
+		} elseif ($__postVars['method'] == 'forgot') {
+			echo "forgot";
 		}
+
+		exit();
+
+	  	
 	});
 });
 

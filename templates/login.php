@@ -70,7 +70,7 @@
 												</div>
 												<div class="clear"></div>
 												<div id="input_buttons">
-													<input type="hidden" value="set" name="method" />
+													<input type="hidden" value="login" name="method" />
 													<input type="hidden" value="true" name="submitted" />
 													<!--<input type="submit" value="Submit" name="submit" class="submit_button" />-->
 													<button class="btn btn-primary btn-block" type="submit" value="Submit" name="submit">Login</button>
@@ -84,6 +84,45 @@
 								</div>
 							</div>
 						<?php } ?>
+						<!-- Forgot password view -->
+						<?php if ($passResetView) { ?>
+							<div class="row">
+								<div class="col-md-6 col-md-offset-3">
+									<div class="well row pt-2x pb-3x bk-light">
+										<div class="col-md-8 col-md-offset-2">
+											<div>
+												<h2 class="page-title"><?php echo $title; ?></h2>
+											</div>
+											<?php if($messages){ ?>
+												<div class="alert alert-dismissible alert-danger">
+													<button type="button" class="close" data-dismiss="alert"><i class="fa fa-remove"></i></button>
+													<h4>Warning!</h4>
+													<p>Best check yo self; <?php echo $messages; ?>.</p>
+												</div>
+											<?php } ?>
+											<form action="/login/main" method="post" id="main_entry_form" class="mt">
+												<div class="form_field">
+													<label class="text-uppercase text-sm">Email:</label>
+													<input type="input" name="email" size="35" id="email" class="form-control mb" />
+													<div class="clear"></div>
+												</div>
+												<div class="clear"></div>
+												<div id="input_buttons">
+													<input type="hidden" value="forgot" name="method" />
+													<input type="hidden" value="true" name="submitted" />
+													<!--<input type="submit" value="Submit" name="submit" class="submit_button" />-->
+													<button class="btn btn-primary btn-block" type="submit" value="Submit" name="submit">Submit</button>
+												</div>
+											</form>
+										</div>
+									</div>
+									<div class="text-center">
+										<a href="#">Forgot password?</a>
+									</div>
+								</div>
+							</div>
+						<?php } ?>
+						<!-- // Forgot password view -->
 					</div>
 				</div>
 			</div>
