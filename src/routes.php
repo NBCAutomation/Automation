@@ -52,6 +52,17 @@ $app->group('/dashboard', function () use ($app) {
 		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
 		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
 
+		// Server time
+		$info = getdate();
+		$date = $info['mday'];
+		$month = $info['mon'];
+		$year = $info['year'];
+		$hour = $info['hours'];
+		$min = $info['minutes'];
+		$sec = $info['seconds'];
+
+		$current_date = "$month/$date//$year @ $hour:$min:$sec";
+
 		return $this->renderer->render($response, 'home.php', [
 	        'title' => 'Dashboard',
 	        'page_name' => 'home',
@@ -63,6 +74,7 @@ $app->group('/dashboard', function () use ($app) {
 			'todayNavTotalWarningReports' => $todayNavTotalWarningReports,
 			'todayContentTotalFailureReports' => $todayContentTotalFailureReports,
 			'todayContentTotalWarningReports' => $todayContentTotalWarningReports,
+			'serverTimeStamp' => $current_date,
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
@@ -1018,6 +1030,16 @@ $app->group('/utils', function () {
 
     		$emailContent = '';
 
+    		$info = getdate();
+    		$date = $info['mday'];
+    		$month = $info['mon'];
+    		$year = $info['year'];
+    		$hour = $info['hours'];
+    		$min = $info['minutes'];
+    		$sec = $info['seconds'];
+
+    		$current_date = "$month/$date//$year @ $hour:$min:$sec";
+
     		// Today report data
     		// Manifest
     		$todayManifestTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_manifest_audits'));
@@ -1042,7 +1064,8 @@ $app->group('/utils', function () {
     		$emailContent .= '<td bgcolor="#ffd000">'.$todayNavTotalWarningReports.'</td>';
     		$emailContent .= '<td bgcolor="#ffd000">'.$todayContentTotalWarningReports.'</td></tr>';
     		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">view reports</a></td></tr>';
-    		$emailContent .= '<tr><td colspan="3"><p>The email will be sent every 4 hours following the cron. The totals are a current total throughout the day.</p></td></tr>';
+    		$emailContent .= '<tr><td colspan="3"><p>The email will be sent every 4 hours following the cron, and is delayed 20 min to allow for all results to complete processing. </p></td></tr>';
+    		$emailContent .= '<tr><td colspan="3"><p>*totals are at current UTC server time: '.$current_date.' </p></td></tr>';
     		$emailContent .= '</table>';
 
     		Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent);

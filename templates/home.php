@@ -48,6 +48,7 @@
 						</div>
 					</div>
 				</div>
+				<p>*totals are at current UTC server time: <?php echo $serverTimeStamp; ?> </p>
 			</div>
 		</div>
 	</div>
