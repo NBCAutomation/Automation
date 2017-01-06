@@ -82,34 +82,40 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         /*******************
         // Start Test
         *******************/
-        casper.start( url ).then(function(response) {
-            if ( response.status == 200 || response.status == 304 || response.status == 302 ) {
-                var pageItem = casper.getElementInfo('body');
+        casper.start().then(function() {
+            casper.thenOpen(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                if ( response.status == 200 || response.status == 304 || response.status == 302 ) {
+                    var pageItem = casper.getElementInfo('body');
 
-                for (var prop in pageItem) {
-                    // console.log("obj." + prop + " = " + pageItem[prop]);
-                    if (prop == 'tag') {
-                        // console.log(pageItem[prop].substring(0,100));
-                        var initBodyTag = pageItem[prop].substring(0,100);
+                    for (var prop in pageItem) {
+                        // console.log("obj." + prop + " = " + pageItem[prop]);
+                        if (prop == 'tag') {
+                            // console.log(pageItem[prop].substring(0,100));
+                            var initBodyTag = pageItem[prop].substring(0,100);
+                        }
                     }
-                }
 
-                if ( initBodyTag.indexOf('nbc') > -1 ) {
-                    console.log('OTS property...');
-                    var testProperty = 'otsTestSuite';
-                } else if ( initBodyTag.indexOf('tlmd') > -1 ) {
-                    console.log('TLM property...');
-                    var testProperty = 'tlmTestSuite';
+                    if ( initBodyTag.indexOf('nbc') > -1 ) {
+                        console.log('OTS property...');
+                        var testProperty = 'otsTestSuite';
+                    } else if ( initBodyTag.indexOf('tlmd') > -1 ) {
+                        console.log('TLM property...');
+                        var testProperty = 'tlmTestSuite';
+                    } else {
+                        console.log( 'Unable to get body class, possble header block.' );
+                        console.log( '------- body class -------' );
+                        console.log( initBodyTag );
+                        this.exit();
+                    }
+
+                    console.log(url);
+                    suite.visualTests(testProperty, url);
+
                 } else {
-                    console.log( JSON.stringify() );
+                    casper.test.fail('Page did not load correctly. Response: ' + response.status);
                 }
-
-                console.log(url);
-                suite.visualTests(testProperty, url);
-
-            } else {
-                casper.test.fail('Page did not load correctly. Response: ' + response.status);
-            }
+            })
+            
 
         }).then(function() {
             // console.log('step');
@@ -135,57 +141,61 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         // NBC OTS Testing
         if (otsTestSuite) {
-            casper.wait(700, function() {
-            // casper.wait(47000, function() {
+            // casper.wait(700, function() {
+            casper.wait(47000, function() {
                 this.waitForSelector("#sfcontentFill",
                     function pass () {
                         test.comment('loading done.....');
-                        test.assertSelectorHasText('body', 'home', "Homepage loaded");
+                        // test.assertSelectorHasText('body', 'home', "Homepage loaded");
 
-                        this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
+                        // this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
 
-                        test.assertExists('.site-header', "The site header loaded correctly.");
-                        test.assertVisible('.site-header', "...is also visible.");
+                        // test.assertExists('.site-header', "The site header loaded correctly.");
+                        // test.assertVisible('.site-header', "...is also visible.");
 
-                        test.assertExists('.brand a img', "The logo loaded correctly.");
-                        test.assertVisible('.brand a', "...is also visible.");
+                        // test.assertExists('.brand a img', "The logo loaded correctly.");
+                        // test.assertVisible('.brand a', "...is also visible.");
 
-                        test.assertExists('.navbar', "The nav loaded correctly.");
-                        test.assertVisible('.navbar', "...is visible.");
+                        // test.assertExists('.navbar', "The nav loaded correctly.");
+                        // test.assertVisible('.navbar', "...is visible.");
 
-                        // Move the mouse to the top TVE nav
-                        test.assertExists('.nav-small-section.nav-live-tv', "live tv icon loaded correctly.");
-                        test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
+                        // // Move the mouse to the top TVE nav
+                        // test.assertExists('.nav-small-section.nav-live-tv', "live tv icon loaded correctly.");
+                        // test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
 
-                        this.mouse.move('.nav-small-section.nav-live-tv a');
-                        test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
+                        // this.mouse.move('.nav-small-section.nav-live-tv a');
+                        // test.assertVisible('.nav-small-section.nav-live-tv .nav-small-sub', "tv subnav...is visible.");
 
-                        if(casper.exists('.weather-module')){
-                            test.assertExists('.weather-module', "The weather module loaded correctly.");
-                            test.assertVisible('.weather-module', "...is visible.");
-                            var weatherNorm = true;
-                        // If severe weather module is displayed
-                        } else if(casper.exists('.weather-module-severe')){
-                            test.comment('.weather-module-severe is set....');
-                            test.assertExists('.weather-module-severe', "The severe weather module loaded correctly.");
-                            test.assertExists('.weather-alert-info', "The severe weather module alerts loaded correctly.");
-                            test.assertVisible('.weather-module-severe', "...is visible.");
-                        }
+                        // if(casper.exists('.weather-module')){
+                        //     test.assertExists('.weather-module', "The weather module loaded correctly.");
+                        //     test.assertVisible('.weather-module', "...is visible.");
+                        //     var weatherNorm = true;
+                        // // If severe weather module is displayed
+                        // } else if(casper.exists('.weather-module-severe')){
+                        //     test.comment('.weather-module-severe is set....');
+                        //     test.assertExists('.weather-module-severe', "The severe weather module loaded correctly.");
+                        //     test.assertExists('.weather-alert-info', "The severe weather module alerts loaded correctly.");
+                        //     test.assertVisible('.weather-module-severe', "...is visible.");
+                        // }
 
-                        test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
-                        test.assertVisible('.weather-module-radar iframe', "...is visible.");
+                        // test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
+                        // test.assertVisible('.weather-module-radar iframe', "...is visible.");
                         
                         // Capture screenshot if not loaded.
-                        if(casper.exists('.weather-module')){
+                        // if(casper.exists('.weather-module')){
 
-                        }
+                        // }
 
                         // Spredfast modules
-                        test.assertExists('.sfbox', "The spredfast modules loaded correctly.");
-                        test.assertVisible('.sfbox', "...is visible.");
+                        // if (casper.exists('.sfbox')) {
+                        //     test.assertExists('.sfbox', "The spredfast modules loaded correctly.");
+                        //     test.assertVisible('.sfbox', "...is visible.");
+                        // } else {
+                        //     console.log(' [] Unable to test Spredfast modules, .sfbox not seen or loading. Test manually. ');
+                        // }
 
-                        test.assertExists('.footer', "The footer area loaded correctly.");
-                        test.assertVisible('.footer', "...is visible.");
+                        // test.assertExists('.footer', "The footer area loaded correctly.");
+                        // test.assertVisible('.footer', "...is visible.");
 
                         suite.collectNavigation(testProperty, url);
                     },
@@ -335,7 +345,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             
             if ( currentNavUrl != mainURL+'/' ) {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-                    
+
                     // Check for property type
                     if (response.url.indexOf('telemundo') > -1) {
                         console.log('-------------');
@@ -343,21 +353,30 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         console.log('HTTP Response - ' + response.status);
                         console.log('...skipping, no section/page subnav on TLM');
                     } else {
-                        this.waitForSelector('.subnav-large-container',
-                            function pass () {
-                                console.log('-------------');
-                                test.comment('Current url > ' +  response.url);
-                                console.log('HTTP Response - ' + response.status);
+                        if (response.url.indexOf('nbc') > -1) {
+                            if (casper.exists('.subnav-large-container2')) {
+                                casper.wait(700, function() {
+                                    this.waitForSelector('.subnav-large-container',
+                                        function pass () {
+                                            console.log('-------------');
+                                            test.comment('Current url > ' +  response.url);
+                                            console.log('HTTP Response - ' + response.status);
 
-                                // this.captureSelector('screenshots/sub-nav_' + destiations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                                test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
-                            },
-                            function fail () {
-                                this.captureSelector('screenshots/sub-nav_-screenshot' + timeStamp + '.png', 'body');
-                                test.fail("Unable to test page elements.");
-                            },
-                            null // timeout limit in milliseconds
-                        )
+                                            // this.captureSelector('screenshots/sub-nav_' + destiations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                                            test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
+                                        },
+                                        function fail () {
+                                            this.captureSelector('/screenshots/sub-nav_-screenshot' + timeStamp + '.png', 'body');
+                                            test.fail("Unable to test page elements.");
+                                        },
+                                        null // timeout limit in milliseconds
+                                    )
+                                })
+                            } else {
+                                console.log('Unable to find the subnav container');
+                                console.log(response.body);
+                            }
+                        }
                     }
 
                 })
@@ -410,7 +429,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 var currentNavUrl = url + addtnlDestinations[i];
             }
 
-            casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+            casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
 
                 // console.log(testProperty);
                 console.log('-------------');
