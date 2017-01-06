@@ -1122,6 +1122,24 @@ class DbHandler {
         return $output;
     }
 
+
+    // Util ** Delete all test data older than 30days
+    public function getApiKeyById($user_id) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("SELECT api_key FROM users WHERE id = ?");
+        $stmt->execute(array($user_id));
+
+        if ($stmt->execute()) {
+            $api_key = $stmt->fetch();
+
+            return $api_key;
+            $stmt->close();
+        } else {
+            return NULL;
+        }
+    }
+
 }
 
 ?>

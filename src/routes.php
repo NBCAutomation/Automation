@@ -1018,8 +1018,17 @@ $app->group('/utils', function () {
        ->withHeader('Pragma', 'public')
        ->withHeader('Content-Length', filesize($file));
 
-    readfile($file);
-    return $response;
+	    readfile($file);
+	    return $response;
+    });
+
+    $this->get('/purge-cache', function ($request, $response) {
+    	$allPostPutVars = $request->getQueryParams();
+
+		$tmpLocation = BASEPATH .'/tmp/';
+		
+		Spire::purgeAllCache($tmpLocation);
+
     });
 
     $this->get('/send_alert', function ($request, $response) {
@@ -1053,6 +1062,13 @@ $app->group('/utils', function () {
     		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
     		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
 
+    		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayManifestTotalWarningReports, $todayNavTotalFailureReports, $todayNavTotalWarningReports, $todayContentTotalFailureReports, $todayContentTotalWarningReports);
+
+    		
+
+    		// echo array_sum($dashErrorTotals);
+
+
     		$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
     		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
     		$emailContent .= '<tr><td colspan="3"><a href="http://54.243.53.242/">Dashbaord</a></td></tr>';
@@ -1067,6 +1083,8 @@ $app->group('/utils', function () {
     		$emailContent .= '<tr><td colspan="3"><p>The email will be sent every 4 hours following the cron, and is delayed 20 min to allow for all results to complete processing. </p></td></tr>';
     		$emailContent .= '<tr><td colspan="3"><p>*totals are at current UTC server time: '.$current_date.' </p></td></tr>';
     		$emailContent .= '</table>';
+
+    		// echo $emailContent;
 
     		Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent);
     		$this->logger->info("Alert notification email sent");

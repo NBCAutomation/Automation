@@ -321,6 +321,32 @@ class Spire {
 		return $c;
 	}
 
+	public static function purgeAllCache($target, $canDeleteTarget = false) {
+	    if(is_dir($target)){
+	        $files = glob( $target . '*', GLOB_MARK );
+
+        	foreach($files as $file) {
+    			if(is_file($file)) {
+    				unlink($file);
+    			} elseif(is_dir($file)){
+    				Spire::purgeAllCache($file, true);
+    				// var_dump($file);
+    				// var_dump(rmdir($file));
+    				rmdir($file);
+    			}
+    		}
+
+    		if ($canDeleteTarget) {
+    			// var_dump($target);
+    			// var_dump(rmdir($target));
+    			rmdir($target);	
+    		}
+
+	    } elseif(is_file($target)) {
+	        unlink( $target );
+	    }
+	}
+
 	public static function sendEmailNotification($email, $alertData){
 		///////////HEADERS INFORMATION////////////
 		$f_email = 'LIMQualityAssurance@nbcuni.com';
