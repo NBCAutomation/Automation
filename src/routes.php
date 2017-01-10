@@ -390,38 +390,70 @@ $app->group('/scripts', function () {
 
     	$allPostPutVars = $request->getParsedBody();
 
-    	foreach($allPostPutVars as $key => $param){
-    		// var_dump($key, $param);
 
-    		if ($key == 'script') {
-    			$__runScript = $param;
-    		}
+    	// Configure testing vars from POST config
+	    	// Set stage flag
+	    	if($allPostPutVars['enviroment'] == 'Stage') {
+	    		$stageTesting = true;
+	    	}
 
-    		if ($key == 'output'){
-    			// $__output = ' --output=console --env=local';
-    			$__output = ' --output=console';
-    		}
+	    	// Set output flag
+	    	if($allPostPutVars['output'] == 'console') {
+	    		$__output = ' --output=console';
+	    	}
 
-	    	if ($key == 'brand_test' && $param == 'all') {
+	    	// Set testing script
+	    	if($allPostPutVars['script']) {
+	    		$__runScript = $allPostPutVars['script'];
+	    	}
+
+	    	// Test all sites
+	    	if($allPostPutVars['brand_test'] == 'all') {
 	    		shell_exec("rm ". $__tmpFile);
-	    		$__tmpFile = './sites.txt';
-	    	} elseif ($key == 'brand_test' && $param == 'nbc') {
+	    		if ($stageTesting) {
+	    			$__tmpFile = './stage_sites.txt';
+	    		} else {
+	    			$__tmpFile = './sites.txt';
+	    		}
+	    	}
+
+	    	// Test all OTS sites
+	    	if($allPostPutVars['brand_test'] == 'nbc') {
 	    		shell_exec("rm ". $__tmpFile);
-	    		$__tmpFile = './sites-nbc.txt';
-	    	} elseif ($key == 'brand_test' && $param == 'telemundo') {
+	    		if ($stageTesting) {
+	    			$__tmpFile = './stage_sites-nbc.txt';
+	    		} else {
+	    			$__tmpFile = './sites-nbc.txt';
+	    		}
+	    	}
+
+	    	// Test all TLM sites
+	    	if($allPostPutVars['brand_test'] == 'telemundo') {
 	    		shell_exec("rm ". $__tmpFile);
-	    		$__tmpFile = './sites-tsg.txt';
-	    	} else {
+	    		if ($stageTesting) {
+	    			$__tmpFile = './stage_sites-tsg.txt';
+	    		} else {
+	    			$__tmpFile = './sites-tsg.txt';
+	    		}
+	    	}
+
+	    	// Create testing site list, if options chose
+	    	if($allPostPutVars['test_site']) {
 	    		$writeTempFile = true;
 
-	    		if ($key == 'test_site' && is_array($param)) {
-					foreach ($param as $__key => $__value) {
-						$__data .= 'http://www.'.$__value.'.com';
-						$__data .= "\r\n";
-					}
-				}
+	    		$siteArray = $allPostPutVars['test_site'];
+
+	    		foreach ($siteArray as $__key => $__value) {
+	    			if ($stageTesting) {
+	    				$__data .= 'http://stage.www.'.$__value.'.com';
+	    			} else {
+	    				$__data .= 'http://www.'.$__value.'.com';
+	    			}
+	    			$__data .= "\r\n";
+	    		}
 	    	}
-    	}
+
+
 
     	if ($writeTempFile) {
     		file_put_contents($__tmpFile, $__data, FILE_APPEND | LOCK_EX);

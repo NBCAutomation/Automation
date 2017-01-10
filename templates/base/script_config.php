@@ -10,14 +10,31 @@
 					<br>
 				</label>
 				<div class="col-sm-10">
-					<div class="checkbox">
-						<input id="checkbox1" name="output" type="checkbox" value="console">
-						<label for="checkbox1">Yes</label>
-					</div>
+					<?php if( $view == 'regressionTest' ) { ?>
+						<div class="checkbox checkbox-success">
+							<input id="checkbox1" name="output" type="checkbox" value="console" checked>
+							<label for="checkbox1">Yes</label>
+						</div>
+					<?php } else { ?>
+						<div class="checkbox">
+							<input id="checkbox1" name="output" type="checkbox" value="console">
+							<label for="checkbox1">Yes</label>
+						</div>
+					<?php } ?>
 				</div>
 			</div>
 			<hr />
 			<?php } ?>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Enviroment</label>
+				<div class="col-sm-10">
+					<select class="form-control" name="enviroment">
+						<option>Prod</option>
+						<option>Stage</option>
+					</select>
+				</div>
+			</div>
+			<hr />
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Run Suite
 					<br>

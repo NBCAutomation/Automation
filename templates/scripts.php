@@ -108,26 +108,36 @@
 						$bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m','[37;42;1');
 						$bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>','#');
 
+						$testLog = array();
+
 						// Console output
 						while (@ ob_end_flush());
 
+						$x = 0;
 						$runProcess = popen($execCmd, 'r');
 
 						echo '<pre id="test_output">';
-						while (!feof($runProcess))
-						{
+
+						while (!feof($runProcess)) {
 						    $lines = fread($runProcess, 4096);
 
 						    $formattedText = str_replace($bashOutput, $bashOutputStyle, $lines);
 					        echo $formattedText;
 
+					        $testLog['line_'.$x] = $formattedText;
+
 						    @ flush();
+
+						    $x++;
 						}
+
 						echo '</pre>';
 
 						$output = "";
 						$retval = -1;
 
+						var_dump($testLog);
+						
 						// exec($delCmd, $output, $retval);
 						
 					?>
