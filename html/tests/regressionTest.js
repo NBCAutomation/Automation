@@ -346,18 +346,18 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             if ( currentNavUrl != mainURL+'/' ) {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
 
-                    test.comment('passed url => ' +  response.url);
+                    // test.comment('passed url => ' +  response.url);
 
                     // Check for property type
                     if (response.url.indexOf('telemundo') > -1) {
                         console.log('-------------');
                         test.comment('Current url > ' +  response.url);
                         console.log('HTTP Response - ' + response.status);
-                        console.log('...skipping, no section/page subnav on TLM');
+                        console.log('...skipping, no on-page section/page subnav for TLM');
                     } else {
                         // if forced to login screen, login
                         if (response.url.indexOf('clickability') > -1) {
-                            console.log('Click login page, attempting to login...');
+                            console.log('Clickability login page, attempting to login...');
 
                             casper.waitForSelector("form input[name='j_username']", function() {
                                 this.fillSelectors('form#login', {
@@ -366,16 +366,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 }, true);
                             });
 
-                            // casper.waitWhileSelector('form', function(){
-                            //     test.comment('redirecting to page....');
-                            // }, 7000);
-
                             casper.waitWhileSelector('form',
+                                // Adding pass/fail wait to wait for page to redirect to new page.
                                 function pass () {
-                                    console.log('PASS ]');
+                                    // console.log('PASS ]');
                                 },
                                 function fail () {
-                                    console.log('FAIL ]');  
+                                    // console.log('FAIL ]');  
                                 }, 1200);
 
                             casper.then(function(){
@@ -438,14 +435,19 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
         }
 
-        // if (i == -1) {
-        //     suite.pageTests(testProperty, mainURL);
-        // };
+        casper.wait(100, function() {
+            // console.log(destinations.length,i,testProperty, mainURL);
+            if (i == -1) {
+                suite.pageTests(testProperty, mainURL);
+            };
+        });
     };
 
     regressionSuite.prototype.pageTests = function(testProperty, url) {
         var suite = this;
         var addtnlDestinations = [];
+
+        console.log('//////////////////////');
 
         // Set testing item
         if (testProperty == 'otsTestSuite') {
@@ -456,7 +458,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 '/traffic',
                 '/weather',
                 '/investigations',
-
                 'http://www.telexitos.com',
                 'http://www.cozitv.com'
             ];
@@ -467,7 +468,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             var addtnlDestinations = [
                 '/envia-tus-comentarios',
                 '/trafico',
-
                 'http://www.telexitos.com',
                 'http://www.cozitv.com'
             ];
@@ -482,7 +482,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 var currentNavUrl = url + addtnlDestinations[i];
             }
 
-            casper.open(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+            casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
 
                 // console.log(testProperty);
                 console.log('-------------');
@@ -514,7 +514,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 // Cozi testing
                 if ( response.url.indexOf('cozi') > -1 ) {
                     test.assertVisible('.headerLogo', "logo loaded and is visible.");
-                    test.assertVisible('#bodyContainer', "main page loaded and displayed.");
+                    test.assertVisible('.page .feature-full', "main page loaded and displayed.");
 
                     // console.log('...clicking play icon');
                     // this.mouse.move('.playButtonLarge');
