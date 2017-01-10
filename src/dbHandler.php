@@ -1124,7 +1124,17 @@ class DbHandler {
 
 
     // Util ** Delete all test data older than 30days
-    public function getApiKeyById($user_id) {
+    public function getApiKeyByIddddddd($user_id) {
+        // SELECT * FROM tests WHERE `type` = 'apiCheck-nav' AND DATE(created) >= CURDATE()
+
+        // SELECT * FROM nav_tests WHERE DATE(created) = CURDATE() AND status = 'Fail'
+
+        // SELECT * FROM nav_tests WHERE DATE(created) >= '2017-01-03 00:00:00' AND status = 'Fail'
+
+        // SELECT * FROM "nav_tests" WHERE DATE(created) = CURDATE()-1 AND status = 'Fail' 
+
+
+
         $db_con = Spire::getConnection();
 
         $stmt = $db_con->prepare("SELECT api_key FROM users WHERE id = ?");
