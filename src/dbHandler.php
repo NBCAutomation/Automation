@@ -416,6 +416,32 @@ class DbHandler {
         }
     }
 
+    public function saveRegressionResults($regressionResults) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO regression_tests(test_data) VALUES(?)");
+        $stmtStatus = $stmt->execute(array($regressionResults));
+
+        if ($stmtStatus) {
+            // task row created
+            // now assign the task to user
+            $new_test_id = $db_con->lastInsertId();
+
+            if ($new_test_id != NULL) {
+                // task created successfully
+                return $new_test_id;
+            } else {
+                // task failed to create
+                return NULL;
+            }
+        } else {
+            // task failed to create
+            return NULL;
+        }
+
+        $stmt->close();
+    }
+
     /**
      * Reporting
      */
@@ -1064,6 +1090,34 @@ class DbHandler {
 
                 // var_dump($allFailureReports);
                 return $allFailureReports;
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
+    public function getAllRegressionTestData() {
+        $output = Spire::spireCache('getAllRegressionTestData', 400, function() {
+            
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM regression_tests ORDER BY id DESC");
+            $regressionTestData = array();
+
+            if ($stmt->execute()) {
+                $stationData = $stmt->fetchAll();
+                    
+                foreach( $stationData as $key => $value ){
+                    $regressionTestData[$key] = $value;
+                }
+
+                $regressionTestDataArray[] = $regressionTestData;
+
+                $stmt->closeCursor();
+                return $regressionTestDataArray;
+                
             } else {
                 return NULL;
             }

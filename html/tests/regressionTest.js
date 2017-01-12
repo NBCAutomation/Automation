@@ -373,7 +373,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 },
                                 function fail () {
                                     // console.log('FAIL ]');  
-                                }, 1200);
+                                }, 1000);
 
                             casper.then(function(){
                                 test.comment( 'new page title' + this.getTitle() );
@@ -503,7 +503,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 }
 
                 if ( response.url.indexOf('investigations') > -1 ) {
-                    test.assertVisible('.leadMediaThumbnail', "lead video thumb displayed.");
+                    test.assertVisible('#leadMedia img', "lead video thumb displayed.");
                 }
 
                 // Telexitos testing

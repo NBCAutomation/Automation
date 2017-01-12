@@ -194,26 +194,35 @@ $app->group('/reports', function () {
 	            $reportsView = true;
 	            break;
 
+            case "regression_tests":
+                $regressionView = true;
+                break;
+
 		    default:
 		        $testTypeName = 'none-existent';
 		}
 
 		if (! $mainView) {
-			// Reporting Data
-			$todayReports = $db->getAllTestsFromToday($args['view']);
-			$yesterdayReports = $db->getAllTestsFromYesterday($args['view']);
+			if ($regressionView) {
+				$regressionResults = $db->getAllRegressionTestData();
+			} else {
+				// Reporting Data
+				$todayReports = $db->getAllTestsFromToday($args['view']);
+				$yesterdayReports = $db->getAllTestsFromYesterday($args['view']);
 
-			$todayTotalFailureReports = $db->allFailureReportsFromToday($args['view']);
-			$todayTotalWarningReports = $db->allWarningReportsFromToday($args['view']);
+				$todayTotalFailureReports = $db->allFailureReportsFromToday($args['view']);
+				$todayTotalWarningReports = $db->allWarningReportsFromToday($args['view']);
 
-			$yesterdayTotalFailureReports = $db->allFailureReportsFromYesterday($args['view']);
-			$yesterdayTotalWarningReports = $db->allWarningReportsFromYesterday($args['view']);
+				$yesterdayTotalFailureReports = $db->allFailureReportsFromYesterday($args['view']);
+				$yesterdayTotalWarningReports = $db->allWarningReportsFromYesterday($args['view']);
 
-			$todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($args['view']));
-			$todayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromToday($args['view']));
+				$todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($args['view']));
+				$todayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromToday($args['view']));
 
-			$yesterdayTotalErrors = Spire::countDataResults($db->allFailureReportsFromYesterday($args['view']));
-			$yesterdayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromYesterday($args['view']));
+				$yesterdayTotalErrors = Spire::countDataResults($db->allFailureReportsFromYesterday($args['view']));
+				$yesterdayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromYesterday($args['view']));
+
+			}
 		}
 
         return $this->renderer->render($response, 'reports.php', [
@@ -225,6 +234,7 @@ $app->group('/reports', function () {
             'reportsView' => $reportsView,
             'singleView' => $singleView,
             'overView' => $overView,
+            'regressionView' => $regressionView,
             'fileView' => $fileView,
             'reportClass' => true,
     		// 'results' => $getReports,
@@ -239,6 +249,7 @@ $app->group('/reports', function () {
 			'todayTotalWarnings' => $todayTotalWarnings,
 			'yesterdayTotalErrors' => $yesterdayTotalErrors,
 			'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
+			'regressionResults' => $regressionResults,
 
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),

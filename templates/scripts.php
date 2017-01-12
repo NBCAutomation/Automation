@@ -104,6 +104,7 @@
 				</div>
 				<div class="process-data">
 					<?php
+						$db = new DbHandler();
 						
 						$bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m','[37;42;1');
 						$bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>','#');
@@ -136,9 +137,9 @@
 						$output = "";
 						$retval = -1;
 
-						var_dump($testLog);
+						$db->saveRegressionResults(serialize($testLog));
 						
-						// exec($delCmd, $output, $retval);
+						exec($delCmd, $output, $retval);
 						
 					?>
 				</div>	
