@@ -95,7 +95,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     }
 
-                    if ( initBodyTag.indexOf('nbc') > -1 ) {
+                    if ( initBodyTag.indexOf('nbc') > -1 || initBodyTag.indexOf('necn') > -1 ) {
                         console.log('OTS property...');
                         var testProperty = 'otsTestSuite';
                     } else if ( initBodyTag.indexOf('tlmd') > -1 ) {
