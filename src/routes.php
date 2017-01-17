@@ -1170,9 +1170,12 @@ $app->group('/utils', function () {
 			// Send email and log
 			Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent, $emailSubject);
 			$this->logger->info("DB records purged: ". $purgedResults);
+
+			// Purge cache
+			return $response->withRedirect('/utils/purgeResults?auto=y');
     	}
 
-		return $response->withRedirect('/dashboard/main');
+    	return $response->withRedirect('/dashboard/main');
 
     });
 
