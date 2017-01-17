@@ -1070,7 +1070,7 @@ $app->group('/utils', function () {
 
 		$tmpLocation = BASEPATH .'/tmp/';
 		
-		Spire::purgeAllCache($tmpLocation);
+		$cacheClear = Spire::purgeAllCache($tmpLocation);
 
     });
 

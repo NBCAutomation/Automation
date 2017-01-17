@@ -1099,7 +1099,7 @@ class DbHandler {
     }
 
     public function getAllRegressionTestData() {
-        $output = Spire::spireCache('getAllRegressionTestData', 400, function() {
+        $output = Spire::spireCache('getAllRegressionTestData', 100, function() {
             
             $db_con = Spire::getConnection();
 

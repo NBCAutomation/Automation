@@ -322,23 +322,19 @@ class Spire {
 	}
 
 	public static function purgeAllCache($target, $canDeleteTarget = false) {
+	    $files = glob( $target . '*', GLOB_MARK );
+	    
 	    if(is_dir($target)){
-	        $files = glob( $target . '*', GLOB_MARK );
-
         	foreach($files as $file) {
     			if(is_file($file)) {
     				unlink($file);
     			} elseif(is_dir($file)){
     				Spire::purgeAllCache($file, true);
-    				// var_dump($file);
-    				// var_dump(rmdir($file));
     				rmdir($file);
     			}
     		}
 
     		if ($canDeleteTarget) {
-    			// var_dump($target);
-    			// var_dump(rmdir($target));
     			rmdir($target);	
     		}
 
