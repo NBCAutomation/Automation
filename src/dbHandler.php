@@ -1178,30 +1178,27 @@ class DbHandler {
 
 
     // Util ** Delete all test data older than 30days
-    public function getApiKeyByIddddddd($user_id) {
-        // SELECT * FROM tests WHERE `type` = 'apiCheck-nav' AND DATE(created) >= CURDATE()
-
-        // SELECT * FROM nav_tests WHERE DATE(created) = CURDATE() AND status = 'Fail'
-
-        // SELECT * FROM nav_tests WHERE DATE(created) >= '2017-01-03 00:00:00' AND status = 'Fail'
-
-        // SELECT * FROM "nav_tests" WHERE DATE(created) = CURDATE()-1 AND status = 'Fail' 
-
-
-
+    public function purgeOldTestResults() {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("SELECT api_key FROM users WHERE id = ?");
-        $stmt->execute(array($user_id));
+        $testTableNames = array('tests','article_tests','nav_tests','manifest_tests');
 
-        if ($stmt->execute()) {
-            $api_key = $stmt->fetch();
+        $purgedData = array();
 
-            return $api_key;
-            $stmt->close();
-        } else {
-            return NULL;
+        foreach ($testTableNames as $tableName) {
+            
+            $stmt = $db_con->prepare("DELETE FROM ".$tableName." WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY) >= `created`");
+            
+            if ( $res = $stmt->execute() ) {
+
+                $purgedData[$tableName] = $stmt->rowCount();
+                $stmt->closeCursor();
+            } else {
+                return NULL;
+            }
         }
+
+        return $purgedData;
     }
 
 }

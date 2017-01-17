@@ -1046,7 +1046,7 @@ $app->group('/utils', function () {
 		// }
     });
 
-
+	// Process file download
     $this->get('/download', function ($request, $response) {
     	$allPostPutVars = $request->getQueryParams();
 
@@ -1065,15 +1065,8 @@ $app->group('/utils', function () {
 	    return $response;
     });
 
-    $this->get('/purge-cache', function ($request, $response) {
-    	$allPostPutVars = $request->getQueryParams();
 
-		$tmpLocation = BASEPATH .'/tmp/';
-		
-		$cacheClear = Spire::purgeAllCache($tmpLocation);
-
-    });
-
+    // Test results email notification
     $this->get('/send_alert', function ($request, $response) {
     	$allPostPutVars = $request->getQueryParams();
 
@@ -1108,9 +1101,11 @@ $app->group('/utils', function () {
     		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayManifestTotalWarningReports, $todayNavTotalFailureReports, $todayNavTotalWarningReports, $todayContentTotalFailureReports, $todayContentTotalWarningReports);
 
     		
+			if ( array_sum($dashErrorTotals) > 1 ) {
+				$sendEmailNotification = true;
+			}
 
-    		// echo array_sum($dashErrorTotals);
-
+			$emailSubject = 'Automation Failures/Warnings';
 
     		$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
     		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
@@ -1129,13 +1124,56 @@ $app->group('/utils', function () {
 
     		// echo $emailContent;
 
-    		Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent);
-    		$this->logger->info("Alert notification email sent");
-    	} else {
-   			 		
+    		if ($sendEmailNotification) {
+    			Spire::sendEmailNotification('LIMQualityAssurance@nbcuni.com', $emailContent, $emailSubject);
+    			$this->logger->info("Alert notification email sent");
+    		}
     	}
+
 		return $response->withRedirect('/dashboard/main');
         
+    });
+
+    // Purge site all cache
+    $this->get('/purge-cache', function ($request, $response) {
+    	$allPostPutVars = $request->getQueryParams();
+
+		$tmpLocation = BASEPATH .'/tmp/';
+		
+		$cacheClear = Spire::purgeAllCache($tmpLocation);
+
+    });
+
+    // Purge old tests // Date(X) > 30 Days & send an email once a week
+    $this->get('/purgeResults', function ($request, $response) {
+    	$allPostPutVars = $request->getQueryParams();
+
+    	if ($allPostPutVars['auto']) {
+	    	$db = new DbHandler();
+			
+			$purgedResults = $db->purgeOldTestResults();
+			$emailSubject = 'Spire DB Purge Maintenance';
+
+			$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
+			$emailContent .= '<tr><th colspan="2">DB Purge Maintenance</th></tr>';
+			$emailContent .= '<tr bgcolor="#ddd"><th>Table</th><th>Records removed</th></tr>';
+			$emailContent .= '<tr><td colspan="2">*Deleting DB data/records older than 30 Days.</td></tr>';
+
+
+			foreach ($purgedResults as $key => $value) {
+				$emailContent .= '<tr><td>'.$key.'</td><td>'.$value.'</td></tr>';
+			}
+
+			$emailContent .= '<tr><td></td><td></td></tr>';
+			$emailContent .= '</table>';
+
+			// Send email and log
+			Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent, $emailSubject);
+			$this->logger->info("DB records purged: ". $purgedResults);
+    	}
+
+		return $response->withRedirect('/dashboard/main');
+
     });
 
 });

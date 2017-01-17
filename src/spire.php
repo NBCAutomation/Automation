@@ -343,21 +343,20 @@ class Spire {
 	    }
 	}
 
-	public static function sendEmailNotification($email, $alertData){
+	public static function sendEmailNotification($email, $alertData, $emailSubject){
 		///////////HEADERS INFORMATION////////////
 		$f_email = 'LIMQualityAssurance@nbcuni.com';
 		$emailto = $email;
 
 		$headers = "From: " . strip_tags($f_email) . "\r\n";
 		$headers .= "Reply-To: ". strip_tags($f_email) . "\r\n";
-		$emailsubject = 'Automation Failures/Warnings';
 		$headers .= "MIME-Version: 1.0\r\n";
 		$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
 		$message =  $alertData;
 
 		//Email message
-		mail($emailto, $emailsubject, $message, $headers);
+		mail($emailto, $emailSubject, $message, $headers);
 	}
 
 }
