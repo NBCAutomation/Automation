@@ -491,6 +491,7 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                         var articleLeadMedia = __innerItems[__items].leadMedia;
                                         
                                         if (debugOutput) {
+
                                             console.log('  -----------------');
                                             console.log('  >> article_contentID  : ' + __innerItems[__items].contentID);
                                             console.log('  >> article_title  : ' + __innerItems[__items].title);
@@ -506,6 +507,8 @@ casper.test.begin('OTS SPIRE | API Article/Content Audit', function suite(test) 
                                             console.log('  >> article_leadImageURL  : ' + __innerItems[__items].leadImageURL);
                                             console.log('  >> article_feature  : ' + __innerItems[__items].feature);
                                             console.log('  >> article_sponsored  : ' + __innerItems[__items].sponsored);
+                                            console.log('  >> article_sponsored  : ' + __innerItems[__items].sponsorName);
+                                            console.log('  >> article_sponsored  : ' + __innerItems[__items].sponsorID);
                                             console.log('  >> article_liveVideoEmbed  : ' + __innerItems[__items].liveVideoEmbed);
                                             console.log('  >> article_liveAppVideoEmbed  : ' + __innerItems[__items].liveAppVideoEmbed);
                                             // console.log('  >> article_contentBody  : ' + __innerItems[__items].contentBody);
