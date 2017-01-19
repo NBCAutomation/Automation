@@ -1105,15 +1105,24 @@ $app->group('/utils', function () {
 				$sendEmailNotification = true;
 			}
 
+			function setStatusColor($errorCount) {
+				if ( $errorCount > 0) {
+					$boxColor = "#cc0000";
+				} else {
+					$boxColor = "#93c54b";
+				}
+				return $boxColor;
+			}
+
 			$emailSubject = 'Automation Failures/Warnings';
 
     		$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
     		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
     		$emailContent .= '<tr><td colspan="3"><a href="http://54.243.53.242/">Dashbaord</a></td></tr>';
     		$emailContent .= '<tr bgcolor="#ddd"><th>Manifest</th><th>Navigation</th><th>Content</th></tr>';
-    		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="#cc0000">'.$todayManifestTotalFailureReports.'</td>';
-    		$emailContent .= '<td bgcolor="#cc0000">'.$todayNavTotalFailureReports.'</td>';
-    		$emailContent .= '<td bgcolor="#cc0000">'.$todayContentTotalFailureReports.'</td></tr>';
+    		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="'.setStatusColor($todayManifestTotalFailureReports).'">'.$todayManifestTotalFailureReports.'</td>';
+    		$emailContent .= '<td bgcolor="'.setStatusColor($todayNavTotalFailureReports).'">'.$todayNavTotalFailureReports.'</td>';
+    		$emailContent .= '<td bgcolor="'.setStatusColor($todayContentTotalFailureReports).'">'.$todayContentTotalFailureReports.'</td></tr>';
     		$emailContent .= '<tr style="color: #000; text-align: center;"><td bgcolor="#ffd000">'.$todayManifestTotalWarningReports.'</td>';
     		$emailContent .= '<td bgcolor="#ffd000">'.$todayNavTotalWarningReports.'</td>';
     		$emailContent .= '<td bgcolor="#ffd000">'.$todayContentTotalWarningReports.'</td></tr>';
