@@ -1098,7 +1098,7 @@ $app->group('/utils', function () {
     		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
     		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
 
-    		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayManifestTotalWarningReports, $todayNavTotalFailureReports, $todayNavTotalWarningReports, $todayContentTotalFailureReports, $todayContentTotalWarningReports);
+    		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
 
     		
 			if ( array_sum($dashErrorTotals) > 1 ) {
