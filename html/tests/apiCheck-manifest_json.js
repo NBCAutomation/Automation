@@ -374,8 +374,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             }
         }
 
-        // casper.open(url,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-            casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+        casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 
                 resp = resp;
                 
@@ -383,149 +382,34 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 if ( status == 200) {
                     if (showOutput) {console.log(url + colorizer.colorize(' Status: ' + status, 'INFO') )};
+                    
+                    var validated = false;
+                    var output = this.getPageContent();
 
-                    // casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    try{
+
+                        jsonParsedOutput = JSON.parse(output);
+
+                        mainItem = jsonParsedOutput;
+
+                        var count = 0;
                         
-                        var validated = false;
-                        var output = this.getPageContent();
+                        // console.log(jsonParsedOutput["app-urls"]["weather-branding"]);
+                        // console.log(JSON.stringify(jsonParsedOutput));
 
-                        try{
-
-                            jsonParsedOutput = JSON.parse(output);
-
-                            mainItem = jsonParsedOutput;
-
-                            var count = 0;
+                        for (var __item in jsonParsedOutput) {
+                            console.log(colorizer.colorize(__item, 'INFO') + ' : ' + jsonParsedOutput[__item]);
                             
 
-                            console.log(JSON.stringify(jsonParsedOutput));
-
-                            for (var __item in mainItem) {
-                                console.log('++++++++++++++++++++++++++///////// in here');
-                                console.log(__item);
-
-                                if(mainItem.hasOwnProperty(__item)){
-                                    count++;
-                                }
-
-                                var parsedOutputItems = jsonParsedOutput.items[count];
-
-                                for (var currentItem in parsedOutputItems) {
-                                    // if (debugOutput) {
-                                        console.log(currentItem + ' : ' + parsedOutputItems[currentItem]);
-                                    // };
-
-                                    if (requiredManifestKeys.indexOf(currentItem) > -1) {
-
-                                        if (parsedOutputItems.length <= 0) {
-                                            throw new Error('key blank ' + currentItem);
-                                        } else {
-
-                                            if (currentItem === 'appTitle') {
-                                                var navItemAppTitle = parsedOutputItems[currentItem];
-                                            }
-
-                                            if (currentItem === 'location') {
-                                                
-                                                if (debugOutput) {
-                                                    console.log(currentItem + ' : ' + parsedOutputItems[currentItem]);
-                                                };
-
-                                                // Find actual links and append the corrent version string to the end of the url
-                                                if (parsedOutputItems[currentItem].indexOf('/apps') > -1) {
-
-                                                    if (parsedOutputItems[currentItem].indexOf('?') > -1) {
-                                                        var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '&apiVersion=5'
-                                                    } else {
-                                                        var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '?apiVersion=5'
-                                                    }
-                                                    
-                                                    if (debugOutput) {
-                                                        console.log(navItemAppLocationURL);
-                                                    };
-                                                }
-
-                                                // Test to ensure that the navigation urls are working properly
-                                                // suite.checkHealth(navItemAppTitle, navItemAppLocationURL, testID);
-                                            }
-                                        }
-                                    }
-
-                                    // -------------------------------------
-
-                                    if (currentItem === 'items' && typeof parsedOutputItems[currentItem] === 'object') {
-
-                                        var __parent = jsonParsedOutput.items[count].title;
-                                        console.log(' ++++++++ ' +__parent);
-
-                                        if (debugOutput) {
-                                            console.log('-----------------');
-                                            console.log(__parent + ' sub links');
-                                        }
-                                        
-                                        var __subItem = jsonParsedOutput.items[count].items;
-
-                                        var __count = 0;
-
-                                        for (var __item in __subItem) {
-                                            
-                                            if(__subItem.hasOwnProperty(__item)){
-                                                __count++;
-
-                                                __offset = (__count - 1);
-                                                // console.log(__offset);
-                                            }
-
-                                            var __lastItem = jsonParsedOutput.items[count].items[__offset];
-
-                                            for (var __b in __lastItem) {
-                                                if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
-
-                                                if (requiredManifestKeys.indexOf(__b) > -1) {
-                                                    // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
-                                                    
-                                                    if (__b === 'appTitle') {
-                                                        var subNavItemAppTitle = __lastItem[__b];
-                                                    }
-
-                                                    if (__b === 'location') {
-                                                        
-                                                        if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
-
-                                                        if (__lastItem[__b].indexOf('/apps') > -1) {
-
-                                                            if (__lastItem[__b].indexOf('?') > -1) {
-                                                                var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=5'
-                                                            } else {
-                                                                var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=5'
-                                                            }
-                                                            
-                                                            if (debugOutput) {
-                                                                console.log('>> ' + __lastKeyUrl);
-                                                            };
-                                                        }
-
-                                                        suite.checkHealth(subNavItemAppTitle, __lastKeyUrl, testID);
-                                                    }
-                                                }
-
-                                            }
-                                            if (debugOutput) { console.log('    -----------------')};
-                                        }
-                                    }
-
-                                }
-
-                                if (debugOutput) {console.log('-----------------')};
+                            if(mainItem.hasOwnProperty(__item)){
+                                count++;
                             }
-                        } catch (e) {
-                            // ...
-                            if (showOutput) {console.log(e)};
                         }
-                    // });
+                    } catch (e) {
+                        // ...
+                        if (showOutput) {console.log(e)};
+                    }
                 }
-
-                // suite.checkHealth();
             });
     };
 
