@@ -403,59 +403,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                                 console.log(colorizer.colorize(parentManifestItem, 'INFO') + ' : ' + jsonParsedOutput[parentManifestItem]);
                             
                             } else {
-                                // Subset name
-                                console.log(colorizer.colorize(parentManifestItem, 'COMMENT'));
-
-                                var childManifestObject = jsonParsedOutput[parentManifestItem];
-
-                                for (var childItem in childManifestObject) {
-
-                                    if (typeof childManifestObject[childItem] != 'object') {
-                                        console.log('- ' + colorizer.colorize(childItem, 'INFO') + ' : ' + childManifestObject[childItem]);
-
-                                    } else {
-                                        // Subset name
-                                        console.log('  -----------------');
-                                        console.log(colorizer.colorize('  # ' + childItem, 'COMMENT'));
-
-                                        var grandchildManifestObject = jsonParsedOutput[parentManifestItem];
-
-                                        for (var grandchildItem in grandchildManifestObject) {
-                                            if (typeof grandchildManifestObject[grandchildItem] != 'object') {
-                                                console.log('   - ' + colorizer.colorize(grandchildItem, 'INFO') + ' : ' + grandchildManifestObject[grandchildItem]);
-                                            } else {
-                                                // Subset name
-                                                console.log('    -----------------');
-                                                console.log(colorizer.colorize('    # ' + grandchildItem, 'COMMENT'));
-
-                                                var greatGrandChildManifestObject = grandchildManifestObject[grandchildItem];
-
-                                                for (var greatGrandchildItem in greatGrandChildManifestObject) {
-                                                    if (typeof greatGrandChildManifestObject[greatGrandchildItem] != 'object') {
-                                                        console.log('     - ' + colorizer.colorize(greatGrandchildItem, 'INFO') + ' : ' + greatGrandChildManifestObject[greatGrandchildItem]);
-                                                    } else {
-                                                        // Subset name
-                                                        console.log('      -----------------');
-                                                        console.log(colorizer.colorize('      # ' + greatGrandchildItem, 'COMMENT'));
-
-                                                        var lineageManifestObject = greatGrandChildManifestObject[greatGrandchildItem];
-
-                                                        for (var lineageManifestItem in lineageManifestObject) {
-                                                            if (typeof lineageManifestObject[lineageManifestItem] != 'object') {
-                                                                console.log('       - ' + colorizer.colorize(lineageManifestItem, 'INFO') + ' : ' + lineageManifestObject[lineageManifestItem]);
-                                                            } else {
-                                                                
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                suite.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem]);
                             }
-
-                            console.log('------------------------');
                         }
                     } catch (e) {
                         // ...
@@ -463,6 +412,24 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     }
                 }
             });
+    };
+
+    apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
+        var suite = this;
+
+        // Manifest keys are built as key__ +
+        // Ex: parentKeyName__childKeyName__grandChildKeyName__lineageItemKeyName : Value
+        // Live Ex: TVE__OnDemand__featured_shows__0__show_img : http://media.nbcnewyork.com/designimages/featured_show_1_ondemand2x.png
+
+        for (var childItem in childManifestObject) {
+            if (typeof childManifestObject[childItem] != 'object') {
+                console.log('- ' + colorizer.colorize(parentObjectName + '__' + childItem, 'INFO') + ' : ' + childManifestObject[childItem]);
+
+            } else {
+                var manifestObjectName = parentObjectName + '__' + childItem;
+                suite.spiderObject(manifestObjectName, childManifestObject[childItem]);
+            }
+        }
     };
 
     new apiSuite(casper.cli.get('url'));
