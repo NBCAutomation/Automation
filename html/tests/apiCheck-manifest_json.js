@@ -368,9 +368,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
             
             if(createDictionary){
-                fs.write(save, 'Expected Key,Expected Value', 'a+');
+                // fs.write(save, 'Expected Key,Expected Value', 'a+');
             } else {
-                fs.write(save, 'Test ID,API Version,Expected Key,Expected Value,Live Key,Live Value,Pass/Fail,Info,' + '\n', 'a+');
+                // fs.write(save, 'Test ID,API Version,Expected Key,Expected Value,Live Key,Live Value,Pass/Fail,Info,' + '\n', 'a+');
             }
         }
 
@@ -397,13 +397,65 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         // console.log(jsonParsedOutput["app-urls"]["weather-branding"]);
                         // console.log(JSON.stringify(jsonParsedOutput));
 
-                        for (var __item in jsonParsedOutput) {
-                            console.log(colorizer.colorize(__item, 'INFO') + ' : ' + jsonParsedOutput[__item]);
-                            
+                        for (var parentManifestItem in jsonParsedOutput) {
 
-                            if(mainItem.hasOwnProperty(__item)){
-                                count++;
+                            if (typeof jsonParsedOutput[parentManifestItem] != 'object') {
+                                console.log(colorizer.colorize(parentManifestItem, 'INFO') + ' : ' + jsonParsedOutput[parentManifestItem]);
+                            
+                            } else {
+                                // Subset name
+                                console.log(colorizer.colorize(parentManifestItem, 'COMMENT'));
+
+                                var childManifestObject = jsonParsedOutput[parentManifestItem];
+
+                                for (var childItem in childManifestObject) {
+
+                                    if (typeof childManifestObject[childItem] != 'object') {
+                                        console.log('- ' + colorizer.colorize(childItem, 'INFO') + ' : ' + childManifestObject[childItem]);
+
+                                    } else {
+                                        // Subset name
+                                        console.log('  -----------------');
+                                        console.log(colorizer.colorize('  # ' + childItem, 'COMMENT'));
+
+                                        var grandchildManifestObject = jsonParsedOutput[parentManifestItem];
+
+                                        for (var grandchildItem in grandchildManifestObject) {
+                                            if (typeof grandchildManifestObject[grandchildItem] != 'object') {
+                                                console.log('   - ' + colorizer.colorize(grandchildItem, 'INFO') + ' : ' + grandchildManifestObject[grandchildItem]);
+                                            } else {
+                                                // Subset name
+                                                console.log('    -----------------');
+                                                console.log(colorizer.colorize('    # ' + grandchildItem, 'COMMENT'));
+
+                                                var greatGrandChildManifestObject = grandchildManifestObject[grandchildItem];
+
+                                                for (var greatGrandchildItem in greatGrandChildManifestObject) {
+                                                    if (typeof greatGrandChildManifestObject[greatGrandchildItem] != 'object') {
+                                                        console.log('     - ' + colorizer.colorize(greatGrandchildItem, 'INFO') + ' : ' + greatGrandChildManifestObject[greatGrandchildItem]);
+                                                    } else {
+                                                        // Subset name
+                                                        console.log('      -----------------');
+                                                        console.log(colorizer.colorize('      # ' + greatGrandchildItem, 'COMMENT'));
+
+                                                        var lineageManifestObject = greatGrandChildManifestObject[greatGrandchildItem];
+
+                                                        for (var lineageManifestItem in lineageManifestObject) {
+                                                            if (typeof lineageManifestObject[lineageManifestItem] != 'object') {
+                                                                console.log('       - ' + colorizer.colorize(lineageManifestItem, 'INFO') + ' : ' + lineageManifestObject[lineageManifestItem]);
+                                                            } else {
+                                                                
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
+
+                            console.log('------------------------');
                         }
                     } catch (e) {
                         // ...
