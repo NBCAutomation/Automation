@@ -45,6 +45,150 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var logResults = false;
     }
 
+    var collectionObject = {};
+    var dictionaryObject = {};
+    var testResultsObject = {};
+
+    // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
+    var reqKeys = new Array(
+        "domain",
+        "market-site-key",
+        "launch-image-name",
+        "ugc-partition-id",
+        "video-autoplay",
+        "push-notification-url-key",
+        "push-notification-flag-key",
+        // "comscore-app-name",
+        /*
+        "web-links__facebook__url",
+        "web-links__google-plus__url",
+        "web-links__instagram__url",
+        */
+        "web-links__search__title",
+        "web-links__search__url",
+        "web-links__send-feedback__url",
+        "web-links__settings-privacy-policy__title",
+        "web-links__settings-privacy-policy__url",
+        "web-links__traffic__url",
+        "web-links__tv-listings__title",
+        "web-links__tv-listings__url",
+        "web-links__tve__url",
+        /*
+        "web-links__twitter__url",
+        */
+        "web-links__weather-alerts__url",
+        "web-links__weather-school-closings__url",
+        "advertising__display__network-id",
+        "advertising__display__echo-transition-delay",
+        "echo-transition-delay",
+        "advertising__splash__enabled",
+        "advertising__splash__ad-unit-level2",
+        "advertising__splash__request-timeout",
+        "advertising__splash__display-duration",
+        "advertising__splash__target-width",
+        "advertising__splash__target-height",
+        "advertising__splash__scaling-x",
+        "advertising__splash__scaling-y",
+        "advertising__video__network-id",
+        "advertising__video__direct-sold-target-width",
+        "advertising__video__direct-sold-target-height",
+        "advertising__video__backfill-target-width",
+        "advertising__video__backfill-target-height",
+        "advertising__video__backfill-app-id",
+        "backfill-app-id",
+        "wsi-map-id",
+        // "wsi-market-default-layer",
+        "app-urls__weather-branding",
+        "app-urls__iteam-branding",
+        "app-urls__alerts",
+        "app-urls__ugctemplets",
+        "app-urls__breaking",
+        "app-urls__home",
+        "app-urls__home-investigation",
+        "app-urls__facebook-comments-script",
+        "app-urls__navigation",
+        "app-urls__settings-terms-of-use",
+        "app-urls__settings-terms-of-service",
+        "app-urls__settings-closed-captioning-faq",
+        "app-urls__submit-media",
+        "app-urls__trending",
+        "app-urls__weather-forcast-video",
+        "app-urls__weather-forcast-story",
+        "app-urls__weather-maps",
+        "app-base-urls__advertising-display",
+        "app-base-urls__advertising-video",
+        "app-base-urls__home-top-stories",
+        "app-base-urls__content",
+        "app-base-urls__gallery",
+        "app-base-urls__recommended",
+        "app-base-urls__related",
+        "app-base-urls__weather-conditions-icon",
+        "app-base-urls__weather-forcast",
+        "app-base-urls__weather-wsi-forcast",
+        "app-base-urls__weather-location-lookup",
+        "omniture__report-suite-ids",
+        "omniture__tracking-server",
+        "omniture__app-section-server-name",
+        "omniture__page-view-event",
+        "omniture__link-type",
+        "omniture__station-division",
+        "omniture__station-business-unit",
+        "omniture__station-call-sign",
+        "omniture__station-market",
+        /*
+        "force-update",
+        "update-screen-title",
+        "update-screen-desc",
+        "update-screen-appUrl",
+        "update-screen-appversion",
+        */
+        "advertising__ad-unit-level1",
+        "advertising__fw_ssid",
+        /*
+        "adtest",
+        */
+        "advertising__stage",
+        "advertising__article-interstitial",
+        "advertising__gallery-interstitial",
+        "advertising__default-iab-category-tier1",
+        "advertising__default-iab-category-tier2",
+        "advertising__splash__display-duration",
+        "contact__name",
+        "contact__address-line1",
+        "contact__address-line2",
+        "contact__phone",
+        /*
+        "contact-Info__phone1__contactInfoLabel",
+        "contact-Info__phone1__contactInfoNumber",
+        "contactInfoNumber",
+        "contact-Info__phone2__contactInfoLabel",
+        "contact-Info__phone2__contactInfoNumber",
+        "contact-Info__phone3__contactInfoLabel",
+        "contact-Info__phone3__contactInfoNumber",
+        */
+        "contact__investigation-phone",
+        "contact__investigation-email",
+        "weather__meteorologist-summary-disabled",
+        "weather__market-default-postal-code",
+        "weather__market-default-location-name",
+        // "weather__market-default-dma",
+        "weather__market-default-lat",
+        "weather__market-default-long",
+        "weather__scroll-down-animation-hour",
+        "weather__scroll-down-animation-display-sec",
+        "weather__geo-location-prompt-visit-interval",
+        /*
+        "app-id",
+        */
+        "live-promotion__is-live-promotion",
+        "live-promotion__promotion-type",
+        "live-promotion__url-schema-ios",
+        "live-promotion__app-link-ios",
+        "live-promotion__url-schema-android",
+        "live-promotion__app-link-android"
+    );
+
+
     if (!debugOutput) {
         var currentTime = new Date();
 
@@ -146,11 +290,13 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             if (logResults) {
                 suite.processTestResults(save);
             }
+
             if(createDictionary){
                 console.log('Dictionary creation ended.');
             } else {
                 console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
             }
+
             this.exit();
             test.done();
         });
@@ -166,7 +312,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty + '&fileLoc=' + testResultFileLocation;
 
         if (!logResults){
-            suite.getContent(url, type, 'xx');
+            suite.getManifestData(url, type, 'xx');
         } else {
             if (dbUrl) {
                 casper.open(dbUrl).then(function(resp) {
@@ -179,7 +325,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         var output = this.getHTML();
                         var __dbID = casper.getElementInfo('body').text;
 
-                        suite.getContent(url, type, __dbID);
+                        suite.getManifestData(url, type, __dbID);
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }
@@ -213,156 +359,13 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         }
     };
 
-    apiSuite.prototype.getContent = function(url, type, testID) {
+    apiSuite.prototype.getManifestData = function(url, type, testID) {
         
         var suite = this;
         var apiVersion = '5';
 
-        // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
-        var reqKeys = new Array(
-            "domain",
-            "market-site-key",
-            "launch-image-name",
-            "ugc-partition-id",
-            "video-autoplay",
-            "push-notification-url-key",
-            "push-notification-flag-key",
-            // "comscore-app-name",
-            /*
-            "web-links__facebook__url",
-            "web-links__google-plus__url",
-            "web-links__instagram__url",
-            */
-            "web-links__search__title",
-            "web-links__search__url",
-            "web-links__send-feedback__url",
-            "web-links__settings-privacy-policy__title",
-            "web-links__settings-privacy-policy__url",
-            "web-links__traffic__url",
-            "web-links__tv-listings__title",
-            "web-links__tv-listings__url",
-            "web-links__tve__url",
-            /*
-            "web-links__twitter__url",
-            */
-            "web-links__weather-alerts__url",
-            "web-links__weather-school-closings__url",
-            "advertising__display__network-id",
-            "advertising__display__echo-transition-delay",
-            "echo-transition-delay",
-            "advertising__splash__enabled",
-            "advertising__splash__ad-unit-level2",
-            "advertising__splash__request-timeout",
-            "advertising__splash__display-duration",
-            "advertising__splash__target-width",
-            "advertising__splash__target-height",
-            "advertising__splash__scaling-x",
-            "advertising__splash__scaling-y",
-            "advertising__video__network-id",
-            "advertising__video__direct-sold-target-width",
-            "advertising__video__direct-sold-target-height",
-            "advertising__video__backfill-target-width",
-            "advertising__video__backfill-target-height",
-            "advertising__video__backfill-app-id",
-            "backfill-app-id",
-            "wsi-map-id",
-            // "wsi-market-default-layer",
-            "app-urls__weather-branding",
-            "app-urls__iteam-branding",
-            "app-urls__alerts",
-            "app-urls__ugctemplets",
-            "app-urls__breaking",
-            "app-urls__home",
-            "app-urls__home-investigation",
-            "app-urls__facebook-comments-script",
-            "app-urls__navigation",
-            "app-urls__settings-terms-of-use",
-            "app-urls__settings-terms-of-service",
-            "app-urls__settings-closed-captioning-faq",
-            "app-urls__submit-media",
-            "app-urls__trending",
-            "app-urls__weather-forcast-video",
-            "app-urls__weather-forcast-story",
-            "app-urls__weather-maps",
-            "app-base-urls__advertising-display",
-            "app-base-urls__advertising-video",
-            "app-base-urls__home-top-stories",
-            "app-base-urls__content",
-            "app-base-urls__gallery",
-            "app-base-urls__recommended",
-            "app-base-urls__related",
-            "app-base-urls__weather-conditions-icon",
-            "app-base-urls__weather-forcast",
-            "app-base-urls__weather-wsi-forcast",
-            "app-base-urls__weather-location-lookup",
-            "omniture__report-suite-ids",
-            "omniture__tracking-server",
-            "omniture__app-section-server-name",
-            "omniture__page-view-event",
-            "omniture__link-type",
-            "omniture__station-division",
-            "omniture__station-business-unit",
-            "omniture__station-call-sign",
-            "omniture__station-market",
-            /*
-            "force-update",
-            "update-screen-title",
-            "update-screen-desc",
-            "update-screen-appUrl",
-            "update-screen-appversion",
-            */
-            "advertising__ad-unit-level1",
-            "advertising__fw_ssid",
-            /*
-            "adtest",
-            */
-            "advertising__stage",
-            "advertising__article-interstitial",
-            "advertising__gallery-interstitial",
-            "advertising__default-iab-category-tier1",
-            "advertising__default-iab-category-tier2",
-            "advertising__splash__display-duration",
-            "contact__name",
-            "contact__address-line1",
-            "contact__address-line2",
-            "contact__phone",
-            /*
-            "contact-Info__phone1__contactInfoLabel",
-            "contact-Info__phone1__contactInfoNumber",
-            "contactInfoNumber",
-            "contact-Info__phone2__contactInfoLabel",
-            "contact-Info__phone2__contactInfoNumber",
-            "contact-Info__phone3__contactInfoLabel",
-            "contact-Info__phone3__contactInfoNumber",
-            */
-            "contact__investigation-phone",
-            "contact__investigation-email",
-            "weather__meteorologist-summary-disabled",
-            "weather__market-default-postal-code",
-            "weather__market-default-location-name",
-            // "weather__market-default-dma",
-            "weather__market-default-lat",
-            "weather__market-default-long",
-            "weather__scroll-down-animation-hour",
-            "weather__scroll-down-animation-display-sec",
-            "weather__geo-location-prompt-visit-interval",
-            /*
-            "app-id",
-            */
-            "live-promotion__is-live-promotion",
-            "live-promotion__promotion-type",
-            "live-promotion__url-schema-ios",
-            "live-promotion__app-link-ios",
-            "live-promotion__url-schema-android",
-            "live-promotion__app-link-android"
-        );
-        
         //Begin manifest key/val check
         reqKeys.reverse();
-
-        collectionObject = {};
-        dictionaryObject = {};
-        testResultsObject = {};
             
         if (!debugOutput) {
             // Write file headers
@@ -429,7 +432,14 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             }
         })
 
-        console.log(collectionObject);
+        casper.wait(700, function() {
+            console.log(collectionObject.length);
+
+            for (var thisCollectionOtem in collectionObject) {
+                console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+            };
+        });
+
     };
 
     apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
@@ -447,15 +457,14 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
                 }
 
-                // console.log('reqKeys found ' + reqKeys);
-
-                // var subManifestKeyName = parentManifestItem.toLowerCase();
-                // var subManifestKeyValue = jsonParsedOutput[parentManifestItem];
+                // console.log(reqKeys);
 
                 // // Add key/val to collection object for testing;
-                // if (subManifestKeyName in reqKeys) {
-                //     collectionObject[subManifestKeyName] = subManifestKeyValue;
-                // }
+                if (manifestMainObjectName in reqKeys) {
+                    consol.log( manifestMainObjectName );
+
+                    collectionObject[subManifestKeyName] = subManifestKeyValue;
+                }
 
             } else {
                 var manifestObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
