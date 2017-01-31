@@ -15,6 +15,9 @@
 //
 // JSON Manifest
 // templates/nbc_news_app_json_manifest?apiVersion=5
+//
+// Added manifest_dictionary table
+//
 
 
 casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
@@ -222,36 +225,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         newUrl = parser.href;
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
-
-        var fs = require('fs');
-        
-        if(createDictionary){
-            var logName = urlUri + '_dictionary.csv';
-        } else {
-            var logName = urlUri + '_manifest-audit_' + timeStamp + '.csv';
-        }
-
-        var curFolder = month + '_' + day + '_' + year;
-        
-        if(createDictionary){
-            var saveLocation = 'manifest_dictionary/';
-
-            fs.makeDirectory(saveLocation, 775);
-            console.log(logName);
-            var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
-
-        } else {
-            var saveLocation = 'test_results/api_manifest_audits/' + curFolder;
-            fs.makeDirectory(saveLocation, 775);
-
-            if (['local', 'dev'].indexOf(envConfig) < 0) {
-                var process = require("child_process"),
-                    spawn = process.spawn,
-                    child = spawn("chown", ["-hR", "ec2-user:apache", saveLocation]);
-            }
-
-            var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
-        }
     }
 
     var apiSuite = function(url) {
@@ -272,7 +245,10 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         // Add manifest url    
         url = url + '/templates/nbc_news_app_json_manifest?apiVersion=5';
 
-        // Start Test
+        /*****************
+        * Start Test
+        */
+
         casper.start( url ).then(function(response) {
             if ( response.status == 200 ) {
                 if(createDictionary){
@@ -285,10 +261,23 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             }
         }).then(function () {
             suite.createTestID(url, type, urlUri);
+        }).then(function () {
+            if (debugOutput) {
+                console.log('---------------------');
+                casper.wait(700, function() {
+                    // console.log(collectionObject);
+                    for (var thisCollectionOtem in collectionObject) {
+                        console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+                    }
+                })
+            }
+
+            suite.processTestResults(urlUri, collectionObject);
+
         }).run(function() {
             //Process file to DB
             if (logResults) {
-                suite.processTestResults(save);
+                suite.processTestResults(urlUri, collectionObject);
             }
 
             if(createDictionary){
@@ -304,12 +293,10 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
     // Create test id in DB
     apiSuite.prototype.createTestID = function(url, type, stationProperty) {
-
         var suite = this;
-        var testResultFileLocation = encodeURIComponent(save);
 
         // require('utils').dump( current );
-        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty + '&fileLoc=' + testResultFileLocation;
+        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty + '&fileLoc=json_null';
 
         if (!logResults){
             suite.getManifestData(url, type, 'xx');
@@ -336,48 +323,39 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     };
 
     // Log results in DB
-    apiSuite.prototype.processTestResults = function(resultsFile) {
-        var testResultFileLocation = encodeURIComponent(save);
+    apiSuite.prototype.processTestResults = function(urlUri, collectionObject) {
+        var processUrl = configURL + '/utils/manage_dictionary&task=createDictionary';
+        // &dictionaryStation=' + urlUri + '&dictionaryData=' + JSON.stringify(collectionObject);
 
-        var suite = this;
+        console.log(processUrl);
 
-        var processUrl = configURL + '/utils/tasks?task=upload&testType=apiManifest&fileLoc=' + testResultFileLocation;
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'dictionaryStation': urlUri,
+                'dictionaryData':  JSON.stringify(collectionObject)
+            }
+        });
 
-        if (processUrl) {
-            casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+
+        // if (processUrl) {
+        //     casper.open(processUrl,{ method: 'post' }).then(function(resp) {
                 
-                var status = this.status().currentHTTPStatus;
+        //         var status = this.status().currentHTTPStatus;
 
-                if ( status == 200) {
-                    console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl );                    
-                } else {
-                    throw new Error('Unable to get/store Test ID!');
-                    this.exit();
-                }
+        //         if ( status == 200) {
+        //             console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl );                    
+        //         } else {
+        //             throw new Error('unable to store data');
+        //             this.exit();
+        //         }
                 
-            });
-        }
+        //     });
+        // }
     };
 
     apiSuite.prototype.getManifestData = function(url, type, testID) {
-        
         var suite = this;
-        var apiVersion = '5';
-
-        //Begin manifest key/val check
-        reqKeys.reverse();
-            
-        if (!debugOutput) {
-            // Write file headers
-            var testInfo = 'Manifest url tested: ' + url;
-            var testTime = 'Test completed: ' + month + '/' + day + '/' + year + ' - ' +hours + ':' + minutes + ' ' + toD;
-            
-            if(createDictionary){
-                // fs.write(save, 'Expected Key,Expected Value', 'a+');
-            } else {
-                // fs.write(save, 'Test ID,API Version,Expected Key,Expected Value,Live Key,Live Value,Pass/Fail,Info,' + '\n', 'a+');
-            }
-        }
 
         casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 
@@ -396,11 +374,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                     mainItem = jsonParsedOutput;
 
-                    var count = 0;
-                    
-                    // console.log(jsonParsedOutput["app-urls"]["weather-branding"]);
-                    // console.log(JSON.stringify(jsonParsedOutput));
-
                     for (var parentManifestItem in jsonParsedOutput) {
 
                         if (typeof jsonParsedOutput[parentManifestItem] != 'object') {
@@ -412,15 +385,10 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                             var manifestKeyValue = jsonParsedOutput[parentManifestItem];
 
                             // Add key/val to collection object for testing;
-                            if (manifestKeyName in reqKeys) {
-                                collectionObject[manifestKeyName] = manifestKeyValue;
-                            }
+                            suite.buildmanifestCollectionObject(manifestKeyName, manifestKeyValue);
                         
                         } else {
-                            // Spider subObjects add to collection
-                            // casper.wait(700, function() {
-                                suite.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem]);
-                            // });
+                            suite.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem]);
                         }
                     }
                 } catch (e) {
@@ -431,14 +399,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 console.log(colorizer.colorize('Unable to open the manifest endpoint. ', 'ERROR'));
             }
         })
-
-        casper.wait(700, function() {
-            console.log(collectionObject.length);
-
-            for (var thisCollectionOtem in collectionObject) {
-                console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
-            };
-        });
 
     };
 
@@ -457,20 +417,29 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
                 }
 
-                // console.log(reqKeys);
-
-                // // Add key/val to collection object for testing;
-                if (manifestMainObjectName in reqKeys) {
-                    consol.log( manifestMainObjectName );
-
-                    collectionObject[subManifestKeyName] = subManifestKeyValue;
-                }
+                // Add key/val to collection object for testing if required;
+                suite.buildmanifestCollectionObject(manifestMainObjectName, childManifestObject[childItem]);
 
             } else {
                 var manifestObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
                 suite.spiderObject(manifestObjectName, childManifestObject[childItem]);
             }
         }
+    };
+
+    apiSuite.prototype.buildmanifestCollectionObject = function(manifestCollectionObjectName, manifestCollectionObjectValue) {
+        var suite = this;
+        reqKeys.reverse();
+
+        // If manifestCollectionObjectName found in required manifest key array, add it to the collection object for testing
+        for (var reqKeysItem in reqKeys){
+            
+            if (manifestCollectionObjectName == reqKeys[reqKeysItem]) {
+
+                collectionObject[manifestCollectionObjectName] = manifestCollectionObjectValue;
+            }
+        }
+
     };
 
 

@@ -973,6 +973,7 @@ $app->group('/utils', function () {
 		$testType = $utilReqParams['testscript'];
 		$testResultsFile = $utilReqParams['fileLoc'];
 
+		// Set task to run
 		if ($utilReqParams['task'] == 'generate'){
 			$createTestID = true;
 		}
@@ -990,7 +991,9 @@ $app->group('/utils', function () {
 			} else {
 				echo('che le derp');
 			}
-		} elseif ($uploadResultsFile) {
+		}
+
+		if ($uploadResultsFile) {
 			// Updload results file
 
 			echo "...importing csv to db<br />";
@@ -1029,14 +1032,9 @@ $app->group('/utils', function () {
 				}
 			}
 
-		} else {
-			return $this->renderer->render($response, 'utils.php', [
-			    'title' => 'Utils',
-			    'page_name' => 'utils',
-			    'mainView' => true,
-			    'hideBreadcrumbs' => true
-			]);
 		}
+
+		return $response->withRedirect('/dashboard/main');
 
 		//POST or PUT
 		// $allPostPutVars = $request->getParsedBody();
@@ -1045,6 +1043,30 @@ $app->group('/utils', function () {
 		//    var_dump($key.' => '.$param);
 		// }
     });
+
+	// Manage manifest dictionary insert/update
+    // $this->post('/manage_dictionary', function ($request, $response, $args) {
+	$this->post('/{view}', function ($request, $response, $args) {
+		$this->logger->info("Dictionary task made it");
+
+    	$utilPostParams = $request->getParsedBody();
+
+    	$this->logger->info("Dictionary station ".$utilPostParams['dictionaryStation']);
+    	$this->logger->info("Dictionary data ".$utilPostParams['dictionaryData']);
+
+		$dictionaryStation = $utilPostParams['dictionaryStation'];
+		$dictionaryData = $utilPostParams['dictionaryData'];
+    	
+    	// if ($createDictionary) {
+		// var_dump($dictionaryStation, $dictionaryData);
+		$manifestDictionaryStatus = $db->insertUpdateManifestDictionary($dictionaryStation, $dictionaryData);
+		
+		if ($manifestDictionaryStatus){
+			$this->logger->info("Dictionary insert/updated: ". $station ." : ". $manifestDictionaryStatus);
+		}
+    	// }
+    });
+
 
 	// Process file download
     $this->get('/download', function ($request, $response) {

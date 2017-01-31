@@ -442,9 +442,85 @@ class DbHandler {
         $stmt->close();
     }
 
+
     /**
-     * Reporting
+     * Insert or update manifest dictionary data
      */
+    
+    public function insertUpdateManifestDictionary($station, $manifestDictionaryData) {
+        $db_con = Spire::getConnection();
+        $queryStatus = FALSE;
+
+        $lookupStmt = $db_con->prepare("SELECT id FROM manifest_dictionary WHERE `station` = '".$station."'");
+
+        if ($lookupStmt->execute()) {
+            $manifestDictionaryID = $lookupStmt->fetch();
+
+            if(! $manifestDictionaryID){
+                // If no dictionary found insert
+                $stmt = $db_con->prepare("INSERT INTO manifest_dictionary(station, dictionary_object) VALUES(?, ?)");
+                $insertStatement = $stmt->execute(array($station, $manifestDictionaryData));
+
+                if ($insertStatement) {
+                    $dictionaryID = $db_con->lastInsertId();
+
+                    if ($dictionaryID != NULL) {
+                        $queryStatus = TRUE;
+                        return $queryStatus;
+                    } else {
+                        return $queryStatus;
+                    }
+                } else {
+                    return $queryStatus;
+                }
+            } else {
+                // If dictionary found update data object
+                $stmt = $db_con->prepare("UPDATE manifest_dictionary SET dictionary_object = ? WHERE station = ?");
+                $stmtStatus = $stmt->execute(array($manifestDictionaryData, $station));
+
+                $queryStatus = $stmtStatus;
+
+                return $queryStatus;
+            }
+
+            return $queryStatus;
+
+            $lookupStmt->closeCursor();
+        } else {
+            
+        }
+    }
+
+
+    public function getManifestDictionaryData($station) {
+        $output = Spire::spireCache('getManifestDictionaryData_'.$station, 9000, function() use ($station) {
+
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM manifest_dictionary WHERE `station` = '".$station);
+
+            if ($stmt->execute()) {
+                $manifestDictionaryData = $stmt->fetchAll();
+
+                foreach( $allTests as $key => $value ){
+                    // echo "key: ".$key." // val: ".$value."\n\n";
+                    $tests[$key] = $value;
+                }
+
+                $apiTestsArray[] = $tests;
+
+                $stmt->closeCursor();
+                return $apiTestsArray;
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
+
+    /* ------------- Reporting ------------------ */
     
     public function getAllTests() {
         $db_con = Spire::getConnection();
