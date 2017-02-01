@@ -9,3 +9,4 @@ http://stage.www.nbcconnecticut.com
 http://stage.www.nbcwashington.com
 http://stage.www.nbcsandiego.com
 http://stage.www.necn.com
+http://www.nbcboston.com
