@@ -982,6 +982,12 @@ $app->group('/utils', function () {
 			$uploadResultsFile = true;
 		}
 
+		if ($utilReqParams['task'] == 'getDictionaryData'){
+			$getDictionaryData = true;
+		}
+
+		///////////////////////////////////
+
 		if ($createTestID) {
 			// Create test ID
 			$thisID = $db->createTestID($randTestID, $stationProperty, $testType, $testResultsFile);
@@ -1008,7 +1014,7 @@ $app->group('/utils', function () {
 					$this->logger->info("Nav Test results imported - ". $testResultsFile );
 				} else {
 					echo 'DB nav import failed';
-					$this->logger->info("DB nav import failed");
+					$this->logger->info("ERROR: DB nav import failed");
 				}
 			}
 
@@ -1018,7 +1024,7 @@ $app->group('/utils', function () {
 					$this->logger->info("Article test results imported - ". $testResultsFile );
 				} else {
 					echo 'DB article import failed';
-					$this->logger->info("DB article import failed");
+					$this->logger->info("ERROR: DB article import failed");
 				}
 			}
 
@@ -1028,13 +1034,22 @@ $app->group('/utils', function () {
 					$this->logger->info("Manifest test results imported - ". $testResultsFile );
 				} else {
 					echo 'DB manifest import failed';
-					$this->logger->info("DB manifest import failed");
+					$this->logger->info("ERROR: DB manifest import failed");
 				}
 			}
 
 		}
 
-		return $response->withRedirect('/dashboard/main');
+		if ($getDictionaryData) {
+			$dData = $db->getManifestDictionaryData($stationProperty);
+			// echo '<pre>';
+			echo($dData[0]);
+			// echo '</pre>';
+		}
+
+
+		// Force redirect
+		// return $response->withRedirect('/dashboard/main');
 
 		//POST or PUT
 		// $allPostPutVars = $request->getParsedBody();
@@ -1047,24 +1062,22 @@ $app->group('/utils', function () {
 	// Manage manifest dictionary insert/update
     // $this->post('/manage_dictionary', function ($request, $response, $args) {
 	$this->post('/{view}', function ($request, $response, $args) {
-		$this->logger->info("Dictionary task made it");
+		$db = new DbHandler();
 
     	$utilPostParams = $request->getParsedBody();
 
-    	$this->logger->info("Dictionary station ".$utilPostParams['dictionaryStation']);
-    	$this->logger->info("Dictionary data ".$utilPostParams['dictionaryData']);
+    	// Uncomment and post to save to appp.log for debugging
+    	// $this->logger->info("Dictionary station ".$utilPostParams['dictionaryStation']);
+    	// $this->logger->info("Dictionary data ".$utilPostParams['dictionaryData']);
 
 		$dictionaryStation = $utilPostParams['dictionaryStation'];
 		$dictionaryData = $utilPostParams['dictionaryData'];
     	
-    	// if ($createDictionary) {
-		// var_dump($dictionaryStation, $dictionaryData);
 		$manifestDictionaryStatus = $db->insertUpdateManifestDictionary($dictionaryStation, $dictionaryData);
 		
 		if ($manifestDictionaryStatus){
-			$this->logger->info("Dictionary insert/updated: ". $station ." : ". $manifestDictionaryStatus);
+			$this->logger->info("Dictionary insert/updated: ". $dictionaryStation ." : ". $manifestDictionaryStatus);
 		}
-    	// }
     });
 
 

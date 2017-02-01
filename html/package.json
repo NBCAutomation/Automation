@@ -16,7 +16,8 @@
 		"local-manifest": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\" --env=local",
 		"local-nav": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\" --env=local",
 		"local-article": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-article.js\" --url=\"{}\" --env=local",
-		"create-dictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\" --output=dictionary"
+		"create-dictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --url=\"{}\" --output=dictionary",
+		"create-JSONdictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest_json.js\" --url=\"{}\" --env=local --task=createDictionary"
 	},
 	"dependencies": {
 	    "casperjs": "^1.1.3",

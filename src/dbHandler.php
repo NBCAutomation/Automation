@@ -493,24 +493,17 @@ class DbHandler {
 
 
     public function getManifestDictionaryData($station) {
-        $output = Spire::spireCache('getManifestDictionaryData_'.$station, 9000, function() use ($station) {
+        $output = Spire::spireCache('getManifestDictionaryData_'.$station, 604800, function() use ($station) {
 
             $db_con = Spire::getConnection();
 
-            $stmt = $db_con->prepare("SELECT * FROM manifest_dictionary WHERE `station` = '".$station);
+            $stmt = $db_con->prepare("SELECT dictionary_object FROM manifest_dictionary WHERE `station` = '".$station."'");
 
             if ($stmt->execute()) {
-                $manifestDictionaryData = $stmt->fetchAll();
-
-                foreach( $allTests as $key => $value ){
-                    // echo "key: ".$key." // val: ".$value."\n\n";
-                    $tests[$key] = $value;
-                }
-
-                $apiTestsArray[] = $tests;
+                $manifestDictionaryData = $stmt->fetch();
 
                 $stmt->closeCursor();
-                return $apiTestsArray;
+                return $manifestDictionaryData;
             } else {
                 return NULL;
             }

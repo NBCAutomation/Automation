@@ -17,7 +17,8 @@
 // templates/nbc_news_app_json_manifest?apiVersion=5
 //
 // Added manifest_dictionary table
-//
+// Dictionaries are auto updated in the db
+// http://stackoverflow.com/questions/1068834/object-comparison-in-javascript
 
 
 casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
@@ -37,11 +38,14 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var type = casper.cli.get('output');
         if (type === 'debug') {
             var debugOutput = true;
-        } else if (type === 'dictionary') {
-            var createDictionary = true;
-            var logResults = false;
         } else if (type === 'console') {
             var showOutput = true;
+        }
+
+    var type = casper.cli.get('task');
+        if (type === 'createDictionary') {
+            var createDictionary = true;
+            var logResults = false;
         }
 
     if ( casper.cli.get('testing') ) {
@@ -51,6 +55,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var collectionObject = {};
     var dictionaryObject = {};
     var testResultsObject = {};
+    var dictionaryManifestObject;
+    var manifestTestRefID;
 
     // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
     var reqKeys = new Array(
@@ -231,64 +237,77 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
         if (!url) {
             throw new Error('A URL is required!');
-        }
+        } else {
+            var suite = this;
 
-        var suite = this;
+            var parser = document.createElement('a');
+            parser.href = url;
 
-        var parser = document.createElement('a');
-        parser.href = url;
+            newUrl = parser.href;
+            var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+            var urlUri = sourceString.replace('.','_');
 
-        newUrl = parser.href;
-        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-        var urlUri = sourceString.replace('.','_');
+            // Add manifest url    
+            url = url + '/templates/nbc_news_app_json_manifest?apiVersion=5';
 
-        // Add manifest url    
-        url = url + '/templates/nbc_news_app_json_manifest?apiVersion=5';
-
-        /*****************
-        * Start Test
-        */
-
-        casper.start( url ).then(function(response) {
-            if ( response.status == 200 ) {
-                if(createDictionary){
-                    console.log('Dictionary creation started.');
-                } else {
-                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-                }
-            } else {
-                casper.test.fail('Page did not load correctly. Response: ' + response.status);
-            }
-        }).then(function () {
-            suite.createTestID(url, type, urlUri);
-        }).then(function () {
-            if (debugOutput) {
-                console.log('---------------------');
-                casper.wait(700, function() {
-                    // console.log(collectionObject);
-                    for (var thisCollectionOtem in collectionObject) {
-                        console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+            /*******************
+            * Start Test
+            *******************/
+            casper.start( url ).then(function(response) {
+                if ( response.status == 200 ) {
+                    if(createDictionary){
+                        console.log(urlUri + ' Dictionary creation/update started.');
+                    } else {
+                        console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
                     }
-                })
-            }
+                } else {
+                    casper.test.fail('Page did not load correctly. Response: ' + response.status);
+                }
+            }).then(function () {
+                if (createDictionary) {
+                    suite.collectManifestData(url, type, 'xx');
+                } else {
+                    // Create ref test ID and start manifest data collection for testing
+                    suite.createTestID(url, type, urlUri);
+                }
+            }).then(function () {
+                if(createDictionary){
+                    suite.updateInsertManifestDictionary(urlUri, collectionObject);
 
-            suite.processTestResults(urlUri, collectionObject);
+                    // Display collection object
+                    if (debugOutput) {
+                        console.log('---------------------');
+                        console.log(' Collection object   ');
+                        console.log('---------------------');
+                        casper.wait(700, function() {
+                            // console.log(collectionObject);
+                            for (var thisCollectionOtem in collectionObject) {
+                                console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+                            }
+                        })
+                    } else {
 
-        }).run(function() {
-            //Process file to DB
-            if (logResults) {
-                suite.processTestResults(urlUri, collectionObject);
-            }
+                    }
+                } else {
+                    suite.testManifestData(urlUri, collectionObject);
+                }
 
-            if(createDictionary){
-                console.log('Dictionary creation ended.');
-            } else {
-                console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
-            }
+            }).run(function() {
+                //Process file to DB
+                if (logResults) {
+                    suite.processTestResults(urlUri, collectionObject);
+                }
 
-            this.exit();
-            test.done();
-        });
+                if(createDictionary){
+                    console.log(urlUri + ' Dictionary creation/update ended.');
+                } else {
+                    console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
+                }
+
+                this.exit();
+                test.done();
+            });
+        }
     };
 
     // Create test id in DB
@@ -299,35 +318,37 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty + '&fileLoc=json_null';
 
         if (!logResults){
-            suite.getManifestData(url, type, 'xx');
+            suite.collectManifestData(url, type, 'xx');
         } else {
             if (dbUrl) {
                 casper.open(dbUrl).then(function(resp) {
-                    
+
                     var status = this.status().currentHTTPStatus;
 
                     if ( status == 200) {
                         if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
                         var output = this.getHTML();
-                        var __dbID = casper.getElementInfo('body').text;
+                        var manifestTestRefID = casper.getElementInfo('body').text;
 
-                        suite.getManifestData(url, type, __dbID);
+                        suite.collectManifestData(url, type, manifestTestRefID);
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }
-                    
                 });
             }
         }
     };
 
-    // Log results in DB
-    apiSuite.prototype.processTestResults = function(urlUri, collectionObject) {
+    apiSuite.prototype.updateInsertManifestDictionary = function(urlUri, collectionObject) {
         var processUrl = configURL + '/utils/manage_dictionary&task=createDictionary';
         // &dictionaryStation=' + urlUri + '&dictionaryData=' + JSON.stringify(collectionObject);
 
-        console.log(processUrl);
+        if (debugOutput) {
+            console.log('dictionaryStation > ' + urlUri);
+            console.log('dictionaryData    > ' + JSON.stringify(collectionObject));
+            console.log('---------------------');
+        }
 
         casper.open(processUrl, {
             method: 'post',
@@ -336,25 +357,25 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 'dictionaryData':  JSON.stringify(collectionObject)
             }
         });
-
-
-        // if (processUrl) {
-        //     casper.open(processUrl,{ method: 'post' }).then(function(resp) {
-                
-        //         var status = this.status().currentHTTPStatus;
-
-        //         if ( status == 200) {
-        //             console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl );                    
-        //         } else {
-        //             throw new Error('unable to store data');
-        //             this.exit();
-        //         }
-                
-        //     });
-        // }
     };
 
-    apiSuite.prototype.getManifestData = function(url, type, testID) {
+    apiSuite.prototype.processTestResults = function(urlUri, collectionObject) {
+        var processUrl = configURL + '/utils/manage_dictionary&task=processTestResults';
+
+        if (debugOutput) {
+            console.log(processUrl);
+        }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'dictionaryStation': urlUri,
+                'dictionaryData':  JSON.stringify(collectionObject)
+            }
+        });
+    };
+
+    apiSuite.prototype.collectManifestData = function(url, type, testID) {
         var suite = this;
 
         casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
@@ -442,6 +463,46 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
     };
 
+    apiSuite.prototype.pullManifestDictionaryData = function(station, callback) {
+        var suite = this;
+        var dbUrl = configURL + '/utils/tasks?task=getDictionaryData&&property=' + station;
+
+        if (dbUrl) {
+            casper.open(dbUrl).then(function(resp) {
+                var status = this.status().currentHTTPStatus,
+                    output = false;
+
+                if ( status == 200) {
+                    if (debugOutput) { console.log(colorizer.colorize('Manifest dictionary data: ', 'COMMENT') + dbUrl ) };
+                    
+                    output = casper.getElementInfo('body').text;
+                } else {
+                    throw new Error('Unable to pull manifest data, util url missing: ' + status);
+                }
+
+                if (typeof(callback) === "function") {
+                    callback(output);
+                }
+            })
+        } else {
+            throw new Error('Unable to pull manifest data, util url missing.');
+        }
+
+    };
+
+
+    apiSuite.prototype.testManifestData = function(url, manifestCollectionObject) {
+        var suite = this;
+        
+        var dictionaryManifestObject = suite.pullManifestDictionaryData(url, function (data) {
+            // console.log(JSON.parse(data) == manifestCollectionObject);
+            testData = JSON.parse(data);
+            for (var testingItem in testData) {
+                console.log('>>>>> ' + testingItem + ' : ' + testData[testingItem]);
+            }         
+        });
+        
+    };
 
 
     new apiSuite(casper.cli.get('url'));
