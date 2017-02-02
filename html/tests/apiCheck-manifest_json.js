@@ -1,25 +1,19 @@
-/* globals casper, require, console */
 // Author: Deltrie Allen
 // Contact: deltrie.allen@nbcuni.com
-// Version: 2.0
+// Version: 1.0 of JSON Testing; V.3 of Manifest testing.
+// Casper 1.1.0-beta3 and Phantom 1.9.8
 // Case: Test API main manifest file to verify main key/values that allow the app to function correctly.
 // Use: casperjs test [file_name] --url=[site]
-//    optional string params --output=debug to show logged key/val strings
-//    optional string params --output=console will show test results
-
-// Dictionary files:
-// - OTS Created 9/7/16
-
-//
-// Casper 1.1.0-beta3 and Phantom 1.9.8
+//    optional string params:
+//      --output=debug          > to show logged key/val strings
+//      --output=console        > will show test results
+//      --task=createDictionary > to create dictionary for current property/station
+//      --testing               > disables DB logging of test results
 //
 // JSON Manifest
 // templates/nbc_news_app_json_manifest?apiVersion=5
 //
-// Added manifest_dictionary table
-// Dictionaries are auto updated in the db
-// http://stackoverflow.com/questions/1068834/object-comparison-in-javascript
-
+// Testing starts @ Line 250
 
 casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
@@ -220,8 +214,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             if (hours === '0'){
                 var hours = "12";
             }
-
-
 
         var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
 
