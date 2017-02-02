@@ -1050,34 +1050,43 @@ $app->group('/utils', function () {
 
 		// Force redirect
 		// return $response->withRedirect('/dashboard/main');
-
-		//POST or PUT
-		// $allPostPutVars = $request->getParsedBody();
-		// foreach($allPostPutVars as $key => $param){
-		//    //POST or PUT parameters list
-		//    var_dump($key.' => '.$param);
-		// }
     });
 
-	// Manage manifest dictionary insert/update
+	// Manage test POST requests
     // $this->post('/manage_dictionary', function ($request, $response, $args) {
 	$this->post('/{view}', function ($request, $response, $args) {
 		$db = new DbHandler();
 
     	$utilPostParams = $request->getParsedBody();
-
-    	// Uncomment and post to save to appp.log for debugging
-    	// $this->logger->info("Dictionary station ".$utilPostParams['dictionaryStation']);
-    	// $this->logger->info("Dictionary data ".$utilPostParams['dictionaryData']);
-
-		$dictionaryStation = $utilPostParams['dictionaryStation'];
-		$dictionaryData = $utilPostParams['dictionaryData'];
     	
-		$manifestDictionaryStatus = $db->insertUpdateManifestDictionary($dictionaryStation, $dictionaryData);
+    	// Create Dictionary entries into DB
+    	if ($utilPostParams['task'] == 'createDictionary') {
+    		$dictionaryStation = $utilPostParams['dictionaryStation'];
+    		$dictionaryData = $utilPostParams['dictionaryData'];
+    		  	
+    		$manifestDictionaryStatus = $db->insertUpdateManifestDictionary($dictionaryStation, $dictionaryData);
+    		
+    		if ($manifestDictionaryStatus){
+    			$this->logger->info("Dictionary insert/updated: ". $dictionaryStation ." : ". $manifestDictionaryStatus);
+    		}
+    	}
+
+    	// Log Manifest test results to DB
+    	if ($utilPostParams['task'] == 'processManifestTestResults') {
+    		$testID = $utilPostParams['testID'];
+    		$testType = $utilPostParams['testType'];
+    		$station = $utilPostParams['testProperty'];
+    		$status = $utilPostParams['testStatus'];
+    		$results = $utilPostParams['testResults'];
+    		$info = '';
+    		  	
+    		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $results, $info);
+    		
+    		if ($processManifestTestResults){
+    			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",testType=>". $testType .",testStatus=>". $status ."]");
+    		}
+    	}
 		
-		if ($manifestDictionaryStatus){
-			$this->logger->info("Dictionary insert/updated: ". $dictionaryStation ." : ". $manifestDictionaryStatus);
-		}
     });
 
 

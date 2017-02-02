@@ -55,8 +55,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var collectionObject = {};
     var dictionaryObject = {};
     var testResultsObject = {};
-    var dictionaryManifestObject;
     var manifestTestRefID;
+    var manifestTestStatus;
 
     // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
     var reqKeys = new Array(
@@ -251,7 +251,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             url = url + '/templates/nbc_news_app_json_manifest?apiVersion=5';
 
             /*******************
-            * Start Test
+            *
+            * Start Testing
+            *
             *******************/
             casper.start( url ).then(function(response) {
                 if ( response.status == 200 ) {
@@ -289,15 +291,25 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                     }
                 } else {
-                    suite.testManifestData(urlUri, collectionObject);
+                    suite.testManifestData(urlUri, collectionObject, manifestTestRefID);
+                }
+
+            }).then(function () {
+                if (debugOutput) {
+                    console.log('---------------------');
+                    console.log(' Test Results object   ');
+                    console.log('---------------------');
+                    for (var testResultsItem in testResultsObject) {
+                        console.log('>>>>> ' + testResultsItem + ' : ' + testResultsObject[testResultsItem]);
+                    }
+                }
+
+                //Process test results to DB
+                if (logResults) {
+                    suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, 'apiManifestTest', manifestTestStatus);
                 }
 
             }).run(function() {
-                //Process file to DB
-                if (logResults) {
-                    suite.processTestResults(urlUri, collectionObject);
-                }
-
                 if(createDictionary){
                     console.log(urlUri + ' Dictionary creation/update ended.');
                 } else {
@@ -341,7 +353,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     };
 
     apiSuite.prototype.updateInsertManifestDictionary = function(urlUri, collectionObject) {
-        var processUrl = configURL + '/utils/manage_dictionary&task=createDictionary';
+        var processUrl = configURL + '/utils/processRequest';
         // &dictionaryStation=' + urlUri + '&dictionaryData=' + JSON.stringify(collectionObject);
 
         if (debugOutput) {
@@ -353,14 +365,15 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         casper.open(processUrl, {
             method: 'post',
             data:   {
+                'task': 'createDictionary',
                 'dictionaryStation': urlUri,
                 'dictionaryData':  JSON.stringify(collectionObject)
             }
         });
     };
 
-    apiSuite.prototype.processTestResults = function(urlUri, collectionObject) {
-        var processUrl = configURL + '/utils/manage_dictionary&task=processTestResults';
+    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testType, manifestTestStatus) {
+        var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
             console.log(processUrl);
@@ -369,14 +382,20 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         casper.open(processUrl, {
             method: 'post',
             data:   {
-                'dictionaryStation': urlUri,
-                'dictionaryData':  JSON.stringify(collectionObject)
+                'task': 'processManifestTestResults',
+                'testID': testID,
+                'testType': testType,
+                'testProperty': urlUri,
+                'testStatus': manifestTestStatus,
+                'testResults':  JSON.stringify(testResultsObject)
             }
         });
     };
 
     apiSuite.prototype.collectManifestData = function(url, type, testID) {
         var suite = this;
+
+        manifestTestRefID = testID;
 
         casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 
@@ -465,7 +484,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
     apiSuite.prototype.pullManifestDictionaryData = function(station, callback) {
         var suite = this;
-        var dbUrl = configURL + '/utils/tasks?task=getDictionaryData&&property=' + station;
+        var dbUrl = configURL + '/utils/tasks?task=getDictionaryData&property=' + station;
 
         if (dbUrl) {
             casper.open(dbUrl).then(function(resp) {
@@ -487,51 +506,94 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         } else {
             throw new Error('Unable to pull manifest data, util url missing.');
         }
-
     };
 
 
-    apiSuite.prototype.testManifestData = function(url, manifestCollectionObject) {
+    apiSuite.prototype.testManifestData = function(url, manifestCollectionObject, testID) {
         var suite = this;
-        
+        var errorCount = 0;
+        var testErrors = [];
+        var currentTestObject = {};
+        var currentTestObjectFailures = {};
+
+        // Build test results object
+        testResultsObject['testID'] = testID;
+        testResultsObject['testProperty'] = url;
+
         var dictionaryManifestObject = suite.pullManifestDictionaryData(url, function (data) {
-            
             var obj1 = JSON.parse(data);
             var obj2 = manifestCollectionObject;
-            
+
             Object.keys(obj1).forEach( function (key) {
+                console.log(colorizer.colorize('key: ', 'COMMENT') + key );
                 if (showOutput) {
-                    console.log(colorizer.colorize('key: ', 'COMMENT') + key );
                     console.log(' -  dict val:  ' + obj1[key]);
                     console.log(' -  live val:  ' + obj2[key]);
                 }
 
-                // Compare values for match
-                // if (obj1[key] === obj2[key]) {
-                //     if (showOutput) {
-                //         console.log(' -  ' + colorizer.colorize('PASS ', 'INFO'));
-                //     }
-                // } else {
-                //     if (showOutput) {
-                //         console.log(' -  ' + colorizer.colorize('FAIL: Value mismatch:', 'ERROR') + obj1[key] + ' : ' + obj2[key] );
-                //     }
-                // }
-
                 try{
                     test.assertEquals(obj1[key], obj2[key]);
-                } catch (e) {
-                    // var consoleError = e;
-                    // if ( consoleError.indexOf('AssertionError') > -1 ) {
-                        // console.log(consoleError);
-                        console.log(' -  ' + colorizer.colorize('FAIL: Value mismatch:', 'ERROR') + obj1[key] + ' : ' + obj2[key] );
-                    // }
+                } catch (e) {        
+                    // casper.test.error(e);
+                    console.log(colorizer.colorize('FAIL:', 'ERROR') + ' [' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
+                    testErrors.push('[' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
+                    
+                    currentTestObjectFailures['expectedValue'] = obj1[key];
+                    currentTestObjectFailures['LiveValue'] = obj2[key];
+
+                    currentTestObject[key] = currentTestObjectFailures;
+
+                    errorCount++
                 }
-                console.log('==========================');
+                console.log('---------------------------');
             });
-        });
-        
+
+            if (errorCount > 0) {
+
+                // Add test results to results object; debug below
+                manifestTestStatus = 'Fail';
+                testResultsObject['testStatus'] = 'Fail';
+                testResultsObject['testResults'] = currentTestObject;
+
+                if (debugOutput) {
+                    console.log('---------------------------');
+                    console.log(' Test Results Collection');
+                    console.log('---------------------------');
+                    for (var thisTestItem in currentTestObject) {
+                        if (typeof currentTestObject[thisTestItem] != 'object') {
+                            console.log('-' + thisTestItem + ' : ' + currentTestObject[thisTestItem]);
+                        } else {
+                            console.log('  -' + thisTestItem + ' :');
+                            var subValueKeySet = currentTestObject[thisTestItem];
+
+                            for ( var testValues in subValueKeySet) {
+                                console.log('    -' + testValues + ' : ' + subValueKeySet[testValues]);
+                            }
+                        }
+                    }
+                }
+
+                // Display error report for current test
+                testErrors.reverse();
+                // console.log(currentTestObject);
+
+                console.log('\n');
+                console.log('---------------------------');
+                console.log(' ! ' + errorCount + ' Failures Found !');
+                console.log('---------------------------');
+
+                for (var i = testErrors.length - 1; i >= 0; i--) {
+                    console.log(colorizer.colorize('- FAIL: ' + testErrors[i], 'ERROR'));
+                }
+                console.log('\n');
+                casper.test.fail( errorCount + ' errors found.' );
+            } else {
+                manifestTestStatus = 'Pass';
+                testResultsObject['testStatus'] = 'Pass';
+                testResultsObject['testResults'] = 'No data collected, all keys with Pass status.';
+            }
+
+        });  
     };
-
-
     new apiSuite(casper.cli.get('url'));
 });

@@ -401,6 +401,7 @@ class DbHandler {
         }
     }
 
+    // Will be replaced by 
     public function manifestAuditInsert($resultsFile) {
         $db_con = Spire::getConnection();
 
@@ -439,7 +440,30 @@ class DbHandler {
             return NULL;
         }
 
-        $stmt->close();
+        $stmt->closeCursor();
+    }
+
+    /**
+     * Insert test results; New formatted table for JSON test results.
+     */
+    
+    public function insertTestResults($testID, $testType, $station, $status, $results, $info) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO test_results(ref_test_id, test_type, property, status, results_data, info) VALUES(?, ?, ?, ?, ?, ?)");
+        $insertStatement = $stmt->execute(array($testID, $testType, $station, $status, $results, $info));
+
+        if ($insertStatement) {
+            $lastInsertId = $db_con->lastInsertId();
+
+            if (! $lastInsertId) {
+                return FALSE;
+            } else {
+                return TRUE;
+            }
+        }
+
+        $stmt->closeCursor();
     }
 
 
