@@ -495,11 +495,39 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var suite = this;
         
         var dictionaryManifestObject = suite.pullManifestDictionaryData(url, function (data) {
-            // console.log(JSON.parse(data) == manifestCollectionObject);
-            testData = JSON.parse(data);
-            for (var testingItem in testData) {
-                console.log('>>>>> ' + testingItem + ' : ' + testData[testingItem]);
-            }         
+            
+            var obj1 = JSON.parse(data);
+            var obj2 = manifestCollectionObject;
+            
+            Object.keys(obj1).forEach( function (key) {
+                if (showOutput) {
+                    console.log(colorizer.colorize('key: ', 'COMMENT') + key );
+                    console.log(' -  dict val:  ' + obj1[key]);
+                    console.log(' -  live val:  ' + obj2[key]);
+                }
+
+                // Compare values for match
+                // if (obj1[key] === obj2[key]) {
+                //     if (showOutput) {
+                //         console.log(' -  ' + colorizer.colorize('PASS ', 'INFO'));
+                //     }
+                // } else {
+                //     if (showOutput) {
+                //         console.log(' -  ' + colorizer.colorize('FAIL: Value mismatch:', 'ERROR') + obj1[key] + ' : ' + obj2[key] );
+                //     }
+                // }
+
+                try{
+                    test.assertEquals(obj1[key], obj2[key]);
+                } catch (e) {
+                    // var consoleError = e;
+                    // if ( consoleError.indexOf('AssertionError') > -1 ) {
+                        // console.log(consoleError);
+                        console.log(' -  ' + colorizer.colorize('FAIL: Value mismatch:', 'ERROR') + obj1[key] + ' : ' + obj2[key] );
+                    // }
+                }
+                console.log('==========================');
+            });
         });
         
     };
