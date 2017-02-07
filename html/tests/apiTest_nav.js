@@ -66,6 +66,18 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
     var urlUri = sourceString.replace('.','_');
 
+    var collectionObject = {};
+    var testResultsObject = {};
+    var manifestTestRefID;
+    var manifestTestStatus;
+
+    var reqKeys = new Array(
+        "navigationid",
+        "apptitle",
+        "sectionmapping",
+        "location"
+    );
+
     // Testing Suite Functions
     var apiSuite = function(url) {
 
@@ -86,7 +98,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/manifest/?apiVersion=5';
+        url = url + '/apps/news-app/navigation?apiVersion=5';
 
         // Start Test
         casper.start( url ).then(function(response) {
@@ -94,7 +106,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             if ( response.status == 200 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
 
-                suite.createTestID(url, type, urlUri, save);
+                suite.createTestID(url, type, urlUri);
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
@@ -111,32 +123,31 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     // Create test id in DB
-    apiSuite.prototype.createTestID = function(url, type, stationProperty, fileLocation) {
-
+    apiSuite.prototype.createTestID = function(url, type, stationProperty) {
         var suite = this;
-        var testResultFileLocation = encodeURIComponent(save);
 
-        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty + '&fileLoc=' + testResultFileLocation;
+        // require('utils').dump( current );
+        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty + '&fileLoc=json_null';
 
         if (!logResults){
-            suite.getContent(url, type, 'xx');
+            if (debugOutput) { console.log(colorizer.colorize('TestID: ', 'COMMENT') + 'xx') };
+            suite.collectionNavigationItems(url, type, 'xx');
         } else {
             if (dbUrl) {
                 casper.open(dbUrl).then(function(resp) {
-                    
+
                     var status = this.status().currentHTTPStatus;
 
                     if ( status == 200) {
                         if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
                         var output = this.getHTML();
-                        var __dbID = casper.getElementInfo('body').text;
+                        var manifestTestRefID = casper.getElementInfo('body').text;
 
-                        suite.getContent(url, type, __dbID);
+                        suite.collectionNavigationItems(url, type, manifestTestRefID);
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }
-                    
                 });
             }
         }
@@ -175,169 +186,159 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             var rawContent = this.getHTML();
             
             if ( rawContent ) {
-                suite.checkNavigation(url, __urlSuite[__prog], testID);
+                suite.collectionNavigationItems(url, __urlSuite[__prog], testID);
             } else {
                 throw new Error('Missing XML elements!');
             }
         });
     };
 
-    apiSuite.prototype.checkNavigation = function(url, __url, testID) {
-
+    apiSuite.prototype.collectionNavigationItems = function(url, testType, testID) {
         var suite = this;
-        // var current = suite.__collected.shift();
 
-        var requiredManifestKeys = new Array("appTitle","sectionMapping","location");
+        manifestTestRefID = testID;
 
-        var __baseUrl = casper.cli.get('url');
-
-        // if (current.url) {
-        if (__url) {
-            casper.open(__url,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+        casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 
-                resp = resp;
+            resp = resp;
+            
+            var status = this.status().currentHTTPStatus;
+
+            if ( status == 200) {
+                if (showOutput) {console.log(url + colorizer.colorize(' Status: ' + status, 'INFO') )};
                 
-                var status = this.status().currentHTTPStatus;
+                var validated = false;
+                var output = this.getPageContent();
 
-                if ( status == 200) {
-                    if (showOutput) {console.log(__url + colorizer.colorize(' Status: ' + status, 'INFO') )};
+                try{
+                    jsonParsedOutput = JSON.parse(output);
 
-                    casper.open(__url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                        
-                        var validated = false;
-                        var output = this.getPageContent();
+                    mainItem = jsonParsedOutput;
 
-                        // console.log(output);
+                    for (var parentManifestItem in jsonParsedOutput) {
 
-                        __output = JSON.parse(output);
-
-                        var mainItem = __output.items;
-
-                        var count = 0;
-                        
-                        for (var __item in mainItem) {
-                            
-                            if(mainItem.hasOwnProperty(__item)){
-                                count++;
+                        if (typeof jsonParsedOutput[parentManifestItem] != 'object') {
+                            if (debugOutput) {
+                                console.log(colorizer.colorize(parentManifestItem.toLowerCase(), 'INFO') + ' : ' + jsonParsedOutput[parentManifestItem]);
                             }
 
-                            var parsedOutputItems = __output.items[count];
+                            var manifestKeyName = parentManifestItem.toLowerCase();
+                            var manifestKeyValue = jsonParsedOutput[parentManifestItem];
 
-                            for (var currentItem in parsedOutputItems) {
-                                if (debugOutput) {
-                                    console.log(currentItem + ' : ' + parsedOutputItems[currentItem]);
-                                };
-
-                                if (requiredManifestKeys.indexOf(currentItem) > -1) {
-
-                                    if (parsedOutputItems.length <= 0) {
-                                        throw new Error('key blank ' + currentItem);
-                                    } else {
-
-                                        if (currentItem === 'appTitle') {
-                                            var navItemAppTitle = parsedOutputItems[currentItem];
-                                        }
-
-                                        if (currentItem === 'location') {
-                                            
-                                            if (debugOutput) {
-                                                console.log(currentItem + ' : ' + parsedOutputItems[currentItem]);
-                                            };
-
-                                            // Find actual links and append the corrent version string to the end of the url
-                                            if (parsedOutputItems[currentItem].indexOf('/apps') > -1) {
-
-                                                if (parsedOutputItems[currentItem].indexOf('?') > -1) {
-                                                    var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '&apiVersion=5'
-                                                } else {
-                                                    var navItemAppLocationURL = __baseUrl + parsedOutputItems[currentItem] + '?apiVersion=5'
-                                                }
-                                                
-                                                if (debugOutput) {
-                                                    console.log(navItemAppLocationURL);
-                                                };
-                                            }
-
-                                            // Test to ensure that the navigation urls are working properly
-                                            suite.checkHealth(navItemAppTitle, navItemAppLocationURL, testID);
-                                        }
-                                    }
-                                }
-
-                                // -------------------------------------
-
-                                if (currentItem === 'items' && typeof parsedOutputItems[currentItem] === 'object') {
-
-                                    var __parent = __output.items[count].title;
-
-                                    if (debugOutput) {
-                                        console.log('-----------------');
-                                        console.log(__parent + ' sub links');
-                                    }
-                                    
-                                    var __subItem = __output.items[count].items;
-
-                                    var __count = 0;
-
-                                    for (var __item in __subItem) {
-                                        
-                                        if(__subItem.hasOwnProperty(__item)){
-                                            __count++;
-
-                                            __offset = (__count - 1);
-                                            // console.log(__offset);
-                                        }
-
-                                        var __lastItem = __output.items[count].items[__offset];
-
-                                        for (var __b in __lastItem) {
-                                            if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
-
-                                            if (requiredManifestKeys.indexOf(__b) > -1) {
-                                                // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
-                                                
-                                                if (__b === 'appTitle') {
-                                                    var subNavItemAppTitle = __lastItem[__b];
-                                                }
-
-                                                if (__b === 'location') {
-                                                    
-                                                    if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
-
-                                                    if (__lastItem[__b].indexOf('/apps') > -1) {
-
-                                                        if (__lastItem[__b].indexOf('?') > -1) {
-                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=5'
-                                                        } else {
-                                                            var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=5'
-                                                        }
-                                                        
-                                                        if (debugOutput) {
-                                                            console.log('>> ' + __lastKeyUrl);
-                                                        };
-                                                    }
-
-                                                    suite.checkHealth(subNavItemAppTitle, __lastKeyUrl, testID);
-                                                }
-                                            }
-
-                                        }
-                                        if (debugOutput) { console.log('    -----------------')};
-                                    }
-                                }
-
-                            }
-
-                            if (debugOutput) {console.log('-----------------')};
+                            // Add key/val to collection object for testing;
+                            // suite.buildmanifestCollectionObject(manifestKeyName, manifestKeyValue);
+                        
+                        } else {
+                            suite.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem]);
+                            // console.log(parentManifestItem, jsonParsedOutput[parentManifestItem]);
                         }
+                    }
+                } catch (e) {
+                    console.log('here 2');
+                    console.log(e)
+                    // ...
+                    if (showOutput) {console.log(e)};
+                }
+            } else {
+                console.log(colorizer.colorize('Unable to open the manifest endpoint. ', 'ERROR'));
+            }
+        })
+    };
 
-                    });
+    apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
+        var suite = this;
+        var firstPass = true;
+        // Manifest keys are built as key__ +
+        // Ex: parentKeyName__childKeyName__grandChildKeyName__lineageItemKeyName : Value
+        // Live Ex: TVE__OnDemand__featured_shows__0__show_img : http://media.nbcnewyork.com/designimages/featured_show_1_ondemand2x.png
+
+        for (var childItem in childManifestObject) {
+            if (typeof childManifestObject[childItem] != 'object') {
+
+                if ( childItem == 'dateGenerated') {
+                    // Print metadata object
+                    console.log(childItem + ' : ' + childManifestObject[childItem]);
+                    console.log('.----------------');
                 }
 
-                suite.checkHealth();
-            });
-        } else {
-            // delete this.__collected; 
+                // if ( childItem.indexOf('appTitle') > -1 ) {
+                //     var parentItemName = childManifestObject[childItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                //     // if (!initialPass) {
+                //         console.log(      'main name: ' + parentItemName);
+                //     // }
+                // } else {
+                //     for (var reqKeysItem in reqKeys){                        
+                //         if (childItem.indexOf( reqKeys[reqKeysItem] ) > -1) {
+                //         // if (manifestCollectionObjectName == reqKeys[reqKeysItem]) {
+                //             // if (firstPass) {
+                //             //     console.log('== ' + parentItemName);
+                //             // } else {
+                //             //     console.log('    >> ' + parentItemName + '__' + childItem);
+                //             // }
+                //             // console.log(childItem + ' ::: ' + childManifestObject[childItem]);
+                //             // collectionObject[manifestCollectionObjectName] = manifestCollectionObjectValue;
+                //         }
+                //     }
+                // }
+
+
+                if (debugOutput) {
+                    // console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
+                }
+
+                // Add key/val to collection object for testing if required;
+                // suite.buildmanifestCollectionObject(manifestMainObjectName, childManifestObject[childItem]);
+
+            } else {
+                var subObject = childManifestObject[childItem];
+                for (var subItem in subObject) {
+                    if ( subItem.indexOf('appTitle') > -1 ) {
+                        console.log(subItem + ' : ' + subObject[subItem]);
+                        var subItemKeyName = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                    } else {
+                        // console.log(subItemKeyName + '__' + subItem + ' : ' + subObject[subItem]);
+                        console.log('  -- ' + subItemKeyName + '__' + subItem + ' : ' + subObject[subItem]);
+                        var subItemKeyNameRef = subItemKeyName + '__' + subItem;
+                    }
+
+                    if (typeof subObject[subItem] != 'object') {
+                        // console.log('    collect');
+                    } else {
+                        console.log('    spider object');
+                        // suite.spiderObject(manifestObjectName, childManifestObject[childItem], firstPass);
+                    }
+                }
+                // firstPass = false;
+                // console.log('=== Object === ');
+                // console.log('   -- childItem ' + childItem);
+                // console.log('   -- childManifestObject ' + childManifestObject);
+                // console.log('   -- childManifestObject[childItem] ' + childManifestObject[childItem]);
+
+                // if ( subItem.indexOf('appTitle') > -1 ) {
+                //     var parentItemName = childManifestObject[childItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                //     console.log(      'SUB main name: ' + parentItemName);
+                // }
+
+                // var manifestObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
+                
+            }
+        }
+    };
+
+    apiSuite.prototype.buildmanifestCollectionObject = function(manifestCollectionObjectName, manifestCollectionObjectValue) {
+        var suite = this;
+        reqKeys.reverse();
+
+        // If manifestCollectionObjectName found in required manifest key array, add it to the collection object for testing
+        for (var reqKeysItem in reqKeys){
+            // console.log('>> ' + reqKeys[reqKeysItem])
+            
+            if (manifestCollectionObjectName.indexOf( reqKeys[reqKeysItem] ) > -1) {
+            // if (manifestCollectionObjectName == reqKeys[reqKeysItem]) {
+
+                console.log(manifestCollectionObjectName + ' : ' + manifestCollectionObjectValue);
+                // collectionObject[manifestCollectionObjectName] = manifestCollectionObjectValue;
+            }
         }
     };
 
