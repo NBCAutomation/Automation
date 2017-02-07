@@ -240,7 +240,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var urlUri = sourceString.replace('.','_');
 
             // Add manifest url    
-            url = url + '/templates/nbc_news_app_json_manifest?apiVersion=5';
+            url = url + '/apps/news-app/manifest/json/?apiVersion=6';
 
             /*******************
             *
