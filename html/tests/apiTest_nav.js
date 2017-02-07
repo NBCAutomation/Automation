@@ -110,6 +110,22 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
+        }).then(function () {
+            // Display collection object
+            if (debugOutput) {
+                console.log('---------------------');
+                console.log(' Collection object   ');
+                console.log('---------------------');
+                casper.wait(700, function() {
+                    // console.log(collectionObject);
+                    for (var thisCollectionOtem in collectionObject) {
+                        console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+                    }
+                })
+            } else {
+
+            }
+
         }).run(function() {            
             //Process file to DB
             if (logResults) {
@@ -229,7 +245,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                             // suite.buildmanifestCollectionObject(manifestKeyName, manifestKeyValue);
                         
                         } else {
-                            suite.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem]);
+                            suite.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem], true);
                             // console.log(parentManifestItem, jsonParsedOutput[parentManifestItem]);
                         }
                     }
@@ -245,7 +261,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         })
     };
 
-    apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
+    apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject, initialPass) {
         var suite = this;
         var firstPass = true;
         // Manifest keys are built as key__ +
@@ -258,68 +274,51 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 if ( childItem == 'dateGenerated') {
                     // Print metadata object
                     console.log(childItem + ' : ' + childManifestObject[childItem]);
-                    console.log('.----------------');
+                    console.log('----------------');
                 }
 
-                // if ( childItem.indexOf('appTitle') > -1 ) {
-                //     var parentItemName = childManifestObject[childItem].replace('\/',"_").split(' ').join('_').toLowerCase();
-                //     // if (!initialPass) {
-                //         console.log(      'main name: ' + parentItemName);
-                //     // }
-                // } else {
-                //     for (var reqKeysItem in reqKeys){                        
-                //         if (childItem.indexOf( reqKeys[reqKeysItem] ) > -1) {
-                //         // if (manifestCollectionObjectName == reqKeys[reqKeysItem]) {
-                //             // if (firstPass) {
-                //             //     console.log('== ' + parentItemName);
-                //             // } else {
-                //             //     console.log('    >> ' + parentItemName + '__' + childItem);
-                //             // }
-                //             // console.log(childItem + ' ::: ' + childManifestObject[childItem]);
-                //             // collectionObject[manifestCollectionObjectName] = manifestCollectionObjectValue;
-                //         }
-                //     }
-                // }
-
-
-                if (debugOutput) {
-                    // console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
-                }
-
-                // Add key/val to collection object for testing if required;
-                // suite.buildmanifestCollectionObject(manifestMainObjectName, childManifestObject[childItem]);
+                var manifestMainObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
+                console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
 
             } else {
                 var subObject = childManifestObject[childItem];
-                for (var subItem in subObject) {
-                    if ( subItem.indexOf('appTitle') > -1 ) {
-                        console.log(subItem + ' : ' + subObject[subItem]);
-                        var subItemKeyName = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
-                    } else {
-                        // console.log(subItemKeyName + '__' + subItem + ' : ' + subObject[subItem]);
-                        console.log('  -- ' + subItemKeyName + '__' + subItem + ' : ' + subObject[subItem]);
-                        var subItemKeyNameRef = subItemKeyName + '__' + subItem;
+                
+                if (initialPass) {
+                    for (var subItem in subObject) {
+                        if ( subItem.indexOf('appTitle') > -1 ) {
+                            if (debugOutput) { console.log(subItem + ' : ' + subObject[subItem]) };
+                            var subItemKeyName = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                        } else {
+                            if (typeof subObject[subItem] == 'object') {
+                                console.log('subItemKeyName: ' + subItemKeyName);
+                                var subItemObject = subObject[subItem];
+                                suite.spiderObject(subItemKeyName, subItemObject, false);
+                            } else {
+                                if (debugOutput) {
+                                    // console.log('  -- ' + subItemKeyName + '__' + subItem + ' : ' + subObject[subItem]);
+                                }
+                                // Set key name and add to collection
+                                var subItemKeyNameRef = subItemKeyName + '__' + subItem;
+                                console.log('  -- ' + subItemKeyNameRef + ' : ' + subObject[subItem]);
+                                collectionObject[subItemKeyNameRef] = subObject[subItem];
+                            }
+                        }
                     }
-
-                    if (typeof subObject[subItem] != 'object') {
-                        // console.log('    collect');
-                    } else {
-                        console.log('    spider object');
-                        // suite.spiderObject(manifestObjectName, childManifestObject[childItem], firstPass);
+                } else {
+                    for (var subItem in subObject) {
+                        if ( subItem.indexOf('appTitle') > -1 ) {
+                            var subItemKeyName = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                            if (debugOutput) { console.log('    -- ' + parentObjectName + '__' + subItemKeyName) };
+                        } else {
+                            if (debugOutput) {
+                                console.log('    -- ' + parentObjectName + '__' + subItemKeyName + '__' + subItem.toLowerCase() + ' : ' + subObject[subItem]);
+                            }
+                            // Set key name and add to collection
+                            var itemCollectionkeyName = parentObjectName + '__' + subItemKeyName + '__' + subItem.toLowerCase();
+                            collectionObject[itemCollectionkeyName] = subObject[subItem];
+                        }
                     }
                 }
-                // firstPass = false;
-                // console.log('=== Object === ');
-                // console.log('   -- childItem ' + childItem);
-                // console.log('   -- childManifestObject ' + childManifestObject);
-                // console.log('   -- childManifestObject[childItem] ' + childManifestObject[childItem]);
-
-                // if ( subItem.indexOf('appTitle') > -1 ) {
-                //     var parentItemName = childManifestObject[childItem].replace('\/',"_").split(' ').join('_').toLowerCase();
-                //     console.log(      'SUB main name: ' + parentItemName);
-                // }
-
-                // var manifestObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
                 
             }
         }
@@ -331,13 +330,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
         // If manifestCollectionObjectName found in required manifest key array, add it to the collection object for testing
         for (var reqKeysItem in reqKeys){
-            // console.log('>> ' + reqKeys[reqKeysItem])
             
             if (manifestCollectionObjectName.indexOf( reqKeys[reqKeysItem] ) > -1) {
-            // if (manifestCollectionObjectName == reqKeys[reqKeysItem]) {
 
-                console.log(manifestCollectionObjectName + ' : ' + manifestCollectionObjectValue);
-                // collectionObject[manifestCollectionObjectName] = manifestCollectionObjectValue;
+                console.log('ff ' + manifestCollectionObjectName + ' : ' + manifestCollectionObjectValue);
             }
         }
     };
