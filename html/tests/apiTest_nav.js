@@ -68,6 +68,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
     var collectionObject = {};
     var testResultsObject = {};
+    var currentTestObject = {};
     var manifestTestRefID;
     var manifestTestStatus;
 
@@ -113,20 +114,33 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }).then(function () {
             // Display collection object
             if (debugOutput) {
+                // console.log('---------------------');
+                // console.log(' Collection object   ');
+                // console.log('---------------------');
+                // casper.wait(700, function() {
+                //     // console.log(collectionObject);
+                //     for (var thisCollectionOtem in collectionObject) {
+                //         console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+                //     }
+                // })
+            } else {
+                // Test Collection data
+                suite.testNavigationData(urlUri, collectionObject, manifestTestRefID)
+            }
+
+        }).run(function() {
+            // if (debugOutput) {
                 console.log('---------------------');
-                console.log(' Collection object   ');
+                console.log(' Results object   ');
                 console.log('---------------------');
                 casper.wait(700, function() {
                     // console.log(collectionObject);
-                    for (var thisCollectionOtem in collectionObject) {
-                        console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+                    for (var resultsCollectionItem in testResultsObject) {
+                        console.log('>>>>> ' + resultsCollectionItem + ' : ' + testResultsObject[resultsCollectionItem]);
                     }
                 })
-            } else {
-
             }
 
-        }).run(function() {            
             //Process file to DB
             if (logResults) {
                 // suite.processTestResults(save);
@@ -324,39 +338,51 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
 
-    apiSuite.prototype.checkHealth = function(urlName, url, testID) {
-
+    apiSuite.prototype.testNavigationData = function(url, collectionObject, testID) {
         var suite = this;
-        // var current = suite.__collected.shift();
 
-        // require('utils').dump( current );
+        // Build test results object
+        testResultsObject['testID'] = testID;
+        testResultsObject['testProperty'] = url;
 
-        if (url) {
-            casper.open(url, {
-                method: 'head'
-            }).then(function(resp) {
-                resp = resp;
-                var status = this.status().currentHTTPStatus;
+        // Test collection object and add to results object
+        for (var thisCollectionItem in collectionObject) {
+            var endpointName = thisCollectionItem;
+            var endpointUrl = collectionObject[thisCollectionItem];
 
-                if ( status == 200) {
-                    if (showOutput) {
-                        console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
-                    };
+            if (endpointUrl) {
+                casper.open(endpointUrl, {
+                    method: 'head'
+                }).then(function(resp) {
+                    resp = resp;
+                    var status = this.status().currentHTTPStatus;
 
-                    if (url.indexOf('submit-your-photos') > -1) {
-                        if (showOutput) {console.log('Skipping UGC url....')};
-                    } else {
-                        suite.validateJson(urlName, url, status, testID);
+                    if ( status == 200) {
+                        if (showOutput) {
+                            console.log('> ' + endpointName + ' : ' + endpointUrl + colorizer.colorize(' // Status: ' + status, 'INFO') );
+                        };
+
+                        if (endpointUrl.indexOf('submit-your-photos') > -1) {
+                            if (showOutput) {console.log('Skipping UGC url....')};
+                        } else {
+                            // Test parsing JSON
+                            suite.validateJson(endpointName, endpointUrl, status, testID);
+                        }
                     }
-                }
-            });
-        } else {
-            // delete this.__collected;
+                });
+            } else {
+                throw new Error('NavTestError: No url provided to test against.').exit();
+            }
         }
     };
 
     apiSuite.prototype.validateJson = function(urlName, url, status, testID) {
         var suite = this;
+        var currentTestStatus = "Pass";
+
+        currentTestObject['endpoint'] = urlName;
+        currentTestObject['endpointUrl'] = url;
+        currentTestObject['httpStatus'] = status;
 
         if (url) {
             casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
@@ -367,11 +393,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
 
                 try {
-                    // __output = JSON.parse(output);
-                    __output = JSON.parse(output);
-                    // console.log(__output);
+                    output = JSON.parse(output);
 
-                    if( __output instanceof Object ) {
+                    if( output instanceof Object ) {
                         var validated = true;
                      }
                 } catch (e) {
@@ -381,15 +405,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                 if (validated) {
                     if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
-                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","JSON Validated",' + '\n', 'a+');
+                    currentTestObject['jsonValidated'] = 'Pass';
+                    // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","JSON Validated",' + '\n', 'a+');
                 } else {
                     if (showOutput) {console.log('...re-testing JSON')};
-                    // var a = "<html><head></head><body>{'a': 123}</body></html>";
-                    // cleanedJson = output.replace(/(^.*?>)(?={)/, '').replace(/}.*?$/, '') + "}"
-                    
                     var reg = /\<body[^>]*\>([^]*)\<\/body/m;
-
-                    // cleanedJson = output.match(reg)[1];
 
                     try {
                         cleanedJson = output.match(reg)[1];
@@ -400,27 +420,35 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                 if( JSONTestOutput instanceof Object ) {
                                     if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                                    fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","PASS - JSON Validated",' + '\n', 'a+');
+                                    // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","PASS - JSON Validated",' + '\n', 'a+');
                                 } else {
                                     if (showOutput) {console.log(cleanedJson)};
                                 }
                             } catch (e) {
                                 // ...
                                 if (showOutput) {console.log(colorizer.colorize('WARNING: ', 'COMMENT') + 'Parse fail unable to parse programmatically also with removing HTML tags, possible False/Positive..check url manually.')};
-                                fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Warn","WARNING - Possible False/Positive",' + '\n', 'a+');
+                                currentTestObject['jsonValidated'] = 'Warning';
+                                // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Warn","WARNING - Possible False/Positive",' + '\n', 'a+');
                             }
                         }
 
                     } catch (e) {
                         if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!')};
-                        fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Fail","FAIL - Possible content error",' + '\n', 'a+');
+                        currentTestObject['jsonValidated'] = 'Fail';
+                        currentTestStatus = 'Fail';
+                        // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Fail","FAIL - Possible content error",' + '\n', 'a+');
                     }
                 }
                 if (showOutput) {console.log('-----------------')};
+
+                // Set current test status
+                testResultsObject['testStatus'] = currentTestStatus;
             });
         } else {
             if (showOutput) {console.log(colorizer.colorize('No url provided for JSON validation!', 'ERROR'))};
         }
+
+        testResultsObject['testResults'] = currentTestObject;
     };
 
     new apiSuite(casper.cli.get('url'));
