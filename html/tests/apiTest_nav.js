@@ -72,9 +72,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var manifestTestStatus;
 
     var reqKeys = new Array(
-        "navigationid",
-        "apptitle",
-        "sectionmapping",
+        "navigationID",
+        "appTitle",
+        "sectionMapping",
         "location"
     );
 
@@ -129,7 +129,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }).run(function() {            
             //Process file to DB
             if (logResults) {
-                suite.processTestResults(save);
+                // suite.processTestResults(save);
             }
 
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
@@ -194,21 +194,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
-    apiSuite.prototype.getContent = function(url, type, testID) {
-        
-        var suite = this;
-
-        casper.open(url,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function() {
-            var rawContent = this.getHTML();
-            
-            if ( rawContent ) {
-                suite.collectionNavigationItems(url, __urlSuite[__prog], testID);
-            } else {
-                throw new Error('Missing XML elements!');
-            }
-        });
-    };
-
     apiSuite.prototype.collectionNavigationItems = function(url, testType, testID) {
         var suite = this;
 
@@ -264,9 +249,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject, initialPass) {
         var suite = this;
         var firstPass = true;
-        // Manifest keys are built as key__ +
-        // Ex: parentKeyName__childKeyName__grandChildKeyName__lineageItemKeyName : Value
-        // Live Ex: TVE__OnDemand__featured_shows__0__show_img : http://media.nbcnewyork.com/designimages/featured_show_1_ondemand2x.png
+        reqKeys.reverse();
+        var __baseUrl = casper.cli.get('url');
 
         for (var childItem in childManifestObject) {
             if (typeof childManifestObject[childItem] != 'object') {
@@ -282,58 +266,59 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
             } else {
                 var subObject = childManifestObject[childItem];
-                
-                if (initialPass) {
-                    for (var subItem in subObject) {
-                        if ( subItem.indexOf('appTitle') > -1 ) {
-                            if (debugOutput) { console.log(subItem + ' : ' + subObject[subItem]) };
-                            var subItemKeyName = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                for (var subItem in subObject) {
+                    
+                        if (subObject.length <= 0) {
+                            throw new Error('key blank ' + subItem);
                         } else {
-                            if (typeof subObject[subItem] == 'object') {
-                                console.log('subItemKeyName: ' + subItemKeyName);
-                                var subItemObject = subObject[subItem];
-                                suite.spiderObject(subItemKeyName, subItemObject, false);
-                            } else {
-                                if (debugOutput) {
-                                    // console.log('  -- ' + subItemKeyName + '__' + subItem + ' : ' + subObject[subItem]);
+
+                            if (subItem === 'appTitle') {
+                                if (initialPass) {
+                                    var navItemAppTitleNiceName = subObject[subItem];
+                                    var navItemAppTitle = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                                } else {
+                                    var navItemAppTitleNiceName = subObject[subItem];
+                                    var mainNavItemTitle = parentObjectName.replace('\/',"_").split(' ').join('_').toLowerCase();
+                                    var subNavItemTitle = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                                    var navItemAppTitle = mainNavItemTitle + '__' + subNavItemTitle;
                                 }
-                                // Set key name and add to collection
-                                var subItemKeyNameRef = subItemKeyName + '__' + subItem;
-                                console.log('  -- ' + subItemKeyNameRef + ' : ' + subObject[subItem]);
-                                collectionObject[subItemKeyNameRef] = subObject[subItem];
+                            }
+
+                            if (subItem === 'location') {
+                                if (debugOutput) {
+                                    console.log(subItem + ' : ' + subObject[subItem]);
+                                };
+
+                                // Find actual links and append the corrent version string to the end of the url
+                                if (subObject[subItem].indexOf('/apps') > -1) {
+
+                                    if (subObject[subItem].indexOf('?') > -1) {
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=5'
+                                    } else {
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=5'
+                                    }
+                                    
+                                    if (debugOutput) {
+                                        console.log(navItemAppLocationURL);
+                                    };
+                                }
+                                
+                                if (debugOutput) {
+                                    console.log('navItemAppTitleNiceName > ' + navItemAppTitleNiceName);
+                                    console.log('navItemAppTitle > ' + navItemAppTitle);
+                                    console.log('navItemAppLocationURL > ' + navItemAppLocationURL);    
+                                }
+                                // Push data into collection
+                                collectionObject[navItemAppTitle] = navItemAppLocationURL;
+                            }
+
+                            if (typeof subObject[subItem] == 'object') {
+                                parentObjectName = false;
+                                suite.spiderObject(navItemAppTitle, subObject[subItem], false);
                             }
                         }
                     }
-                } else {
-                    for (var subItem in subObject) {
-                        if ( subItem.indexOf('appTitle') > -1 ) {
-                            var subItemKeyName = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
-                            if (debugOutput) { console.log('    -- ' + parentObjectName + '__' + subItemKeyName) };
-                        } else {
-                            if (debugOutput) {
-                                console.log('    -- ' + parentObjectName + '__' + subItemKeyName + '__' + subItem.toLowerCase() + ' : ' + subObject[subItem]);
-                            }
-                            // Set key name and add to collection
-                            var itemCollectionkeyName = parentObjectName + '__' + subItemKeyName + '__' + subItem.toLowerCase();
-                            collectionObject[itemCollectionkeyName] = subObject[subItem];
-                        }
-                    }
-                }
-                
-            }
-        }
-    };
-
-    apiSuite.prototype.buildmanifestCollectionObject = function(manifestCollectionObjectName, manifestCollectionObjectValue) {
-        var suite = this;
-        reqKeys.reverse();
-
-        // If manifestCollectionObjectName found in required manifest key array, add it to the collection object for testing
-        for (var reqKeysItem in reqKeys){
-            
-            if (manifestCollectionObjectName.indexOf( reqKeys[reqKeysItem] ) > -1) {
-
-                console.log('ff ' + manifestCollectionObjectName + ' : ' + manifestCollectionObjectValue);
+                if (debugOutput) { console.log('------') }
             }
         }
     };
