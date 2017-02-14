@@ -442,7 +442,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 if (showOutput) {console.log('-----------------')};
 
                 // Set current test status
-                testResultsObject['testStatus'] = currentTestStatus;
+                testResultsObject['testStatus'] = currentTestStatus; 
             });
         } else {
             if (showOutput) {console.log(colorizer.colorize('No url provided for JSON validation!', 'ERROR'))};
