@@ -173,10 +173,24 @@
 			if ($uAuth && $mainView) {
 		?>
 		<div class="row">
-			<ul>
-				<li><a href="https://nbclocalmedia.quickbase.com/db/bd3dkzuga?a=dr&rid=1417" target="_blank">Automation QB Tickets</a></li>
-				<li><a href="https://nbclocalmedia.quickbase.com/db/bd7ds2sk5?a=API_GenAddRecordForm&_fid_23=1417&z=k3szm" target="_blank">Add Automation QB Tickets</a></li>
-			</ul>
+			<div class="panel panel-default">
+				<div class="panel-heading">QB</div>
+				<div class="panel-body">
+					<ul>
+						<li><a href="https://nbclocalmedia.quickbase.com/db/bd3dkzuga?a=dr&rid=1417" target="_blank">Automation QB Tickets</a></li>
+						<li><a href="https://nbclocalmedia.quickbase.com/db/bd7ds2sk5?a=API_GenAddRecordForm&_fid_23=1417&z=k3szm" target="_blank">Add Automation QB Tickets</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">Tasks</div>
+				<div class="panel-body">
+					<ul>
+						<li><a href="/scripts/updateDictionaries">Update manifest dictionaries.</a> - Scrapes and saves new manifest data. Will overwrite current CSV's and/or tables</li>
+						<li><a href="/utils/purge-cache">Purge all DB Query cache</a> - WARNING, Will delete all DB Query cach, site will slow down upon refresh. Only use if needed. </li>
+					</ul>
+				</div>
+			</div>
 		</div>
 		<?php
 			}

@@ -1294,6 +1294,35 @@ class DbHandler {
         return $purgedData;
     }
 
+    /**
+     * Log user task
+     */
+    
+    public function logTask($task, $user, $taskNotes) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO tasks(task, user, info) VALUES(?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($task, $user, $taskNotes));
+
+        if ($stmtStatus) {
+            // task row created
+            $rowID = $db_con->lastInsertId();
+
+            if ($rowID != NULL) {
+                // task created successfully
+                return $rowID;
+            } else {
+                // task failed to create
+                return NULL;
+            }
+        } else {
+            // task failed to create
+            return NULL;
+        }
+
+        $stmt->close();
+    }
+
 }
 // DB
 //SELECT Year(`created`), Month(`created`), Day(`created`), COUNT(*) FROM article_tests WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)

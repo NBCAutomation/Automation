@@ -10,7 +10,7 @@
 					<br>
 				</label>
 				<div class="col-sm-10">
-					<?php if( $view == 'regressionTest' ) { ?>
+					<?php if( $view == 'regressionTest' || $view == 'updateDictionaries' ) { ?>
 						<div class="checkbox checkbox-success">
 							<input id="checkbox1" name="output" type="checkbox" value="console" checked>
 							<label for="checkbox1">Yes</label>
@@ -25,6 +25,7 @@
 			</div>
 			<hr />
 			<?php } ?>
+			<?php if ($view != 'updateDictionaries') { ?>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Enviroment</label>
 				<div class="col-sm-10">
@@ -35,6 +36,16 @@
 				</div>
 			</div>
 			<hr />
+			<?php } else { ?>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Notes/Ticket</label>
+				<div class="col-sm-10">
+					<!-- <input type="text" class="form-control" name="dictionary_reason"> -->
+					<textarea class="form-control" rows="3" name="update_notes"></textarea>
+					<span class="help-block m-b-none">Enter a brief description of why the dictionary is being updated. Please be sure to reference a ticket if avail.</span>
+				</div>
+			</div>
+			<?php } ?>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Run Suite
 					<br>

@@ -392,6 +392,7 @@ $app->group('/scripts', function () {
 
 
     $this->post('/{view}', function ($request, $response, $args) {
+    	$db = new DbHandler();
     	$permissions = $request->getAttribute('spPermissions');
 
     	// Temp File
@@ -400,7 +401,6 @@ $app->group('/scripts', function () {
 
 
     	$allPostPutVars = $request->getParsedBody();
-
 
     	// Configure testing vars from POST config
 	    	// Set stage flag
@@ -481,6 +481,34 @@ $app->group('/scripts', function () {
 		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-nav.js" --url="{}"'.$__output;
 		} elseif ($__runScript == 'regressionTest') {
 		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output;
+		} elseif ($__runScript == 'updateDictionaries') {
+			$updateNotesObject = array();
+
+			if($allPostPutVars['brand_test'] == 'all') {
+				$updateSites = "All";
+			} elseif($allPostPutVars['brand_test'] == 'nbc') {
+				$updateSites = "OTS - all";
+			} elseif($allPostPutVars['brand_test'] == 'telemundo') {
+				$updateSites = "TLM - all";
+			} elseif($allPostPutVars['test_site']) {
+				$updateSites = array();
+				foreach ($siteArray as $stationKey => $stationValue) {
+					$updateSites['station_'.$stationKey] = $stationValue;
+				}
+			}
+
+			$task = $__runScript;
+			$user = $request->getAttribute('spAuth')['email'];
+			$updateNotesObject['user_notes'] = $allPostPutVars['update_notes'];
+			$updateNotesObject['update_stations'] = $updateSites;
+			$updateNotes = serialize($updateNotesObject);
+			$__output = ' --output=dictionary';
+
+			$logTask = $db->logTask($task, $user, $updateNotes);
+			
+			if ($logTask > 0) {
+				$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
+			}
 		}
 
 		sleep(1);
@@ -1195,6 +1223,7 @@ $app->group('/utils', function () {
 		
 		$cacheClear = Spire::purgeAllCache($tmpLocation);
 
+		return $response->withRedirect('/dashboard/main');
     });
 
     // Purge old tests // Date(X) > 30 Days & send an email once a week

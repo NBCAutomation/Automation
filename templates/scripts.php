@@ -85,7 +85,7 @@
 
 		<div class="panel panel-default">
 		<?php
-			if($view == 'regressionTest'){
+			if($view == 'regressionTest' || $view == 'updateDictionaries'){
 				include_once 'base/script_config.php';
 			} else {
 				echo '<div class="panel-body"><span><b>Script set to run on cron every 4 hours, manual starting/testing is disabled.</b></span></div>';
