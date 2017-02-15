@@ -38,13 +38,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var logResults = false;
     }
 
-    var parser = document.createElement('a');
-    parser.href = casper.cli.get('url');
-
-    newUrl = parser.href;
-    var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-    var urlUri = sourceString.replace('.','_');
-
     var collectionObject = {};
     var testResultsObject = {};
     var currentTestObject = {};

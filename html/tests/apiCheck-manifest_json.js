@@ -191,40 +191,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         "live-promotion__app-link-android"
     );
 
-
-    if (!debugOutput) {
-        var currentTime = new Date();
-
-        var month = currentTime.getMonth() + 1;
-        var day = currentTime.getDate();
-        var year = currentTime.getFullYear();
-        var hours = currentTime.getHours();
-        var minutes = currentTime.getMinutes();
-
-            if (minutes < 10){
-                minutes = "0" + minutes;
-            }
-
-            if(hours > 11){
-                var toD = "PM";
-            } else {
-                var toD = "AM";
-            }
-
-            if (hours === '0'){
-                var hours = "12";
-            }
-
-        var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
-
-        var parser = document.createElement('a');
-        parser.href = casper.cli.get('url');
-
-        newUrl = parser.href;
-        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-        var urlUri = sourceString.replace('.','_');
-    }
-
     var apiSuite = function(url) {
 
         if (!url) {
