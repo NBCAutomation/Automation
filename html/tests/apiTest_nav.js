@@ -38,27 +38,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var logResults = false;
     }
 
-    var currentTime = new Date();
-
-    var month = currentTime.getMonth() + 1;
-    var day = currentTime.getDate();
-    var year = currentTime.getFullYear();
-    var hours = currentTime.getHours();
-    var minutes = currentTime.getMinutes();
-
-        if (minutes < 10){ minutes = "0" + minutes; }
-
-        if (hours > 11){
-            var toD = "PM";
-        } else {
-            var toD = "AM";
-        }
-
-        if (hours === '0'){ var hours = "12"; }
-
-
-    var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
-
     var parser = document.createElement('a');
     parser.href = casper.cli.get('url');
 
@@ -71,9 +50,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var currentTestObject = {};
     var manifestTestRefID;
     var manifestTestStatus;
-
     manifestTestStatus = 'Pass';
-
 
     var reqKeys = new Array(
         "navigationID",
@@ -93,8 +70,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
         var suite = this;
 
-        // var type = casper.cli.get('type');
-
         var parser = document.createElement('a');
         parser.href = url;
 
@@ -104,12 +79,15 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         
         url = url + '/apps/news-app/navigation?apiVersion=5';
 
-        // Start Test
+        /*******************
+        *
+        * Start Testing
+        *
+        *******************/
         casper.start( url ).then(function(response) {
             
             if ( response.status == 200 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-
                 suite.createTestID(url, type, urlUri);
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
@@ -171,7 +149,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     apiSuite.prototype.createTestID = function(url, type, stationProperty) {
         var suite = this;
 
-        // require('utils').dump( current );
         var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty + '&fileLoc=json_null';
 
         if (!logResults){
@@ -249,20 +226,15 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                             }
 
                             var manifestKeyName = parentManifestItem.toLowerCase();
-                            var manifestKeyValue = jsonParsedOutput[parentManifestItem];
-
-                            // Add key/val to collection object for testing;
-                            // suite.buildmanifestCollectionObject(manifestKeyName, manifestKeyValue);
-                        
+                            var manifestKeyValue = jsonParsedOutput[parentManifestItem];                        
                         } else {
                             suite.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem], true);
-                            // console.log(parentManifestItem, jsonParsedOutput[parentManifestItem]);
                         }
                     }
                 } catch (e) {
                     console.log('here 2');
                     console.log(e)
-                    // ...
+                    
                     if (showOutput) {console.log(e)};
                 }
             } else {
@@ -458,12 +430,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         } else {
             if (showOutput) {console.log(colorizer.colorize('No url provided for JSON validation!', 'ERROR'))};
         }
-    };
-
-    apiSuite.prototype.buildmanifestCollectionObject = function(testingObect, manifestCollectionObjectValue) {
-        var suite = this;
-        reqKeys.reverse();
-
     };
 
     new apiSuite(casper.cli.get('url'));
