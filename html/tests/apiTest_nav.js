@@ -72,6 +72,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var manifestTestRefID;
     var manifestTestStatus;
 
+    manifestTestStatus = 'Pass';
+
+
     var reqKeys = new Array(
         "navigationID",
         "appTitle",
@@ -114,38 +117,50 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }).then(function () {
             // Display collection object
             if (debugOutput) {
-                // console.log('---------------------');
-                // console.log(' Collection object   ');
-                // console.log('---------------------');
-                // casper.wait(700, function() {
-                //     // console.log(collectionObject);
-                //     for (var thisCollectionOtem in collectionObject) {
-                //         console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
-                //     }
-                // })
+                console.log('---------------------');
+                console.log(' Collection object   ');
+                console.log('---------------------');
+                casper.wait(700, function() {
+                    // console.log(collectionObject);
+                    for (var thisCollectionOtem in collectionObject) {
+                        console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+                    }
+                })
             } else {
                 // Test Collection data
                 suite.testNavigationData(urlUri, collectionObject, manifestTestRefID)
             }
 
-        }).run(function() {
-            // if (debugOutput) {
+        }).then(function () {
+            if (debugOutput) {
                 console.log('---------------------');
-                console.log(' Results object   ');
+                console.log(' Test Results object   ');
                 console.log('---------------------');
-                casper.wait(700, function() {
-                    // console.log(collectionObject);
-                    for (var resultsCollectionItem in testResultsObject) {
-                        console.log('>>>>> ' + resultsCollectionItem + ' : ' + testResultsObject[resultsCollectionItem]);
+                for (var resultsCollectionItem in testResultsObject) {
+                    console.log('- ' + resultsCollectionItem + ' : ' + testResultsObject[resultsCollectionItem]);
+                    
+                    if (typeof testResultsObject[resultsCollectionItem] == 'object') {
+                        var resultsItemSubObject = testResultsObject[resultsCollectionItem];
+
+                        for (var thisSubItem in resultsItemSubObject){
+                            console.log('     -- ' + thisSubItem + ' : ' + resultsItemSubObject[thisSubItem]);
+
+                            var thisChildObject = resultsItemSubObject[thisSubItem];
+                            if (typeof thisChildObject == 'object') {
+                                for (var thisChildItem in thisChildObject){
+                                    console.log('      --- ' + thisChildItem + ' : ' + thisChildObject[thisChildItem]);
+                                }
+                            }
+                        }
                     }
-                })
+                }
             }
 
-            //Process file to DB
+            //Process test results to DB
             if (logResults) {
-                // suite.processTestResults(save);
+                suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, 'apiNavTest', manifestTestStatus);
             }
-
+        }).run(function() {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
             this.exit();
             test.done();
@@ -184,28 +199,24 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     // Log results in DB
-    apiSuite.prototype.processTestResults = function(resultsFile) {
-        var testResultFileLocation = encodeURIComponent(save);
+    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testType, manifestTestStatus) {
+        var processUrl = configURL + '/utils/processRequest';
 
-        var suite = this;
-
-        // require('utils').dump( current );
-        var processUrl = configURL + '/utils/tasks?task=upload&testType=apiNav&fileLoc=' + testResultFileLocation;
-
-        if (processUrl) {
-            casper.open(processUrl,{ method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                
-                var status = this.status().currentHTTPStatus;
-
-                if ( status == 200) {
-                    console.log(colorizer.colorize('DB processURL Loaded: ', 'COMMENT') + processUrl );                    
-                } else {
-                    throw new Error('Unable to get/store Test ID!');
-                    this.exit();
-                }
-                
-            });
+        if (debugOutput) {
+            console.log(processUrl);
         }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'task': 'processManifestTestResults',
+                'testID': testID,
+                'testType': testType,
+                'testProperty': urlUri,
+                'testStatus': manifestTestStatus,
+                'testResults':  JSON.stringify(testResultsObject)
+            }
+        });
     };
 
     apiSuite.prototype.collectionNavigationItems = function(url, testType, testID) {
@@ -351,25 +362,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             var endpointUrl = collectionObject[thisCollectionItem];
 
             if (endpointUrl) {
-                casper.open(endpointUrl, {
-                    method: 'head'
-                }).then(function(resp) {
-                    resp = resp;
-                    var status = this.status().currentHTTPStatus;
-
-                    if ( status == 200) {
-                        if (showOutput) {
-                            console.log('> ' + endpointName + ' : ' + endpointUrl + colorizer.colorize(' // Status: ' + status, 'INFO') );
-                        };
-
-                        if (endpointUrl.indexOf('submit-your-photos') > -1) {
-                            if (showOutput) {console.log('Skipping UGC url....')};
-                        } else {
-                            // Test parsing JSON
-                            suite.validateJson(endpointName, endpointUrl, status, testID);
-                        }
-                    }
-                });
+                suite.validateJson(endpointName, endpointUrl, testID);
             } else {
                 throw new Error('NavTestError: No url provided to test against.').exit();
             }
@@ -380,75 +373,97 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
         var currentTestStatus = "Pass";
 
-        currentTestObject['endpoint'] = urlName;
-        currentTestObject['endpointUrl'] = url;
-        currentTestObject['httpStatus'] = status;
 
         if (url) {
             casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                
                 resp = resp;
                 var validated = false;
+                var status = this.status().currentHTTPStatus;
                 var output = this.getPageContent();
+                var currentTestResults = {};
 
-                if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
+                currentTestResults['url'] = url;
+                currentTestResults['httpStatus'] = status;
 
-                try {
-                    output = JSON.parse(output);
+                if ( status == 200) {
+                    if (showOutput) {
+                        if (url.indexOf('submit-your-photos') > -1) {
+                            if (showOutput) {console.log('Skipping UGC url....')};
+                        } else {
+                            // console.log(endpointName + '..........');
+                            console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
+                            
+                            // Test parsing JSON
+                            if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
 
-                    if( output instanceof Object ) {
-                        var validated = true;
-                     }
-                } catch (e) {
-                    // ...
-                    if (showOutput) {console.log(e)};
-                }
-
-                if (validated) {
-                    if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
-                    currentTestObject['jsonValidated'] = 'Pass';
-                    // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","JSON Validated",' + '\n', 'a+');
-                } else {
-                    if (showOutput) {console.log('...re-testing JSON')};
-                    var reg = /\<body[^>]*\>([^]*)\<\/body/m;
-
-                    try {
-                        cleanedJson = output.match(reg)[1];
-
-                        if (cleanedJson) {
                             try {
-                                JSONTestOutput = JSON.parse(cleanedJson);
+                                output = JSON.parse(output);
 
-                                if( JSONTestOutput instanceof Object ) {
-                                    if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                                    // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","PASS - JSON Validated",' + '\n', 'a+');
-                                } else {
-                                    if (showOutput) {console.log(cleanedJson)};
-                                }
+                                if( output instanceof Object ) {
+                                    var validated = true;
+                                 }
                             } catch (e) {
                                 // ...
-                                if (showOutput) {console.log(colorizer.colorize('WARNING: ', 'COMMENT') + 'Parse fail unable to parse programmatically also with removing HTML tags, possible False/Positive..check url manually.')};
-                                currentTestObject['jsonValidated'] = 'Warning';
-                                // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Warn","WARNING - Possible False/Positive",' + '\n', 'a+');
+                                if (showOutput) {console.log(e)};
                             }
-                        }
 
-                    } catch (e) {
-                        if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!')};
-                        currentTestObject['jsonValidated'] = 'Fail';
-                        currentTestStatus = 'Fail';
-                        // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Fail","FAIL - Possible content error",' + '\n', 'a+');
+                            if (validated) {
+                                if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
+                                currentTestResults['jsonValidated'] = 'Pass';
+
+
+                            } else {
+                                if (showOutput) {console.log('...re-testing JSON')};
+                                var reg = /\<body[^>]*\>([^]*)\<\/body/m;
+
+                                try {
+                                    cleanedJson = output.match(reg)[1];
+
+                                    if (cleanedJson) {
+                                        try {
+                                            JSONTestOutput = JSON.parse(cleanedJson);
+
+                                            if( JSONTestOutput instanceof Object ) {
+                                                if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
+                                                // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","PASS - JSON Validated",' + '\n', 'a+');
+                                            } else {
+                                                if (showOutput) {console.log(cleanedJson)};
+                                            }
+                                        } catch (e) {
+                                            // ...
+                                            if (showOutput) {console.log(colorizer.colorize('WARNING: ', 'COMMENT') + 'Parse fail unable to parse programmatically also with removing HTML tags, possible False/Positive..check url manually.')};
+                                            currentTestResults['jsonValidated'] = 'Warning';
+                                        }
+                                    }
+
+                                } catch (e) {
+                                    if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!')};
+                                    
+                                    currentTestResults['jsonValidated'] = 'Fail';
+                                    currentTestStatus = 'Fail';
+                                    manifestTestStatus = 'Fail';
+                                }
+                            }
+                            if (showOutput) {console.log('-----------------')};
+                        }
                     }
                 }
-                if (showOutput) {console.log('-----------------')};
 
-                // Set current test status
-                testResultsObject['testStatus'] = currentTestStatus; 
-            });
+                // Set current test status & results
+                currentTestObject[urlName] = currentTestResults;
+                testResultsObject['testStatus'] = currentTestStatus;
+                testResultsObject['testResults'] = currentTestObject;
+            })
         } else {
             if (showOutput) {console.log(colorizer.colorize('No url provided for JSON validation!', 'ERROR'))};
         }
+    };
 
-        testResultsObject['testResults'] = currentTestObject;
+    apiSuite.prototype.buildmanifestCollectionObject = function(testingObect, manifestCollectionObjectValue) {
+        var suite = this;
+        reqKeys.reverse();
+
     };
 
     new apiSuite(casper.cli.get('url'));
