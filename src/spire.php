@@ -188,6 +188,7 @@ class Spire {
 
 	        // var_dump('miss!');
 	        // var_dump($data);
+	        // echo '----------<br />';
 	    } else {
 	        $data = unserialize(file_get_contents($cacheFile));
 	        // var_dump('hit!');

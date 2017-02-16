@@ -1119,6 +1119,78 @@ class DbHandler {
 
     }
 
+    public function getFailuresPer30Day($testResultsTable) {
+        $output = Spire::spireCache('getFailuresPer30Day_'.$testResultsTable, 9000, function() use ($testResultsTable) {
+            
+            $db_con = Spire::getConnection();
+
+            switch ($testResultsTable) {
+                
+                case "api_manifest_audits":
+                    $testTableName = 'manifest_tests';
+                    break;
+
+                case "apiCheck-manifest":
+                    $testTableName = 'manifest_tests';
+                    break;
+
+                case "api_navigation_audits":
+                    $testTableName = 'nav_tests';
+                    break;
+
+                case "apiCheck-nav":
+                    $testTableName = 'nav_tests';
+                    break;
+
+                case "api_article_audits":
+                    $testTableName = 'article_tests';
+                    break;
+
+                case "apiCheck-article":
+                    $testTableName = 'article_tests';
+                    break;
+
+                default:
+                    $testTableName = 'none-existent';
+            }
+
+            //$stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
+            $stmt = $db_con->prepare("SELECT Year(`created`) AS 'Year', Month(`created`) AS 'Month', COUNT(*) AS 'Total' FROM ".$testTableName." WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`)");
+            $failureCounts = array();
+
+            $months = array(1 => 'Jan.', 2 => 'Feb.', 3 => 'Mar.', 4 => 'Apr.', 5 => 'May', 6 => 'Jun.', 7 => 'Jul.', 8 => 'Aug.', 9 => 'Sep.', 10 => 'Oct.', 11 => 'Nov.', 12 => 'Dec.');
+
+            if ($stmt->execute()) {
+                $errorReports = $stmt->fetchAll();
+
+                foreach ($errorReports as $key => $val) {
+                    // var_dump($val['Year']);
+                    // var_dump($val['Month']);
+                    // var_dump($val['Total']);
+
+                    foreach ($months as $num => $name) {
+                        $monthName = date('F', mktime(0, 0, 0, $num, 10));
+                        if ($num == $val['Month']) {
+                            $failureCounts[$monthName."Value"] = $val['Total'];
+                        } else {
+                            $failureCounts[$monthName."Value"] = "0";
+                        }
+                    }
+                }
+
+                $stmt->closeCursor();
+                // var_dump($failureCounts);
+                $monthFailureCounts = implode(",",$failureCounts);
+                return $monthFailureCounts;
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+
+    }
+
     public function allWarningReportsFromYesterday($testResultsTable) {
         $output = Spire::spireCache('allWarningReportsFromYesterday_'.$testResultsTable, 9000, function() use ($testResultsTable) {
             
@@ -1325,5 +1397,8 @@ class DbHandler {
 
 }
 // DB
-//SELECT Year(`created`), Month(`created`), Day(`created`), COUNT(*) FROM article_tests WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)
+// SELECT Year(`created`), Month(`created`), Day(`created`), COUNT(*) FROM article_tests WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)
+
+// Total past 30 days
+// SELECT Year(`created`), Month(`created`), Day(`created`), COUNT(*) FROM article_tests WHERE `created` <= NOW() AND status = 'Fail'
 ?>

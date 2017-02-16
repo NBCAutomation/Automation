@@ -52,6 +52,10 @@ $app->group('/dashboard', function () use ($app) {
 		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
 		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
 
+		$man30Day = $db->getFailuresPer30Day('api_manifest_audits');
+		$nav30Day = $db->getFailuresPer30Day('api_navigation_audits');
+		$cont30Day = $db->getFailuresPer30Day('api_article_audits');
+
 		// Server time
 		$info = getdate();
 		$date = $info['mday'];
@@ -75,6 +79,9 @@ $app->group('/dashboard', function () use ($app) {
 			'todayContentTotalFailureReports' => $todayContentTotalFailureReports,
 			'todayContentTotalWarningReports' => $todayContentTotalWarningReports,
 			'serverTimeStamp' => $current_date,
+			'man30Day' => $man30Day,
+			'nav30Day' => $nav30Day,
+			'cont30Day' => $cont30Day,
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),

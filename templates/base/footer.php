@@ -20,8 +20,49 @@
 	<script src="/assets/js/fileinput.js"></script>
 	<script src="/assets/js/chartData.js"></script>
 	<script src="/assets/js/main.js"></script>
+	<?php if ($page_name == 'home') {?>
+	<script type="text/javascript">
+		var barChartData = {
+			labels: ["January", "February", "March"],
+		    datasets: [
+		        {
+		            label: "Manifest Errors",
+		            fillColor: "rgba(220,220,100,0.5)",
+		            strokeColor: "rgba(220,220,100,0.8)",
+		            highlightFill: "rgba(220,220,100,0.75)",
+		            highlightStroke: "rgba(220,220,100,1)",
+		            data: [<?php echo $man30Day ?>]
+		        },
+		        {
+		            label: "Navigation Errors",
+		            fillColor: "rgba(220,220,220,0.5)",
+		            strokeColor: "rgba(220,220,220,0.8)",
+		            highlightFill: "rgba(220,220,220,0.75)",
+		            highlightStroke: "rgba(220,220,220,1)",
+		            data: [<?php echo $nav30Day ?>]
+		        },
+		        {
+		            label: "Content Errors",
+		            fillColor: "rgba(151,187,205,0.5)",
+		            strokeColor: "rgba(151,187,205,0.8)",
+		            highlightFill: "rgba(151,187,205,0.75)",
+		            highlightStroke: "rgba(151,187,205,1)",
+		            data: [<?php echo $cont30Day ?>]
+		        }
+		    ]
+		}
+	</script>
+	<?php } ?>
 	<script type="text/javascript">
 	$(window).load(function() {
+		<?php if ($page_name == 'home') { ?>
+		// Bar Chart from barChartData
+		var $ctx = document.getElementById("chart-bar").getContext("2d");
+		window.myBar = new Chart($ctx).Bar(barChartData, {
+			responsive : true
+		});
+		<?php } ?>
+
 		$('input[class^="class"]').click(function() {
 		    var $this = $(this);
 		    if ($this.is(".class1")) {
