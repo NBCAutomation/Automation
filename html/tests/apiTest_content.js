@@ -99,8 +99,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 })
             } else {
                 // Test Collection data
-                suite.testNavigationData(urlUri, collectionObject, manifestTestRefID)
+                suite.testNavigationData(urlUri, collectionObject, manifestTestRefID);
             }
+        }).then(function () {
+            console.log('--------// Test endpoint content');
+            // Test endpoint content
+            suite.testEndpointContent(urlUri, collectionObject, manifestTestRefID);
 
         }).then(function () {
             if (debugOutput) {
@@ -240,7 +244,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
         var firstPass = true;
         reqKeys.reverse();
-        var __baseUrl = casper.cli.get('url');
+        var baseUrl = casper.cli.get('url');
 
         for (var childItem in childManifestObject) {
             if (typeof childManifestObject[childItem] != 'object') {
@@ -283,9 +287,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 if (subObject[subItem].indexOf('/apps') > -1) {
 
                                     if (subObject[subItem].indexOf('?') > -1) {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=5'
+                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '&apiVersion=5'
                                     } else {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=5'
+                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '?apiVersion=5'
                                     }
                                     
                                     if (debugOutput) {
@@ -376,8 +380,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                             if (validated) {
                                 if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
                                 currentTestResults['jsonValidated'] = 'Pass';
-
-
                             } else {
                                 if (showOutput) {console.log('...re-testing JSON')};
                                 var reg = /\<body[^>]*\>([^]*)\<\/body/m;
@@ -391,7 +393,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                             if( JSONTestOutput instanceof Object ) {
                                                 if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                                                // fs.write(save, '"' + testID + '","' + urlName + '","' + url + '",' + status + ',"Pass","PASS - JSON Validated",' + '\n', 'a+');
+                                                
                                             } else {
                                                 if (showOutput) {console.log(cleanedJson)};
                                             }
@@ -425,16 +427,32 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
-    apiSuite.prototype.testEndpointContent = function(url, __url, type, testID) {    
+
+    apiSuite.prototype.testEndpointContent = function(url, collectionObject, testID) {
         var suite = this;
-        var __baseUrl = casper.cli.get('url');
+        for (var thisCollectionItem in collectionObject) {
+            var endpointName = thisCollectionItem;
+            var endpointUrl = collectionObject[thisCollectionItem];
+
+            if (endpointUrl) {
+                suite.endpointContentValidation(endpointName, endpointUrl, testID);
+            } else {
+                throw new Error('NavTestError: No url provided to test against.').exit();
+            }
+        }
+    };
+    
+    apiSuite.prototype.endpointContentValidation = function(url, endpointUrl, testID) {
+        var suite = this;
+        var baseUrl = casper.cli.get('url');
+
         var reqKeys = new Array("appTitle","sectionMapping","location");
         var articleKeys = new Array("contentID","title","byline","summary","displayDate","updatedMessage","shareURL","typeName","fullsizeImageURL","thumbnailImageURL","fullsizeLeadImageURL","leadImageURL","contentBody","extID");
 
-        __contentSections = {};
-        
-        if (__url) {
-            casper.thenOpen(__url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }, function(resp) {
+        contentSections = {};
+
+        if (endpointUrl) {
+            casper.thenOpen(endpointUrl, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }, function(resp) {
                 
                 var status = this.status().currentHTTPStatus;
 
@@ -445,18 +463,20 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 var _count = 0;
                 var setFail = 0;
                 
+                __output = JSON.parse(output);
+
                 var mainItemArticles = __output.modules;
 
                 for (var __itemThis in mainItemArticles) {
                     if (showOutput) {
                         console.log('-----------------');
-                        console.log(' Test ID: ' + testID + '\n Testing endpoint: ' + __url);
+                        console.log(' Test ID: ' + testID + '\n Testing endpoint: ' + endpointUrl);
                         console.log(' -------');
                     }
 
                     if (debugOutput) {
                         console.log('-----------------');
-                        console.log('> Endpoint', __url);
+                        console.log('> Endpoint', endpointUrl);
                         console.log('-----------------');
                     }
 
@@ -522,17 +542,17 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                     if (__innerItems[__items].typeName !== 'FeaturePageHeader') {
                                         if (__innerItems[__items].typeName == 'Gallery') {
-                                            //     console.log('    ------------------ ');
-                                            //     console.log('     Gallery\n');
-                                            // console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID);
-                                            // var galleryContentURL = __baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
-                                            // console.log('      >  Gallery items = ' + galleryContentURL);
+                                                console.log('    ------------------ ');
+                                                console.log('     Gallery\n');
+                                            // console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID);
+                                            var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
+                                            console.log('      >  Gallery items = ' + galleryContentURL);
                                             // var urlName = 'Gallery ID - ' + articleContentID;
                                             
                                             // suite.checkHealth(galleryItem, galleeryURL, testID);
                                             var pageData = this.getPageContent();
                                             // console.log('[begin page]' + pageData + '[end page]')
-                                            // galleryContentJSON = JSON.parse(pageData);
+                                            galleryContentJSON = JSON.parse(pageData);
 
                                             if( galleryContentJSON instanceof Object ) {
 
@@ -591,9 +611,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                                             if (__lastItem[__b].indexOf('/apps') > -1) {
 
                                                                                 if (__lastItem[__b].indexOf('?') > -1) {
-                                                                                    var __lastKeyUrl = __baseUrl + __lastItem[__b] + '&apiVersion=5'
+                                                                                    var __lastKeyUrl = baseUrl + __lastItem[__b] + '&apiVersion=5'
                                                                                 } else {
-                                                                                    var __lastKeyUrl = __baseUrl + __lastItem[__b] + '?apiVersion=5'
+                                                                                    var __lastKeyUrl = baseUrl + __lastItem[__b] + '?apiVersion=5'
                                                                                 }
                                                                                 
                                                                                 if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
@@ -601,9 +621,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                                                             // Set collections array
                                                                             if (manifestTest) {
-                                                                                if (!(__lastKeyName in __contentSections)){
+                                                                                if (!(__lastKeyName in contentSections)){
                                                                                     // console.log(' - '+__lastKeyName);
-                                                                                    __contentSections[__lastKeyName] = __lastKeyUrl;
+                                                                                    contentSections[__lastKeyName] = __lastKeyUrl;
                                                                                 }
                                                                             }
                                                                         }
@@ -640,7 +660,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                                 console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
 
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+
 
                                                 var __curError = '';
 
@@ -650,7 +670,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Feature flag set to TRUE but featureId empty.';
                                                 
                                                 console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+                                                
 
                                                 var __curError = '';
                                             }
@@ -665,7 +685,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+                                                
 
                                                 var __curError = '';
 
@@ -676,7 +696,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+                                                
 
                                                 var __curError = '';
 
@@ -693,7 +713,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+                                                
 
                                                 var __curError = '';
                                             } else if (articleLiveAppVideoEmbed.length <= 0) {
@@ -702,7 +722,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
-                                                fs.write(save, '"' + testID + '","' + __url + '","' + articleContentID + '","' + articleTitle + '","' + __curError + '","Fail",' + '\n', 'a+');
+                                                
 
                                                 var __curError = '';
                                             }
@@ -723,11 +743,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                     console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
                                                 }
                                                 
-                                                // if (__subItems[__indItems] == 'Gallery') {
-                                                //     console.log('    ------------------ ');
-                                                //     console.log('     Gallery\n');
-                                                //     console.log('      >  Gallery items = ' + __baseUrl + '/apps/news-app/content/gallery/?contentId=');
-                                                // }
+                                                if (__subItems[__indItems] == 'Gallery') {
+                                                    console.log('    ------------------ ');
+                                                    console.log('     Gallery\n');
+                                                    console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                                }
                                             }
 
                                             if (debugOutput) {console.log('  >---------------')};
@@ -744,6 +764,40 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 }
                 if (showOutput) { console.log(' >> Endpoint testing completed with ' + setFail + ' FAILs.'); }
             });
+        }
+    };
+
+    apiSuite.prototype.gallerySpiderCheck = function(urlName, url, testID) {
+
+    };
+
+    apiSuite.prototype.checkHealth = function(urlName, url, testID) {
+
+        var suite = this;
+        // var current = suite.__collected.shift();
+
+        // require('utils').dump( current );
+
+        if (url) {
+            casper.open(url, {
+                method: 'head'
+            }).then(function(resp) {
+                resp = resp;
+                var status = this.status().currentHTTPStatus;
+
+                if ( status == 200) {
+                    if (showOutput) {console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') )};
+
+                    if (url.indexOf('submit-your-photos') > -1) {
+                        if (showOutput) {console.log('Skipping UGC url....')};
+                    } else {
+                        // console.log('  ================  ready to validate JSON.');
+                        // suite.validateJson(urlName, url, status, testID);
+                    }
+                }
+            });
+        } else {
+            // delete this.__collected;
         }
     };
 
