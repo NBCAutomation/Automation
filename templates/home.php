@@ -60,7 +60,7 @@ if ( $todayManifestTotalFailureReports > 0 || $todayNavTotalFailureReports > 0 |
 				</div>
 			</div>
 		</div>
-		<div class="panel panel-default">
+		<!-- <div class="panel panel-default">
 			<div class="panel-body">
 				<div class="col-md-12">
 					<div class="panel panel-default">
@@ -80,6 +80,6 @@ if ( $todayManifestTotalFailureReports > 0 || $todayNavTotalFailureReports > 0 |
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
 <?php include_once 'base/footer.php' ?>
