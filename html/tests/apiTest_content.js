@@ -41,6 +41,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var collectionObject = {};
     var testResultsObject = {};
     var currentTestObject = {};
+    var galleryCollectionObject = {};
     var manifestTestRefID;
     var manifestTestStatus;
     manifestTestStatus = 'Pass';
@@ -548,6 +549,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
                                             console.log('      >  Gallery items = ' + galleryContentURL);
                                             // var urlName = 'Gallery ID - ' + articleContentID;
+                                            // galleryCollectionObject[articleContentID] = galleryContentURL
                                             
                                             // suite.checkHealth(galleryItem, galleeryURL, testID);
                                             var pageData = this.getPageContent();
@@ -769,6 +771,31 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
     apiSuite.prototype.gallerySpiderCheck = function(urlName, url, testID) {
 
+    };
+
+    apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
+        var suite = this;
+
+        // Manifest keys are built as key__ +
+        // Ex: parentKeyName__childKeyName__grandChildKeyName__lineageItemKeyName : Value
+        // Live Ex: TVE__OnDemand__featured_shows__0__show_img : http://media.nbcnewyork.com/designimages/featured_show_1_ondemand2x.png
+
+        for (var childItem in childManifestObject) {
+            if (typeof childManifestObject[childItem] != 'object') {
+                var manifestMainObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
+
+                if (debugOutput) {
+                    console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
+                }
+
+                // Add key/val to collection object for testing if required;
+                suite.buildmanifestCollectionObject(manifestMainObjectName, childManifestObject[childItem]);
+
+            } else {
+                var manifestObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
+                suite.spiderObject(manifestObjectName, childManifestObject[childItem]);
+            }
+        }
     };
 
     apiSuite.prototype.checkHealth = function(urlName, url, testID) {
