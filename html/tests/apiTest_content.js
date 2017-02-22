@@ -108,6 +108,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             suite.testEndpointContent(urlUri, collectionObject, manifestTestRefID);
 
         }).then(function () {
+            console.log('---------------------');
+            console.log(' galleryCollectionObject object   ');
+            console.log('---------------------');
+            console.log(Object.keys(galleryCollectionObject).length);
+            for (var thisGalleryCollectionItem in galleryCollectionObject) {
+                console.log('>>>>> ' + thisGalleryCollectionItem + ' : ' + galleryCollectionObject[thisGalleryCollectionItem]);
+            }
+        }).then(function () {
             if (debugOutput) {
                 console.log('---------------------');
                 console.log(' Test Results object   ');
@@ -541,15 +549,17 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         console.log('  >> article_leadMedia  : ' + __innerItems[__items].leadMedia);
                                     }
 
-                                    if (__innerItems[__items].typeName !== 'FeaturePageHeader') {
-                                        if (__innerItems[__items].typeName == 'Gallery') {
+                                    if (articleTypeName !== 'FeaturePageHeader') {
+                                        if (articleTypeName == 'Gallery') {
+                                            var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
+
+                                            if (debugOutput) {
                                                 console.log('    ------------------ ');
                                                 console.log('     Gallery\n');
-                                            // console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID);
-                                            var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
-                                            console.log('      >  Gallery items = ' + galleryContentURL);
-                                            // var urlName = 'Gallery ID - ' + articleContentID;
-                                            // galleryCollectionObject[articleContentID] = galleryContentURL
+                                                console.log('      >  Gallery items url = ' + galleryContentURL);
+                                            }
+                                            // Add to gallery collection object for testing. 
+                                            galleryCollectionObject[articleContentID] = galleryContentURL;
                                             
                                             // suite.checkHealth(galleryItem, galleeryURL, testID);
                                             var pageData = this.getPageContent();
@@ -559,6 +569,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             if( galleryContentJSON instanceof Object ) {
 
                                                 galleryOutput = JSON.parse(pageData);
+                                                console.log('>>>>>>>>>>>>>>>>>>>>>>>>-----------------');
+                                                console.log(JSON.stringify(galleryOutput));
+                                                console.log('>>>>>>>>>>>>>>>>>>>>>>>>-----------------');
 
                                                 var fullJSONObject = galleryOutput.items;
 
@@ -645,7 +658,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         }
 
                                         if (articleThumbnailImageURL == null) {
-                                            console.log('  []> article_contentID  : ' + __innerItems[__items].contentID + '\n  []> article_typeName  : ' + __innerItems[__items].typeName + '\n  []> article_title  : ' + __innerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + __innerItems[__items].thumbnailImageURL);
+                                            console.log('  []> article_contentID  : ' + __innerItems[__items].contentID + '\n  []> article_typeName  : ' + articleTypeName + '\n  []> article_title  : ' + __innerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + __innerItems[__items].thumbnailImageURL);
                                         }
 
                                         if (articleThumbnailImageURL.indexOf('0*false') > -1) {
@@ -773,30 +786,30 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
     };
 
-    apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
-        var suite = this;
+    // apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
+    //     var suite = this;
 
-        // Manifest keys are built as key__ +
-        // Ex: parentKeyName__childKeyName__grandChildKeyName__lineageItemKeyName : Value
-        // Live Ex: TVE__OnDemand__featured_shows__0__show_img : http://media.nbcnewyork.com/designimages/featured_show_1_ondemand2x.png
+    //     // Manifest keys are built as key__ +
+    //     // Ex: parentKeyName__childKeyName__grandChildKeyName__lineageItemKeyName : Value
+    //     // Live Ex: TVE__OnDemand__featured_shows__0__show_img : http://media.nbcnewyork.com/designimages/featured_show_1_ondemand2x.png
 
-        for (var childItem in childManifestObject) {
-            if (typeof childManifestObject[childItem] != 'object') {
-                var manifestMainObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
+    //     for (var childItem in childManifestObject) {
+    //         if (typeof childManifestObject[childItem] != 'object') {
+    //             var manifestMainObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
 
-                if (debugOutput) {
-                    console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
-                }
+    //             if (debugOutput) {
+    //                 console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
+    //             }
 
-                // Add key/val to collection object for testing if required;
-                suite.buildmanifestCollectionObject(manifestMainObjectName, childManifestObject[childItem]);
+    //             // Add key/val to collection object for testing if required;
+    //             // suite.buildmanifestCollectionObject(manifestMainObjectName, childManifestObject[childItem]);
 
-            } else {
-                var manifestObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
-                suite.spiderObject(manifestObjectName, childManifestObject[childItem]);
-            }
-        }
-    };
+    //         } else {
+    //             var manifestObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
+    //             suite.spiderObject(manifestObjectName, childManifestObject[childItem]);
+    //         }
+    //     }
+    // };
 
     apiSuite.prototype.checkHealth = function(urlName, url, testID) {
 
