@@ -104,6 +104,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             }
         }).then(function () {
             console.log('--------// Test endpoint content');
+            if (debugOutput) {
+                console.log('-----------------------------------------');
+                console.log(' Start testing content collectionObject   ');
+                console.log('-----------------------------------------');
+            }
             // Test endpoint content
             suite.testEndpointContent(urlUri, collectionObject, manifestTestRefID);
 
@@ -115,6 +120,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             for (var thisGalleryCollectionItem in galleryCollectionObject) {
                 console.log('>>>>> ' + thisGalleryCollectionItem + ' : ' + galleryCollectionObject[thisGalleryCollectionItem]);
             }
+
+            suite.galleryObjectTest(galleryItem, galleeryURL, testID);
+
         }).then(function () {
             if (debugOutput) {
                 console.log('---------------------');
@@ -476,7 +484,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                 var mainItemArticles = __output.modules;
 
-                for (var __itemThis in mainItemArticles) {
+                for (var innerArticleItems in mainItemArticles) {
                     if (showOutput) {
                         console.log('-----------------');
                         console.log(' Test ID: ' + testID + '\n Testing endpoint: ' + endpointUrl);
@@ -489,64 +497,65 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         console.log('-----------------');
                     }
 
-                    // console.log('== '+__itemThis.items);
-                    var __thisShit = mainItemArticles[__itemThis];
+                    // console.log('== '+innerArticleItems.items);
+                    var singleArticleItemObject = mainItemArticles[innerArticleItems];
 
-                    for (var __iK in __thisShit) {
+                    for (var singleArticleItem in singleArticleItemObject) {
 
-                        if (__iK === 'items' && typeof __thisShit[__iK] === 'object') {
+                        if (singleArticleItem === 'items' && typeof singleArticleItemObject[singleArticleItem] === 'object') {
                             
-                            var __innerItems = __thisShit[__iK];
+                            var singleArticleInnerItems = singleArticleItemObject[singleArticleItem];
 
                             var __subCount = 0;
 
-                            for (var __items in __innerItems) {
+                            for (var __items in singleArticleInnerItems) {
 
-                                if (typeof __innerItems[__items] === 'object') {
+                                if (typeof singleArticleInnerItems[__items] === 'object') {
 
-                                    var articleContentID = __innerItems[__items].contentID;
-                                    var articleTitle = __innerItems[__items].title;
-                                    var articleByline = __innerItems[__items].byline;
-                                    var articleSummary = __innerItems[__items].summary;
-                                    var articleDisplayDate = __innerItems[__items].displayDate;
-                                    var articleUpdatedMessage = __innerItems[__items].updatedMessage;
-                                    var articleShareURL = __innerItems[__items].shareURL;
-                                    var articleTypeName = __innerItems[__items].typeName;
-                                    var articleFullsizeImageURL = __innerItems[__items].fullsizeImageURL;
-                                    var articleThumbnailImageURL = __innerItems[__items].thumbnailImageURL;
-                                    var articleFullsizeLeadImageURL = __innerItems[__items].fullsizeLeadImageURL;
-                                    var articleLeadImageURL = __innerItems[__items].leadImageURL;
-                                    var articleFeature = __innerItems[__items].feature;
-                                    var articleSponsored = __innerItems[__items].sponsored;
-                                    var articleIsLiveStream = __innerItems[__items].isLiveStream;
-                                    var articleLiveVideoEmbed = __innerItems[__items].liveVideoEmbed;
-                                    var articleLiveAppVideoEmbed = __innerItems[__items].liveAppVideoEmbed;
-                                    var articleContentBody = __innerItems[__items].contentBody;
-                                    var articleLeadMedia = __innerItems[__items].leadMedia;
+                                    var articleContentID = singleArticleInnerItems[__items].contentID;
+                                    var articleTitle = singleArticleInnerItems[__items].title;
+                                    var articleByline = singleArticleInnerItems[__items].byline;
+                                    var articleSummary = singleArticleInnerItems[__items].summary;
+                                    var articleDisplayDate = singleArticleInnerItems[__items].displayDate;
+                                    var articleUpdatedMessage = singleArticleInnerItems[__items].updatedMessage;
+                                    var articleShareURL = singleArticleInnerItems[__items].shareURL;
+                                    var articleTypeName = singleArticleInnerItems[__items].typeName;
+                                    var articleFullsizeImageURL = singleArticleInnerItems[__items].fullsizeImageURL;
+                                    var articleThumbnailImageURL = singleArticleInnerItems[__items].thumbnailImageURL;
+                                    var articleFullsizeLeadImageURL = singleArticleInnerItems[__items].fullsizeLeadImageURL;
+                                    var articleLeadImageURL = singleArticleInnerItems[__items].leadImageURL;
+                                    var articleFeature = singleArticleInnerItems[__items].feature;
+                                    var articleSponsored = singleArticleInnerItems[__items].sponsored;
+                                    var articleIsLiveStream = singleArticleInnerItems[__items].isLiveStream;
+                                    var articleLiveVideoEmbed = singleArticleInnerItems[__items].liveVideoEmbed;
+                                    var articleLiveAppVideoEmbed = singleArticleInnerItems[__items].liveAppVideoEmbed;
+                                    var articleContentBody = singleArticleInnerItems[__items].contentBody;
+                                    var articleLeadMedia = singleArticleInnerItems[__items].leadMedia;
                                     
                                     if (debugOutput) {
-
-                                        console.log('  -----------------');
-                                        console.log('  >> article_contentID  : ' + __innerItems[__items].contentID);
-                                        console.log('  >> article_title  : ' + __innerItems[__items].title);
-                                        console.log('  >> article_byline  : ' + __innerItems[__items].byline);
-                                        // console.log('  >> article_summary  : ' + __innerItems[__items].summary);
-                                        console.log('  >> article_displayDate  : ' + __innerItems[__items].displayDate);
-                                        console.log('  >> article_updatedMessage  : ' + __innerItems[__items].updatedMessage);
-                                        console.log('  >> article_shareURL  : ' + __innerItems[__items].shareURL);
-                                        console.log('  >> article_typeName  : ' + __innerItems[__items].typeName);
-                                        console.log('  >> article_fullsizeImageURL  : ' + __innerItems[__items].fullsizeImageURL);
-                                        console.log('  >> article_thumbnailImageURL  : ' + __innerItems[__items].thumbnailImageURL);
-                                        console.log('  >> article_fullsizeLeadImageURL  : ' + __innerItems[__items].fullsizeLeadImageURL);
-                                        console.log('  >> article_leadImageURL  : ' + __innerItems[__items].leadImageURL);
-                                        console.log('  >> article_feature  : ' + __innerItems[__items].feature);
-                                        console.log('  >> article_sponsored  : ' + __innerItems[__items].sponsored);
-                                        console.log('  >> article_sponsored  : ' + __innerItems[__items].sponsorName);
-                                        console.log('  >> article_sponsored  : ' + __innerItems[__items].sponsorID);
-                                        console.log('  >> article_liveVideoEmbed  : ' + __innerItems[__items].liveVideoEmbed);
-                                        console.log('  >> article_liveAppVideoEmbed  : ' + __innerItems[__items].liveAppVideoEmbed);
-                                        // console.log('  >> article_contentBody  : ' + __innerItems[__items].contentBody);
-                                        console.log('  >> article_leadMedia  : ' + __innerItems[__items].leadMedia);
+                                        console.log('------------------------');
+                                        console.log(' Content var declaration   ');
+                                        console.log('------------------------');
+                                        console.log('   >> article_contentID  : ' + singleArticleInnerItems[__items].contentID);
+                                        console.log('   >> article_title  : ' + singleArticleInnerItems[__items].title);
+                                        console.log('   >> article_byline  : ' + singleArticleInnerItems[__items].byline);
+                                        // console.log('   >> article_summary  : ' + singleArticleInnerItems[__items].summary);
+                                        console.log('   >> article_displayDate  : ' + singleArticleInnerItems[__items].displayDate);
+                                        console.log('   >> article_updatedMessage  : ' + singleArticleInnerItems[__items].updatedMessage);
+                                        console.log('   >> article_shareURL  : ' + singleArticleInnerItems[__items].shareURL);
+                                        console.log('   >> article_typeName  : ' + singleArticleInnerItems[__items].typeName);
+                                        console.log('   >> article_fullsizeImageURL  : ' + singleArticleInnerItems[__items].fullsizeImageURL);
+                                        console.log('   >> article_thumbnailImageURL  : ' + singleArticleInnerItems[__items].thumbnailImageURL);
+                                        console.log('   >> article_fullsizeLeadImageURL  : ' + singleArticleInnerItems[__items].fullsizeLeadImageURL);
+                                        console.log('   >> article_leadImageURL  : ' + singleArticleInnerItems[__items].leadImageURL);
+                                        console.log('   >> article_feature  : ' + singleArticleInnerItems[__items].feature);
+                                        console.log('   >> article_sponsored  : ' + singleArticleInnerItems[__items].sponsored);
+                                        console.log('   >> article_sponsored  : ' + singleArticleInnerItems[__items].sponsorName);
+                                        console.log('   >> article_sponsored  : ' + singleArticleInnerItems[__items].sponsorID);
+                                        console.log('   >> article_liveVideoEmbed  : ' + singleArticleInnerItems[__items].liveVideoEmbed);
+                                        console.log('   >> article_liveAppVideoEmbed  : ' + singleArticleInnerItems[__items].liveAppVideoEmbed);
+                                        // console.log('   >> article_contentBody  : ' + singleArticleInnerItems[__items].contentBody);
+                                        console.log('   >> article_leadMedia  : ' + singleArticleInnerItems[__items].leadMedia);
                                     }
 
                                     if (articleTypeName !== 'FeaturePageHeader') {
@@ -561,96 +570,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             // Add to gallery collection object for testing. 
                                             galleryCollectionObject[articleContentID] = galleryContentURL;
                                             
-                                            // suite.checkHealth(galleryItem, galleeryURL, testID);
-                                            var pageData = this.getPageContent();
-                                            // console.log('[begin page]' + pageData + '[end page]')
-                                            galleryContentJSON = JSON.parse(pageData);
-
-                                            if( galleryContentJSON instanceof Object ) {
-
-                                                galleryOutput = JSON.parse(pageData);
-                                                console.log('>>>>>>>>>>>>>>>>>>>>>>>>-----------------');
-                                                console.log(JSON.stringify(galleryOutput));
-                                                console.log('>>>>>>>>>>>>>>>>>>>>>>>>-----------------');
-
-                                                var fullJSONObject = galleryOutput.items;
-
-                                                for (var jsonItem in fullJSONObject) {
-                                                    
-                                                    if(fullJSONObject.hasOwnProperty(jsonItem)){
-                                                        count++;
-                                                    }
-
-                                                    var thisContentItem = galleryOutput.items[count];
-
-                                                    for (var galKey in thisContentItem) {
-
-                                                        if (galKey === 'items' && typeof thisContentItem[galKey] === 'object') {
-
-                                                            var parentInfo = galleryOutput.items[count].title;
-
-                                                            if (debugOutput) {
-                                                                console.log('-----------------');
-                                                                console.log(parentInfo + ' sub links');
-                                                            }
-                                                            
-                                                            var __subItem = galleryOutput.items[count].items;
-
-                                                            var __count = 0;
-
-                                                            for (var jsonItem in __subItem) {
-                                                                
-                                                                if(__subItem.hasOwnProperty(jsonItem)){
-                                                                    __count++;
-
-                                                                    __offset = (__count - 1);
-                                                                    // console.log(__offset);
-                                                                }
-
-                                                                var __lastItem = galleryOutput.items[count].items[__offset];
-
-                                                                for (var __b in __lastItem) {
-                                                                    if (debugOutput) {console.log(' -  ' + __b + ' : ' + __lastItem[__b])};
-
-                                                                    if (reqKeys.indexOf(__b) > -1) {
-                                                                        // console.log(' -  ' + __b + ' : ' + __lastItem[__b]);
-                                                                        
-                                                                        if (__b === 'appTitle') {
-                                                                            var __lastKeyName = __lastItem[__b];
-                                                                        }
-
-                                                                        if (__b === 'location') {
-                                                                            
-                                                                            if (debugOutput) {console.log(__b + ' : ' + __lastItem[__b])};
-
-                                                                            if (__lastItem[__b].indexOf('/apps') > -1) {
-
-                                                                                if (__lastItem[__b].indexOf('?') > -1) {
-                                                                                    var __lastKeyUrl = baseUrl + __lastItem[__b] + '&apiVersion=5'
-                                                                                } else {
-                                                                                    var __lastKeyUrl = baseUrl + __lastItem[__b] + '?apiVersion=5'
-                                                                                }
-                                                                                
-                                                                                if (debugOutput) {console.log('>> ' + __lastKeyUrl)};
-                                                                            }
-
-                                                                            // Set collections array
-                                                                            if (manifestTest) {
-                                                                                if (!(__lastKeyName in contentSections)){
-                                                                                    // console.log(' - '+__lastKeyName);
-                                                                                    contentSections[__lastKeyName] = __lastKeyUrl;
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                                }
-                                                                if (debugOutput) { console.log('    -----------------')};
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                            // suite.galleryObjectTest(galleryItem, galleeryURL, testID);
                                         }
 
                                         if (articleFullsizeImageURL.indexOf('0*false') > -1) {
@@ -658,7 +578,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         }
 
                                         if (articleThumbnailImageURL == null) {
-                                            console.log('  []> article_contentID  : ' + __innerItems[__items].contentID + '\n  []> article_typeName  : ' + articleTypeName + '\n  []> article_title  : ' + __innerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + __innerItems[__items].thumbnailImageURL);
+                                            console.log('  []> article_contentID  : ' + singleArticleInnerItems[__items].contentID + '\n  []> article_typeName  : ' + articleTypeName + '\n  []> article_title  : ' + singleArticleInnerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + singleArticleInnerItems[__items].thumbnailImageURL);
                                         }
 
                                         if (articleThumbnailImageURL.indexOf('0*false') > -1) {
@@ -668,7 +588,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         // Check for the Feature flag
                                         if (articleFeature === true) {
                                             
-                                            if (__innerItems[__items].featureName.length <= 0) {
+                                            if (singleArticleInnerItems[__items].featureName.length <= 0) {
                                                 setFail++;
 
                                                 var __curError = 'Feature flag set to TRUE but featureName empty.';
@@ -679,7 +599,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                                 var __curError = '';
 
-                                            } else if (__innerItems[__items].featureId.length <= 0) {
+                                            } else if (singleArticleInnerItems[__items].featureId.length <= 0) {
                                                 setFail++;
 
                                                 var __curError = 'Feature flag set to TRUE but featureId empty.';
@@ -694,28 +614,20 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         // Check for the Sponsor flag
                                         if (articleSponsored === true) {
                                             
-                                            if (__innerItems[__items].sponsorName.length <= 0) {
+                                            if (singleArticleInnerItems[__items].sponsorName.length <= 0) {
                                                 setFail++;
                                                 
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
-                                                
-
                                                 var __curError = '';
-
-
-                                            } else if (__innerItems[__items].sponsorID.length <= 0) {
+                                            } else if (singleArticleInnerItems[__items].sponsorID.length <= 0) {
                                                 setFail++;
                                                 
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
-                                                
-
                                                 var __curError = '';
-
-
                                             }
                                         }
 
@@ -728,7 +640,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.', 'ERROR'));
-                                                
 
                                                 var __curError = '';
                                             } else if (articleLiveAppVideoEmbed.length <= 0) {
@@ -737,7 +648,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
-                                                
 
                                                 var __curError = '';
                                             }
@@ -760,8 +670,16 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 
                                                 if (__subItems[__indItems] == 'Gallery') {
                                                     console.log('    ------------------ ');
-                                                    console.log('     Gallery\n');
+                                                    console.log('     Lead Media Gallery\n');
                                                     console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                                }
+
+                                                if (__subItems[__indItems] == 'Video Release') {
+                                                    console.log('    ------------------ ');
+                                                    console.log('     Lead Media Video Release\n');
+                                                    console.log('     **** __subItems[__indItems]' + __subItems['typeName']);
+                                                    console.log('     **** __subItems[__indItems]' + __subItems['extID']);
+                                                    // https://link.theplatform.com/s/Yh1nAC/sJwQ4NYbTgg_?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true
                                                 }
                                             }
 
@@ -782,8 +700,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
-    apiSuite.prototype.gallerySpiderCheck = function(urlName, url, testID) {
-
+    apiSuite.prototype.galleryObjectTest = function(galleryObject, testID) {
+        for (var galleryItem in galleryObject) {
+            console.log(galleryItem + ' < : > ' + galleryObject[galleryItem]);
+        }
     };
 
     // apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
