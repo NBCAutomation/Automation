@@ -110,7 +110,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 console.log('-----------------------------------------');
             }
             // Test endpoint content
-            suite.testEndpointContent(urlUri, collectionObject, manifestTestRefID);
+            suite.testEndpointContent(collectionObject, manifestTestRefID);
 
         }).then(function () {
             console.log('---------------------');
@@ -445,7 +445,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
 
-    apiSuite.prototype.testEndpointContent = function(url, collectionObject, testID) {
+    apiSuite.prototype.testEndpointContent = function(collectionObject, testID) {
         var suite = this;
         for (var thisCollectionItem in collectionObject) {
             var endpointName = thisCollectionItem;
@@ -459,7 +459,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
     
-    apiSuite.prototype.endpointContentValidation = function(url, endpointUrl, testID) {
+    apiSuite.prototype.endpointContentValidation = function(endpointName, endpointUrl, testID) {
         var suite = this;
         var baseUrl = casper.cli.get('url');
 
@@ -470,35 +470,31 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
         if (endpointUrl) {
             casper.thenOpen(endpointUrl, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }, function(resp) {
-                
                 var status = this.status().currentHTTPStatus;
-
-                var validated = false;
                 var output = this.getPageContent();
-
-                var count = 0;
-                var _count = 0;
                 var setFail = 0;
                 
-                __output = JSON.parse(output);
+                rawOutput = JSON.parse(output);
 
-                var mainItemArticles = __output.modules;
+                // Main endpoint data module item
+                var mainItemArticles = rawOutput.modules;
 
-                for (var innerArticleItems in mainItemArticles) {
-                    if (showOutput) {
+                for (var innerContentItem in mainItemArticles) {
+                    // if (showOutput) {
                         console.log('-----------------');
-                        console.log(' Test ID: ' + testID + '\n Testing endpoint: ' + endpointUrl);
+                        console.log(' Test ID: ' + testID);
+                        console.log('Testing endpoint: ' + endpointUrl);
                         console.log(' -------');
-                    }
+                    // }
 
-                    if (debugOutput) {
-                        console.log('-----------------');
-                        console.log('> Endpoint', endpointUrl);
-                        console.log('-----------------');
-                    }
+                    // if (debugOutput) {
+                    //     console.log('-----------------');
+                    //     console.log('> Endpoint', endpointUrl);
+                    //     console.log('-----------------');
+                    // }
 
-                    // console.log('== '+innerArticleItems.items);
-                    var singleArticleItemObject = mainItemArticles[innerArticleItems];
+                    console.log('== '+innerContentItem.items);
+                    var singleArticleItemObject = mainItemArticles[innerContentItem];
 
                     for (var singleArticleItem in singleArticleItemObject) {
 
@@ -525,40 +521,49 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                     var articleFullsizeLeadImageURL = singleArticleInnerItems[__items].fullsizeLeadImageURL;
                                     var articleLeadImageURL = singleArticleInnerItems[__items].leadImageURL;
                                     var articleFeature = singleArticleInnerItems[__items].feature;
+                                    var articleFeatureName = singleArticleInnerItems[__items].featureName;
+                                    var articleFeatureID = singleArticleInnerItems[__items].featureId;
                                     var articleSponsored = singleArticleInnerItems[__items].sponsored;
+                                    var articleSponsorName = singleArticleInnerItems[__items].sponsorName;
+                                    var articleSponsorID = singleArticleInnerItems[__items].sponsorID;
                                     var articleIsLiveStream = singleArticleInnerItems[__items].isLiveStream;
                                     var articleLiveVideoEmbed = singleArticleInnerItems[__items].liveVideoEmbed;
                                     var articleLiveAppVideoEmbed = singleArticleInnerItems[__items].liveAppVideoEmbed;
                                     var articleContentBody = singleArticleInnerItems[__items].contentBody;
                                     var articleLeadMedia = singleArticleInnerItems[__items].leadMedia;
-                                    
-                                    if (debugOutput) {
-                                        console.log('------------------------');
-                                        console.log(' Content var declaration   ');
-                                        console.log('------------------------');
-                                        console.log('   >> article_contentID  : ' + singleArticleInnerItems[__items].contentID);
-                                        console.log('   >> article_title  : ' + singleArticleInnerItems[__items].title);
-                                        console.log('   >> article_byline  : ' + singleArticleInnerItems[__items].byline);
-                                        // console.log('   >> article_summary  : ' + singleArticleInnerItems[__items].summary);
-                                        console.log('   >> article_displayDate  : ' + singleArticleInnerItems[__items].displayDate);
-                                        console.log('   >> article_updatedMessage  : ' + singleArticleInnerItems[__items].updatedMessage);
-                                        console.log('   >> article_shareURL  : ' + singleArticleInnerItems[__items].shareURL);
-                                        console.log('   >> article_typeName  : ' + singleArticleInnerItems[__items].typeName);
-                                        console.log('   >> article_fullsizeImageURL  : ' + singleArticleInnerItems[__items].fullsizeImageURL);
-                                        console.log('   >> article_thumbnailImageURL  : ' + singleArticleInnerItems[__items].thumbnailImageURL);
-                                        console.log('   >> article_fullsizeLeadImageURL  : ' + singleArticleInnerItems[__items].fullsizeLeadImageURL);
-                                        console.log('   >> article_leadImageURL  : ' + singleArticleInnerItems[__items].leadImageURL);
-                                        console.log('   >> article_feature  : ' + singleArticleInnerItems[__items].feature);
-                                        console.log('   >> article_sponsored  : ' + singleArticleInnerItems[__items].sponsored);
-                                        console.log('   >> article_sponsored  : ' + singleArticleInnerItems[__items].sponsorName);
-                                        console.log('   >> article_sponsored  : ' + singleArticleInnerItems[__items].sponsorID);
-                                        console.log('   >> article_liveVideoEmbed  : ' + singleArticleInnerItems[__items].liveVideoEmbed);
-                                        console.log('   >> article_liveAppVideoEmbed  : ' + singleArticleInnerItems[__items].liveAppVideoEmbed);
-                                        // console.log('   >> article_contentBody  : ' + singleArticleInnerItems[__items].contentBody);
-                                        console.log('   >> article_leadMedia  : ' + singleArticleInnerItems[__items].leadMedia);
-                                    }
+
+
+                                    // if (debugOutput) {
+                                        console.log('-------------------------------');
+                                        console.log(' Content item var declaration   ');
+                                        console.log('-------------------------------');
+                                        console.log('    > articleContentID : ' + articleContentID);
+                                        console.log('    > articleTitle : ' + articleTitle);
+                                        console.log('    > articleByline : ' + articleByline);
+                                        // console.log('    > articleSummary : ' + articleSummary);
+                                        console.log('    > articleDisplayDate : ' + articleDisplayDate);
+                                        console.log('    > articleUpdatedMessage : ' + articleUpdatedMessage);
+                                        console.log('    > articleShareURL : ' + articleShareURL);
+                                        console.log('    > articleTypeName : ' + articleTypeName);
+                                        console.log('    > articleFullsizeImageURL : ' + articleFullsizeImageURL);
+                                        console.log('    > articleThumbnailImageURL : ' + articleThumbnailImageURL);
+                                        console.log('    > articleFullsizeLeadImageURL : ' + articleFullsizeLeadImageURL);
+                                        console.log('    > articleLeadImageURL : ' + articleLeadImageURL);
+                                        console.log('    > articleFeature : ' + articleFeature);
+                                        console.log('    > articleFeatureName : ' + articleFeatureName);
+                                        console.log('    > articleFeatureName : ' + articleFeatureID);
+                                        console.log('    > articleSponsored : ' + articleSponsored);
+                                        console.log('    > articleSponsorName : ' + articleSponsorName);
+                                        console.log('    > articleSponsorID : ' + articleSponsorID);
+                                        console.log('    > articleIsLiveStream : ' + articleIsLiveStream);
+                                        console.log('    > articleLiveVideoEmbed : ' + articleLiveVideoEmbed);
+                                        console.log('    > articleLiveAppVideoEmbed : ' + articleLiveAppVideoEmbed);
+                                        // console.log('    > articleContentBody : ' + articleContentBody);
+                                        console.log('    > articleLeadMedia : ' + articleLeadMedia);
+                                    // }
 
                                     if (articleTypeName !== 'FeaturePageHeader') {
+                                        // If gallery collect into gallery object
                                         if (articleTypeName == 'Gallery') {
                                             var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
 
@@ -573,55 +578,45 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             // suite.galleryObjectTest(galleryItem, galleeryURL, testID);
                                         }
 
-                                        if (articleFullsizeImageURL.indexOf('0*false') > -1) {
+                                        if (articleFullsizeImageURL.indexOf('0*false') > -1 || articleFullsizeImageURL == null) {
                                             console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + articleFullsizeImageURL + '.', 'ERROR'));
                                         }
 
-                                        if (articleThumbnailImageURL == null) {
-                                            console.log('  []> article_contentID  : ' + singleArticleInnerItems[__items].contentID + '\n  []> article_typeName  : ' + articleTypeName + '\n  []> article_title  : ' + singleArticleInnerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + singleArticleInnerItems[__items].thumbnailImageURL);
-                                        }
-
-                                        if (articleThumbnailImageURL.indexOf('0*false') > -1) {
+                                        if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
+                                            // console.log('  []> article_contentID  : ' + singleArticleInnerItems[__items].contentID + '\n  []> article_typeName  : ' + articleTypeName + '\n  []> article_title  : ' + singleArticleInnerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + singleArticleInnerItems[__items].thumbnailImageURL);
                                             console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
                                         }
-                                        
+
                                         // Check for the Feature flag
                                         if (articleFeature === true) {
-                                            
-                                            if (singleArticleInnerItems[__items].featureName.length <= 0) {
+                                            if (articleFeatureName.length <= 0) {
                                                 setFail++;
 
                                                 var __curError = 'Feature flag set to TRUE but featureName empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
-
-
-
                                                 var __curError = '';
 
-                                            } else if (singleArticleInnerItems[__items].featureId.length <= 0) {
+                                            } else if (articleFeatureID.length <= 0) {
                                                 setFail++;
 
                                                 var __curError = 'Feature flag set to TRUE but featureId empty.';
                                                 
                                                 console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
-                                                
-
                                                 var __curError = '';
                                             }
                                         }
 
                                         // Check for the Sponsor flag
                                         if (articleSponsored === true) {
-                                            
-                                            if (singleArticleInnerItems[__items].sponsorName.length <= 0) {
+                                            if (articleSponsorName.length <= 0) {
                                                 setFail++;
                                                 
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
 
                                                 console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
                                                 var __curError = '';
-                                            } else if (singleArticleInnerItems[__items].sponsorID.length <= 0) {
+                                            } else if (articleSponsorID.length <= 0) {
                                                 setFail++;
                                                 
                                                 var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
@@ -633,7 +628,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                         // Check for the LiveStream flag
                                         if (articleIsLiveStream === true) {
-                                            
                                             if (articleLiveVideoEmbed.length <= 0) {
                                                 setFail++;
 
@@ -654,7 +648,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         }
 
                                         if (typeof articleLeadMedia === 'object') {
-
                                             __subItems = articleLeadMedia;
                                             
                                             if (debugOutput) {
@@ -662,24 +655,30 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             }
 
                                             for (var __indItems in __subItems) {
-                                                // if (typeof __subItems[__indItems] === 'object') {
-
                                                 if (debugOutput) {
                                                     console.log('    >> ' + __indItems + ' : ' + __subItems[__indItems]);
                                                 }
                                                 
-                                                if (__subItems[__indItems] == 'Gallery') {
+                                                if (__subItems['typeName'] == 'Gallery') {
                                                     console.log('    ------------------ ');
                                                     console.log('     Lead Media Gallery\n');
                                                     console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                                    var galleryContentID = __subItems['contentID'];
+                                                    var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + galleryContentID;
+                                                    console.log('       gallery url to test: ' + galleryContentURL);
                                                 }
 
-                                                if (__subItems[__indItems] == 'Video Release') {
+                                                if (__subItems['typeName'] == 'Video Release') {
                                                     console.log('    ------------------ ');
                                                     console.log('     Lead Media Video Release\n');
-                                                    console.log('     **** __subItems[__indItems]' + __subItems['typeName']);
-                                                    console.log('     **** __subItems[__indItems]' + __subItems['extID']);
-                                                    // https://link.theplatform.com/s/Yh1nAC/sJwQ4NYbTgg_?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true
+                                                    console.log('       __subItems[__indItems]' + __subItems['typeName']);
+                                                    console.log('       __subItems[__indItems]' + __subItems['extID']);
+                                                    var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ __subItems['extID'] +'?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
+                                                    console.log('       video url to test ' + videoURL);
+
+                                                    // var urlHealthStatus = suite.checkURLHealth(videoURL, function (data) {
+                                                    //    console.log('     ++++++++++++ endpoint HTTP status: ' + data); 
+                                                    // });
                                                 }
                                             }
 
@@ -731,33 +730,56 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     //     }
     // };
 
-    apiSuite.prototype.checkHealth = function(urlName, url, testID) {
+    // apiSuite.prototype.checkHealth = function(urlName, url, testID) {
 
+    //     var suite = this;
+    //     // var current = suite.__collected.shift();
+
+    //     // require('utils').dump( current );
+
+    //     if (url) {
+    //         casper.open(url, {
+    //             method: 'head'
+    //         }).then(function(resp) {
+    //             resp = resp;
+    //             var status = this.status().currentHTTPStatus;
+
+    //             if ( status == 200) {
+    //                 if (showOutput) {console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') )};
+
+    //                 if (url.indexOf('submit-your-photos') > -1) {
+    //                     if (showOutput) {console.log('Skipping UGC url....')};
+    //                 } else {
+    //                     // console.log('  ================  ready to validate JSON.');
+    //                     // suite.validateJson(urlName, url, status, testID);
+    //                 }
+    //             }
+    //         });
+    //     } else {
+    //         // delete this.__collected;
+    //     }
+    // };
+
+    apiSuite.prototype.checkURLHealth = function(url, callback) {
         var suite = this;
-        // var current = suite.__collected.shift();
-
-        // require('utils').dump( current );
 
         if (url) {
-            casper.open(url, {
-                method: 'head'
-            }).then(function(resp) {
-                resp = resp;
-                var status = this.status().currentHTTPStatus;
+            casper.open(url).then(function(resp) {
+                var status = this.status().currentHTTPStatus,
+                    output = false;
 
                 if ( status == 200) {
-                    if (showOutput) {console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') )};
-
-                    if (url.indexOf('submit-your-photos') > -1) {
-                        if (showOutput) {console.log('Skipping UGC url....')};
-                    } else {
-                        // console.log('  ================  ready to validate JSON.');
-                        // suite.validateJson(urlName, url, status, testID);
-                    }
+                    output = true;
+                } else {
+                    output = false;
                 }
-            });
+
+                if (typeof(callback) === "function") {
+                    callback(output);
+                }
+            })
         } else {
-            // delete this.__collected;
+            throw new Error('checkURLHealth: Unable to test url, missing url;');
         }
     };
 
