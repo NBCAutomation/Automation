@@ -706,53 +706,38 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         for (var galleryItem in galleryObject) {
-            console.log(galleryItem + ' < : > ' + galleryObject[galleryItem]);
-            var galleryID = galleryItem;
+            // var galleryID = galleryItem;
             var galleryURL = galleryObject[galleryItem];
             
-            casper.wait(100, function() {
-                casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                    var status = this.status().currentHTTPStatus;
+            casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                var status = this.status().currentHTTPStatus;
 
-                    if ( status == 200) {
-                        var output = this.getPageContent();
+                if ( status == 200) {
+                    var output = this.getPageContent();
 
-                        console.log(galleryURL);
+                    console.log('resp.url ' + resp.url);
 
-                        jsonParsedOutput = JSON.parse(output);
-                        // jsonParsedOutput = output;
+                    jsonParsedOutput = JSON.parse(output);
 
-                        mainItem = jsonParsedOutput;
-
-                        for (var parentManifestItem in jsonParsedOutput) {
-
-                            if (typeof jsonParsedOutput[parentManifestItem] != 'object') {
-                                if (debugOutput) {
-                                    console.log(colorizer.colorize(parentManifestItem.toLowerCase(), 'INFO') + ' : ' + jsonParsedOutput[parentManifestItem]);
-                                }
-
-                                // var manifestKeyName = parentManifestItem.toLowerCase();
-                                // var manifestKeyValue = jsonParsedOutput[parentManifestItem];                    
-                            } else {
-                                if (parentManifestItem === 'items') {
-                                    var innerGalleryObjects = jsonParsedOutput[parentManifestItem];
-                                    for (var thisGalleryObject in innerGalleryObjects){
-                                        var gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID;
-                                        var gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
-                                        // console.log(gallerySingleImageID);
-                                        // var urlHealthStatus = suite.checkURLHealth(gallerySingleImageURL, function (data) {
-                                        //     if (! data) {
-                                        //         console.log(colorizer.colorize('     Fail: ', 'FAIL') + 'Unable to load gallery image ' + gallerySingleImageID + ', for gallery:' + galleryURL);
-                                        //     } else {
-                                        //         console.log(gallerySingleImageID + ' Gallery image loaded.');
-                                        //     }
-                                        // });
+                    for (var parentManifestItem in jsonParsedOutput) {    
+                        if (parentManifestItem === 'items') {
+                            var innerGalleryObjects = jsonParsedOutput[parentManifestItem];
+                            for (var thisGalleryObject in innerGalleryObjects){
+                                var gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID;
+                                var gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
+                                
+                                var urlHealthStatus = suite.checkURLHealth(gallerySingleImageURL, function (data) {
+                                    if (! data) {
+                                        console.log(colorizer.colorize('     Fail: ', 'FAIL') + 'Unable to load gallery image ' + gallerySingleImageID + ', for gallery:' + galleryURL);
+                                    } else {
+                                        console.log(gallerySingleImageID + ' Gallery image loaded.');
                                     }
-                                }
+                                });
                             }
                         }
+                    
                     }
-                });
+                }
             });
 
         }
