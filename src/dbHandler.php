@@ -1164,9 +1164,10 @@ class DbHandler {
                 $errorReports = $stmt->fetchAll();
 
                 foreach ($errorReports as $key => $val) {
-                    // var_dump($val['Year']);
-                    // var_dump($val['Month']);
-                    // var_dump($val['Total']);
+                    var_dump($val['Year']);
+                    var_dump($val['Month']);
+                    var_dump($val['Day']);
+                    var_dump($val['Total']);
 
                     foreach ($months as $num => $name) {
                         $monthName = date('F', mktime(0, 0, 0, $num, 10));

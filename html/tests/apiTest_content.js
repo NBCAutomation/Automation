@@ -113,15 +113,17 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             suite.testEndpointContent(collectionObject, manifestTestRefID);
 
         }).then(function () {
-            console.log('---------------------');
-            console.log(' galleryCollectionObject object   ');
-            console.log('---------------------');
-            console.log(Object.keys(galleryCollectionObject).length);
-            for (var thisGalleryCollectionItem in galleryCollectionObject) {
-                console.log('>>>>> ' + thisGalleryCollectionItem + ' : ' + galleryCollectionObject[thisGalleryCollectionItem]);
+            if (debugOutput) {
+                console.log('---------------------------------');
+                console.log(' galleryCollectionObject object   ');
+                console.log('---------------------------------');
+                console.log(Object.keys(galleryCollectionObject).length);
+                for (var thisGalleryCollectionItem in galleryCollectionObject) {
+                    console.log('>>>>> ' + thisGalleryCollectionItem + ' : ' + galleryCollectionObject[thisGalleryCollectionItem]);
+                }
             }
-
-            suite.galleryObjectTest(galleryItem, galleeryURL, testID);
+            // Test Gallery collection items
+            suite.galleryObjectTest(galleryCollectionObject, manifestTestRefID);
 
         }).then(function () {
             if (debugOutput) {
@@ -478,22 +480,16 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                 // Main endpoint data module item
                 var mainItemArticles = rawOutput.modules;
-
+                if (showOutput) {
+                    console.log('-----------------');
+                    console.log(' Test ID: ' + testID);
+                    console.log(' endpointName > '  + endpointName);
+                    console.log(' endpointUrl: ' + endpointUrl);
+                    console.log(' -------');
+                }
                 for (var innerContentItem in mainItemArticles) {
-                    // if (showOutput) {
-                        console.log('-----------------');
-                        console.log(' Test ID: ' + testID);
-                        console.log('Testing endpoint: ' + endpointUrl);
-                        console.log(' -------');
-                    // }
 
-                    // if (debugOutput) {
-                    //     console.log('-----------------');
-                    //     console.log('> Endpoint', endpointUrl);
-                    //     console.log('-----------------');
-                    // }
-
-                    console.log('== '+innerContentItem.items);
+                    // console.log('== '+innerContentItem.items);
                     var singleArticleItemObject = mainItemArticles[innerContentItem];
 
                     for (var singleArticleItem in singleArticleItemObject) {
@@ -652,28 +648,41 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 console.log('    ------------------ ');
                                             }
 
-                                                
                                             if (articleLeadMedia['typeName'] == 'Gallery') {
-                                                console.log('    ------------------ ');
-                                                console.log('     Lead Media Gallery\n');
-                                                console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
                                                 var galleryContentID = articleLeadMedia['contentID'];
                                                 var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + galleryContentID;
-                                                console.log('       gallery url to test: ' + galleryContentURL);
+
+                                                if (debugOutput) {
+                                                    console.log('    ------------------ ');
+                                                    console.log('     Lead Media Gallery\n');
+                                                    console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                                    console.log('       gallery url to test: ' + galleryContentURL);
+                                                }
+
+                                                // var urlHealthStatus = suite.checkURLHealth(galleryContentURL, function (data) {
+                                                //     if (data) {
+                                                //         console.log(colorizer.colorize('     Lead media: Gallery loaded correctly: ', 'INFO') + data);
+                                                //         galleryCollectionObject[articleContentID] = galleryContentURL;
+                                                //     }
+                                                // });
                                             }
 
                                             if (articleLeadMedia['typeName'] == 'Video Release') {
-                                                console.log('    ------------------ ');
-                                                console.log('     Lead Media Video Release\n');
-                                                console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['typeName']);
-                                                console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['extID']);
                                                 var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ articleLeadMedia['extID'] +'?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
-                                                console.log('       video url to test ' + videoURL);
 
-                                                var urlHealthStatus = suite.checkURLHealth(videoURL, function (data) {
-                                                   // console.log('     endpoint HTTP status: ' + data);
-                                                   console.log(colorizer.colorize('     endpoint HTTP status:', 'INFO') + data);
-                                                });
+                                                if (debugOutput) {
+                                                    console.log('    ------------------ ');
+                                                    console.log('     Lead Media Video Release\n');
+                                                    console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['typeName']);
+                                                    console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['extID']);
+                                                    console.log('       video url to test ' + videoURL);
+                                                }
+
+                                                // var urlHealthStatus = suite.checkURLHealth(videoURL, function (data) {
+                                                //     if (data) {
+                                                //         console.log(colorizer.colorize('     Lead media: Video release file: ', 'INFO') + data);
+                                                //     }
+                                                // });
                                             }
 
                                             if (debugOutput) {console.log('  >---------------')};
@@ -694,8 +703,58 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     apiSuite.prototype.galleryObjectTest = function(galleryObject, testID) {
+        var suite = this;
+
         for (var galleryItem in galleryObject) {
             console.log(galleryItem + ' < : > ' + galleryObject[galleryItem]);
+            var galleryID = galleryItem;
+            var galleryURL = galleryObject[galleryItem];
+            
+            casper.wait(100, function() {
+                casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+                    var status = this.status().currentHTTPStatus;
+
+                    if ( status == 200) {
+                        var output = this.getPageContent();
+
+                        console.log(galleryURL);
+
+                        jsonParsedOutput = JSON.parse(output);
+                        // jsonParsedOutput = output;
+
+                        mainItem = jsonParsedOutput;
+
+                        for (var parentManifestItem in jsonParsedOutput) {
+
+                            if (typeof jsonParsedOutput[parentManifestItem] != 'object') {
+                                if (debugOutput) {
+                                    console.log(colorizer.colorize(parentManifestItem.toLowerCase(), 'INFO') + ' : ' + jsonParsedOutput[parentManifestItem]);
+                                }
+
+                                // var manifestKeyName = parentManifestItem.toLowerCase();
+                                // var manifestKeyValue = jsonParsedOutput[parentManifestItem];                    
+                            } else {
+                                if (parentManifestItem === 'items') {
+                                    var innerGalleryObjects = jsonParsedOutput[parentManifestItem];
+                                    for (var thisGalleryObject in innerGalleryObjects){
+                                        var gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID;
+                                        var gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
+                                        // console.log(gallerySingleImageID);
+                                        // var urlHealthStatus = suite.checkURLHealth(gallerySingleImageURL, function (data) {
+                                        //     if (! data) {
+                                        //         console.log(colorizer.colorize('     Fail: ', 'FAIL') + 'Unable to load gallery image ' + gallerySingleImageID + ', for gallery:' + galleryURL);
+                                        //     } else {
+                                        //         console.log(gallerySingleImageID + ' Gallery image loaded.');
+                                        //     }
+                                        // });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
         }
     };
 
