@@ -706,7 +706,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         for (var galleryItem in galleryObject) {
-            // var galleryID = galleryItem;
+            var galleryID = galleryItem;
             var galleryURL = galleryObject[galleryItem];
             
             casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
@@ -726,13 +726,17 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 var gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID;
                                 var gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
                                 
+                                console.log('gallerySingleImageID > ' + gallerySingleImageID);
                                 var urlHealthStatus = suite.checkURLHealth(gallerySingleImageURL, function (data) {
                                     if (! data) {
                                         console.log(colorizer.colorize('     Fail: ', 'FAIL') + 'Unable to load gallery image ' + gallerySingleImageID + ', for gallery:' + galleryURL);
                                     } else {
                                         console.log(gallerySingleImageID + ' Gallery image loaded.');
                                     }
+                                    return data;
                                 });
+
+                                console.log('urlHealthStatus ' + urlHealthStatus);
                             }
                         }
                     
