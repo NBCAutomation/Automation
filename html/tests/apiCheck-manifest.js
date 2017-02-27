@@ -22,6 +22,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var colorizer = require('colorizer').create('Colorizer');
     var logResults = true;
     var envConfig = casper.cli.get('env');
+    var cronProcess = casper.cli.get('cron');
 
     if (envConfig === 'local') {
         var configURL = 'http://spire.app';
@@ -712,7 +713,12 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
 
                     // var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
-                    var dictionaryFile = '../manifest_dictionary/' + urlUri + '_dictionary.csv';
+                    if (cronProcess) {
+                        var dictionaryFile = 'manifest_dictionary/' + urlUri + '_dictionary.csv';    
+                    } else {
+                        var dictionaryFile = '../manifest_dictionary/' + urlUri + '_dictionary.csv';
+                    }
+                    
                     var localDictName =  urlUri + '_dictionary.csv';
 
                     var dictionaryManifestData = fs.read(dictionaryFile);
