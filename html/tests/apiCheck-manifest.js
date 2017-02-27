@@ -712,7 +712,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
 
                     // var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
-                    var dictionaryFile = 'manifest_dictionary/' + urlUri + '_dictionary.csv';
+                    var dictionaryFile = '../manifest_dictionary/' + urlUri + '_dictionary.csv';
                     var localDictName =  urlUri + '_dictionary.csv';
 
                     var dictionaryManifestData = fs.read(dictionaryFile);
