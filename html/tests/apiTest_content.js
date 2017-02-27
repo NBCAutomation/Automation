@@ -123,7 +123,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 }
             }
             // Test Gallery collection items
-            suite.galleryObjectTest(galleryCollectionObject, manifestTestRefID);
+            // suite.galleryObjectTest(galleryCollectionObject, manifestTestRefID);
 
         }).then(function () {
             if (debugOutput) {
@@ -460,7 +460,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             }
         }
     };
-    
+
     apiSuite.prototype.endpointContentValidation = function(endpointName, endpointUrl, testID) {
         var suite = this;
         var baseUrl = casper.cli.get('url');
@@ -476,287 +476,290 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 var output = this.getPageContent();
                 var setFail = 0;
                 
-                rawOutput = JSON.parse(output);
+                // rawOutput = JSON.parse(output);
 
-                // Main endpoint data module item
-                var mainItemArticles = rawOutput.modules;
-                if (showOutput) {
-                    console.log('-----------------');
-                    console.log(' Test ID: ' + testID);
-                    console.log(' endpointName > '  + endpointName);
-                    console.log(' endpointUrl: ' + endpointUrl);
-                    console.log(' -------');
-                }
-                for (var innerContentItem in mainItemArticles) {
+                try{
+                    rawOutput = JSON.parse(output);
 
-                    // console.log('== '+innerContentItem.items);
-                    var singleArticleItemObject = mainItemArticles[innerContentItem];
+                    // Main endpoint data module item
+                    var mainItemArticles = rawOutput.modules;
+                    if (showOutput) {
+                        console.log('---------------------------------');
+                        // console.log(' Test ID: ' + testID);
+                        console.log(' endpointName > '  + endpointName);
+                        console.log(' endpointUrl: ' + endpointUrl);
+                        console.log('---------------------------------');
+                    }
+                    for (var innerContentItem in mainItemArticles) {
 
-                    for (var singleArticleItem in singleArticleItemObject) {
+                        // console.log('== '+innerContentItem.items);
+                        var singleArticleItemObject = mainItemArticles[innerContentItem];
 
-                        if (singleArticleItem === 'items' && typeof singleArticleItemObject[singleArticleItem] === 'object') {
-                            
-                            var singleArticleInnerItems = singleArticleItemObject[singleArticleItem];
+                        for (var singleArticleItem in singleArticleItemObject) {
 
-                            var __subCount = 0;
+                            if (singleArticleItem === 'items' && typeof singleArticleItemObject[singleArticleItem] === 'object') {
+                                
+                                var singleArticleInnerItems = singleArticleItemObject[singleArticleItem];
 
-                            for (var __items in singleArticleInnerItems) {
+                                var __subCount = 0;
 
-                                if (typeof singleArticleInnerItems[__items] === 'object') {
+                                for (var __items in singleArticleInnerItems) {
 
-                                    var articleContentID = singleArticleInnerItems[__items].contentID;
-                                    var articleTitle = singleArticleInnerItems[__items].title;
-                                    var articleByline = singleArticleInnerItems[__items].byline;
-                                    var articleSummary = singleArticleInnerItems[__items].summary;
-                                    var articleDisplayDate = singleArticleInnerItems[__items].displayDate;
-                                    var articleUpdatedMessage = singleArticleInnerItems[__items].updatedMessage;
-                                    var articleShareURL = singleArticleInnerItems[__items].shareURL;
-                                    var articleTypeName = singleArticleInnerItems[__items].typeName;
-                                    var articleFullsizeImageURL = singleArticleInnerItems[__items].fullsizeImageURL;
-                                    var articleThumbnailImageURL = singleArticleInnerItems[__items].thumbnailImageURL;
-                                    var articleFullsizeLeadImageURL = singleArticleInnerItems[__items].fullsizeLeadImageURL;
-                                    var articleLeadImageURL = singleArticleInnerItems[__items].leadImageURL;
-                                    var articleFeature = singleArticleInnerItems[__items].feature;
-                                    var articleFeatureName = singleArticleInnerItems[__items].featureName;
-                                    var articleFeatureID = singleArticleInnerItems[__items].featureId;
-                                    var articleSponsored = singleArticleInnerItems[__items].sponsored;
-                                    var articleSponsorName = singleArticleInnerItems[__items].sponsorName;
-                                    var articleSponsorID = singleArticleInnerItems[__items].sponsorID;
-                                    var articleIsLiveStream = singleArticleInnerItems[__items].isLiveStream;
-                                    var articleLiveVideoEmbed = singleArticleInnerItems[__items].liveVideoEmbed;
-                                    var articleLiveAppVideoEmbed = singleArticleInnerItems[__items].liveAppVideoEmbed;
-                                    var articleContentBody = singleArticleInnerItems[__items].contentBody;
-                                    var articleLeadMedia = singleArticleInnerItems[__items].leadMedia;
+                                    if (typeof singleArticleInnerItems[__items] === 'object') {
+
+                                        var articleContentID = singleArticleInnerItems[__items].contentID;
+                                        var articleTitle = singleArticleInnerItems[__items].title;
+                                        var articleByline = singleArticleInnerItems[__items].byline;
+                                        var articleSummary = singleArticleInnerItems[__items].summary;
+                                        var articleDisplayDate = singleArticleInnerItems[__items].displayDate;
+                                        var articleUpdatedMessage = singleArticleInnerItems[__items].updatedMessage;
+                                        var articleShareURL = singleArticleInnerItems[__items].shareURL;
+                                        var articleTypeName = singleArticleInnerItems[__items].typeName;
+                                        var articleFullsizeImageURL = singleArticleInnerItems[__items].fullsizeImageURL;
+                                        var articleThumbnailImageURL = singleArticleInnerItems[__items].thumbnailImageURL;
+                                        var articleFullsizeLeadImageURL = singleArticleInnerItems[__items].fullsizeLeadImageURL;
+                                        var articleLeadImageURL = singleArticleInnerItems[__items].leadImageURL;
+                                        var articleFeature = singleArticleInnerItems[__items].feature;
+                                        var articleFeatureName = singleArticleInnerItems[__items].featureName;
+                                        var articleFeatureID = singleArticleInnerItems[__items].featureId;
+                                        var articleSponsored = singleArticleInnerItems[__items].sponsored;
+                                        var articleSponsorName = singleArticleInnerItems[__items].sponsorName;
+                                        var articleSponsorID = singleArticleInnerItems[__items].sponsorID;
+                                        var articleIsLiveStream = singleArticleInnerItems[__items].isLiveStream;
+                                        var articleLiveVideoEmbed = singleArticleInnerItems[__items].liveVideoEmbed;
+                                        var articleLiveAppVideoEmbed = singleArticleInnerItems[__items].liveAppVideoEmbed;
+                                        var articleContentBody = singleArticleInnerItems[__items].contentBody;
+                                        var articleLeadMedia = singleArticleInnerItems[__items].leadMedia;
 
 
-                                    if (debugOutput) {
-                                        console.log('-------------------------------');
-                                        console.log(' Content item var declaration   ');
-                                        console.log('-------------------------------');
-                                        console.log('    > articleContentID : ' + articleContentID);
-                                        console.log('    > articleTitle : ' + articleTitle);
-                                        console.log('    > articleByline : ' + articleByline);
-                                        // console.log('    > articleSummary : ' + articleSummary);
-                                        console.log('    > articleDisplayDate : ' + articleDisplayDate);
-                                        console.log('    > articleUpdatedMessage : ' + articleUpdatedMessage);
-                                        console.log('    > articleShareURL : ' + articleShareURL);
-                                        console.log('    > articleTypeName : ' + articleTypeName);
-                                        console.log('    > articleFullsizeImageURL : ' + articleFullsizeImageURL);
-                                        console.log('    > articleThumbnailImageURL : ' + articleThumbnailImageURL);
-                                        console.log('    > articleFullsizeLeadImageURL : ' + articleFullsizeLeadImageURL);
-                                        console.log('    > articleLeadImageURL : ' + articleLeadImageURL);
-                                        console.log('    > articleFeature : ' + articleFeature);
-                                        console.log('    > articleFeatureName : ' + articleFeatureName);
-                                        console.log('    > articleFeatureName : ' + articleFeatureID);
-                                        console.log('    > articleSponsored : ' + articleSponsored);
-                                        console.log('    > articleSponsorName : ' + articleSponsorName);
-                                        console.log('    > articleSponsorID : ' + articleSponsorID);
-                                        console.log('    > articleIsLiveStream : ' + articleIsLiveStream);
-                                        console.log('    > articleLiveVideoEmbed : ' + articleLiveVideoEmbed);
-                                        console.log('    > articleLiveAppVideoEmbed : ' + articleLiveAppVideoEmbed);
-                                        // console.log('    > articleContentBody : ' + articleContentBody);
-                                        console.log('    > articleLeadMedia : ' + articleLeadMedia);
-                                    }
-
-                                    if (articleTypeName !== 'FeaturePageHeader') {
-                                        // If gallery collect into gallery object
-                                        if (articleTypeName == 'Gallery') {
-                                            var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
-
-                                            if (debugOutput) {
-                                                console.log('    ------------------ ');
-                                                console.log('     Gallery\n');
-                                                console.log('      >  Gallery items url = ' + galleryContentURL);
-                                            }
-                                            // Add to gallery collection object for testing. 
-                                            galleryCollectionObject[articleContentID] = galleryContentURL;
-                                            
-                                            // suite.galleryObjectTest(galleryItem, galleeryURL, testID);
+                                        if (debugOutput) {
+                                            console.log('-------------------------------');
+                                            console.log(' Content item var declaration   ');
+                                            console.log('-------------------------------');
+                                            console.log('    > articleContentID : ' + articleContentID);
+                                            console.log('    > articleTitle : ' + articleTitle);
+                                            console.log('    > articleByline : ' + articleByline);
+                                            // console.log('    > articleSummary : ' + articleSummary);
+                                            console.log('    > articleDisplayDate : ' + articleDisplayDate);
+                                            console.log('    > articleUpdatedMessage : ' + articleUpdatedMessage);
+                                            console.log('    > articleShareURL : ' + articleShareURL);
+                                            console.log('    > articleTypeName : ' + articleTypeName);
+                                            console.log('    > articleFullsizeImageURL : ' + articleFullsizeImageURL);
+                                            console.log('    > articleThumbnailImageURL : ' + articleThumbnailImageURL);
+                                            console.log('    > articleFullsizeLeadImageURL : ' + articleFullsizeLeadImageURL);
+                                            console.log('    > articleLeadImageURL : ' + articleLeadImageURL);
+                                            console.log('    > articleFeature : ' + articleFeature);
+                                            console.log('    > articleFeatureName : ' + articleFeatureName);
+                                            console.log('    > articleFeatureName : ' + articleFeatureID);
+                                            console.log('    > articleSponsored : ' + articleSponsored);
+                                            console.log('    > articleSponsorName : ' + articleSponsorName);
+                                            console.log('    > articleSponsorID : ' + articleSponsorID);
+                                            console.log('    > articleIsLiveStream : ' + articleIsLiveStream);
+                                            console.log('    > articleLiveVideoEmbed : ' + articleLiveVideoEmbed);
+                                            console.log('    > articleLiveAppVideoEmbed : ' + articleLiveAppVideoEmbed);
+                                            // console.log('    > articleContentBody : ' + articleContentBody);
+                                            console.log('    > articleLeadMedia : ' + articleLeadMedia);
                                         }
 
-                                        if (articleFullsizeImageURL.indexOf('0*false') > -1 || articleFullsizeImageURL == null) {
-                                            console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + articleFullsizeImageURL + '.', 'ERROR'));
-                                        }
-
-                                        if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
-                                            // console.log('  []> article_contentID  : ' + singleArticleInnerItems[__items].contentID + '\n  []> article_typeName  : ' + articleTypeName + '\n  []> article_title  : ' + singleArticleInnerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + singleArticleInnerItems[__items].thumbnailImageURL);
-                                            console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
-                                        }
-
-                                        // Check for the Feature flag
-                                        if (articleFeature === true) {
-                                            if (articleFeatureName.length <= 0) {
-                                                setFail++;
-
-                                                var __curError = 'Feature flag set to TRUE but featureName empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
-                                                var __curError = '';
-
-                                            } else if (articleFeatureID.length <= 0) {
-                                                setFail++;
-
-                                                var __curError = 'Feature flag set to TRUE but featureId empty.';
-                                                
-                                                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
-                                                var __curError = '';
-                                            }
-                                        }
-
-                                        // Check for the Sponsor flag
-                                        if (articleSponsored === true) {
-                                            if (articleSponsorName.length <= 0) {
-                                                setFail++;
-                                                
-                                                var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
-                                                var __curError = '';
-                                            } else if (articleSponsorID.length <= 0) {
-                                                setFail++;
-                                                
-                                                var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
-                                                var __curError = '';
-                                            }
-                                        }
-
-                                        // Check for the LiveStream flag
-                                        if (articleIsLiveStream === true) {
-                                            if (articleLiveVideoEmbed.length <= 0) {
-                                                setFail++;
-
-                                                var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.', 'ERROR'));
-
-                                                var __curError = '';
-                                            } else if (articleLiveAppVideoEmbed.length <= 0) {
-                                                setFail++;
-                                                
-                                                var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
-
-                                                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
-
-                                                var __curError = '';
-                                            }
-                                        }
-
-                                        if (typeof articleLeadMedia === 'object') {
-                                            if (debugOutput) {
-                                                console.log('    ------------------ ');
-                                            }
-
-                                            if (articleLeadMedia['typeName'] == 'Gallery') {
-                                                var galleryContentID = articleLeadMedia['contentID'];
-                                                var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + galleryContentID;
+                                        if (articleTypeName !== 'FeaturePageHeader') {
+                                            // If gallery collect into gallery object
+                                            if (articleTypeName == 'Gallery') {
+                                                var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
 
                                                 if (debugOutput) {
                                                     console.log('    ------------------ ');
-                                                    console.log('     Lead Media Gallery\n');
-                                                    console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
-                                                    console.log('       gallery url to test: ' + galleryContentURL);
+                                                    console.log('     Gallery\n');
+                                                    console.log('      >  Gallery items url = ' + galleryContentURL);
                                                 }
-
-                                                // var urlHealthStatus = suite.checkURLHealth(galleryContentURL, function (data) {
-                                                //     if (data) {
-                                                //         console.log(colorizer.colorize('     Lead media: Gallery loaded correctly: ', 'INFO') + data);
-                                                //         galleryCollectionObject[articleContentID] = galleryContentURL;
-                                                //     }
-                                                // });
+                                                // Test gallery content
+                                                suite.galleryObjectTest(galleryContentURL, testID);
                                             }
 
-                                            if (articleLeadMedia['typeName'] == 'Video Release') {
-                                                var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ articleLeadMedia['extID'] +'?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
+                                            if (articleFullsizeImageURL.indexOf('0*false') > -1 || articleFullsizeImageURL == null) {
+                                                console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + articleFullsizeImageURL + '.', 'ERROR'));
+                                            }
 
+                                            if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
+                                                // console.log('  []> article_contentID  : ' + singleArticleInnerItems[__items].contentID + '\n  []> article_typeName  : ' + articleTypeName + '\n  []> article_title  : ' + singleArticleInnerItems[__items].title + '\n  []> article_thumbnailImageURL  : ' + singleArticleInnerItems[__items].thumbnailImageURL);
+                                                console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
+                                            }
+
+                                            // Check for the Feature flag
+                                            if (articleFeature === true) {
+                                                if (articleFeatureName.length <= 0) {
+                                                    setFail++;
+
+                                                    var __curError = 'Feature flag set to TRUE but featureName empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
+                                                    var __curError = '';
+
+                                                } else if (articleFeatureID.length <= 0) {
+                                                    setFail++;
+
+                                                    var __curError = 'Feature flag set to TRUE but featureId empty.';
+                                                    
+                                                    console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
+                                                    var __curError = '';
+                                                }
+                                            }
+
+                                            // Check for the Sponsor flag
+                                            if (articleSponsored === true) {
+                                                if (articleSponsorName.length <= 0) {
+                                                    setFail++;
+                                                    
+                                                    var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
+                                                    var __curError = '';
+                                                } else if (articleSponsorID.length <= 0) {
+                                                    setFail++;
+                                                    
+                                                    var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
+                                                    var __curError = '';
+                                                }
+                                            }
+
+                                            // Check for the LiveStream flag
+                                            if (articleIsLiveStream === true) {
+                                                if (articleLiveVideoEmbed.length <= 0) {
+                                                    setFail++;
+
+                                                    var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.', 'ERROR'));
+
+                                                    var __curError = '';
+                                                } else if (articleLiveAppVideoEmbed.length <= 0) {
+                                                    setFail++;
+                                                    
+                                                    var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
+
+                                                    console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
+
+                                                    var __curError = '';
+                                                }
+                                            }
+
+                                            if (typeof articleLeadMedia === 'object') {
                                                 if (debugOutput) {
                                                     console.log('    ------------------ ');
-                                                    console.log('     Lead Media Video Release\n');
-                                                    console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['typeName']);
-                                                    console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['extID']);
-                                                    console.log('       video url to test ' + videoURL);
                                                 }
 
-                                                // var urlHealthStatus = suite.checkURLHealth(videoURL, function (data) {
-                                                //     if (data) {
-                                                //         console.log(colorizer.colorize('     Lead media: Video release file: ', 'INFO') + data);
-                                                //     }
-                                                // });
+                                                if (articleLeadMedia['typeName'] == 'Gallery') {
+                                                    var galleryContentID = articleLeadMedia['contentID'];
+                                                    var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + galleryContentID;
+
+                                                    if (debugOutput) {
+                                                        console.log('    ------------------ ');
+                                                        console.log('     Lead Media Gallery\n');
+                                                        console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                                                        console.log('       gallery url to test: ' + galleryContentURL);
+                                                    }
+
+                                                    var urlHealthStatus = suite.checkURLHealth(galleryContentURL, function (data) {
+                                                        if (data) {
+                                                            if (showOutput) {
+                                                                console.log(' > Lead media: Gallery loaded correctly ok: ' + colorizer.colorize(data, 'INFO'));
+                                                            }
+                                                        }
+                                                    });
+                                                }
+
+                                                if (articleLeadMedia['typeName'] == 'Video Release') {
+                                                    var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ articleLeadMedia['extID'] +'?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
+
+                                                    if (debugOutput) {
+                                                        console.log('    ------------------ ');
+                                                        console.log('     Lead Media Video Release\n');
+                                                        console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['typeName']);
+                                                        console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['extID']);
+                                                        console.log('       video url to test ' + videoURL);
+                                                    }
+
+                                                    var urlHealthStatus = suite.checkURLHealth(videoURL, function (data) {
+                                                        if (data) {
+                                                            if (showOutput) {
+                                                                console.log(' > Lead media: Video release file url OK: ' + colorizer.colorize(data, 'INFO'));
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                                if (debugOutput) {console.log('  >---------------')};
                                             }
-
-                                            if (debugOutput) {console.log('  >---------------')};
-
                                         }
+                                        if (debugOutput) {console.log('  -----------------')};
                                     }
-
-                                    if (debugOutput) {console.log('  -----------------')};
                                 }
                             }
-                            
                         }
                     }
+                    if (showOutput) {
+                        casper.wait(200, function() {
+                            console.log(' > Endpoint testing completed with ' + setFail + ' FAILs.');
+                        });
+                    }                    
+                } catch (e) {
+                    if (showOutput) {
+                        console.log(' ' + colorizer.colorize('JSON Parse Fail:', 'FAIL') + e);
+                        // console.log('   JSON Object ');
+                        // console.log('  ------------------------------');
+                        // console.log( JSON.stringify(output));
+                        // console.log('  ------------------------------');
+                    };
                 }
-                if (showOutput) { console.log(' >> Endpoint testing completed with ' + setFail + ' FAILs.'); }
             });
         }
     };
 
-    apiSuite.prototype.galleryObjectTest = function(galleryObject, testID) {
+    apiSuite.prototype.galleryObjectTest = function(galleryURL, testID) {
         var suite = this;
-
-        for (var galleryItem in galleryObject) {
-            var galleryID = galleryItem;
-            var galleryURL = galleryObject[galleryItem];
             
-            casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-                var status = this.status().currentHTTPStatus;
+        casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+            var status = this.status().currentHTTPStatus;
 
-                if ( status == 200) {
-                    var output = this.getPageContent();
+            if ( status == 200) {
+                var output = this.getPageContent();
+                console.log(' > Gallery url: ' + resp.url);
 
-                    console.log('resp.url ' + resp.url);
+                jsonParsedOutput = JSON.parse(output);
 
-                    jsonParsedOutput = JSON.parse(output);
-
-                    for (var parentManifestItem in jsonParsedOutput) {    
-                        if (parentManifestItem === 'items') {
-                            var innerGalleryObjects = jsonParsedOutput[parentManifestItem];
-                            for (var thisGalleryObject in innerGalleryObjects){
-                                var gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID;
-                                var gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
-                                
-                                console.log('gallerySingleImageID > ' + gallerySingleImageID);
-                                var urlHealthStatus = suite.checkURLHealth(gallerySingleImageURL, function (data) {
-                                    if (! data) {
-                                        console.log(colorizer.colorize('     Fail: ', 'FAIL') + 'Unable to load gallery image ' + gallerySingleImageID + ', for gallery:' + galleryURL);
-                                    } else {
-                                        console.log(gallerySingleImageID + ' Gallery image loaded.');
-                                    }
-                                    return data;
-                                });
-
-                                console.log('urlHealthStatus ' + urlHealthStatus);
-                            }
+                for (var parentManifestItem in jsonParsedOutput) {    
+                    if (parentManifestItem === 'items') {
+                        var innerGalleryObjects = jsonParsedOutput[parentManifestItem];
+                        for (var thisGalleryObject in innerGalleryObjects){
+                            var gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID;
+                            var gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
+                            
+                            // console.log('gallerySingleImageID > ' + gallerySingleImageID);
+                            suite.checkURLHealth(gallerySingleImageURL, function (data) {
+                                if (data == 'Pass') {
+                                    console.log('   - Gallery image loaded.');
+                                } else {
+                                    console.log('   - Fail: Unable to load gallery image, for gallery:' + gallerySingleImageURL);
+                                }
+                            });
                         }
-                    
                     }
+                
                 }
-            });
-
-        }
+            }
+        });
     };
-
+    
     apiSuite.prototype.checkURLHealth = function(url, callback) {
         var suite = this;
 
         if (url) {
-            casper.open(url).then(function(resp) {
+            casper.thenOpen(url).then(function(resp) {
                 var status = this.status().currentHTTPStatus,
                     output = false;
 
                 if ( status == 200) {
-                    output = true;
+                    output = 'Pass';
                 } else {
                     output = false;
                 }
