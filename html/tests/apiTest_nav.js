@@ -42,8 +42,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var testResultsObject = {};
     var currentTestObject = {};
     var manifestTestRefID;
-    var manifestTestStatus;
-    manifestTestStatus = 'Pass';
+    var manifestTestStatus = 'Pass';
+    var setFail = 0;
 
     var reqKeys = new Array(
         "navigationID",
@@ -129,7 +129,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
             //Process test results to DB
             if (logResults) {
-                suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, 'apiNavTest', manifestTestStatus);
+                suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiNavTest', manifestTestStatus);
             }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
@@ -169,7 +169,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     // Log results in DB
-    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testType, manifestTestStatus) {
+    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestTestStatus) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
@@ -184,6 +184,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 'testType': testType,
                 'testProperty': urlUri,
                 'testStatus': manifestTestStatus,
+                'testFailureCount':testFailureCount,
                 'testResults':  JSON.stringify(testResultsObject)
             }
         });
@@ -348,15 +349,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 var output = this.getPageContent();
                 var currentTestResults = {};
 
-                currentTestResults['url'] = url;
-                currentTestResults['httpStatus'] = status;
-
                 if ( status == 200) {
                     if (showOutput) {
                         if (url.indexOf('submit-your-photos') > -1) {
                             if (showOutput) {console.log('Skipping UGC url....')};
                         } else {
-                            // console.log(endpointName + '..........');
                             console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
                             
                             // Test parsing JSON
@@ -375,9 +372,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                             if (validated) {
                                 if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
-                                currentTestResults['jsonValidated'] = 'Pass';
-
-
                             } else {
                                 if (showOutput) {console.log('...re-testing JSON')};
                                 var reg = /\<body[^>]*\>([^]*)\<\/body/m;
@@ -397,28 +391,49 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                             }
                                         } catch (e) {
                                             // ...
-                                            if (showOutput) {console.log(colorizer.colorize('WARNING: ', 'COMMENT') + 'Parse fail unable to parse programmatically also with removing HTML tags, possible False/Positive..check url manually.')};
+                                            if (showOutput) {
+                                                console.log('-------------------');
+                                                console.log(' JSON Parse Warning  ');
+                                                console.log('-------------------');
+                                                console.log(colorizer.colorize('WARNING: ', 'COMMENT') + 'Parse fail unable to parse programmatically also with removing HTML tags, possible False/Positive..check url manually.');
+                                            }
                                             currentTestResults['jsonValidated'] = 'Warning';
                                         }
                                     }
 
                                 } catch (e) {
-                                    if (showOutput) {console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!')};
+                                    if (showOutput) {
+                                        console.log('-------------------');
+                                        console.log(' JSON Parse Error  ');
+                                        console.log('-------------------');
+                                        console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!');
+                                    };
                                     
                                     currentTestResults['jsonValidated'] = 'Fail';
                                     currentTestStatus = 'Fail';
                                     manifestTestStatus = 'Fail';
+                                    setFail++;
                                 }
                             }
                             if (showOutput) {console.log('-----------------')};
                         }
                     }
+                } else {
+                    currentTestResults['url'] = url;
+                    currentTestResults['httpStatus'] = status;
                 }
 
                 // Set current test status & results
-                currentTestObject[urlName] = currentTestResults;
+                if (Object.keys(currentTestResults).length > 0) {
+                    currentTestObject[urlName] = currentTestResults;
+                }
+
+                if (Object.keys(currentTestResults).length > 0) {
+                    testResultsObject['testResults'] = currentTestObject;
+                }
+
                 testResultsObject['testStatus'] = currentTestStatus;
-                testResultsObject['testResults'] = currentTestObject;
+                
             })
         } else {
             if (showOutput) {console.log(colorizer.colorize('No url provided for JSON validation!', 'ERROR'))};

@@ -51,6 +51,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var testResultsObject = {};
     var manifestTestRefID;
     var manifestTestStatus;
+    var setFail = 0;
 
     // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
     var reqKeys = new Array(
@@ -264,7 +265,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 //Process test results to DB
                 if (logResults) {
-                    suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, 'apiManifestTest', manifestTestStatus);
+                    suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiManifestTest', manifestTestStatus);
                 }
 
             }).run(function() {
@@ -330,7 +331,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         });
     };
 
-    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testType, manifestTestStatus) {
+    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestTestStatus) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
@@ -345,6 +346,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 'testType': testType,
                 'testProperty': urlUri,
                 'testStatus': manifestTestStatus,
+                'testFailureCount':testFailureCount,
                 'testResults':  JSON.stringify(testResultsObject)
             }
         });
@@ -539,6 +541,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 console.log('---------------------------');
                 console.log(' ! ' + errorCount + ' Failures Found !');
                 console.log('---------------------------');
+
+                setFail = errorCount;
 
                 for (var i = testErrors.length - 1; i >= 0; i--) {
                     console.log(colorizer.colorize('- FAIL: ' + testErrors[i], 'ERROR'));

@@ -400,7 +400,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                     console.log('-------------------');
                                     console.log('Unable to test parse JSON data via validateJson(). url: ' + url);
                                     console.log(e);
-                                    setFail++
+                                    setFail++;
                                 };
                             }
 
@@ -431,7 +431,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 console.log('-------------------');
                                                 console.log(colorizer.colorize('WARNING: ', 'COMMENT') + 'Parse fail unable to parse programmatically also with removing HTML tags, possible False/Positive..check url manually.');
                                             };
-                                            setFail++
+                                            setFail++;
                                             currentTestResults['jsonValidated'] = 'Warning';
                                         }
                                     }
@@ -443,7 +443,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         console.log('-------------------');
                                         console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!');
                                     };
-                                    setFail++
+                                    setFail++;
                                     currentTestResults['jsonValidated'] = 'Fail';
                                     manifestTestStatus = 'Fail';
                                 }
@@ -692,7 +692,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                                     var urlHealthStatus = suite.checkURLHealth(galleryContentURL, function (data) {
                                                         if (! data) {
-                                                            setFail++
+                                                            setFail++;
                                                             if (showOutput) {
                                                                console.log(' > Lead media: Gallery loaded failed to load correctly: ' + colorizer.colorize(data, 'FAIL'));
                                                                subTestResults['leadMedia_gallery_urlHealthStatus'] = 'Lead media: Gallery loaded failed to load correctly';
@@ -714,7 +714,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                                                     var urlHealthStatus = suite.checkURLHealth(videoURL, function (data) {
                                                         if (! data) {
-                                                            setFail++
+                                                            setFail++;
                                                             if (showOutput) {
                                                                 console.log(' > Lead media: Video release file url Failed to load: ' + colorizer.colorize(data, 'FAIL'));
                                                                 subTestResults['leadMedia_video_urlHealthStatus'] = 'Lead media: Video release file url Failed to load';
@@ -762,7 +762,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                         subTestResults['endpointContentValidationError_' + endpointName] = 'endpoint: ' + endpointUrl + ' // \n JSON Error: ' + e;
                         manifestTestStatus = 'Fail';
-                        setFail++
+                        setFail++;
                     };
                 }
             });
@@ -814,7 +814,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                                 console.log('   - gallerySingleImageURL > ' + gallerySingleImageURL);
                                             }
                                             galleryTestingResults['galleryImage_' + gallerySingleImageID] = 'Fail: Unable to load gallery image: ' + gallerySingleImageURL;
-                                            setFail++
+                                            setFail++;
                                         } else {
                                             if (showOutput) {
                                                 console.log(colorizer.colorize('   - Gallery image ', 'COMMENT') + gallerySingleImageID + colorizer.colorize(' // Status: ' + httpStatus, 'INFO'));
@@ -835,7 +835,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         console.log(e)
                         subTestResults['jsonParseError_' + articleContentID] = 'galleryURL: ' + resp.url + ' // \n JSON Error: ' + e;
                         manifestTestStatus = 'Fail';
-                        setFail++
+                        setFail++;
                     };
                 }
                 if (Object.keys(galleryTestingResults).length > 0){
