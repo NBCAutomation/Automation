@@ -1112,10 +1112,13 @@ $app->group('/utils', function () {
     		$testType = $utilPostParams['testType'];
     		$station = $utilPostParams['testProperty'];
     		$status = $utilPostParams['testStatus'];
+    		$testFailureCount = $utilPostParams['testFailureCount'];
     		$results = $utilPostParams['testResults'];
     		$info = '';
     		  	
-    		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $results, $info);
+    		  	$this->logger->info('made it here from test '.$testType);
+
+    		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $results, $info);
     		
     		if ($processManifestTestResults){
     			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",testType=>". $testType .",testStatus=>". $status ."]");

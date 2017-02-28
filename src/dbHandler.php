@@ -446,12 +446,11 @@ class DbHandler {
     /**
      * Insert test results; New formatted table for JSON test results.
      */
-    
-    public function insertTestResults($testID, $testType, $station, $status, $results, $info) {
+    public function insertTestResults($testID, $testType, $station, $status, $testFailureCount, $results, $info) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("INSERT INTO test_results(ref_test_id, test_type, property, status, results_data, info) VALUES(?, ?, ?, ?, ?, ?)");
-        $insertStatement = $stmt->execute(array($testID, $testType, $station, $status, $results, $info));
+        $stmt = $db_con->prepare("INSERT INTO test_results(ref_test_id, test_type, property, status, failures, results_data, info) VALUES(?, ?, ?, ?, ?, ?, ?)");
+        $insertStatement = $stmt->execute(array($testID, $testType, $station, $status, $testFailureCount, $results, $info));
 
         if ($insertStatement) {
             $lastInsertId = $db_con->lastInsertId();
