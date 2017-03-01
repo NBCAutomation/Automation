@@ -6,11 +6,6 @@
 // todayNavTotalWarningReports
 // todayContentTotalFailureReports
 // todayContentTotalWarningReports
-if ( $todayManifestTotalFailureReports > 0 || $todayNavTotalFailureReports > 0 || $todayContentTotalFailureReports > 0 ) {
-	$tableClass = 'bk-danger';
-} else {
-	$tableClass = 'bk-success';
-}
 ?>
 	<div class="panel-body">
 		<?php if ($user) { ?>
@@ -24,7 +19,7 @@ if ( $todayManifestTotalFailureReports > 0 || $todayNavTotalFailureReports > 0 |
 					<div class="row">
 						<div class="col-xs-6 col-sm-3">
 							<div class="panel panel-default">
-								<div class="panel-body text-light <?php echo $tableClass; ?>">
+								<div class="panel-body text-light <?php if ( $todayManifestTotalFailureReports > 0 ){ echo 'bk-danger'; } else { echo 'bk-success'; } ?>">
 									<div class="stat-panel text-center">
 										<div class="stat-panel-number h1 "><?php echo $todayManifestTotalFailureReports; ?></div>
 										<div class="stat-panel-title text-uppercase">Manifest errors</div>
@@ -35,7 +30,7 @@ if ( $todayManifestTotalFailureReports > 0 || $todayNavTotalFailureReports > 0 |
 						</div>
 						<div class="col-xs-6 col-sm-3">
 							<div class="panel panel-default">
-								<div class="panel-body text-light <?php echo $tableClass; ?>">
+								<div class="panel-body text-light <?php if ( $todayNavTotalFailureReports > 0 ){ echo 'bk-danger'; } else { echo 'bk-success'; } ?>">
 									<div class="stat-panel text-center">
 										<div class="stat-panel-number h1 "><?php echo $todayNavTotalFailureReports; ?></div>
 										<div class="stat-panel-title text-uppercase">Navigation Errors</div>
@@ -46,7 +41,7 @@ if ( $todayManifestTotalFailureReports > 0 || $todayNavTotalFailureReports > 0 |
 						</div>
 						<div class="col-xs-6 col-sm-3">
 							<div class="panel panel-default">
-								<div class="panel-body text-light <?php echo $tableClass; ?>">
+								<div class="panel-body text-light <?php if ( $todayContentTotalFailureReports > 0 ){ echo 'bk-danger'; } else { echo 'bk-success'; } ?>">
 									<div class="stat-panel text-center">
 										<div class="stat-panel-number h1 "><?php echo $todayContentTotalFailureReports; ?></div>
 										<div class="stat-panel-title text-uppercase">Content errors</div>

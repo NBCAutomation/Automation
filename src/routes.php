@@ -1115,8 +1115,6 @@ $app->group('/utils', function () {
     		$testFailureCount = $utilPostParams['testFailureCount'];
     		$results = $utilPostParams['testResults'];
     		$info = '';
-    		  	
-    		  	$this->logger->info('made it here from test '.$testType);
 
     		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $results, $info);
     		
