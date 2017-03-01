@@ -1214,7 +1214,8 @@ $app->group('/utils', function () {
     		// echo $emailContent;
 
     		if ($sendEmailNotification) {
-    			Spire::sendEmailNotification('LIMQualityAssurance@nbcuni.com', $emailContent, $emailSubject);
+    			Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent, $emailSubject);
+    			// Spire::sendEmailNotification('LIMQualityAssurance@nbcuni.com', $emailContent, $emailSubject);
     			$this->logger->info("Alert notification email sent");
     		}
     	}
