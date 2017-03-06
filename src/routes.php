@@ -509,7 +509,7 @@ $app->group('/scripts', function () {
 			$updateNotesObject['user_notes'] = $allPostPutVars['update_notes'];
 			$updateNotesObject['update_stations'] = $updateSites;
 			$updateNotes = serialize($updateNotesObject);
-			$__output = ' --output=dictionary';
+			$__output = ' --cron --output=dictionary';
 
 			$logTask = $db->logTask($task, $user, $updateNotes);
 			
