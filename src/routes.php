@@ -1050,6 +1050,7 @@ $app->group('/utils', function () {
 				} else {
 					echo 'DB nav import failed';
 					$this->logger->info("ERROR: DB nav import failed");
+					Spire::sendEmailNotification('deltrie.allen@nbcuni.com', 'ERROR: DB nav import failed', 'Spire DB Import Error.');
 				}
 			}
 
@@ -1060,6 +1061,7 @@ $app->group('/utils', function () {
 				} else {
 					echo 'DB article import failed';
 					$this->logger->info("ERROR: DB article import failed");
+					Spire::sendEmailNotification('deltrie.allen@nbcuni.com', 'ERROR: DB article import failed', 'Spire DB Import Error.');
 				}
 			}
 
@@ -1070,6 +1072,7 @@ $app->group('/utils', function () {
 				} else {
 					echo 'DB manifest import failed';
 					$this->logger->info("ERROR: DB manifest import failed");
+					Spire::sendEmailNotification('deltrie.allen@nbcuni.com', 'ERROR: DB manifest import failed', 'Spire DB Import Error.');
 				}
 			}
 
