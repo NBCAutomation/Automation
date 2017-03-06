@@ -94,8 +94,19 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var saveLocation = 'manifest_dictionary/';
 
             fs.makeDirectory(saveLocation, 775);
-            console.log(logName);
-            var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
+            if (debugOutput) {
+                console.log(logName);
+                console.log('fs.workingDirectory > ' + fs.workingDirectory);
+            }
+
+            if (cronProcess) {
+                var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
+            } else {
+                var parent = fs.absolute("../");
+                var save = fs.pathJoin(parent, saveLocation, logName);
+                console.log(save);
+            }
+            
 
         } else {
             var saveLocation = 'test_results/api_manifest_audits/' + curFolder;
@@ -711,12 +722,16 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         fs.changeWorkingDirectory(curFilePath.join('/'));
                     }
 
-
-                    // var dictionaryFile = fs.workingDirectory + '/manifest_dictionary/' + urlUri + '_dictionary.csv';
                     if (cronProcess) {
                         var dictionaryFile = 'manifest_dictionary/' + urlUri + '_dictionary.csv';    
+                        console.log(dictionaryFile);
                     } else {
-                        var dictionaryFile = '../manifest_dictionary/' + urlUri + '_dictionary.csv';
+                        var parent = fs.absolute("../");
+                        var dictionaryFile = parent + 'manifest_dictionary/' + urlUri + '_dictionary.csv';
+                        if (debugOutput) {
+                            console.log('parent >> ' +parent);
+                            console.log('dictionaryFile >> ' + dictionaryFile);
+                        }
                     }
                     
                     var localDictName =  urlUri + '_dictionary.csv';
