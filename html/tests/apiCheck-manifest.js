@@ -100,11 +100,13 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             }
 
             if (cronProcess) {
+                console.log('cronProcess');
                 var save = fs.pathJoin(fs.workingDirectory, saveLocation, logName);
+                console.log(save); 
             } else {
                 var parent = fs.absolute("../");
                 var save = fs.pathJoin(parent, saveLocation, logName);
-                console.log(save);
+                // console.log(save);
             }
             
 
