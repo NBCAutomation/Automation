@@ -121,6 +121,24 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         }).then(function() {
             // console.log('step');
+            if (setFail > 0) {
+                console.log('\n');
+                console.log('---------------------');
+                console.log('  ' + setFail + ' Failures!');
+                console.log('---------------------');
+
+                for (var failureItem in testResultsObject) {
+                    console.log('> ' + failureItem);
+                    if (typeof testResultsObject[failureItem] != 'object') {
+                        console.log('> ' + failureItem + ' : ' + testResultsObject[failureItem]);
+                    } else {
+                        var subFailureItem = testResultsObject[failureItem];
+                        for (var subFailureItems in subFailureItem) {
+                            console.log('   > ' + subFailureItems + ' : ' + subFailureItem[subFailureItems]);
+                        }
+                    }
+                }
+            }
 
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
@@ -156,23 +174,33 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             console.log("The site header loaded correctly.");
                             test.assertVisible('.site-header', "...is also visible.");
                         } else {
-                            suite.logRegressionError('.site-header', urlUri);
+                            console.log(colorizer.colorize('Unable to locate the site header. ', 'ERROR'));
+                            suite.logRegressionError('.site-header', urlUri, 'siteHeader');
                         }
 
-                        if(casper.exists('.brand a img')) {
+                        if(casper.exists('.brandy a img')) {
                             console.log('.brand a img', "The logo loaded correctly.")
                             test.assertVisible('.brand a', "...is also visible.");
+                        } else {
+                            console.log(colorizer.colorize('Logo not loading correctly. ', 'ERROR'));
+                            suite.logRegressionError('.brand a img', urlUri, 'headerLogo');
                         }
 
                         if(casper.exists('.navbar')) {
                             console.log('.navbar', "The nav loaded correctly.")
                             test.assertVisible('.navbar', "...is visible.");
+                        } else {
+                            console.log(colorizer.colorize('The main nav didnt load correctly. ', 'ERROR'));
+                            suite.logRegressionError('.navbar', urlUri, 'mainNav');
                         }
 
                         // Move the mouse to the top TVE nav
                         if(casper.exists('.nav-small-section.nav-live-tv')) {
                             console.log('.nav-small-section.nav-live-tv', "live tv icon loaded correctly.")
                             test.assertVisible('.nav-small-section.nav-live-tv', "...is visible.");
+                        } else {
+                            console.log(colorizer.colorize('The TVE menu didnt load correctly. ', 'ERROR'));
+                            suite.logRegressionError('.nav-small-section.nav-live-tv', urlUri, 'tveMenu');
                         }
 
                         this.mouse.move('.nav-small-section.nav-live-tv a');
@@ -188,15 +216,19 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             test.assertExists('.weather-module-severe', "The severe weather module loaded correctly.");
                             test.assertExists('.weather-alert-info', "The severe weather module alerts loaded correctly.");
                             test.assertVisible('.weather-module-severe', "...is visible.");
+                        } else {
+                            console.log(colorizer.colorize('The homepage weather module didnt load correctly. ', 'ERROR'));
+                            suite.logRegressionError('.weather-module', urlUri, 'weatherModule');
                         }
 
-                        test.assertExists('.weather-module-radar iframe', "The weather radar loaded correctly.");
-                        test.assertVisible('.weather-module-radar iframe', "...is visible.");
+                        if (casper.exists('.weather-module-radar iframe')) {
+                            console.log('The weather radar loaded correctly.');
+                            test.assertVisible('.weather-module-radar iframe', "...is visible.");    
+                        } else {
+                            console.log(colorizer.colorize('The homepage weather radar didnt load correctly. ', 'ERROR'));
+                            suite.logRegressionError('.weather-module-radar iframe', urlUri, 'weatherRadar');
+                        }                        
                         
-                        // Capture screenshot if not loaded.
-                        // if(casper.exists('.weather-module')){
-
-                        // }
 
                         // Spredfast modules
                         if (casper.exists('.sfbox')) {
@@ -209,7 +241,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         test.assertExists('.footer', "The footer area loaded correctly.");
                         test.assertVisible('.footer', "...is visible.");
 
-                        suite.collectNavigation(testProperty, url);
+                        // suite.collectNavigation(testProperty, url);
                     },
                     function fail () {
                         this.captureSelector('screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.png', 'body');
@@ -270,10 +302,19 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
     // Regressiong test actions
-    regressionSuite.prototype.logRegressionError = function(testingEntity, urlUri) {
+    regressionSuite.prototype.logRegressionError = function(testingEntity, urlUri, refName) {
+        var refErrors = {};
+
         var suite = this;
         var entityName = testingEntity.replace('.','_').replace('\/',"_").split(' ').join('_').toLowerCase();
         casper.captureSelector('../screenshots/' + urlUri + '_' + entityName + '_failure-screenshot' + timeStamp + '.png', 'body');
+        var failureScreenshot = '../screenshots/' + urlUri + '_' + entityName + '_failure-screenshot' + timeStamp + '.png';
+        // console.log(failureScreenshot);
+
+        refErrors['failure'] = 'unable to locate "' + refName + '" entitiy: "' + testingEntity + '"';
+        refErrors['screenshot'] = failureScreenshot;
+
+        testResultsObject[refName] = refErrors;
         setFail++;
     };
 
