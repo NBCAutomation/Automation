@@ -137,7 +137,9 @@
 						$output = "";
 						$retval = -1;
 
-						$db->saveRegressionResults(serialize($testLog));
+						if($view == 'regressionTest') {
+							$db->saveRegressionResults(serialize($testLog));	
+						}
 						
 						exec($delCmd, $output, $retval);
 						
