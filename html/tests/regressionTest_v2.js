@@ -390,10 +390,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             if ( currentNavUrl != mainURL+'/' ) {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
 
-                    // test.comment('passed url => ' +  response.url);
+                    // Grab url info
                     var parser = document.createElement('a');
                     parser.href = response.url;
                     newUrl = parser.href;
+                    urlPath = parser.pathname;
+
+                    var pagePathName = urlPath.replace('/','').split(/[/?#]/)[0];
                     var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
                     var urlUri = sourceString.replace('.','_');
 
@@ -436,8 +439,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                                 test.comment('Current test url > ' +  response.url);
                                                 console.log('HTTP Response - ' + response.status);
 
-                                                // this.captureSelector('screenshots/sub-nav_' + destiations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                                                test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
+                                                suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
                                             },
                                             function fail () {
                                                 this.captureSelector('/screenshots/sub-nav_-screenshot' + timeStamp + '.png', 'body');
@@ -461,15 +463,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                             test.comment('Current test url > ' +  response.url);
                                             console.log('HTTP Response - ' + response.status);
 
-                                            // this.captureSelector('screenshots/sub-nav_' + destiations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
-                                            console.log(this.getTitle());
-                                            test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
-                                            // suite.testAssertion('.subnav-section-landing', urlUri, 'pageSubNavContainer');
+                                            suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
                                         },
-                                        // function fail () {
-                                        //     this.captureSelector('/screenshots/sub-nav_-screenshot' + timeStamp + '.png', 'body');
-                                        //     test.fail("Unable to test page elements.");
-                                        // },
+                                        function fail () {
+                                            testResultsObject[pagePathName + '_subNav'] = 'Unable to locate page subnav.';
+                                            setFail++;
+                                        },
                                         null // timeout limit in milliseconds
                                     )
                                 })
