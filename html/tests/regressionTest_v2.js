@@ -202,13 +202,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 console.log(' testingObject Properties');
                                 console.log('---------------------------');
                                 console.log('testingItem > ' + testingItem);
-                                tole.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                                console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
                             }
 
                             var refName = testingItem;
                             var testingEntity = testingObject[testingItem];
 
-                            suite.testAssertion(testingEntity, urlUri, refName);
+                            // Test the item/classes within the testObject
+                            // suite.testAssertion(testingEntity, urlUri, refName);
                         }
                     },
                     function fail () {
@@ -249,12 +250,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 console.log(' testingObject Properties');
                                 console.log('---------------------------');
                                 console.log('testingItem > ' + testingItem);
-                                tole.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                                console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
                             }
 
                             var refName = testingItem;
                             var testingEntity = testingObject[testingItem];
 
+                            // Test the item/classes within the testObject
                             suite.testAssertion(testingEntity, urlUri, refName);
                         }
                     },
@@ -389,6 +391,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
 
                     // test.comment('passed url => ' +  response.url);
+                    var parser = document.createElement('a');
+                    parser.href = response.url;
+                    newUrl = parser.href;
+                    var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+                    var urlUri = sourceString.replace('.','_');
 
                     // Check for property type
                     if (response.url.indexOf('telemundo') > -1) {
@@ -455,12 +462,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                             console.log('HTTP Response - ' + response.status);
 
                                             // this.captureSelector('screenshots/sub-nav_' + destiations[i].linkText.toLowerCase() + '-screenshot' + timeStamp + '.png', 'body');
+                                            console.log(this.getTitle());
                                             test.assertVisible('.subnav-section-landing', "subsection navbar visible.");
+                                            // suite.testAssertion('.subnav-section-landing', urlUri, 'pageSubNavContainer');
                                         },
-                                        function fail () {
-                                            this.captureSelector('/screenshots/sub-nav_-screenshot' + timeStamp + '.png', 'body');
-                                            test.fail("Unable to test page elements.");
-                                        },
+                                        // function fail () {
+                                        //     this.captureSelector('/screenshots/sub-nav_-screenshot' + timeStamp + '.png', 'body');
+                                        //     test.fail("Unable to test page elements.");
+                                        // },
                                         null // timeout limit in milliseconds
                                     )
                                 })
@@ -531,32 +540,39 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 test.comment('Current url > ' +  response.url);
                 console.log('HTTP Response - ' + response.status);
 
+                var parser = document.createElement('a');
+                parser.href = response.url;
+                newUrl = parser.href;
+                var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+                var urlUri = sourceString.replace('.','_');
+
                 // OTS Checks
                 if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
-                    test.assertVisible('#navteqTrafficOneContainer', "traffic map container loaded...");
+                    suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap');
                 }
 
                 if ( response.url.indexOf('contact-us') > -1 || response.url.indexOf('conectate') > -1 ) {
-                    test.assertVisible('.contact-landing-module', "contact page loaded, about module seen/loaded....");
+                    suite.testAssertion('.contact-landing-module', urlUri, 'contactPageModule');
                 }
 
                 if ( response.url.indexOf('weather') > -1 ) {
-                    test.assertVisible('.wx-standalone-map', "weather page interactive radar seen/loaded....");
+                    suite.testAssertion('.contact-landing-module', urlUri, 'contactPageModule');
                 }
 
                 if ( response.url.indexOf('investigations') > -1 ) {
-                    test.assertVisible('#leadMedia img', "lead video thumb displayed.");
+                    suite.testAssertion('#leadMedia img', urlUri, 'investigationsLeadThumb');
                 }
 
                 // Telexitos testing
                 if ( response.url.indexOf('telexitos') > -1 ) {
                     test.assertVisible('.primary', "main page loaded and displayed.");
+                    suite.testAssertion('.primary', urlUri, 'telexitosMainDiv');
                 }
 
                 // Cozi testing
                 if ( response.url.indexOf('cozi') > -1 ) {
-                    test.assertVisible('.headerLogo', "logo loaded and is visible.");
-                    test.assertVisible('.page .feature-full', "main page loaded and displayed.");
+                    suite.testAssertion('.headerLogo', urlUri, 'coziLogo');
+                    suite.testAssertion('.page .feature-full', urlUri, 'coziMainContent');
 
                     // console.log('...clicking play icon');
                     // this.mouse.move('.playButtonLarge');
