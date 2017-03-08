@@ -1399,6 +1399,8 @@ class DbHandler {
 // DB
 // SELECT Year(`created`), Month(`created`), Day(`created`), COUNT(*) FROM article_tests WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)
 
+// SELECT Year(`created`) AS 'Year', Month(`created`) AS 'Month', Day(`created`) AS 'Day', COUNT(*) AS 'Total' FROM manifest_tests WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)
+
 // Total past 30 days
 // SELECT Year(`created`), Month(`created`), Day(`created`), COUNT(*) FROM article_tests WHERE `created` <= NOW() AND status = 'Fail'
 ?>
