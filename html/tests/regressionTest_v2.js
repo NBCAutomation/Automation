@@ -565,7 +565,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                         )
                                     })
                                 } else {
-                                    console.log('Unable to find the subnav container 1');
+                                    console.log('Unable to find the subnav container.');
                                 }
                             });
 
@@ -589,7 +589,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     )
                                 } else {
                                     console.log(response.url);
-                                    console.log('Unable to find the subnav container 2');
+                                    console.log('-- Unable to find the subnav container.');
                                     this.captureSelector('../test_results/screenshots/' + urlUri + '--' + pagePathName + '_subnav_failure-screenshot' + timeStamp + '.jpg', 'body');
                                 }
                             })
