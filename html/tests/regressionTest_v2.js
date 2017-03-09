@@ -539,7 +539,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 }, 1000);
 
                             casper.then(function(){
-                                test.comment( 'new page title' + this.getTitle() );
+                                test.comment('...login successful, continuing.');
+                                // test.comment('-- new page title ' + this.getTitle() );
                                 console.log('\n');
 
                                 if (casper.exists('.subnav-large-container')) {
