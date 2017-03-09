@@ -654,12 +654,31 @@
 		<?php } ?>
 		<?php 
 			if ($regressionView) {
-				$testData = $regressionResults;
+				// $testData = $regressionResults;
 
-				$bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m','[37;42;1');
-				$bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>','#');
+				// $bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m','[37;42;1');
+				// $bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>','#');
+
+				echo '<pre>';
+				var_dump($regressionTests);
+				echo '</pre>';
+
+				// foreach ($regressionTests[0] as $key => $value) {
+				// 	// echo $value['id']."<br />";
+				// 	// echo $value['ref_test_id']."<br />";
+				// 	// echo $value['test_type']."<br />";
+				// 	// echo $value['property']."<br />";
+				// 	// echo $value['status']."<br />";
+				// 	// echo $value['failures']."<br />";
+				// 	// echo $value['created']."<br />";
+				// 	// echo "-----------------<br /><br />";
+				// 	echo "key ". $key."<br />";
+				// 	echo "value ". $value."<br />";
+				// 	echo '</pre>';
+				// }
+
 		?>
-			<div class="panel panel-default">
+			<!-- <div class="panel panel-default" style="display: none;">
 				<div class="panel-heading">Regression Tests</div>
 				<div class="panel-body">
 					<div class="alert alert-dismissible alert-info">
@@ -701,7 +720,7 @@
 					<?php endforeach; ?>
 					</div>
 				</div>
-			</div>
+			</div> -->
 		<?php } ?>
 	</div><!-- panel-body api_results -->
 

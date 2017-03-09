@@ -1291,25 +1291,29 @@ class DbHandler {
         return $output;
     }
 
-    public function getAllTestResultData($testResultsTable) {
-        $output = Spire::spireCache('getAllRegressionTestData', 100, function() {
-            
+    public function getAllTestResultData($testType) {
+        $output = Spire::spireCache('getAllTestResultData', 100, function() use ($testType) {
             $db_con = Spire::getConnection();
 
-            $stmt = $db_con->prepare("SELECT * FROM regression_tests ORDER BY id DESC");
-            $regressionTestData = array();
+            if ($testType == 'all') {
+                $stmt = $db_con->prepare("SELECT * FROM test_results ORDER BY id DESC");    
+            } else {
+                $stmt = $db_con->prepare("SELECT * FROM test_results WHERE test_type = '".$testType."'");
+            }
+
+            $testResultsData = array();
 
             if ($stmt->execute()) {
-                $stationData = $stmt->fetchAll();
+                $testResults = $stmt->fetchAll();
                     
-                foreach( $stationData as $key => $value ){
-                    $regressionTestData[$key] = $value;
+                foreach( $testResults as $key => $value ){
+                    $testResultsData[$key] = $value;
                 }
 
-                $regressionTestDataArray[] = $regressionTestData;
+                $storedTestData[] = $testResultsData;
 
                 $stmt->closeCursor();
-                return $regressionTestDataArray;
+                return $storedTestData;
                 
             } else {
                 return NULL;

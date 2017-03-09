@@ -211,7 +211,10 @@ $app->group('/reports', function () {
 
 		if (! $mainView) {
 			if ($regressionView) {
-				$regressionResults = $db->getAllRegressionTestData();
+				// $regressionResults = $db->getAllRegressionTestData();
+				echo '<style>.ts-sidebar{display: none;}</style>';
+				
+				$regressionTests = $db->getAllTestResultData('regressionTest');
 			} else {
 				// Reporting Data
 				$todayReports = $db->getAllTestsFromToday($args['view']);
@@ -257,6 +260,7 @@ $app->group('/reports', function () {
 			'yesterdayTotalErrors' => $yesterdayTotalErrors,
 			'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
 			'regressionResults' => $regressionResults,
+			'regressionTests' => $regressionTests,
 
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),
