@@ -314,7 +314,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     },
                     function fail () {
-                        this.captureSelector('../test_results/screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.png', 'body');
+                        this.captureSelector('../test_results/screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.jpg', 'body');
                         test.fail("Unable to test page elements. Did not load element .sfbox");
                     },
                     null // timeout limit in milliseconds
@@ -368,7 +368,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     },
                     function fail () {
-                        this.captureSelector('../test_results/screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.png', 'body');
+                        this.captureSelector('../test_results/screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.jpg', 'body');
                         test.fail("Unable to test page elements. Did not load properly.");
                     },
                     null // timeout limit in milliseconds
@@ -398,9 +398,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var suite = this;
         var entityName = testingEntity.replace('.','_').replace('\/',"_").split(' ').join('_').toLowerCase();
         
-        casper.captureSelector('../test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.png', 'body');
+        casper.captureSelector('../test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.jpg', 'body');
         
-        var failureScreenshot = configURL + '/test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.png';
+        var failureScreenshot = configURL + '/test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.jpg';
 
         refErrors['failure'] = 'unable to locate "' + refName + '" entitiy: "' + testingEntity + '". Unable to test item visibility correctly.';
         refErrors['screenshot'] = failureScreenshot;
@@ -588,7 +588,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 } else {
                                     console.log(response.url);
                                     console.log('Unable to find the subnav container 2');
-                                    this.captureSelector('../test_results/screenshots/' + urlUri + '--' + pagePathName + '_subnav_failure-screenshot' + timeStamp + '.png', 'body');
+                                    this.captureSelector('../test_results/screenshots/' + urlUri + '--' + pagePathName + '_subnav_failure-screenshot' + timeStamp + '.jpg', 'body');
                                 }
                             })
                         }
