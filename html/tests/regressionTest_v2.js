@@ -282,7 +282,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         
                         testingObject['siteHeader'] = '.site-header';
                         testingObject['headerLogo'] = '.brand a img';
-                        testingObject['mainNav'] = '.navbarZZ';
+                        testingObject['mainNav'] = '.navbar';
                         testingObject['tveMenu'] = '.nav-small-section.nav-live-tv';
                         testingObject['tveSubMenu'] = '.nav-small-section.nav-live-tv a';
                         testingObject['weatherRadar'] = '.weather-module-radar iframe';
@@ -482,10 +482,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         for (var navLocation in destinations) {
             if ( destinations[navLocation].indexOf(mainURL) > -1 ) {
                 // console.log('          url found');
-                var currentNavUrl = destinations[navLocation];
+                var currentNavUrl = destinations[navLocation].replace(/ /g,"");
             } else {
                 // console.log('         no');
-                var currentNavUrl = mainURL + destinations[navLocation];
+                var currentNavUrl = mainURL + destinations[navLocation].replace(/ /g,"");
             }
             var currentNavTitle = navLocation;
 
