@@ -1371,6 +1371,7 @@ class DbHandler {
 
 
     // Util ** Delete all test data older than 30days
+    // Updated to purge * > 60 for full month to month
     public function purgeOldTestResults() {
         $db_con = Spire::getConnection();
 
@@ -1380,7 +1381,7 @@ class DbHandler {
 
         foreach ($testTableNames as $tableName) {
             
-            $stmt = $db_con->prepare("DELETE FROM ".$tableName." WHERE DATE_SUB(CURDATE(),INTERVAL 30 DAY) >= `created`");
+            $stmt = $db_con->prepare("DELETE FROM ".$tableName." WHERE DATE_SUB(CURDATE(),INTERVAL 61 DAY) >= `created`");
             
             if ( $res = $stmt->execute() ) {
 
