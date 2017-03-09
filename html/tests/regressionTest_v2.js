@@ -140,7 +140,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     // Add test data to collection object
                     testResultsObject['testProperty'] = url;
-                    testResultsObject['testStatus'] = 'Fail';
+                    testResultsObject['testStatus'] = testStatus;
 
                     suite.visualTests(testProperty, urlUri, url);
                 } else {
@@ -151,10 +151,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             // Test navigation items and pages
             suite.collectNavigation(testProperty, url, false);
         }).then(function() {
+            console.log('-----------------------------------');
+            console.log(' Test completed with ' + setFail + ' failures.');
+            console.log('-----------------------------------');
+
             //Log test results
             if (setFail > 0) {
-                console.log('Test completed with ' + setFail + ' failures.');
-
                 suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus);
 
                 if (debugOutput) {
@@ -184,9 +186,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     }
                 }
+            } else {
+                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus);
             }
-            // }
-
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
             
