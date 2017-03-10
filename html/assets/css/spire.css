@@ -119,6 +119,7 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 	/*text-transform: capitalize;*/
 }
 
+.test_results .report_status,
 .api_results .report_status {
 	border-radius: 100%;
 	width: 13px;
@@ -129,23 +130,28 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 	margin: 0px auto;
 }
 
+.test_results .report_status.fail,
 .api_results .report_status.fail {
 	background: red;
 }
 
+.test_results .report_status.pass,
 .api_results .report_status.pass {
 	background: green;
 }
 
+.test_results .report_row_status.fail,
 .api_results .report_row_status.fail {
 	/*background: #ffd8d8 !important;*/
 	color: red;
 }
 
+.test_results .report_row_status.fail a,
 .api_results .report_row_status.fail a {
 	color: red;
 }
 
+.test_results .report_status.warn,
 .api_results .report_status.warn {
 	background: orange;
 }
@@ -154,6 +160,7 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 	border-color: #ddd;
 }
 
+.testel-body .api_results .nav.nav-tabs li,
 .panel-body .api_results .nav.nav-tabs li {
 	padding-left: 0px;
 }

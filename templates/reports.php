@@ -654,74 +654,61 @@
 		<?php } ?>
 		<?php 
 			if ($regressionView) {
-				// $testData = $regressionResults;
+				// echo '<pre>';
+				// var_dump($regressionTests);
+				// echo '</pre>';
+				echo '<div class="panel-body api_results">';
+				echo '<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
+				echo "<tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Test Type</th><th>Property</th><th>Failures</th><th>Created</th></tr>";
 
-				// $bashOutput = array('1[33m','[33m','[32;1m','[37;41;1m','[36m','[37;43;1m','[37;46;1m','[0m','[37;42;1');
-				// $bashOutputStyle = array('<span class="consoleOutput orange">','<span class="consoleOutput orange">','<span class="consoleOutput green">','<span class="consoleOutput red">','<span class="consoleOutput blue">','<span style="display: none;">','<span class="consoleOutput">','</span>','#');
+				foreach ($regressionTests[0] as $key => $value) {
+					$l10nDate = new DateTime($value['created']);
+					$l10nDate->setTimeZone($usersTimezone);
 
-				echo '<pre>';
-				var_dump($regressionTests);
-				echo '</pre>';
+					echo '<tr>';
+					echo '<td><div class="report_status '.strtolower($value['status']).'">'.$value['status'].'</div></td>';
+					echo '<td>'.$value['id'].'</td>';
+					echo '<td>'.$value['ref_test_id'].'</td>';
+					echo '<td>'.$value['test_type'].'</td>';
+					echo '<td>'.$value['property'].'</td>';
+					echo '<td>'.$value['failures'].'</td>';
+					// echo $value['created']."</td>";
+					echo '<td>'.$l10nDate->format('n/d/Y, g:i A').'</td>';
+					echo '<td colspan="5">';
+				?>
+				<div class="panel panel-default" style="display: none;">
+					<div class="panel-body">
+						<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+							<div class="panel panel-default">
+								<div class="panel-heading" role="tab" id="heading_<?php echo $value['id']; ?>">
+									<h4 class="panel-title">
+										<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $value['id']; ?>" aria-expanded="false" aria-controls="collapse_	<?php echo $value['id']; ?>">
+											<i class="fa fa-file" aria-hidden="true"></i>  Failures
+										</a>
+									</h4>
+								</div>
+								<div id="collapse_<?php echo $value['id']; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_<?php echo $value['id']; ?>">
+									<div class="panel-body">
+										<?php
 
-				// foreach ($regressionTests[0] as $key => $value) {
-				// 	// echo $value['id']."<br />";
-				// 	// echo $value['ref_test_id']."<br />";
-				// 	// echo $value['test_type']."<br />";
-				// 	// echo $value['property']."<br />";
-				// 	// echo $value['status']."<br />";
-				// 	// echo $value['failures']."<br />";
-				// 	// echo $value['created']."<br />";
-				// 	// echo "-----------------<br /><br />";
-				// 	echo "key ". $key."<br />";
-				// 	echo "value ". $value."<br />";
-				// 	echo '</pre>';
-				// }
-
-		?>
-			<!-- <div class="panel panel-default" style="display: none;">
-				<div class="panel-heading">Regression Tests</div>
-				<div class="panel-body">
-					<div class="alert alert-dismissible alert-info">
-						<p>*basic view for referencing, pending display/reporting change....</p>
-					</div>
-					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-
-					<?php
-						foreach ($testData[0] as $key => $value) :
-							$l10nDate = new DateTime($value['created']);
-							$l10nDate->setTimeZone($usersTimezone);
-					?>
-
-						<div class="panel panel-default">
-							<div class="panel-heading" role="tab" id="heading_<?php echo $value['id']; ?>">
-								<h4 class="panel-title">
-									<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $value['id']; ?>" aria-expanded="false" aria-controls="collapse_	<?php echo $value['id']; ?>">
-										<i class="fa fa-file" aria-hidden="true"></i>  <?php echo $l10nDate->format('n/d/Y, g:i A'); ?>
-									</a>
-								</h4>
-							</div>
-							<div id="collapse_<?php echo $value['id']; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_<?php echo $value['id']; ?>">
-								<div class="panel-body">
-									<?php
-
-									    $formattedText = str_replace($bashOutput, $bashOutputStyle, $value['test_data']);
-									    $displayText = unserialize($formattedText);
-
-										echo '<pre id="test_output">';
-										foreach ($displayText as $dataKey => $dataValue) {
-											echo $dataValue;
-										}
-										echo '</pre>';
-									?>
+										?>
+									</div>
 								</div>
 							</div>
 						</div>
-
-					<?php endforeach; ?>
 					</div>
 				</div>
-			</div> -->
-		<?php } ?>
+				<?php
+					echo '</td>';
+					echo '</tr>';
+				}
+
+				echo '</table>';
+				echo '</div>';
+
+				// echo '</pre>';
+			}
+		?>
 	</div><!-- panel-body api_results -->
 
 <?php include_once 'base/footer.php' ?>
