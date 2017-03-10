@@ -318,10 +318,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     apiSuite.prototype.testNavigationData = function(url, collectionObject, testID) {
         var suite = this;
 
-        // Build test results object
-        testResultsObject['testID'] = testID;
-        testResultsObject['testProperty'] = url;
-
         // Test collection object and add to results object
         for (var thisCollectionItem in collectionObject) {
             var endpointName = thisCollectionItem;
@@ -431,8 +427,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 if (Object.keys(currentTestResults).length > 0) {
                     testResultsObject['testResults'] = currentTestObject;
                 }
-
-                testResultsObject['testStatus'] = currentTestStatus;
                 
             })
         } else {

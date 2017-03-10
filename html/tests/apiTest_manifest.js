@@ -476,10 +476,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var currentTestObject = {};
         var currentTestObjectFailures = {};
 
-        // Build test results object
-        testResultsObject['testID'] = testID;
-        testResultsObject['testProperty'] = url;
-
         var dictionaryManifestObject = suite.pullManifestDictionaryData(url, function (data) {
             var obj1 = JSON.parse(data);
             var obj2 = manifestCollectionObject;
@@ -512,7 +508,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 // Add test results to results object; debug below
                 manifestTestStatus = 'Fail';
-                testResultsObject['testStatus'] = 'Fail';
                 testResultsObject['testResults'] = currentTestObject;
 
                 if (debugOutput) {

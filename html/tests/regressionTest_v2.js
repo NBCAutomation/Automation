@@ -138,10 +138,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         this.exit();
                     }
 
-                    // Add test data to collection object
-                    testResultsObject['testProperty'] = url;
-                    testResultsObject['testStatus'] = testStatus;
-
                     suite.visualTests(testProperty, urlUri, url);
                 } else {
                     casper.test.fail('Page did not load correctly. Response: ' + response.status);
