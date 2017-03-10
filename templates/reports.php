@@ -657,51 +657,51 @@
 				// echo '<pre>';
 				// var_dump($regressionTests);
 				// echo '</pre>';
-
-				foreach ($regressionTests[0] as $key => $value) {
-					$l10nDate = new DateTime($value['created']);
-					$l10nDate->setTimeZone($usersTimezone);
-					$createdDate = $l10nDate->format('n/d/Y, g:i A');
-				?>
-				<div class="panel-heading">
-					<b>Property: </b> <?php echo $value['property']; ?> -- <?php echo $createdDate; ?>
-				</div>
+			?>
+			<div class="panel panel-default">
+				<div class="panel-heading">Regression Tests</div>
 				<div class="panel-body">
-					<ul>
-						<li><b>Status: </b> <span class="report_status <?php echo strtolower($value['status']); ?>"><?php echo $value['status']; ?></span></li>
-						<li><b>ID: </b> <?php echo $value['id']; ?></li>
-						<li><b>Ref ID: </b> <?php echo $value['ref_test_id']; ?></li>
-						<li><b>Failures: </b> <?php echo $value['failures']; ?></li>
-					</ul>
-					<div>
-						<div class="panel panel-default" style="display: none;">
-							<div class="panel-body">
-								<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-									<div class="panel panel-default">
-										<div class="panel-heading" role="tab" id="heading_<?php echo $value['id']; ?>">
-											<h4 class="panel-title">
-												<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $value['id']; ?>" aria-expanded="false" aria-controls="collapse_	<?php echo $value['id']; ?>">
-													<i class="fa fa-file" aria-hidden="true"></i>  Failures
-												</a>
-											</h4>
-										</div>
-										<div id="collapse_<?php echo $value['id']; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_<?php echo $value['id']; ?>">
-											<div class="panel-body">
-												<?php
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-												?>
-											</div>
-										</div>
-									</div>
+					<?php
+						foreach ($regressionTests[0] as $key => $value) :
+							$l10nDate = new DateTime($value['created']);
+							$l10nDate->setTimeZone($usersTimezone);
+					?>
+
+						<div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="heading_<?php echo $value['id']; ?>">
+								<h4 class="panel-title">
+									<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $value['id']; ?>" aria-expanded="false" aria-controls="collapse_	<?php echo $value['id']; ?>">
+										<i class="fa fa-file" aria-hidden="true"></i> <?php echo $value['property']; ?> - <?php echo $l10nDate->format('n/d/Y, g:i A'); ?>
+									</a>
+								</h4>
+							</div>
+							<div id="collapse_<?php echo $value['id']; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_<?php echo $value['id']; ?>">
+								<div class="panel-body">
+									<ul>
+										<li><b>Status: </b> <span class="report_status <?php echo strtolower($value['status']); ?>"><?php echo $value['status']; ?></span></li>
+										<li><b>ID: </b> <?php echo $value['id']; ?></li>
+										<li><b>Ref ID: </b> <?php echo $value['ref_test_id']; ?></li>
+										<li><b>Failures: </b> <?php echo $value['failures']; ?></li>
+									</ul>
+									<?php
+										echo '<div>';
+										var_dump($value['results_data']);
+										// foreach ($value['results_data'] as $dataKey => $dataValue) {
+										// 	echo $dataValue;
+										// }
+										echo '</div>';
+									?>
 								</div>
 							</div>
 						</div>
+
+					<?php endforeach; ?>
 					</div>
 				</div>
-				<?php
-				}
-			}
-		?>
+			</div>	
+			<?php } ?>
 	</div><!-- panel-body api_results -->
 
 <?php include_once 'base/footer.php' ?>
