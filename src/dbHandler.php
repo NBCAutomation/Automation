@@ -734,7 +734,7 @@ class DbHandler {
     }
 
     public function getTestDataById($testID) {
-        $output = Spire::spireCache('getTestDataById_'.$testID, 10, function() use ($testID) {
+        $output = Spire::spireCache('getTestDataById_'.$testID, 1000, function() use ($testID) {
             $db_con = Spire::getConnection();
             
             $stmt = $db_con->prepare("SELECT * FROM test_results WHERE id = '".$testID."'");
