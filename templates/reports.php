@@ -1,4 +1,6 @@
 <?php
+// error_reporting(E_ALL);
+// ini_set('display_errors', '1');
 	include_once 'base/header.php';
 
 	// Set default server time zone
@@ -424,11 +426,12 @@
 		<?php
 			if ($singleView) {
 				// Inidividual Report View
+				// var_dump($viewType);
+				// var_dump($viewPath);
 				
 				$db = new DbHandler();
 
-				switch ($viewType) {
-				    
+				switch ($viewType) {				    
 				    case "apiCheck-manifest":
 				        $tableHeaders = '<th>Status</th><th>Expected Key</th><th>Expected Value</th><th>Live Key</th><th>Live Value</th><th>Info</th><th>API Version</th>';
 				        $manifestData = true;
@@ -441,89 +444,143 @@
 				        $testTypeFolder = 'navigation';
 				        break;
 
+			        case "regressionTest":
+			            $tableHeaders = '<th> Status</th><th>Link</th><th>URL (click to open)</th><th>HTTP Status Code</th><th>Info</th>';
+			            $regressionData = true;
+			            break;
+
 				    default:
 				        $tableHeaders = '<th> Status</th><th>Endpoint</th><th>Content ID</th><th>Content Title</th><th>Content Error</th>';
 				        $articleData = true;
 				        $testTypeFolder = 'article';
 				}
 
-				$testReportTime = date('n/d/Y, g:i A', strtotime($reportPropertyData['created']));
+				$testReportTime = date('n/d/Y, g:i A', strtotime($fullReportData['created']));
 
 				$l10nDate = new DateTime($testReportTime);
 				$l10nDate->setTimeZone($usersTimezone);
 
-				$reportCSVDate =  date('n_j_Y', strtotime($reportPropertyData['created']));
-				$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($reportPropertyData['created']));
+				$reportCSVDate =  date('n_j_Y', strtotime($fullReportData['created']));
+				$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($fullReportData['created']));
 
 				$reportCSVFile = '/test_results/'.$viewPath.'/'.$reportCSVDate.'/'.$reportPropertyData['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
 
 				$fileLocation = urlencode($reportCSVFile);
+
+				if (strpos($reportProperty, 'stage') !== false) {
+					$thisPropertyName = str_replace('stage_', 'stage.', $reportProperty);
+				} else {
+					$thisPropertyName = $reportProperty;
+				}
 		?>
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class="panel-title"><?php echo $reportPropertyData['property']; ?>.com</h3>
+					<h3 class="panel-title"><?php echo $thisPropertyName; ?>.com</h3>
 				</div>
 				<div class="panel-body">
 					<!-- <h3><?php echo $reportPropertyData['property']; ?>.com</h3> -->
 					<p>Test completed: <?php echo $l10nDate->format('n/d/Y, g:i A'); ?></p>
-					<a href="/utils/download?file=<?php echo $fileLocation; ?>"><i class="fa fa-download" style="font-size:20px;"></i> Download report</a>	
+					<?php
+						if($regressionData) {
+							echo '<ul>';
+							echo '<li><b>Failures:</b> '.$fullReportData['failures'].'</li>';
+							echo '</ul>';
+						} else {
+							echo '<a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i> Download report</a>';
+						}
+					?>
 				</div>
 			</div>
 			
 			<hr />
 
-			<div class="panel-body">
-				<p>Errors displayed first</p>
-				<?php 
-					if ($articleData) {
-						echo "<p>Data will only be display when errors exist.</p>";
-					}
+			<div class="panel">
+				<?php
 
-				?>
-				<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-					<thead>
-						<tr>
-							<?php echo $tableHeaders; ?>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<?php echo $tableHeaders; ?>
-						</tr>
-					</tfoot>
-					<tbody>
-					<?php
-						// var_dump($reportData);
-						foreach ($reportData as $thisReport) {
+					if ($regressionData) {
+						echo '<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">Failure details</h3>
+							</div>
+							<div class="panel-body">';
+						// var_dump(json_decode($reportData));
+						$obj = json_decode($reportData, true);
+						$reportFailures = $obj['testResults'];
 
-						    echo '<tr class="report_row_status '.strtolower($thisReport->status).'">';
-						    echo '<td><div class="report_status '.strtolower($thisReport->status).'">'.$thisReport->status.'</div></td>';
+						foreach ($reportFailures as $reportKey => $reportValue) {
+							echo '<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">'.$reportKey.'</h3>
+								</div>';
+							echo '<div class="panel-body">';
 
-						    if ($manifestData) {
-							    echo '<td>'.$thisReport->expected_key.'</td>';
-							    echo '<td>'.$thisReport->expected_value.'</td>';
-							    echo '<td>'.$thisReport->live_key.'</td>';
-							    echo '<td>'.$thisReport->live_value.'</td>';
-							    echo '<td>'.$thisReport->info.'</td>';
-							    echo '<td>'.$thisReport->api_version.'</td>';
-						    } elseif ($navData) {
-							    echo '<td>'.$thisReport->link_name.'</td>';
-							    echo '<td><a href="'.$thisReport->link_url.'" target="_blank">'.$thisReport->link_url.'</a></td>';
-							    echo '<td>'.$thisReport->status_code.'</td>';
-							    echo '<td>'.$thisReport->info.'</td>';
-						    } elseif ($articleData) {
-							    echo '<td>'.$thisReport->endpoint.'</td>';
-							    echo '<td>'.$thisReport->content_id.'</td>';
-							    echo '<td>'.$thisReport->content_title.'</td>';
-							    echo '<td>'.$thisReport->content_error.'</td>';
-						    }
-							    
-			                echo "</tr>";
+							if (is_array($reportValue)) {
+								echo '<ul>';
+								echo '<li>'.$reportValue['failure'].'</li>';
+								echo '<li><i class="fa fa-file-image-o" aria-hidden="true"></i> <a href="'.$reportValue['screenshot'].'" target="_black">View screenshot</a></li>';
+								echo '</ul>';
+							} else {
+								echo $reportValue;	
+							}
+							echo '</div>';
+							echo '</div>';
 						}
-					?>
-					</tbody>
-				</table>
+						echo '</div>';
+						echo '</div>';
+					} else {
+						if ($articleData) {
+							echo "<p>Data will only be display when errors exist.</p>";
+						}
+				?>
+						<p>Errors displayed first</p>
+						<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+							<thead>
+								<tr>
+									<?php echo $tableHeaders; ?>
+								</tr>
+							</thead>
+							<tfoot>
+								<tr>
+									<?php echo $tableHeaders; ?>
+								</tr>
+							</tfoot>
+							<tbody>
+							<?php
+								// var_dump($reportData);
+								foreach ($reportData as $thisReport) {
+
+								    echo '<tr class="report_row_status '.strtolower($thisReport->status).'">';
+								    echo '<td><div class="report_status '.strtolower($thisReport->status).'">'.$thisReport->status.'</div></td>';
+
+								    if ($manifestData) {
+									    echo '<td>'.$thisReport->expected_key.'</td>';
+									    echo '<td>'.$thisReport->expected_value.'</td>';
+									    echo '<td>'.$thisReport->live_key.'</td>';
+									    echo '<td>'.$thisReport->live_value.'</td>';
+									    echo '<td>'.$thisReport->info.'</td>';
+									    echo '<td>'.$thisReport->api_version.'</td>';
+								    } elseif ($navData) {
+									    echo '<td>'.$thisReport->link_name.'</td>';
+									    echo '<td><a href="'.$thisReport->link_url.'" target="_blank">'.$thisReport->link_url.'</a></td>';
+									    echo '<td>'.$thisReport->status_code.'</td>';
+									    echo '<td>'.$thisReport->info.'</td>';
+								    } elseif ($articleData) {
+									    echo '<td>'.$thisReport->endpoint.'</td>';
+									    echo '<td>'.$thisReport->content_id.'</td>';
+									    echo '<td>'.$thisReport->content_title.'</td>';
+									    echo '<td>'.$thisReport->content_error.'</td>';
+								    }
+									    
+					                echo "</tr>";
+								}
+							?>
+							</tbody>
+						</table>
+				<?php
+					}
+				?>
+				
 			<?php } ?>
 			</div>
 		<?php if ($overView) { ?>
@@ -657,51 +714,35 @@
 				// echo '<pre>';
 				// var_dump($regressionTests);
 				// echo '</pre>';
-			?>
-			<div class="panel panel-default">
-				<div class="panel-heading">Regression Tests</div>
-				<div class="panel-body">
-					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				echo '<div class="panel panel-default">';
+				echo '<div class="panel-heading">Regression Test Reports</div>';
+				echo '<div class="panel-body api_results">';
+				echo '<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
+				echo "<thead><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></thead>";
+				echo "<tbody>";
 
-					<?php
-						foreach ($regressionTests[0] as $key => $value) :
-							$l10nDate = new DateTime($value['created']);
-							$l10nDate->setTimeZone($usersTimezone);
-					?>
+				foreach ($regressionTests[0] as $key => $value) {
+					$l10nDate = new DateTime($value['created']);
+					$l10nDate->setTimeZone($usersTimezone);
 
-						<div class="panel panel-default">
-							<div class="panel-heading" role="tab" id="heading_<?php echo $value['id']; ?>">
-								<h4 class="panel-title">
-									<a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $value['id']; ?>" aria-expanded="false" aria-controls="collapse_	<?php echo $value['id']; ?>">
-										<i class="fa fa-file" aria-hidden="true"></i> <?php echo $value['property']; ?> - <?php echo $l10nDate->format('n/d/Y, g:i A'); ?>
-									</a>
-								</h4>
-							</div>
-							<div id="collapse_<?php echo $value['id']; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading_<?php echo $value['id']; ?>">
-								<div class="panel-body">
-									<ul>
-										<li><b>Status: </b> <span class="report_status <?php echo strtolower($value['status']); ?>"><?php echo $value['status']; ?></span></li>
-										<li><b>ID: </b> <?php echo $value['id']; ?></li>
-										<li><b>Ref ID: </b> <?php echo $value['ref_test_id']; ?></li>
-										<li><b>Failures: </b> <?php echo $value['failures']; ?></li>
-									</ul>
-									<?php
-										echo '<div>';
-										var_dump($value['results_data']);
-										// foreach ($value['results_data'] as $dataKey => $dataValue) {
-										// 	echo $dataValue;
-										// }
-										echo '</div>';
-									?>
-								</div>
-							</div>
-						</div>
+					echo '<tr>';
+					echo '<td><div class="report_status '.strtolower($value['status']).'">'.$value['status'].'</div></td>';
+					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['id'].'</a></td>';
+					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['ref_test_id'].'</a></td>';
+					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
+					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['failures'].'</a></td>';
+					// echo $value['created']."</td>";
+					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+					echo '</tr>';
+				}
+				echo "</tbody>";
+				echo "<tfoot><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></tfoot>";
+				echo '</table>';
+				echo '</div></div>';
 
-					<?php endforeach; ?>
-					</div>
-				</div>
-			</div>	
-			<?php } ?>
+				// echo '</pre>';
+			}
+		?>
 	</div><!-- panel-body api_results -->
 
 <?php include_once 'base/footer.php' ?>

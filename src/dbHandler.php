@@ -733,6 +733,38 @@ class DbHandler {
 
     }
 
+    public function getTestDataById($testID) {
+        $output = Spire::spireCache('getTestDataById_'.$testID, 10, function() use ($testID) {
+            $db_con = Spire::getConnection();
+            
+            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE id = '".$testID."'");
+            $stmt->execute(array($testID));
+
+            $tests = array();
+
+            if ($stmt->execute()) {
+                $testData = $stmt->fetch();
+
+
+                $tests['id'] = $testData['id'];
+                $tests['ref_test_id'] = $testData['ref_test_id'];
+                $tests['test_type'] = $testData['test_type'];
+                $tests['property'] = $testData['property'];
+                $tests['status'] = $testData['status'];
+                $tests['failures'] = $testData['failures'];            
+                $tests['results_data'] = $testData['results_data'];            
+                $tests['info'] = $testData['info'];            
+                $tests['created'] = $testData['created'];
+
+                $stmt->closeCursor();
+                return $tests;
+            } else {
+                return NULL;
+            }
+        });
+        return $output;
+    }
+
     public function getAllTestByType($testType) {
         $output = Spire::spireCache('getAllTestByType_'.$testType, 21600, function() use ($testType) {
             $db_con = Spire::getConnection();

@@ -212,7 +212,6 @@ $app->group('/reports', function () {
 		if (! $mainView) {
 			if ($regressionView) {
 				// $regressionResults = $db->getAllRegressionTestData();
-				echo '<style>.ts-sidebar{display: none;}</style>';
 				
 				$regressionTests = $db->getAllTestResultData('regressionTest');
 			} else {
@@ -309,11 +308,17 @@ $app->group('/reports', function () {
     	$permissions = $request->getAttribute('spPermissions');
 
     	$allPostPutVars = $request->getQueryParams();
-    	$currentRecord = $db->getTestById($allPostPutVars['refID']);
-
-    	$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type'], $args['page']);
-
-    	// var_dump($currentRecordResults);
+    	
+    	// var_dump($args['page']);
+    	if ($args['view'] == 'regression_tests') {
+    		$currentRecord = $db->getTestDataById($args['page']);
+    		$recordViewType = $currentRecord['test_type'];
+    		$currentRecordResults = $currentRecord['results_data'];
+    	} else {
+    		$currentRecord = $db->getTestById($allPostPutVars['refID']);
+    		$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type'], $args['page']);
+    		$recordViewType = $currentRecord['type'];
+    	}
 
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
@@ -324,13 +329,13 @@ $app->group('/reports', function () {
 		    'page_name' => 'reports',
 		    'view' => 'single',
 		    'viewPath' => $args['view'],
-		    'viewType' => $currentRecord['type'],
+		    'viewType' => $recordViewType,
 		    'singleView' => true,
 		    'reportClass' => true,
 		    'reportID' => $currentRecord['id'],
 		    'reportProperty' => $currentRecord['property'],
-		    'reportPropertyData' => $currentRecord,
 		    'reportData' => $currentRecordResults,
+		    'fullReportData' => $currentRecord,
 
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
