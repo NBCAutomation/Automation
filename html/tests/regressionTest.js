@@ -37,7 +37,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     var testingObject = {};
     var testStatus = 'Pass';
     var setFail = 0;
-    var saveLocation = 'test_results/screenshots/';
 
     // Util vars
     var currentTime = new Date();
@@ -68,10 +67,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     if (envConfig === 'local') {
         var configURL = 'http://spire.app';
+        var saveLocation = '../test_results/screenshots/';
     } else if (envConfig === 'dev') {
         var configURL = 'http://45.55.209.68';
+        var saveLocation = '../test_results/screenshots/';
     } else {
         var configURL = 'http://54.243.53.242';
+        var saveLocation = 'test_results/screenshots/';
     }
 
     var type = casper.cli.get('output');
@@ -592,9 +594,50 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                         null // timeout limit in milliseconds
                                     )
                                 } else {
-                                    console.log(response.url);
-                                    console.log('-- Unable to find the subnav container.');
-                                    this.captureSelector(saveLocation + urlUri + '--' + pagePathName + '_subnav_failure-screenshot' + timeStamp + '.jpg', 'body');
+                                    if (casper.exists('form#login')) {
+                                        console.log('Clickability login page, attempting to login...');
+
+                                        casper.waitForSelector("form input[name='j_username']", function() {
+                                            this.fillSelectors('form#login', {
+                                                'input[name = j_username ]' : 'beta@staging.com',
+                                                'input[name = j_password ]' : 'ots!!Staging1'
+                                            }, true);
+                                        });
+
+                                        casper.waitWhileSelector('form',
+                                            // Adding pass/fail wait to wait for page to redirect to new page.
+                                            function pass () {
+                                                // console.log('PASS ]');
+                                            },
+                                            function fail () {
+                                                // console.log('FAIL ]');  
+                                            }, 1000);
+
+                                        casper.then(function(){
+                                            test.comment('...login successful, continuing.');
+                                            if (casper.exists('.subnav-section-landing')) {
+                                                this.waitForSelector('.subnav-large-container',
+                                                    function pass () {
+                                                        console.log('-------------');
+                                                        test.comment('Current test url > ' +  response.url);
+                                                        console.log('HTTP Response - ' + response.status);
+
+                                                        suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
+                                                    },
+                                                    function fail () {
+                                                        testResultsObject[pagePathName + '_subNav'] = 'Unable to locate page subnav.';
+                                                        testStatus = 'Fail';
+                                                        setFail++;
+                                                    },
+                                                    null // timeout limit in milliseconds
+                                                )
+                                            }
+                                        });
+                                    } else {
+                                        console.log(response.url);
+                                        console.log('-- Unable to find the "' + pagePathName + '" subnav container, page load/redirect error. Test manually if Stage. [Full Fail]');
+                                        // this.captureSelector(saveLocation + urlUri + '--' + pagePathName + '_subnav_failure-screenshot' + timeStamp + '.jpg', 'body');
+                                    }
                                 }
                             })
                         }
