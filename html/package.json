@@ -7,6 +7,8 @@
 		"runall": "npm run 5concurrent && npm run 5concurrent-nav && npm run 5concurrent-article",
 		"runall-async": "npm run 1process && npm run 1process-nav && npm run 1process-article",
 		"runall-local": "npm run local-manifest && npm run local-nav && npm run local-article",
+		"runall-regression": "npm run stageRegression && npm run prodRegression",
+		"runall-regressionLocal": "npm run stageRegressionLocal && npm run prodRegressionLocal",
 		"5concurrent": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --cron --url=\"{}\"",
 		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --cron --url=\"{}\"",
 		"5concurrent-nav": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\"",
@@ -17,7 +19,11 @@
 		"local-nav": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-nav.js\" --url=\"{}\" --cron--env=local",
 		"local-article": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiCheck-article.js\" --url=\"{}\" --env=local",
 		"create-dictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest.js\" --cron --url=\"{}\" --output=dictionary",
-		"create-JSONdictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest_json.js\" --url=\"{}\" --env=local --task=createDictionary"
+		"create-JSONdictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiCheck-manifest_json.js\" --url=\"{}\" --env=local --task=createDictionary",
+		"stageRegression": "cat stage_sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --url=\"{}\"",
+		"prodRegression": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --url=\"{}\"",
+		"stageRegressionLocal": "cat stage_sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --env=local --url=\"{}\"",
+		"prodRegressionLocal": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --env=local --url=\"{}\""
 	},
 	"dependencies": {
 	    "casperjs": "^1.1.3",
