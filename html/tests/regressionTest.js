@@ -37,6 +37,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     var testingObject = {};
     var testStatus = 'Pass';
     var setFail = 0;
+    var saveLocation = '../test_results/screenshots/';
 
     // Util vars
     var currentTime = new Date();
@@ -82,6 +83,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     if ( casper.cli.get('testing') ) {
         var logResults = false;
+    }
+
+
+    if (['local', 'dev'].indexOf(envConfig) < 0) {
+        var process = require("child_process"),
+            spawn = process.spawn,
+            child = spawn("chown", ["-hR", "ec2-user:apache", saveLocation]);
     }
 
     var regressionSuite = function(url) {
@@ -312,7 +320,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     },
                     function fail () {
-                        this.captureSelector('../test_results/screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.jpg', 'body');
+                        this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '.jpg', 'body');
                         test.fail("Unable to test page elements. Did not load element .sfbox");
                     },
                     null // timeout limit in milliseconds
@@ -366,7 +374,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     },
                     function fail () {
-                        this.captureSelector('../test_results/screenshots/' + urlUri + '_failure-screenshot' + timeStamp + '.jpg', 'body');
+                        this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '.jpg', 'body');
                         test.fail("Unable to test page elements. Did not load properly.");
                     },
                     null // timeout limit in milliseconds
@@ -396,7 +404,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var suite = this;
         var entityName = testingEntity.replace('.','_').replace('\/',"_").split(' ').join('_').toLowerCase();
         
-        casper.captureSelector('../test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.jpg', 'body');
+        casper.captureSelector(saveLocation + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.jpg', 'body');
         
         var failureScreenshot = configURL + '/test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.jpg';
 
@@ -586,7 +594,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 } else {
                                     console.log(response.url);
                                     console.log('-- Unable to find the subnav container.');
-                                    this.captureSelector('../test_results/screenshots/' + urlUri + '--' + pagePathName + '_subnav_failure-screenshot' + timeStamp + '.jpg', 'body');
+                                    this.captureSelector(saveLocation + urlUri + '--' + pagePathName + '_subnav_failure-screenshot' + timeStamp + '.jpg', 'body');
                                 }
                             })
                         }
