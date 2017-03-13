@@ -37,7 +37,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     var testingObject = {};
     var testStatus = 'Pass';
     var setFail = 0;
-    var saveLocation = '../test_results/screenshots/';
+    var saveLocation = 'test_results/screenshots/';
 
     // Util vars
     var currentTime = new Date();
