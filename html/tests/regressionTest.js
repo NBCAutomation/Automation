@@ -392,7 +392,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         if (casper.exists(testingEntity)) {
             console.log('----------------------------------')
             console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
-            test.assertVisible(testingEntity, refName + ' is visibile');
+            try {
+                test.assertVisible(testingEntity, refName + ' is visibile');
+            } catch (e) {
+                console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
+                console.log('   -- failure')
+                console.log('   -- ' +  e);
+                suite.logRegressionError(testingEntity, urlUri, refName);
+            }
         } else {
             console.log('----------------------------------')
             console.log(colorizer.colorize(refName + ' didnt load correctly, and/or wasn\'t located on the site.', 'ERROR'));
