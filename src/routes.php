@@ -52,9 +52,12 @@ $app->group('/dashboard', function () use ($app) {
 		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
 		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
 
-		$man30Day = $db->getFailuresPer30Day('api_manifest_audits');
-		$nav30Day = $db->getFailuresPer30Day('api_navigation_audits');
-		$cont30Day = $db->getFailuresPer30Day('api_article_audits');
+	// echo '<style>.ts-sidebar {display: none;}</style>';
+	// 	$man30Day = $db->getFailuresPer30Day('api_manifest_audits');
+	// 	echo "---------------------------<br />";
+	// 	$nav30Day = $db->getFailuresPer30Day('api_navigation_audits');
+	// 	echo "---------------------------<br />";
+	// 	$cont30Day = $db->getFailuresPer30Day('api_article_audits');
 
 		// Server time
 		$info = getdate();
@@ -1126,7 +1129,7 @@ $app->group('/utils', function () {
     		$status = $utilPostParams['testStatus'];
     		$testFailureCount = $utilPostParams['testFailureCount'];
     		$results = $utilPostParams['testResults'];
-    		$info = '';
+    		$info = $utilPostParams['testInfo'];
 
     		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $results, $info);
     		

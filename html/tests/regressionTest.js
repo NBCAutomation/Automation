@@ -37,6 +37,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     var testingObject = {};
     var testStatus = 'Pass';
     var setFail = 0;
+    var testInfo = 'Engine: Chrome/WebKit';
 
     // Util vars
     var currentTime = new Date();
@@ -85,6 +86,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     if ( casper.cli.get('testing') ) {
         var logResults = false;
+    }
+
+    runEngine = casper.cli.get('ff');
+    if ( runEngine ) {
+        var testInfo = 'Engine: FF/Gecko';
     }
 
 
@@ -193,7 +199,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     }
                 }
             } else {
-                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus);
+                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus, testInfo);
             }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
@@ -236,7 +242,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
     // Log results in DB
-    regressionSuite.prototype.processTestResults = function(urlUri, testResultsObject, testFailureCount, testID, testType, testStatus) {
+    regressionSuite.prototype.processTestResults = function(urlUri, testResultsObject, testFailureCount, testID, testType, testStatus, testInfo) {
 
         var processUrl = configURL + '/utils/processRequest';
 
@@ -253,7 +259,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 'testProperty': urlUri,
                 'testStatus': testStatus,
                 'testFailureCount':testFailureCount,
-                'testResults':  JSON.stringify(testResultsObject)
+                'testResults':  JSON.stringify(testResultsObject),
+                'testInfo': testInfo
             }
         });
     };
