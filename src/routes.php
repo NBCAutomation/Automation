@@ -1115,9 +1115,12 @@ $app->group('/utils', function () {
     		$dictionaryData = $utilPostParams['dictionaryData'];
     		  	
     		$manifestDictionaryStatus = $db->insertUpdateManifestDictionary($dictionaryStation, $dictionaryData);
+			
+			$tmpLocation = BASEPATH .'/tmp/';
     		
     		if ($manifestDictionaryStatus){
-    			$this->logger->info("Dictionary insert/updated: ". $dictionaryStation ." : ". $manifestDictionaryStatus);
+    			$purgeDBCache = Spire::purgeAllCache($tmpLocation);
+    			$this->logger->info("Dictionary insert/updated: ". $dictionaryStation ." : ". $manifestDictionaryStatus . " -- DbCahce Purged");
     		}
     	}
 
