@@ -12,7 +12,7 @@
 // ./run.sh apiCheck-article --url=http://www.telemundolasvegas.com --output=console
 
 
-casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
+casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
     // Global Vars
     var logResults = true;
     var colorizer = require('colorizer').create('Colorizer');
@@ -65,7 +65,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/navigation?apiVersion=5';
+        url = url + '/apps/news-app/navigation?apiVersion=6';
 
         /*******************
         *
