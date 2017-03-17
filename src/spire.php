@@ -213,99 +213,143 @@ class Spire {
 
 		foreach ($data as $testReport) {
 
-			if ( $view == 'all' ) {
-				if ( strpos($ref, 'manifest') ) {
-			    	$testTypeFolder = 'manifest';
+			if ( strpos($view, 'manifest') ) {
+		    	$viewName = 'Manifest';
+		    	$testPath = 'apiManifestTest';
 
-		    	} elseif ( strpos($ref, 'nav') ) {
-			    	$testTypeFolder = 'navigation';
+	    	} elseif ( strpos($view, 'nav') ) {
+		    	$viewName = 'Navigation';
+		    	$testPath = 'apiNavTest';
 
-				} elseif ( strpos($ref, 'article') ) {
-			    	$testTypeFolder = 'article';
-				
-				}
-
-				// $testReportStatus = $db->checkForTestFailures($testReport['id'], $ref, $view);
-				$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
-
-				$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
-				$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport['created']));
-				$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
-
-			} else {
-				if ( strpos($view, 'manifest') ) {
-			    	$testTypeFolder = 'manifest';
-
-		    	} elseif ( strpos($view, 'nav') ) {
-			    	$testTypeFolder = 'navigation';
-
-				} elseif ( strpos($view, 'article') ) {
-			    	$testTypeFolder = 'article';
-				
-				}
-
-				$testReportStatus = strtolower($testReport->status);
-				$testReportTime = date('n/d/Y, g:i A', strtotime($testReport->created));
-
-				$reportCSVDate =  date('n_j_Y', strtotime($testReport->created));
-				$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport->created));
-				$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport->testInfoProperty.'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
-			}
-
-			$fileLocation = urlencode($reportCSVFile);
-
-			$usersTimezone = new DateTimeZone('America/New_York');
-			$l10nDate = new DateTime($testReportTime);
-			$l10nDate->setTimeZone($usersTimezone);
-			// echo $l10nDate->format('Y-m-d H:i:s')."<br />";
-
-		    $testReportViewData = '<tr class="report_row_status '.$testReportStatus.'">';
-
-		    if ( strpos($view, 'manifest') ) {
-	            $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-	            $testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoProperty.'.com</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoId.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->expected_key.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->expected_value.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->live_key.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->live_value.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->info.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
-
-	        } elseif ( strpos($view, 'nav') ) {
-	            $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-	            $testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoProperty.'.com</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoId.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->link_name.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->link_url.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->status_code.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->info.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
-
-            } elseif ( strpos($view, 'article') ) {
-	            $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-	            $testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoProperty.'.com</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoId.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->endpoint.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->content_id.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->content_title.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->content_error.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->status.'</a></td>';
-	            $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
-		    
-		    } elseif ( $view == 'all' ) {
-		    	// $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
-		    	$testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
-		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['id'].'</a></td>';
-		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['test_id'].'</a></td>';
-		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['property'].'.com</a></td>';
-		    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';	
+			} elseif ( strpos($view, 'article') ) {
+		    	$viewName = 'Article/Content';
+		    	$testPath = 'apiContentTest';
 		    }
+					
+					
+
+			$testReportViewData = '<div class="panel panel-default">';
+			$testReportViewData .= '<div class="panel-heading">'.$viewName.' Reports</div>';
+			$testReportViewData .= '<div class="panel-body api_results">';
+			$testReportViewData .= '<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
+			$testReportViewData .= "<thead><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></thead>";
+			$testReportViewData .= "<tbody>";
+
+			foreach ($data[0] as $key => $value) {
+				$l10nDate = new DateTime($value['created']);
+				$l10nDate->setTimeZone($usersTimezone);
+
+				$testReportViewData .= '<tr>';
+				$testReportViewData .= '<td><div class="report_status '.strtolower($value['status']).'">'.$value['status'].'</div></td>';
+				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['id'].'</a></td>';
+				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['ref_test_id'].'</a></td>';
+				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
+				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['failures'].'</a></td>';
+				// $testReportViewData .= $value['created']."</td>";
+				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+				$testReportViewData .= '</tr>';
+			}
+			$testReportViewData .= "</tbody>";
+			$testReportViewData .= "<tfoot><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></tfoot>";
+			$testReportViewData .= '</table>';
+			$testReportViewData .= '</div></div>';
+
+			// if ( $view == 'all' ) {
+			// 	if ( strpos($ref, 'manifest') ) {
+			//     	$testTypeFolder = 'manifest';
+
+		 //    	} elseif ( strpos($ref, 'nav') ) {
+			//     	$testTypeFolder = 'navigation';
+
+			// 	} elseif ( strpos($ref, 'article') ) {
+			//     	$testTypeFolder = 'article';
+				
+			// 	}
+
+			// 	// $testReportStatus = $db->checkForTestFailures($testReport['id'], $ref, $view);
+			// 	$testReportTime = date('n/d/Y, g:i A', strtotime($testReport['created']));
+
+			// 	$reportCSVDate =  date('n_j_Y', strtotime($testReport['created']));
+			// 	$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport['created']));
+			// 	$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
+
+			// } else {
+			// 	if ( strpos($view, 'manifest') ) {
+			//     	$testTypeFolder = 'manifest';
+
+		 //    	} elseif ( strpos($view, 'nav') ) {
+			//     	$testTypeFolder = 'navigation';
+
+			// 	} elseif ( strpos($view, 'article') ) {
+			//     	$testTypeFolder = 'article';
+				
+			// 	}
+
+			// 	$testReportStatus = strtolower($testReport->status);
+			// 	$testReportTime = date('n/d/Y, g:i A', strtotime($testReport->created));
+
+			// 	$reportCSVDate =  date('n_j_Y', strtotime($testReport->created));
+			// 	$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($testReport->created));
+			// 	$reportCSVFile = '/test_results/'.$view.'/'.$reportCSVDate.'/'.$testReport->testInfoProperty.'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
+			// }
+
+			// $fileLocation = urlencode($reportCSVFile);
+
+			// $usersTimezone = new DateTimeZone('America/New_York');
+			// $l10nDate = new DateTime($testReportTime);
+			// $l10nDate->setTimeZone($usersTimezone);
+			// // echo $l10nDate->format('Y-m-d H:i:s')."<br />";
+
+
+
+
+		 //    $testReportViewData = '<tr class="report_row_status '.$testReportStatus.'">';
+
+		 //    if ( strpos($view, 'manifest') ) {
+	  //           $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+	  //           $testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoProperty.'.com</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoId.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->expected_key.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->expected_value.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->live_key.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->live_value.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->info.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+
+	  //       } elseif ( strpos($view, 'nav') ) {
+	  //           $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+	  //           $testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoProperty.'.com</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoId.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->link_name.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->link_url.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->status_code.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->info.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+
+   //          } elseif ( strpos($view, 'article') ) {
+	  //           $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+	  //           $testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoProperty.'.com</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->testInfoId.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->endpoint.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->content_id.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->content_title.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->content_error.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$testReport->status.'</a></td>';
+	  //           $testReportViewData .= '<td><a href="/reports/'.$view.'/record/'.$testReport->id.'?refID='.$testReport->test_id.'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+		    
+		 //    } elseif ( $view == 'all' ) {
+		 //    	// $testReportViewData .= '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
+		 //    	$testReportViewData .= '<td><a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i></a></td>';
+		 //    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['id'].'</a></td>';
+		 //    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['test_id'].'</a></td>';
+		 //    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$testReport['property'].'.com</a></td>';
+		 //    	$testReportViewData .= '<td><a href="/reports/'.$ref.'/record/'.$testReport['test_id'].'?refID='.$testReport['id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';	
+		 //    }
             
-            $testReportViewData .= "</tr>";
+   //          $testReportViewData .= "</tr>";
          
             print($testReportViewData);
 		}

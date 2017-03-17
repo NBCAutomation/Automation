@@ -503,6 +503,7 @@ class DbHandler {
 
                 $queryStatus = $stmtStatus;
 
+                $stmt->closeCursor();
                 return $queryStatus;
             }
 
@@ -1151,7 +1152,7 @@ class DbHandler {
     }
 
     public function getFailuresPer30Day($testResultsTable) {
-        $output = Spire::spireCache('getFailuresPer30Day_'.$testResultsTable, 9000, function() use ($testResultsTable) {
+        $output = Spire::spireCache('getFailuresPer30Day_'.$testResultsTable, 10, function() use ($testResultsTable) {
             
             $db_con = Spire::getConnection();
 
@@ -1186,7 +1187,7 @@ class DbHandler {
             }
 
             //$stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
-            $stmt = $db_con->prepare("SELECT Year(`created`) AS 'Year', Month(`created`) AS 'Month', COUNT(*) AS 'Total' FROM ".$testTableName." WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`)");
+            $stmt = $db_con->prepare("SELECT Year(`created`) AS 'Year', Month(`created`) AS 'Month', Day(`created`) AS 'Day', COUNT(*) AS 'Total' FROM ".$testTableName." WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)");
             $failureCounts = array();
 
             $months = array(1 => 'Jan.', 2 => 'Feb.', 3 => 'Mar.', 4 => 'Apr.', 5 => 'May', 6 => 'Jun.', 7 => 'Jul.', 8 => 'Aug.', 9 => 'Sep.', 10 => 'Oct.', 11 => 'Nov.', 12 => 'Dec.');
@@ -1195,10 +1196,11 @@ class DbHandler {
                 $errorReports = $stmt->fetchAll();
 
                 foreach ($errorReports as $key => $val) {
-                    var_dump($val['Year']);
-                    var_dump($val['Month']);
-                    var_dump($val['Day']);
-                    var_dump($val['Total']);
+                    echo 'Day > '. $val['Day'].'<br />';
+                    echo 'Month > '. $val['Month'].'<br />';
+                    echo 'Year > '. $val['Year'].'<br />';
+                    echo 'Total > '. $val['Total'].'<br />';
+                    echo '<br />';
 
                     foreach ($months as $num => $name) {
                         $monthName = date('F', mktime(0, 0, 0, $num, 10));
@@ -1323,14 +1325,110 @@ class DbHandler {
         return $output;
     }
 
-    public function getAllTestResultData($testType) {
-        $output = Spire::spireCache('getAllTestResultData', 100, function() use ($testType) {
+    // public function getAllTestResultData($testType) {
+    //     $output = Spire::spireCache('getAllTestResultData', 100, function() use ($testType) {
+    //         $db_con = Spire::getConnection();
+
+    //         if ($testType == 'all') {
+    //             $stmt = $db_con->prepare("SELECT * FROM test_results ORDER BY id DESC");    
+    //         } else {
+    //             $stmt = $db_con->prepare("SELECT * FROM test_results WHERE test_type = '".$testType."'");
+    //         }
+
+    //         $testResultsData = array();
+
+    //         if ($stmt->execute()) {
+    //             $testResults = $stmt->fetchAll();
+                    
+    //             foreach( $testResults as $key => $value ){
+    //                 $testResultsData[$key] = $value;
+    //             }
+
+    //             $storedTestData[] = $testResultsData;
+
+    //             $stmt->closeCursor();
+    //             return $storedTestData;
+                
+    //         } else {
+    //             return NULL;
+    //         }
+    //     });
+
+    //     return $output;
+    // }
+
+    public function getAllTestResultData($testType, $status, $range) {
+        $output = Spire::spireCache('getAllTestResultData', 100, function() use ($testType, $status, $range) {
             $db_con = Spire::getConnection();
 
+            switch ($testType) {
+                case "api_manifest_audits":
+                    $testTypeName = 'apiManifestTest';
+                    break;
+
+                case "api_navigation_audits":
+                    $testTypeName = 'apiNavTest';
+                    break;
+
+                case "api_article_audits":
+                    $testTypeName = 'apiContentTest';
+                    break;
+
+                case "regression_tests":
+                    $testTypeName = 'regressionTest';
+                    break;
+
+                default:
+                    $testTypeName = 'none-existent';
+            }
+
+            switch ($status) {
+                case "all":
+                    $filterStatus = '';
+                    break;
+
+                case "fail":
+                    $filterStatus = "WHERE status = 'fail'";
+                    break;
+
+                case "pass":
+                    $filterStatus = "WHERE status = 'pass'";
+                    break;
+
+                default:
+                    $filterStatus = "";
+            }
+
+            switch ($range) {
+                case "all":
+                    $dataRange = '';
+                    break;
+
+                case "today":
+                    $dataRange = 'AND DATE(created) >= CURDATE()';
+                    break;
+
+                case "yesterday":
+                    $dataRange = 'AND DATE(created) >= CURDATE()-1';
+                    break;
+
+                case "currentMonth":
+                    $dataRange = 'AND Month(created) = Month(CURRENT_DATE())';
+                    break;
+
+                case "lastMonth":
+                    $dataRange = 'AND Month(created) = Month(CURRENT_DATE())-1';
+                    break;
+
+                default:
+                    $dataRange = '';
+            }
+
+
             if ($testType == 'all') {
-                $stmt = $db_con->prepare("SELECT * FROM test_results ORDER BY id DESC");    
+                $stmt = $db_con->prepare("SELECT * FROM test_results ".$dataRange." ORDER BY id DESC");    
             } else {
-                $stmt = $db_con->prepare("SELECT * FROM test_results WHERE test_type = '".$testType."'");
+                $stmt = $db_con->prepare("SELECT * FROM test_results WHERE test_type = '".$testTypeName."' ".$filterStatus." ".$dataRange."");
             }
 
             $testResultsData = array();

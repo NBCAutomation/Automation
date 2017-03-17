@@ -216,23 +216,19 @@ $app->group('/reports', function () {
 			if ($regressionView) {
 				// $regressionResults = $db->getAllRegressionTestData();
 				
-				$regressionTests = $db->getAllTestResultData('regressionTest');
+				$regressionTests = $db->getAllTestResultData('regressionTest', 'all', 'all');
 			} else {
 				// Reporting Data
-				$todayReports = $db->getAllTestsFromToday($args['view']);
-				$yesterdayReports = $db->getAllTestsFromYesterday($args['view']);
 
-				$todayTotalFailureReports = $db->allFailureReportsFromToday($args['view']);
-				$todayTotalWarningReports = $db->allWarningReportsFromToday($args['view']);
+				$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
+				$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
+				$todayTotalFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
+				$yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
+				$yesterdayTotalFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
 
-				$yesterdayTotalFailureReports = $db->allFailureReportsFromYesterday($args['view']);
-				$yesterdayTotalWarningReports = $db->allWarningReportsFromYesterday($args['view']);
+				// $todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($args['view']));
 
-				$todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($args['view']));
-				$todayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromToday($args['view']));
-
-				$yesterdayTotalErrors = Spire::countDataResults($db->allFailureReportsFromYesterday($args['view']));
-				$yesterdayTotalWarnings = Spire::countDataResults($db->allWarningReportsFromYesterday($args['view']));
+				// $yesterdayTotalErrors = Spire::countDataResults($db->allFailureReportsFromYesterday($args['view']));
 
 			}
 		}
