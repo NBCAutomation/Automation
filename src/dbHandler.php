@@ -1358,7 +1358,8 @@ class DbHandler {
     // }
 
     public function getAllTestResultData($testType, $status, $range) {
-        $output = Spire::spireCache('getAllTestResultData', 100, function() use ($testType, $status, $range) {
+        $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 100, function() use ($testType, $status, $range) {
+            echo $testType."<br />".$status."<br />".$range."<br />";
             $db_con = Spire::getConnection();
 
             switch ($testType) {
@@ -1388,11 +1389,11 @@ class DbHandler {
                     break;
 
                 case "fail":
-                    $filterStatus = "WHERE status = 'fail'";
+                    $filterStatus = "AND status = 'fail'";
                     break;
 
                 case "pass":
-                    $filterStatus = "WHERE status = 'pass'";
+                    $filterStatus = "AND status = 'pass'";
                     break;
 
                 default:
@@ -1409,7 +1410,7 @@ class DbHandler {
                     break;
 
                 case "yesterday":
-                    $dataRange = 'AND DATE(created) >= CURDATE()-1';
+                    $dataRange = 'AND DATE(created) = CURDATE()-1';
                     break;
 
                 case "currentMonth":
@@ -1421,7 +1422,7 @@ class DbHandler {
                     break;
 
                 default:
-                    $dataRange = '';
+                    $dataRange = 'AND DATE(created) >= CURDATE()';
             }
 
 

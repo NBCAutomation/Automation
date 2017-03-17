@@ -139,77 +139,82 @@
 				</div>
 
 				<div class="api_results">
-					<!-- <div class="panel panel-default"> -->
-						<!-- <div class="panel-body"> -->
-							<ul class="nav nav-tabs">
-								<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Today's Reports</a></li>
-								<li class=""><a href="#yesterday_reports_tab" data-toggle="tab" aria-expanded="true">Yesterday's Reports</a></li>
-								<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
-							</ul>
-							<br />
-							<div class="tab-content">
-								<div class="tab-pane fade active in" id="today_reports_tab">
-									<div class="panel-body">
-										<ul class="nav nav-tabs">
-											<li class="active"><a href="#errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
-											<li class=""><a href="#all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
-										</ul>
-										<br>
-										<div class="tab-content">
-											<div class="tab-pane fade active in" id="errors_tab">
-												<?php if ($todayReports) { 
-														Spire::returnFormattedDataTable($todayReports, $view);
-													} else {
-														echo "No error reports currently.";
-													}
-												?>
-											</div>
-											<!-- // End errors tab -->
-											<!-- // All reports tab -->
-											<div class="tab-pane" id="all_reports_tab">
-												all report data
-											</div>
-											<!-- // End all reports tab -->
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Today's Reports</a></li>
+						<li class=""><a href="#yesterday_reports_tab" data-toggle="tab" aria-expanded="true">Yesterday's Reports</a></li>
+						<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
+					</ul>
+					<br />
+					<div class="tab-content">
+						<div class="tab-pane fade active in" id="today_reports_tab">
+							<div class="panel-body">
+								<ul class="nav nav-tabs">
+									<li class="active"><a href="#errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
+									<li class=""><a href="#all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
+								</ul>
+								<br>
+								<div class="tab-content">
+									<div class="tab-pane fade active in" id="errors_tab">
+										<?php if ($todayFailureReports) { 
+												Spire::returnFormattedDataTable($todayFailureReports, $view);
+											} else {
+												echo "No error reports currently.";
+											}
+										?>
+									</div>
+									<!-- // End errors tab -->
+									<!-- // All reports tab -->
+									<div class="tab-pane" id="all_reports_tab">
+										<?php if ($todayReports) {
+												Spire::returnFormattedDataTable($todayReports, $view);
+											} else {
+												echo "No error reports currently.";
+											}
+										?>
+									</div>
+									<!-- // End all reports tab -->
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane" id="yesterday_reports_tab">
+							<div class="tab-pane fade active in" id="today_reports_tab">
+								<div class="panel-body">
+									<ul class="nav nav-tabs">
+										<li class="active"><a href="#yesterday_errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
+										<li class=""><a href="#yesterday_all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
+									</ul>
+									<br>
+									<div class="tab-content">
+										<div class="tab-pane fade active in" id="yesterday_errors_tab">
+											<?php if ($yesterdayFailureReports) { 
+													Spire::returnFormattedDataTable($yesterdayFailureReports, $view);
+												} else {
+													echo "No error reports currently.";
+												}
+											?>
 										</div>
-									</div>
-								</div>
-								<div class="tab-pane" id="yesterday_reports_tab">
-									<div class="tab-pane fade active in" id="today_reports_tab">
-										<div class="panel-body">
-											<ul class="nav nav-tabs">
-												<li class="active"><a href="#yesterday_errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
-												<li class=""><a href="#yesterday_all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
-											</ul>
-											<br>
-											<div class="tab-content">
-												<div class="tab-pane fade active in" id="yesterday_errors_tab">
-													<?php if ($yesterdayTotalFailureReports) { ?>
-														yesterday failures
-													<?php
-														} else {
-															echo "No error reports currently.";
-														}
-													?>
-												</div>
-												<!-- // End errors tab -->
-												<!-- // All reports tab -->
-												<div class="tab-pane" id="yesterday_all_reports_tab">
-													yesterday all	
-												</div>
-												<!-- // End all reports tab -->
-											</div>
+										<!-- // End errors tab -->
+										<!-- // All reports tab -->
+										<div class="tab-pane" id="yesterday_all_reports_tab">
+											<?php if ($yesterdayReports) { 
+													Spire::returnFormattedDataTable($yesterdayReports, $view);
+												} else {
+													echo "No error reports currently.";
+												}
+											?>
 										</div>
+										<!-- // End all reports tab -->
 									</div>
 								</div>
-								<div class="tab-pane" id="alltime_reports_tab">
-									<div class="alert alert-dismissible alert-info">
-										<p><i class="fa fa-info-circle" aria-hidden="true"></i> This page may take a few moments to load after clicking the linke. Once the page/query cache is built, subsequent loads should load faster.</p>
-									</div>
-									<a href="/reports/<?php echo $view; ?>/all" class="btn btn-primary">View all reports</a>
-								</div>
-							</div>					
-						<!-- </div>					 -->
-					<!-- </div> -->
+							</div>
+						</div>
+						<div class="tab-pane" id="alltime_reports_tab">
+							<div class="alert alert-dismissible alert-info">
+								<p><i class="fa fa-info-circle" aria-hidden="true"></i> This page may take a few moments to load after clicking the linke. Once the page/query cache is built, subsequent loads should load faster.</p>
+							</div>
+							<a href="/reports/<?php echo $view; ?>/all" class="btn btn-primary">View all reports</a>
+						</div>
+					</div>
 				</div>
 			<?php
 			} ?>
@@ -517,71 +522,17 @@
 
 		<?php } ?>
 		<?php if ($allView) {
-				$db = new DbHandler();
-
-				switch ($viewType) {
-				    
-				    case "apiCheck-manifest":
-				        $tableHeaders = '<th>Status</th><th>Expected Key</th><th>Expected Value</th><th>Live Key</th><th>Live Value</th><th>Info</th><th>API Version</th>';
-				        $manifestData = true;
-				        $testTypeFolder = 'manifest';
-				        break;
-
-				    case "apiCheck-nav":
-				        $tableHeaders = '<th> Status</th><th>Link</th><th>URL (click to open)</th><th>HTTP Status Code</th><th>Info</th>';
-				        $navData = true;
-				        $testTypeFolder = 'navigation';
-				        break;
-
-				    default:
-				        $tableHeaders = '<th> Status</th><th>Endpoint</th><th>Content ID</th><th>Content Title</th><th>Content Error</th>';
-				        $articleData = true;
-				        $testTypeFolder = 'article';
-				}
-
-				$testReportTime = date('n/d/Y, g:i A', strtotime($reportPropertyData['created']));
-
-				$l10nDate = new DateTime($testReportTime);
-				$l10nDate->setTimeZone($usersTimezone);
-
-				$reportCSVDate =  date('n_j_Y', strtotime($reportPropertyData['created']));
-				$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($reportPropertyData['created']));
-
-				$reportCSVFile = '/test_results/'.$viewPath.'/'.$reportCSVDate.'/'.$reportPropertyData['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
-
-				$fileLocation = urlencode($reportCSVFile);
-		?>
-		<div class="api_results">
-			<table class="data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-				<thead>
-					<tr>
-						<!-- <th>Status</th> -->
-						<th>CSV</th>
-						<th>ID</th>
-						<th>Test ID</th>
-						<th>Property</th>
-						<th>Created</th>
-					</tr>
-				</thead>
-				<tfoot>
-					<tr>
-						<!-- <th>Status</th> -->
-						<th>CSV</th>
-						<th>ID</th>
-						<th>Test ID</th>
-						<th>Property</th>
-						<th>Created</th>
-					</tr>
-				</tfoot>
-				<tbody>
-					<?php 
-					Spire::returnFormattedDataTable($reportData[0], 'all', $viewPath); ?>
-				</tbody>
-			</table>	
+			if ($allReports) { 
+				Spire::returnFormattedDataTable($allReports, $view);
+			} else {
+				echo "No error reports currently.";
+			}
+		?>			
 		<?php } ?>
 		<?php 
 			if ($regressionView) {
-				// echo '<pre>';
+		?>
+				<!-- // echo '<pre>';
 				// var_dump($regressionTests);
 				// echo '</pre>';
 				echo '<div class="panel panel-default">';
@@ -610,9 +561,88 @@
 				echo '</table>';
 				echo '</div></div>';
 
-				// echo '</pre>';
+				// echo '</pre>'; -->
+				<div class="api_results">
+					<ul class="nav nav-tabs">
+						<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Today's Reports</a></li>
+						<li class=""><a href="#yesterday_reports_tab" data-toggle="tab" aria-expanded="true">Yesterday's Reports</a></li>
+						<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
+					</ul>
+					<br />
+					<div class="tab-content">
+						<div class="tab-pane fade active in" id="today_reports_tab">
+							<div class="panel-body">
+								<ul class="nav nav-tabs">
+									<li class="active"><a href="#errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
+									<li class=""><a href="#all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
+								</ul>
+								<br>
+								<div class="tab-content">
+									<div class="tab-pane fade active in" id="errors_tab">
+										<?php if ($todayFailureReports) { 
+												Spire::returnFormattedDataTable($todayFailureReports, $view);
+											} else {
+												echo "No error reports currently.";
+											}
+										?>
+									</div>
+									<!-- // End errors tab -->
+									<!-- // All reports tab -->
+									<div class="tab-pane" id="all_reports_tab">
+										<?php if ($todayReports) {
+												Spire::returnFormattedDataTable($todayReports, $view);
+											} else {
+												echo "No error reports currently.";
+											}
+										?>
+									</div>
+									<!-- // End all reports tab -->
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane" id="yesterday_reports_tab">
+							<div class="tab-pane fade active in" id="today_reports_tab">
+								<div class="panel-body">
+									<ul class="nav nav-tabs">
+										<li class="active"><a href="#yesterday_errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
+										<li class=""><a href="#yesterday_all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
+									</ul>
+									<br>
+									<div class="tab-content">
+										<div class="tab-pane fade active in" id="yesterday_errors_tab">
+											<?php if ($yesterdayFailureReports) { 
+													Spire::returnFormattedDataTable($yesterdayFailureReports, $view);
+												} else {
+													echo "No error reports currently.";
+												}
+											?>
+										</div>
+										<!-- // End errors tab -->
+										<!-- // All reports tab -->
+										<div class="tab-pane" id="yesterday_all_reports_tab">
+											<?php if ($yesterdayReports) { 
+													Spire::returnFormattedDataTable($yesterdayReports, $view);
+												} else {
+													echo "No error reports currently.";
+												}
+											?>
+										</div>
+										<!-- // End all reports tab -->
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane" id="alltime_reports_tab">
+							<div class="alert alert-dismissible alert-info">
+								<p><i class="fa fa-info-circle" aria-hidden="true"></i> This page may take a few moments to load after clicking the linke. Once the page/query cache is built, subsequent loads should load faster.</p>
+							</div>
+							<a href="/reports/<?php echo $view; ?>/all" class="btn btn-primary">View all reports</a>
+						</div>
+					</div>
+				</div>
+		<?php
 			}
 		?>
-	</div><!-- panel-body api_results -->
+	
 
 <?php include_once 'base/footer.php' ?>

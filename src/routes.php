@@ -216,15 +216,16 @@ $app->group('/reports', function () {
 			if ($regressionView) {
 				// $regressionResults = $db->getAllRegressionTestData();
 				
-				$regressionTests = $db->getAllTestResultData('regressionTest', 'all', 'all');
-			} else {
+			// 	$regressionTests = $db->getAllTestResultData('regression_tests', 'all', 'all');
+			// } else {
 				// Reporting Data
 
 				$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
 				$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
-				$todayTotalFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
+				$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
+				
 				$yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
-				$yesterdayTotalFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
+				$yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
 
 				// $todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($args['view']));
 
@@ -249,14 +250,14 @@ $app->group('/reports', function () {
     		'allReports' => $allReports,
     		'todayReports' => $todayReports,
     		'yesterdayReports' => $yesterdayReports,
-    		'todayTotalFailureReports' => $todayTotalFailureReports,
-    		'todayTotalWarningReports' => $todayTotalWarningReports,
-    		'yesterdayTotalFailureReports' => $yesterdayTotalFailureReports,
-    		'yesterdayTotalWarningReports' => $yesterdayTotalWarningReports,
-    		'todayTotalFailures' => $todayTotalFailures,
-			'todayTotalWarnings' => $todayTotalWarnings,
-			'yesterdayTotalErrors' => $yesterdayTotalErrors,
-			'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
+    		'todayFailureReports' => $todayFailureReports,
+    		// 'todayTotalWarningReports' => $todayTotalWarningReports,
+    		'yesterdayFailureReports' => $yesterdayFailureReports,
+    		// 'yesterdayTotalWarningReports' => $yesterdayTotalWarningReports,
+    		// 'todayTotalFailures' => $todayTotalFailures,
+			// 'todayTotalWarnings' => $todayTotalWarnings,
+			// 'yesterdayTotalErrors' => $yesterdayTotalErrors,
+			// 'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
 			'regressionResults' => $regressionResults,
 			'regressionTests' => $regressionTests,
 
@@ -277,10 +278,10 @@ $app->group('/reports', function () {
 
     	$allPostPutVars = $request->getQueryParams();
     	// Reporting Data
-    	$allReports = $db->getAllTestByType($args['view']);
+    	$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
 
 		// View path
-		$__viewPath = $args['view']."/".$args['subView'];
+		// $__viewPath = $args['view']."/".$args['subView'];
 
 		// Report View
 		return $this->renderer->render($response, 'reports.php', [
@@ -290,7 +291,7 @@ $app->group('/reports', function () {
 		    'viewPath' => $args['view'],
 		    'allView' => true,
 		    'reportClass' => true,
-		    'reportData' => $allReports,
+		    'allReports' => $allReports,
 
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
