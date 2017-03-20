@@ -418,9 +418,7 @@
 							</tfoot>
 							<tbody>
 							<?php
-								echo "<pre>";
 								// var_dump($reportData);
-								echo "</pre>";
 
 								$obj = json_decode($reportData, true);
 								$reportFailures = $obj['testResults'];
