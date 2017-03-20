@@ -1325,38 +1325,6 @@ class DbHandler {
         return $output;
     }
 
-    // public function getAllTestResultData($testType) {
-    //     $output = Spire::spireCache('getAllTestResultData', 100, function() use ($testType) {
-    //         $db_con = Spire::getConnection();
-
-    //         if ($testType == 'all') {
-    //             $stmt = $db_con->prepare("SELECT * FROM test_results ORDER BY id DESC");    
-    //         } else {
-    //             $stmt = $db_con->prepare("SELECT * FROM test_results WHERE test_type = '".$testType."'");
-    //         }
-
-    //         $testResultsData = array();
-
-    //         if ($stmt->execute()) {
-    //             $testResults = $stmt->fetchAll();
-                    
-    //             foreach( $testResults as $key => $value ){
-    //                 $testResultsData[$key] = $value;
-    //             }
-
-    //             $storedTestData[] = $testResultsData;
-
-    //             $stmt->closeCursor();
-    //             return $storedTestData;
-                
-    //         } else {
-    //             return NULL;
-    //         }
-    //     });
-
-    //     return $output;
-    // }
-
     public function getAllTestResultData($testType, $status, $range) {
         $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 100, function() use ($testType, $status, $range) {
             echo $testType."<br />".$status."<br />".$range."<br />";

@@ -532,36 +532,6 @@
 		<?php 
 			if ($regressionView) {
 		?>
-				<!-- // echo '<pre>';
-				// var_dump($regressionTests);
-				// echo '</pre>';
-				echo '<div class="panel panel-default">';
-				echo '<div class="panel-heading">Regression Test Reports</div>';
-				echo '<div class="panel-body api_results">';
-				echo '<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
-				echo "<thead><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></thead>";
-				echo "<tbody>";
-
-				foreach ($regressionTests[0] as $key => $value) {
-					$l10nDate = new DateTime($value['created']);
-					$l10nDate->setTimeZone($usersTimezone);
-
-					echo '<tr>';
-					echo '<td><div class="report_status '.strtolower($value['status']).'">'.$value['status'].'</div></td>';
-					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['id'].'</a></td>';
-					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['ref_test_id'].'</a></td>';
-					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
-					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['failures'].'</a></td>';
-					// echo $value['created']."</td>";
-					echo '<td><a href="regression_tests/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
-					echo '</tr>';
-				}
-				echo "</tbody>";
-				echo "<tfoot><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></tfoot>";
-				echo '</table>';
-				echo '</div></div>';
-
-				// echo '</pre>'; -->
 				<div class="api_results">
 					<ul class="nav nav-tabs">
 						<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Today's Reports</a></li>
@@ -643,6 +613,4 @@
 		<?php
 			}
 		?>
-	
-
 <?php include_once 'base/footer.php' ?>

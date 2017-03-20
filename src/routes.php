@@ -213,25 +213,12 @@ $app->group('/reports', function () {
 		}
 
 		if (! $mainView) {
-			if ($regressionView) {
-				// $regressionResults = $db->getAllRegressionTestData();
-				
-			// 	$regressionTests = $db->getAllTestResultData('regression_tests', 'all', 'all');
-			// } else {
-				// Reporting Data
+			$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
+			$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
+			$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
 
-				$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
-				$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
-				$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
-				
-				$yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
-				$yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
-
-				// $todayTotalFailures = Spire::countDataResults($db->allFailureReportsFromToday($args['view']));
-
-				// $yesterdayTotalErrors = Spire::countDataResults($db->allFailureReportsFromYesterday($args['view']));
-
-			}
+			$yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
+			$yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
 		}
 
         return $this->renderer->render($response, 'reports.php', [
@@ -246,12 +233,10 @@ $app->group('/reports', function () {
             'regressionView' => $regressionView,
             'fileView' => $fileView,
             'reportClass' => true,
-    		// 'results' => $getReports,
     		'allReports' => $allReports,
     		'todayReports' => $todayReports,
-    		'yesterdayReports' => $yesterdayReports,
     		'todayFailureReports' => $todayFailureReports,
-    		// 'todayTotalWarningReports' => $todayTotalWarningReports,
+    		'yesterdayReports' => $yesterdayReports,
     		'yesterdayFailureReports' => $yesterdayFailureReports,
     		// 'yesterdayTotalWarningReports' => $yesterdayTotalWarningReports,
     		// 'todayTotalFailures' => $todayTotalFailures,
