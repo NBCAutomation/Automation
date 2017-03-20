@@ -495,7 +495,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     testErrors.push('[' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
                     
                     currentTestObjectFailures['expectedValue'] = obj1[key];
-                    currentTestObjectFailures['LiveValue'] = obj2[key];
+                    currentTestObjectFailures['liveValue'] = obj2[key];
 
                     currentTestObject[key] = currentTestObjectFailures;
 
