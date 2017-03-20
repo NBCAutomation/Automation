@@ -225,8 +225,12 @@ class Spire {
 		    	$viewName = 'Article/Content';
 		    	$testPath = 'apiContentTest';
 		    }
-					
-					
+		    
+			if ( strpos($ref, 'all') !== false ) {
+				$urlPath = chop($ref,"/all");
+			} else {
+				$urlPath = $view;
+			}
 
 			$testReportViewData = '<div class="panel panel-default">';
 			$testReportViewData .= '<div class="panel-heading">'.$viewName.' Reports</div>';
@@ -241,12 +245,12 @@ class Spire {
 
 				$testReportViewData .= '<tr>';
 				$testReportViewData .= '<td><div class="report_status '.strtolower($value['status']).'">'.$value['status'].'</div></td>';
-				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['id'].'</a></td>';
-				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['ref_test_id'].'</a></td>';
-				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
-				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['failures'].'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['id'].'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['ref_test_id'].'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['failures'].'</a></td>';
 				// $testReportViewData .= $value['created']."</td>";
-				$testReportViewData .= '<td><a href="'.$view.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
 				$testReportViewData .= '</tr>';
 			}
 			$testReportViewData .= "</tbody>";

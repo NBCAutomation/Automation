@@ -95,7 +95,7 @@
 											<div class="panel panel-default">
 												<div class="panel-body bk-danger text-light">
 													<div class="stat-panel text-center">
-														<div class="stat-panel-number h1 "><?php //echo $todayTotalFailures; ?>0</div>
+														<div class="stat-panel-number h1 "><?php echo $todayTotalErrors; ?></div>
 														<div class="stat-panel-title text-uppercase">Error Reports</div>
 													</div>
 												</div>
@@ -105,7 +105,7 @@
 											<div class="panel panel-default">
 												<div class="panel-body bk-warning-alt text-light">
 													<div class="stat-panel text-center">
-														<div class="stat-panel-number h1 "><?php //echo $todayTotalWarnings; ?>0</div>
+														<div class="stat-panel-number h1 "><?php echo $todayTotalWarnings; ?></div>
 														<div class="stat-panel-title text-uppercase">Warnings</div>
 													</div>
 												</div>
@@ -115,7 +115,7 @@
 											<div class="panel panel-default">
 												<div class="panel-body bk-primary text-light">
 													<div class="stat-panel text-center">
-														<div class="stat-panel-number h1 "><?php //echo $yesterdayTotalErrors; ?>0</div>
+														<div class="stat-panel-number h1 "><?php echo $yesterdayTotalErrors; ?></div>
 														<div class="stat-panel-title text-uppercase">Errors Yesterday</div>
 													</div>
 												</div>
@@ -125,7 +125,7 @@
 											<div class="panel panel-default">
 												<div class="panel-body bk-info text-light">
 													<div class="stat-panel text-center">
-														<div class="stat-panel-number h1 "><?php //echo $yesterdayTotalWarnings; ?>0</div>
+														<div class="stat-panel-number h1 "><?php echo $yesterdayTotalWarnings; ?></div>
 														<div class="stat-panel-title text-uppercase">Warnings Yesterday</div>
 													</div>
 												</div>
@@ -302,18 +302,18 @@
 			if ($singleView) {
 				// Inidividual Report View
 				// var_dump($viewType);
-				// var_dump($viewPath);
+				// var_dump($reportData);
 				
 				$db = new DbHandler();
 
 				switch ($viewType) {				    
-				    case "apiCheck-manifest":
+				    case "apiManifestTest":
 				        $tableHeaders = '<th>Status</th><th>Expected Key</th><th>Expected Value</th><th>Live Key</th><th>Live Value</th><th>Info</th><th>API Version</th>';
 				        $manifestData = true;
 				        $testTypeFolder = 'manifest';
 				        break;
 
-				    case "apiCheck-nav":
+				    case "apiNavTest":
 				        $tableHeaders = '<th> Status</th><th>Link</th><th>URL (click to open)</th><th>HTTP Status Code</th><th>Info</th>';
 				        $navData = true;
 				        $testTypeFolder = 'navigation';
@@ -338,10 +338,6 @@
 				$reportCSVDate =  date('n_j_Y', strtotime($fullReportData['created']));
 				$reportCSVDateTime =  date('n_j_Y-g_i-A', strtotime($fullReportData['created']));
 
-				$reportCSVFile = '/test_results/'.$viewPath.'/'.$reportCSVDate.'/'.$reportPropertyData['property'].'_'.$testTypeFolder.'-audit_'.$reportCSVDateTime.'.csv';
-
-				$fileLocation = urlencode($reportCSVFile);
-
 				if (strpos($reportProperty, 'stage') !== false) {
 					$thisPropertyName = str_replace('stage_', 'stage.', $reportProperty);
 				} else {
@@ -362,7 +358,7 @@
 							echo '<li><b>Failures:</b> '.$fullReportData['failures'].'</li>';
 							echo '</ul>';
 						} else {
-							echo '<a href="/utils/download?file='.$fileLocation.'"><i class="fa fa-download" style="font-size:20px;"></i> Download report</a>';
+							
 						}
 					?>
 				</div>
@@ -422,30 +418,48 @@
 							</tfoot>
 							<tbody>
 							<?php
+								echo "<pre>";
 								// var_dump($reportData);
-								foreach ($reportData as $thisReport) {
+								echo "</pre>";
 
-								    echo '<tr class="report_row_status '.strtolower($thisReport->status).'">';
-								    echo '<td><div class="report_status '.strtolower($thisReport->status).'">'.$thisReport->status.'</div></td>';
+								$obj = json_decode($reportData, true);
+								$reportFailures = $obj['testResults'];
 
-								    if ($manifestData) {
-									    echo '<td>'.$thisReport->expected_key.'</td>';
-									    echo '<td>'.$thisReport->expected_value.'</td>';
-									    echo '<td>'.$thisReport->live_key.'</td>';
-									    echo '<td>'.$thisReport->live_value.'</td>';
-									    echo '<td>'.$thisReport->info.'</td>';
-									    echo '<td>'.$thisReport->api_version.'</td>';
-								    } elseif ($navData) {
-									    echo '<td>'.$thisReport->link_name.'</td>';
-									    echo '<td><a href="'.$thisReport->link_url.'" target="_blank">'.$thisReport->link_url.'</a></td>';
-									    echo '<td>'.$thisReport->status_code.'</td>';
-									    echo '<td>'.$thisReport->info.'</td>';
-								    } elseif ($articleData) {
-									    echo '<td>'.$thisReport->endpoint.'</td>';
-									    echo '<td>'.$thisReport->content_id.'</td>';
-									    echo '<td>'.$thisReport->content_title.'</td>';
-									    echo '<td>'.$thisReport->content_error.'</td>';
-								    }
+								foreach ($reportFailures as $thisReportKey => $thisReportValue) {
+									echo $thisReportKey."<br />";
+
+									if (is_array($thisReportValue)) {
+										foreach ($thisReportValue as $subReportKey => $subReportValue) {
+											echo " -- ".$subReportKey."<br />";
+											echo " -- ".$subReportValue."<br />";
+											// echo " -- ".$subReportValue[$subReportKey]."<br />";
+										}
+										// echo $thisReportValues['liveValue'];
+										// echo $thisReportValues['liveValue'];
+									} else {
+										echo "paco";
+									}
+								    // echo '<tr class="report_row_status '.strtolower($thisReport->status).'">';
+								    // echo '<td><div class="report_status '.strtolower($thisReport->status).'">'.$thisReport->status.'</div></td>';
+
+								    // if ($manifestData) {
+									   //  echo '<td>'.$thisReport['expectedValue'].'</td>';
+									   //  echo '<td>'.if ($thisReport['liveValue']) {$thisReport['liveValue']} else {$thisReport['LiveValue']}.'</td>';
+									   //  echo '<td>'.$thisReport->live_key.'</td>';
+									   //  echo '<td>'.$thisReport->live_value.'</td>';
+									   //  echo '<td>'.$thisReport->info.'</td>';
+									   //  echo '<td>'.$thisReport->api_version.'</td>';
+								    // } elseif ($navData) {
+									   //  echo '<td>'.$thisReport->link_name.'</td>';
+									   //  echo '<td><a href="'.$thisReport->link_url.'" target="_blank">'.$thisReport->link_url.'</a></td>';
+									   //  echo '<td>'.$thisReport->status_code.'</td>';
+									   //  echo '<td>'.$thisReport->info.'</td>';
+								    // } elseif ($articleData) {
+									   //  echo '<td>'.$thisReport->endpoint.'</td>';
+									   //  echo '<td>'.$thisReport->content_id.'</td>';
+									   //  echo '<td>'.$thisReport->content_title.'</td>';
+									   //  echo '<td>'.$thisReport->content_error.'</td>';
+								    // }
 									    
 					                echo "</tr>";
 								}
@@ -523,7 +537,7 @@
 		<?php } ?>
 		<?php if ($allView) {
 			if ($allReports) { 
-				Spire::returnFormattedDataTable($allReports, $view);
+				Spire::returnFormattedDataTable($allReports, $view, $fullPath);
 			} else {
 				echo "No error reports currently.";
 			}

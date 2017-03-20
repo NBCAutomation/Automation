@@ -219,6 +219,12 @@ $app->group('/reports', function () {
 
 			$yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
 			$yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
+			
+			$yesterdayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'yesterday');
+			$yesterdayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'yesterday');
+
+			$todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
+			$todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
 		}
 
         return $this->renderer->render($response, 'reports.php', [
@@ -239,10 +245,10 @@ $app->group('/reports', function () {
     		'yesterdayReports' => $yesterdayReports,
     		'yesterdayFailureReports' => $yesterdayFailureReports,
     		// 'yesterdayTotalWarningReports' => $yesterdayTotalWarningReports,
-    		// 'todayTotalFailures' => $todayTotalFailures,
-			// 'todayTotalWarnings' => $todayTotalWarnings,
-			// 'yesterdayTotalErrors' => $yesterdayTotalErrors,
-			// 'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
+    		'todayTotalErrors' => $todayTotalErrors,
+			'todayTotalWarnings' => $todayTotalWarnings,
+			'yesterdayTotalErrors' => $yesterdayTotalErrors,
+			'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
 			'regressionResults' => $regressionResults,
 			'regressionTests' => $regressionTests,
 
@@ -266,7 +272,7 @@ $app->group('/reports', function () {
     	$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
 
 		// View path
-		// $__viewPath = $args['view']."/".$args['subView'];
+		$viewPath = $args['view']."/".$args['subView'];
 
 		// Report View
 		return $this->renderer->render($response, 'reports.php', [
@@ -274,6 +280,7 @@ $app->group('/reports', function () {
 		    'page_name' => 'reports',
 		    'view' => 'all',
 		    'viewPath' => $args['view'],
+		    'fullPath' => $viewPath,
 		    'allView' => true,
 		    'reportClass' => true,
 		    'allReports' => $allReports,
@@ -294,19 +301,22 @@ $app->group('/reports', function () {
 
     	$allPostPutVars = $request->getQueryParams();
     	
-    	// var_dump($args['page']);
-    	if ($args['view'] == 'regression_tests') {
-    		$currentRecord = $db->getTestDataById($args['page']);
-    		$recordViewType = $currentRecord['test_type'];
-    		$currentRecordResults = $currentRecord['results_data'];
-    	} else {
-    		$currentRecord = $db->getTestById($allPostPutVars['refID']);
-    		$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type'], $args['page']);
-    		$recordViewType = $currentRecord['type'];
-    	}
+    	// if ($args['view'] == 'regression_tests') {
+    	// 	$currentRecord = $db->getTestDataById($args['page']);
+    	// 	$recordViewType = $currentRecord['test_type'];
+    	// 	$currentRecordResults = $currentRecord['results_data'];
+    	// } else {
+    	// 	$currentRecord = $db->getTestById($allPostPutVars['refID']);
+    	// 	$currentRecordResults = $db->getCurrentTestResults($currentRecord['id'], $currentRecord['type'], $args['page']);
+    	// 	$recordViewType = $currentRecord['type'];
+    	// }
+
+    	$currentRecord = $db->getTestDataById($args['page']);
+    	$recordViewType = $currentRecord['test_type'];
+    	$currentRecordResults = $currentRecord['results_data'];
 
 		// View path
-		$__viewPath = $args['view']."/".$args['subView'];
+		$viewPath = $args['view']."/".$args['subView'];
 
 		// Report View
 		return $this->renderer->render($response, 'reports.php', [
@@ -314,6 +324,7 @@ $app->group('/reports', function () {
 		    'page_name' => 'reports',
 		    'view' => 'single',
 		    'viewPath' => $args['view'],
+		    'fullPath' => $viewPath,
 		    'viewType' => $recordViewType,
 		    'singleView' => true,
 		    'reportClass' => true,
