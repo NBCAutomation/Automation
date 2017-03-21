@@ -376,36 +376,53 @@
 				<?php
 
 					if ($regressionData) {
-						echo '<div class="panel panel-default">
-							<div class="panel-heading">
-								<h3 class="panel-title">Failure details</h3>
-							</div>
-							<div class="panel-body">';
-
-						// var_dump(json_decode($reportData));
-						$obj = json_decode($reportData, true);
-						$reportFailures = $obj['testResults'];
-
-						foreach ($reportFailures as $reportKey => $reportValue) {
+						if ($fullReportData['failures'] > 0) {
 							echo '<div class="panel panel-default">
 								<div class="panel-heading">
-									<h3 class="panel-title">'.$reportKey.'</h3>
-								</div>';
-							echo '<div class="panel-body">';
+									<h3 class="panel-title">Failure details</h3>
+								</div>
+								<div class="panel-body">';
 
-							if (is_array($reportValue)) {
-								echo '<ul>';
-								echo '<li>'.$reportValue['failure'].'</li>';
-								echo '<li><i class="fa fa-file-image-o" aria-hidden="true"></i> <a href="'.$reportValue['screenshot'].'" target="_black">View screenshot</a></li>';
-								echo '</ul>';
-							} else {
-								echo $reportValue;	
+							// var_dump(json_decode($reportData));
+							$obj = json_decode($reportData, true);
+							$reportFailures = $obj['testResults'];
+
+							foreach ($reportFailures as $reportKey => $reportValue) {
+								echo '<div class="panel panel-default">
+									<div class="panel-heading">
+										<h3 class="panel-title">'.$reportKey.'</h3>
+									</div>';
+								echo '<div class="panel-body">';
+
+								if (is_array($reportValue)) {
+									echo '<ul>';
+									echo '<li>'.$reportValue['failure'].'</li>';
+									echo '<li><i class="fa fa-file-image-o" aria-hidden="true"></i> <a href="'.$reportValue['screenshot'].'" target="_black">View screenshot</a></li>';
+									echo '</ul>';
+								} else {
+									echo $reportValue;	
+								}
+								echo '</div>';
+								echo '</div>';
 							}
 							echo '</div>';
 							echo '</div>';
+						} else {
+							echo '<div class="alert alert-success"><p><i class="fa fa-check-circle-o" aria-hidden="true"></i> No errors to report, all tests passed.</p></div>';
+							echo '<ul class="defaultList">
+								<li>Logo is clickable</li>
+								<li>Weather module appears on HP and map loads</li>
+								<li>Right rail has Spredfast</li>
+								<li>Watch live TVE dropdown appears</li>
+								<li>News page loads along with sub nav</li>
+								<li>Weather page loads along with sub nav</li>
+								<li>Investigations page loads along with sub navs</li>
+								<li>Entertainment page loads along with sub nav</li>
+								<li>Traffic page loads</li>
+								<li>Interactive radar loads map</li>
+								<li>Contact us loads</li>
+							</ul>';
 						}
-						echo '</div>';
-						echo '</div>';
 					} else {
 						if ($articleData) {
 							echo "<p>Data will only be display when errors exist.</p>";
@@ -531,7 +548,7 @@
 		?>
 				<div class="api_results">
 					<ul class="nav nav-tabs">
-						<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Today's Reports</a></li>
+						<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Recent Reports</a></li>
 						<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
 					</ul>
 					<br />
@@ -545,7 +562,7 @@
 								<br>
 								<div class="tab-content">
 									<div class="tab-pane fade active in" id="errors_tab">
-										<?php if ($todayFailureReports) { 
+										<?php if ($todayFailureReports) {
 												Spire::returnFormattedDataTable($todayFailureReports, $view);
 											} else {
 												echo "No error reports currently.";
