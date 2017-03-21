@@ -1176,39 +1176,26 @@ $app->group('/utils', function () {
 
 			// Build additional test result caches
 			// Task will be hit every 20 min after the 4hr cron, pre-building db caches after job runs
-			// $db->getAllTestResultData('regressionTest');
-			// $db->getAllTestResultData('apiManifestTest');
-			// $db->getAllTestResultData('apiNavTest');
-			// $db->getAllTestResultData('apiContentTest');
-
-	    	$db->getAllTestsFromToday('api_manifest_audits');
-	    	$db->getAllTestsFromYesterday('api_manifest_audits');
-	    	$db->getAllTestByType('api_manifest_audits');
-
-	    	// Nav
-	    	$db->getAllTestsFromToday('api_navigation_audits');
-	    	$db->getAllTestsFromYesterday('api_navigation_audits');
-	    	$db->getAllTestByType('api_navigation_audits');
-
-	    	// Content
-	    	$db->getAllTestsFromToday('api_article_audits');
-	    	$db->getAllTestsFromYesterday('api_article_audits');
-	    	$db->getAllTestByType('api_article_audits');
+			$todayManifestTotalFailureReports = $db->getTestReportCount('all', 'all', 'all');
+			$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'all', 'all');
+			$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'all', 'all');
+			$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'all', 'all');
 
     		// Today report data
     		// Manifest
-    		$todayManifestTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_manifest_audits'));
-    		$todayManifestTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_manifest_audits'));
+    		$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'fail', 'today');
+    		$todayManifestTotalWarningReports = $db->getTestReportCount('api_manifest_audits', 'warning', 'today');
 
     		// Nav
-    		$todayNavTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_navigation_audits'));
-    		$todayNavTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_navigation_audits'));
+    		$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'fail', 'today');
+    		$todayNavTotalWarningReports = $db->getTestReportCount('api_navigation_audits', 'warning', 'today');
 
     		// Content
-    		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
-    		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
+    		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
+    		$todayContentTotalWarningReports = $db->getTestReportCount('api_article_audits', 'warning', 'today');
 
 
+    		echo ($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
     		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
 
     		
