@@ -1195,7 +1195,7 @@ $app->group('/utils', function () {
     		$todayContentTotalWarningReports = $db->getTestReportCount('api_article_audits', 'warning', 'today');
 
 
-    		echo ($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
+    		// echo ($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
     		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
 
     		
