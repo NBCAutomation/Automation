@@ -532,7 +532,6 @@
 				<div class="api_results">
 					<ul class="nav nav-tabs">
 						<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Today's Reports</a></li>
-						<li class=""><a href="#yesterday_reports_tab" data-toggle="tab" aria-expanded="true">Yesterday's Reports</a></li>
 						<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
 					</ul>
 					<br />
@@ -564,38 +563,6 @@
 										?>
 									</div>
 									<!-- // End all reports tab -->
-								</div>
-							</div>
-						</div>
-						<div class="tab-pane" id="yesterday_reports_tab">
-							<div class="tab-pane fade active in" id="today_reports_tab">
-								<div class="panel-body">
-									<ul class="nav nav-tabs">
-										<li class="active"><a href="#yesterday_errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
-										<li class=""><a href="#yesterday_all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
-									</ul>
-									<br>
-									<div class="tab-content">
-										<div class="tab-pane fade active in" id="yesterday_errors_tab">
-											<?php if ($yesterdayFailureReports) { 
-													Spire::returnFormattedDataTable($yesterdayFailureReports, $view);
-												} else {
-													echo "No error reports currently.";
-												}
-											?>
-										</div>
-										<!-- // End errors tab -->
-										<!-- // All reports tab -->
-										<div class="tab-pane" id="yesterday_all_reports_tab">
-											<?php if ($yesterdayReports) { 
-													Spire::returnFormattedDataTable($yesterdayReports, $view);
-												} else {
-													echo "No error reports currently.";
-												}
-											?>
-										</div>
-										<!-- // End all reports tab -->
-									</div>
 								</div>
 							</div>
 						</div>
