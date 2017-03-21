@@ -29,7 +29,7 @@
 							<a href="/reports/api_manifest_audits">Manifest Audits</a>
 						</div>
 						<div class="panel-body">
-							<span class="note">Manifest Key/Value pair testing against pre-defined manifest dictionary files <a href="https://goo.gl/77NtUc" target="_blank">https://goo.gl/77NtUc</a>.</span>
+							<span class="note">Manifest Key/Value pair testing against scraped manifest dictionary values.</span>
 						</div>
 					</div>
 				</li>
@@ -303,12 +303,13 @@
 				// Inidividual Report View
 				// var_dump($viewType);
 				// var_dump($reportData);
+				// exit();
 				
 				$db = new DbHandler();
 
 				switch ($viewType) {				    
 				    case "apiManifestTest":
-				        $tableHeaders = '<th>Status</th><th>Expected Key</th><th>Expected Value</th><th>Live Key</th><th>Live Value</th><th>Info</th><th>API Version</th>';
+				        $tableHeaders = '<th>Status</th><th>Manifest Key</th><th>Expected Value</th><th>Live Value</th>';
 				        $manifestData = true;
 				        $testTypeFolder = 'manifest';
 				        break;
@@ -350,7 +351,9 @@
 					<h3 class="panel-title"><?php echo $thisPropertyName; ?>.com</h3>
 				</div>
 				<div class="panel-body">
-					<!-- <h3><?php echo $reportPropertyData['property']; ?>.com</h3> -->
+					<?php if ($manifestData): ?>
+						Endpoint: <a href="http://www.<?php echo $thisPropertyName; ?>.com/apps/news-app/navigation?apiVersion=6" target="_blank">http://www.<?php echo $thisPropertyName; ?>.com/apps/news-app/navigation?apiVersion=6</a>
+					<?php endif ?>
 					<p>Test completed: <?php echo $l10nDate->format('n/d/Y, g:i A'); ?></p>
 					<?php
 						if($regressionData) {
@@ -363,6 +366,9 @@
 					?>
 				</div>
 			</div>
+			<?php if ($manifestData): ?>
+				<p class="text-muted small"><i>* Note: If sub-nested value, the key/value is built using parent + child + grandchild relationship of dictionary items (ex: parent-key__child-key__grandChild-key).</i></p>
+			<?php endif ?>
 			
 			<hr />
 
@@ -375,6 +381,7 @@
 								<h3 class="panel-title">Failure details</h3>
 							</div>
 							<div class="panel-body">';
+
 						// var_dump(json_decode($reportData));
 						$obj = json_decode($reportData, true);
 						$reportFailures = $obj['testResults'];
@@ -422,44 +429,22 @@
 
 								$obj = json_decode($reportData, true);
 								$reportFailures = $obj['testResults'];
-
+								
 								foreach ($reportFailures as $thisReportKey => $thisReportValue) {
-									echo $thisReportKey."<br />";
+									echo "<tr>";
+									echo "<td><div class=\"report_status fail\">Fail</div></td>";
+									echo "<td>".$thisReportKey."</td>";
 
 									if (is_array($thisReportValue)) {
 										foreach ($thisReportValue as $subReportKey => $subReportValue) {
-											echo " -- ".$subReportKey."<br />";
-											echo " -- ".$subReportValue."<br />";
-											// echo " -- ".$subReportValue[$subReportKey]."<br />";
+											// echo "<td>".$subReportKey."</td>";
+											echo "<td>".$subReportValue."</td>";
 										}
-										// echo $thisReportValues['liveValue'];
-										// echo $thisReportValues['liveValue'];
 									} else {
-										echo "paco";
+										echo "paco taco gelato flako - supa hot fire";
 									}
-								    // echo '<tr class="report_row_status '.strtolower($thisReport->status).'">';
-								    // echo '<td><div class="report_status '.strtolower($thisReport->status).'">'.$thisReport->status.'</div></td>';
-
-								    // if ($manifestData) {
-									   //  echo '<td>'.$thisReport['expectedValue'].'</td>';
-									   //  echo '<td>'.if ($thisReport['liveValue']) {$thisReport['liveValue']} else {$thisReport['LiveValue']}.'</td>';
-									   //  echo '<td>'.$thisReport->live_key.'</td>';
-									   //  echo '<td>'.$thisReport->live_value.'</td>';
-									   //  echo '<td>'.$thisReport->info.'</td>';
-									   //  echo '<td>'.$thisReport->api_version.'</td>';
-								    // } elseif ($navData) {
-									   //  echo '<td>'.$thisReport->link_name.'</td>';
-									   //  echo '<td><a href="'.$thisReport->link_url.'" target="_blank">'.$thisReport->link_url.'</a></td>';
-									   //  echo '<td>'.$thisReport->status_code.'</td>';
-									   //  echo '<td>'.$thisReport->info.'</td>';
-								    // } elseif ($articleData) {
-									   //  echo '<td>'.$thisReport->endpoint.'</td>';
-									   //  echo '<td>'.$thisReport->content_id.'</td>';
-									   //  echo '<td>'.$thisReport->content_title.'</td>';
-									   //  echo '<td>'.$thisReport->content_error.'</td>';
-								    // }
 									    
-					                echo "</tr>";
+					             	echo "</tr>";   
 								}
 							?>
 							</tbody>

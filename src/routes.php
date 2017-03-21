@@ -41,16 +41,13 @@ $app->group('/dashboard', function () use ($app) {
 
 		// Today report data
 		// Manifest
-		$todayManifestTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_manifest_audits'));
-		$todayManifestTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_manifest_audits'));
+		$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'fail', 'today');
 
 		// Nav
-		$todayNavTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_navigation_audits'));
-		$todayNavTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_navigation_audits'));
+		$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'fail', 'today');
 
 		// Content
-		$todayContentTotalFailureReports = Spire::countDataResults($db->allFailureReportsFromToday('api_article_audits'));
-		$todayContentTotalWarningReports = Spire::countDataResults($db->allWarningReportsFromToday('api_article_audits'));
+		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
 
 	// echo '<style>.ts-sidebar {display: none;}</style>';
 	// 	$man30Day = $db->getFailuresPer30Day('api_manifest_audits');
@@ -76,11 +73,8 @@ $app->group('/dashboard', function () use ($app) {
 	        'dashClass' => true,
 	        'hideBreadcrumbs' => true,
 	        'todayManifestTotalFailureReports' => $todayManifestTotalFailureReports,
-			'todayManifestTotalWarningReports' => $todayManifestTotalWarningReports,
 			'todayNavTotalFailureReports' => $todayNavTotalFailureReports,
-			'todayNavTotalWarningReports' => $todayNavTotalWarningReports,
 			'todayContentTotalFailureReports' => $todayContentTotalFailureReports,
-			'todayContentTotalWarningReports' => $todayContentTotalWarningReports,
 			'serverTimeStamp' => $current_date,
 			'man30Day' => $man30Day,
 			'nav30Day' => $nav30Day,
@@ -225,6 +219,8 @@ $app->group('/reports', function () {
 
 			$todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
 			$todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
+			// var_dump($todayTotalErrors);
+			
 		}
 
         return $this->renderer->render($response, 'reports.php', [
@@ -514,12 +510,14 @@ $app->group('/scripts', function () {
 			$updateNotesObject['user_notes'] = $allPostPutVars['update_notes'];
 			$updateNotesObject['update_stations'] = $updateSites;
 			$updateNotes = serialize($updateNotesObject);
-			$__output = ' --cron --output=dictionary';
+			// $__output = ' --output=dictionary';
+			$__output = ' --task=createDictionary';
 
 			$logTask = $db->logTask($task, $user, $updateNotes);
 			
 			if ($logTask > 0) {
-				$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
+				// $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiCheck-manifest.js" --url="{}"'.$__output;
+				$__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_manifest.js" --url="{}"'.$__output;
 			}
 		}
 
@@ -1266,6 +1264,424 @@ $app->group('/utils', function () {
 		$cacheClear = Spire::purgeAllCache($tmpLocation);
 
 		return $response->withRedirect('/dashboard/main');
+    });
+    
+    $this->get('/fake-data', function ($request, $response) {
+    	echo '{  
+   "metadata":{  
+      "dateGenerated":"Mon Mar 20 11:13:55 PDT 2017"
+   },
+   "items":[  
+      {  
+         "navigationID":279291762,
+         "title":"Home",
+         "appTitle":"Home",
+         "pageTitle":"Home",
+         "trackingName":"home",
+         "type":"home",
+         "featureCategory":"",
+         "location":"/apps/news-app/home/modules/",
+         "sectionMapping":"/apps/news-app/home/modules/",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":279045121,
+         "title":"News",
+         "appTitle":"News",
+         "pageTitle":"News",
+         "trackingName":"news",
+         "type":"section",
+         "featureCategory":"",
+         "location":"/apps/news-app/?location=/news",
+         "sectionMapping":"/news",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":"",
+         "items":[  
+            {  
+               "navigationID":279051571,
+               "title":"Top News",
+               "appTitle":"Top News",
+               "pageTitle":"Top News",
+               "sectionMapping":"/news/top-stories",
+               "trackingName":"top news",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/news/top-stories",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":279052021,
+               "title":"Local",
+               "appTitle":"Local",
+               "pageTitle":"Local",
+               "sectionMapping":"/news/local/",
+               "trackingName":"local",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/news/local/",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":384122421,
+               "title":"Top Video",
+               "appTitle":"Top Video",
+               "pageTitle":"Top Video",
+               "sectionMapping":"/home/top-videos/",
+               "trackingName":"top video",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/home/top-videos/",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":279052431,
+               "title":"US & World",
+               "appTitle":"US & World",
+               "pageTitle":"US & World",
+               "sectionMapping":"/news/national-international/",
+               "trackingName":"us & world",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/news/national-international/",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":280036812,
+               "title":"Investigations",
+               "appTitle":"Investigations",
+               "pageTitle":"Investigations",
+               "sectionMapping":"/apps/news-app/investigations/modules",
+               "trackingName":"investigations",
+               "type":"subsection",
+               "location":"/apps/news-app/investigations/modules",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":311308251,
+               "title":"Sports",
+               "appTitle":"Sports",
+               "pageTitle":"Sports",
+               "sectionMapping":"/news/sports",
+               "trackingName":"sports",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/news/sports",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":311210521,
+               "title":"Recall Alert",
+               "appTitle":"Recall Alert",
+               "pageTitle":"Recall Alert",
+               "sectionMapping":"/feature/recall-alert",
+               "trackingName":"recall alert",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/feature/recall-alert",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":392923741,
+               "title":"TV Listings",
+               "appTitle":"TV Listings",
+               "pageTitle":"TV Listings",
+               "sectionMapping":"",
+               "trackingName":"",
+               "type":"link",
+               "location":"http://www.nbcnewyork.com/contact-us/tv-listings/tv-listings-nyc.html",
+               "phoneContact":"",
+               "emailContact":""
+            }
+         ]
+      },
+      {  
+         "navigationID":279047641,
+         "title":"Weather",
+         "appTitle":"Weather",
+         "pageTitle":"Weather",
+         "trackingName":"weather",
+         "type":"weather-forcast",
+         "featureCategory":"",
+         "location":"/apps/news-app/weather/modules/",
+         "sectionMapping":"/apps/news-app/weather/modules/",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":"",
+         "items":[  
+            {  
+               "navigationID":279325042,
+               "title":"Forecast",
+               "appTitle":"Forecast",
+               "pageTitle":"Forecast",
+               "sectionMapping":"/apps/news-app/weather/modules",
+               "trackingName":"forecast",
+               "type":"weather-forcast",
+               "location":"/apps/news-app/?location=/apps/news-app/weather/modules",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":279949142,
+               "title":"Weather Alerts",
+               "appTitle":"Weather Alerts",
+               "pageTitle":"Weather Alerts",
+               "sectionMapping":"",
+               "trackingName":"weather alerts",
+               "type":"weather-alerts",
+               "location":"http://www.nbcnewyork.com/weather/severe-weather-alerts/?appenv=y&disableHeader=true&disableDownloadApp=true",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":279948952,
+               "title":"School Closings",
+               "appTitle":"School Closings",
+               "pageTitle":"School Closings",
+               "sectionMapping":"",
+               "trackingName":"school closings",
+               "type":"weather-school-closings",
+               "location":"http://www.nbcnewyork.com/weather/school-closings/?appenv=y&disableHeader=true&disableDownloadApp=true",
+               "phoneContact":"",
+               "emailContact":""
+            }
+         ]
+      },
+      {  
+         "navigationID":292319771,
+         "title":"Watch Live TV Now",
+         "appTitle":"Watch Live TV Now",
+         "pageTitle":"Watch Live TV Now",
+         "trackingName":"watch live tv now",
+         "type":"link",
+         "featureCategory":"",
+         "location":"tve://",
+         "sectionMapping":"",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":410936505,
+         "title":"First 100 Days",
+         "appTitle":"First 100 Days",
+         "pageTitle":"First 100 Days",
+         "trackingName":"first 100 days",
+         "type":"FeaturePage2.0",
+         "featureCategory":"",
+         "location":"/apps/news-app/?location=/feature/president-trump/inauguration&feature2Content=404991195",
+         "sectionMapping":"/feature/president-trump/inauguration",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":244736941,
+         "title":"Traffic",
+         "appTitle":"Traffic",
+         "pageTitle":"Traffic",
+         "trackingName":"traffic",
+         "type":"link",
+         "featureCategory":"",
+         "location":"http://www.nbcnewyork.com/traffic/?appenv=y&disableHeader=true&disableDownloadApp=true",
+         "sectionMapping":"",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":279048311,
+         "title":"Entertainment",
+         "appTitle":"Entertainment",
+         "pageTitle":"Entertainment",
+         "trackingName":"entertainment",
+         "type":"section",
+         "featureCategory":"",
+         "location":"/apps/news-app/?location=/entertainment",
+         "sectionMapping":"/entertainment",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":"",
+         "items":[  
+            {  
+               "navigationID":279089341,
+               "title":"Top Entertainment",
+               "appTitle":"Top Entertainment",
+               "pageTitle":"Top Entertainment",
+               "sectionMapping":"/entertainment/top-stories",
+               "trackingName":"top entertainment",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/entertainment/top-stories",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":413858423,
+               "title":"New York Live",
+               "appTitle":"New York Live",
+               "pageTitle":"New York Live",
+               "sectionMapping":"/feature/new-york-live",
+               "trackingName":"new york live",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/feature/new-york-live",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":280038352,
+               "title":"In The Wings",
+               "appTitle":"In The Wings",
+               "pageTitle":"In The Wings",
+               "sectionMapping":"/feature/in-the-wings",
+               "trackingName":"in the wings",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/feature/in-the-wings",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":279089371,
+               "title":"The Scene",
+               "appTitle":"The Scene",
+               "pageTitle":"The Scene",
+               "sectionMapping":"/entertainment/the-scene",
+               "trackingName":"the scene",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/entertainment/the-scene",
+               "phoneContact":"",
+               "emailContact":""
+            },
+            {  
+               "navigationID":279060011,
+               "title":"Entertainment News",
+               "appTitle":"Entertainment News",
+               "pageTitle":"Entertainment News",
+               "sectionMapping":"/entertainment/entertainment-news",
+               "trackingName":"entertainment news",
+               "type":"subsection",
+               "location":"/apps/news-app/?location=/entertainment/entertainment-news",
+               "phoneContact":"",
+               "emailContact":""
+            }
+         ]
+      },
+      {  
+         "navigationID":279047251,
+         "title":"Investigations",
+         "appTitle":"Investigations",
+         "pageTitle":"Investigations",
+         "trackingName":"investigations",
+         "type":"section",
+         "featureCategory":"",
+         "location":"/apps/news-app/investigations/modules",
+         "sectionMapping":"/apps/news-app/investigations/modules",
+         "subNavigationPath":"",
+         "phoneContact":"1-866-639-7244",
+         "emailContact":"tips@nbcnewyork.com",
+         "items":[  
+            {  
+               "navigationID":299722851,
+               "title":"Top Investigations",
+               "appTitle":"Top Investigations",
+               "pageTitle":"Top Investigations",
+               "sectionMapping":"/apps/news-app/investigations/modules",
+               "trackingName":"top investigations",
+               "type":"subsection",
+               "location":"/apps/news-app/investigations/modules",
+               "phoneContact":"1-866-639-7244",
+               "emailContact":"tips@nbcnewyork.com"
+            }
+         ]
+      },
+      {  
+         "navigationID":311308251,
+         "title":"Sports",
+         "appTitle":"Sports",
+         "pageTitle":"Sports",
+         "trackingName":"sports",
+         "type":"section",
+         "featureCategory":"",
+         "location":"/apps/news-app/?location=/news/sports",
+         "sectionMapping":"/news/sports",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":368047671,
+         "title":"Better Get Baquero",
+         "appTitle":"Better Get Baquero",
+         "pageTitle":"Better Get Baquero",
+         "trackingName":"better get baquero",
+         "type":"FeaturePage2.0",
+         "featureCategory":"Consumer",
+         "location":"/apps/news-app/?location=/feature/better-get-baquero&feature2Content=365441091",
+         "sectionMapping":"/feature/better-get-baquero",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":279488652,
+         "title":"Submit Photos/Videos",
+         "appTitle":"Submit Photos/Videos",
+         "pageTitle":"Submit Photos/Videos",
+         "trackingName":"submit photos/videos",
+         "type":"submit-media",
+         "featureCategory":"",
+         "location":"/apps/news-app/submit-your-photos-videos",
+         "sectionMapping":"/apps/news-app/submit-your-photos-videos",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":279488462,
+         "title":"Contact Us",
+         "appTitle":"Contact Us",
+         "pageTitle":"Contact Us",
+         "trackingName":"contact us",
+         "type":"contact-us",
+         "featureCategory":"",
+         "location":"/apps/news-app/contact-us",
+         "sectionMapping":"/apps/news-app/contact-us",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":415890733,
+         "title":"NBC Live FAQ",
+         "appTitle":"NBC Live FAQ",
+         "pageTitle":"NBC Live FAQ",
+         "trackingName":"",
+         "type":"link",
+         "featureCategory":"",
+         "location":"http://www.nbcnewyork.com/on-air/about-us/NBC-Live-TV-FAQ-415882193.html",
+         "sectionMapping":"",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      },
+      {  
+         "navigationID":362656271,
+         "title":"App FAQ",
+         "appTitle":"App FAQ",
+         "pageTitle":"App FAQ",
+         "trackingName":"",
+         "type":"link",
+         "featureCategory":"",
+         "location":"http://bit.ly/1P8oFgw",
+         "sectionMapping":"",
+         "subNavigationPath":"",
+         "phoneContact":"",
+         "emailContact":""
+      }
+   ]
+}';
     });
 
     // Purge old tests // Date(X) > 30 Days & send an email once a week

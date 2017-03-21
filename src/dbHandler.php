@@ -735,7 +735,7 @@ class DbHandler {
     }
 
     public function getTestDataById($testID) {
-        $output = Spire::spireCache('getTestDataById_'.$testID, 100, function() use ($testID) {
+        $output = Spire::spireCache('getTestDataById_'.$testID, 1000, function() use ($testID) {
             $db_con = Spire::getConnection();
             
             $stmt = $db_con->prepare("SELECT * FROM test_results WHERE id = '".$testID."'");
@@ -878,7 +878,7 @@ class DbHandler {
     }
 
     public function getCurrentTestResultData($testID, $testType, $refId) {
-        $output = Spire::spireCache('getCurrentTestResultData_'.$testType.'-'.$refId.'_'.$testID, 100, function() use ($testID, $testType, $refId) {
+        $output = Spire::spireCache('getCurrentTestResultData_'.$testType.'-'.$refId.'_'.$testID, 12600, function() use ($testID, $testType, $refId) {
             $db_con = Spire::getConnection();
 
             switch ($testType) {
@@ -1010,7 +1010,7 @@ class DbHandler {
 
     public function getAllTestResultData($testType, $status, $range) {
         $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
-            echo $testType."<br />".$status."<br />".$range."<br />";
+            // echo $testType."<br />".$status."<br />".$range."<br />";
             $db_con = Spire::getConnection();
 
             switch ($testType) {
@@ -1182,12 +1182,14 @@ class DbHandler {
             } else {
                 $stmt = $db_con->prepare("SELECT COUNT(*) AS totalFailures FROM test_results WHERE test_type = '".$testTypeName."' ".$filterStatus." ".$dataRange."");
             }
+
+            // var_dump($stmt);
             
             if ($stmt->execute()) {
 
                 $errorCount = $stmt->fetch();
+                $totalFailures = $errorCount['totalFailures'];
 
-                $totalFailures = $errorCount[0]['totalFailures'];
                 $stmt->closeCursor();
                 return $totalFailures;
             } else {
