@@ -132,7 +132,6 @@
 		    button.prop('disabled', disable);
 		});
 
-		$(".progress").fadeOut("slow");
 		$(".process-data").fadeIn("slow");
 	})
 	</script>

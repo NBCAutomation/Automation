@@ -97,10 +97,14 @@
 		<h3><?php echo $view ?></h3>
 
 		<div class="panel panel-default">
-			<div class="panel-heading">Running Script...</div>
+			<div class="panel-heading">Script Output</div>
 			<div class="panel-body">
 				<div class="progress progress-striped active">
-					<div class="progress-bar" style="width: 100%"></div>
+					<div class="progress-bar" style="width: 100%">Running Script...</div>
+				</div>
+				<div class="script-run-completion alert alert-dismissible alert-success" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert"><i class="fa fa-remove"></i></button>
+					<strong>Complete!</strong> <a href="/reports/regression_tests" class="alert-link"><u>View reports</u></a>.
 				</div>
 				<div class="process-data">
 					<?php
@@ -142,6 +146,10 @@
 						}
 						
 						exec($delCmd, $output, $retval);
+						echo '<script type="text/javascript">
+							$(".progress").fadeOut("slow");
+							$(".script-run-completion").fadeIn("slow");
+						</script>';
 						
 					?>
 				</div>	
