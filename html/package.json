@@ -4,11 +4,11 @@
 	"email": "deltrie.allen@nbcuni.com",
 	"version": "3.0.0",
 	"scripts": {
-		"runall": "npm run 5concurrent && npm run 5concurrent-nav && npm run 5concurrent-article",
-		"runall-async": "npm run 1process && npm run 1process-nav && npm run 1process-article",
+		"runall": "npm run 5concurrent && npm run 5concurrent-nav && npm run 5concurrent-article && npm run sendAlert",
+		"runall-async": "npm run 1process && npm run 1process-nav && npm run 1process-article && npm run sendAlert",
 		"runall-local": "npm run local-manifest && npm run local-nav && npm run local-article",
-		"runall-regression": "npm run stageRegression && npm run prodRegression",
-		"runall-regressionLocal": "npm run stageRegressionLocal && npm run prodRegressionLocal",
+		"runall-regression": "npm run regressionAlertStart && npm run stageRegression && npm run prodRegression && npm run regressionAlertEnd",
+		"runall-regressionLocal": "npm run regressionAlertStart && npm run prodRegressionLocal && npm run regressionAlertEnd",
 		"5concurrent": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiTest_manifest.js\" --url=\"{}\"",
 		"1process": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_manifest.js\" --url=\"{}\"",
 		"5concurrent-nav": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiTest_nav.js\" --url=\"{}\"",
@@ -23,7 +23,10 @@
 		"local-article": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiTest_content.js\" --url=\"{}\" --env=local",
 		"local-create-dictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_manifest.js\" --env=local --url=\"{}\" --task=createDictionary",
 		"stageRegressionLocal": "cat stage_sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --env=local --url=\"{}\"",
-		"prodRegressionLocal": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --env=local --url=\"{}\""
+		"prodRegressionLocal": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --env=local --url=\"{}\"",
+		"regressionAlertStart": "casperjs test \"./utils/tasker.js\" --task=send_alert --taskType=regression-notification --taskRef=start --logNote=casperTask",
+		"regressionAlertEnd": "casperjs test \"./utils/tasker.js\" --task=send_alert --taskType=regression-notification --taskRef=end --logNote=casperTask",
+		"sendAlert": "casperjs test \"./utils/tasker.js\" --task=send_alert --taskType=api-notification --taskRef=complete --logNote=casperTask"
 	},
 	"dependencies": {
 	    "casperjs": "^1.1.3",

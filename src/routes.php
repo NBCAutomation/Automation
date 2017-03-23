@@ -1131,37 +1131,8 @@ $app->group('/utils', function () {
     			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",testType=>". $testType .",testStatus=>". $status ."]");
     		}
     	}
-		
-    });
 
-
-	// Process file download
-    $this->get('/download', function ($request, $response) {
-    	$allPostPutVars = $request->getQueryParams();
-
-		$refFile = $allPostPutVars['file'];
-		$file = __DIR__.'/../html'.$refFile;
-
-        $response = $response->withHeader('Content-Description', 'File Transfer')
-       ->withHeader('Content-Type', 'application/octet-stream')
-       ->withHeader('Content-Disposition', 'attachment;filename="'.basename($file).'"')
-       ->withHeader('Expires', '0')
-       ->withHeader('Cache-Control', 'must-revalidate')
-       ->withHeader('Pragma', 'public')
-       ->withHeader('Content-Length', filesize($file));
-
-	    readfile($file);
-	    return $response;
-    });
-
-
-    // Test results email notification
-    $this->get('/send_alert', function ($request, $response) {
-    	$allPostPutVars = $request->getQueryParams();
-    	$emailContent = '';
-    	$sendEmailNotification;
-
-    	if ($allPostPutVars['auto']) {
+    	if ($utilPostParams['taskType'] == 'api-notification') {
     		$db = new DbHandler();
 
     		$info = getdate();
@@ -1213,8 +1184,8 @@ $app->group('/utils', function () {
 				return $boxColor;
 			}
 
-			$emailRecipient = 'deltrie.allen@nbcuni.com';
-			// $emailRecipient = 'LIMQualityAssurance@nbcuni.com';
+			// $emailRecipient = 'deltrie.allen@nbcuni.com';
+			$emailRecipient = 'LIMQualityAssurance@nbcuni.com';
 
 			$emailSubject = 'Automation Failures/Warnings';
 
@@ -1237,27 +1208,48 @@ $app->group('/utils', function () {
 
     	}
 
-    	if ($allPostPutVars['regression-alert']) {
-    		$emailRecipient = 'deltrie.allen@nbcuni.com';
-    		// $emailContent = 'LIMQualityAssurance@nbcuni.com';
-    		$sendEmailNotification = true;
-    		$emailSubject = 'Automation Regression '.$allPostPutVars['regression-alert'];
-    		$emailContent .= 'Regression cron process: '.$allPostPutVars['regression-alert'].'ed';
+    	if ($utilPostParams['taskType'] == 'regression-notification') {
+    		$db = new DbHandler();
 
-    		if ($allPostPutVars['regression-alert'] == 'end') {
-    			$emailContent .= '<br /> - <a href="http://54.243.53.242/reports/regression_tests">view results</a>';
+    		$todayRegressionCronFailures = $db->getTestReportCount('regression_tests', 'fail', 'today');
+    		// $emailRecipient = 'deltrie.allen@nbcuni.com';
+    		$emailContent = 'LIMQualityAssurance@nbcuni.com';
+    		$sendEmailNotification = true;
+    		$emailSubject = 'Automation Regression '.$utilPostParams['taskRef'];
+    		$emailContent .= 'Regression cron process: '.$utilPostParams['taskRef'].'ed';
+
+    		if ($utilPostParams['regression-alert'] == 'end') {
+    			$emailContent .= '<br /> Process completed. Total Errors: '. $todayRegressionCronFailures;
+    			$emailContent .= '<br /> - <a href="http://54.243.53.242/reports/regression_tests">view reports</a>';
     		}
     	}
 
     	if ($sendEmailNotification) {
-    		// Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
-    		// Spire::sendEmailNotification('LIMQualityAssurance@nbcuni.com', $emailContent, $emailSubject);
-    		echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
-    		$this->logger->info("Alert notification email sent; type: ". $sendEmailNotificationType);
+    		$this->logger->info("Alert notification email sent; type: ". $utilPostParams['taskType'] . ", process: " . $utilPostParams['taskRef'] . ", note: " . $utilPostParams['logNote']);
+    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
+    		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
     	}
+		
+    });
 
-		// return $response->withRedirect('/dashboard/main');
-        
+
+	// Process file download
+    $this->get('/download', function ($request, $response) {
+    	$allPostPutVars = $request->getQueryParams();
+
+		$refFile = $allPostPutVars['file'];
+		$file = __DIR__.'/../html'.$refFile;
+
+        $response = $response->withHeader('Content-Description', 'File Transfer')
+       ->withHeader('Content-Type', 'application/octet-stream')
+       ->withHeader('Content-Disposition', 'attachment;filename="'.basename($file).'"')
+       ->withHeader('Expires', '0')
+       ->withHeader('Cache-Control', 'must-revalidate')
+       ->withHeader('Pragma', 'public')
+       ->withHeader('Content-Length', filesize($file));
+
+	    readfile($file);
+	    return $response;
     });
 
     // Purge site all cache
