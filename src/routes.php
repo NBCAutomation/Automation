@@ -1170,10 +1170,10 @@ $app->group('/utils', function () {
     		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
 
     		
-			// if ( array_sum($dashErrorTotals) > 1 ) {
+			if ( array_sum($dashErrorTotals) > 1 ) {
 				$sendEmailNotification = true;
 				$sendEmailNotificationType = 'Automation failures';
-			// }
+			}
 
 			function setStatusColor($errorCount) {
 				if ( $errorCount > 0) {
