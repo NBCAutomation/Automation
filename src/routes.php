@@ -1158,11 +1158,11 @@ $app->group('/utils', function () {
     // Test results email notification
     $this->get('/send_alert', function ($request, $response) {
     	$allPostPutVars = $request->getQueryParams();
+    	$emailContent = '';
+    	$sendEmailNotification;
 
     	if ($allPostPutVars['auto']) {
     		$db = new DbHandler();
-
-    		$emailContent = '';
 
     		$info = getdate();
     		$date = $info['mday'];
@@ -1199,9 +1199,10 @@ $app->group('/utils', function () {
     		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
 
     		
-			if ( array_sum($dashErrorTotals) > 1 ) {
+			// if ( array_sum($dashErrorTotals) > 1 ) {
 				$sendEmailNotification = true;
-			}
+				$sendEmailNotificationType = 'Automation failures';
+			// }
 
 			function setStatusColor($errorCount) {
 				if ( $errorCount > 0) {
@@ -1211,6 +1212,9 @@ $app->group('/utils', function () {
 				}
 				return $boxColor;
 			}
+
+			$emailRecipient = 'deltrie.allen@nbcuni.com';
+			// $emailRecipient = 'LIMQualityAssurance@nbcuni.com';
 
 			$emailSubject = 'Automation Failures/Warnings';
 
@@ -1231,14 +1235,28 @@ $app->group('/utils', function () {
 
     		// echo $emailContent;
 
-    		if ($sendEmailNotification) {
-    			Spire::sendEmailNotification('deltrie.allen@nbcuni.com', $emailContent, $emailSubject);
-    			// Spire::sendEmailNotification('LIMQualityAssurance@nbcuni.com', $emailContent, $emailSubject);
-    			$this->logger->info("Alert notification email sent");
+    	}
+
+    	if ($allPostPutVars['regression-alert']) {
+    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+    		// $emailContent = 'LIMQualityAssurance@nbcuni.com';
+    		$sendEmailNotification = true;
+    		$emailSubject = 'Automation Regression '.$allPostPutVars['regression-alert'];
+    		$emailContent .= 'Regression cron process: '.$allPostPutVars['regression-alert'].'ed';
+
+    		if ($allPostPutVars['regression-alert'] == 'end') {
+    			$emailContent .= '<br /> - <a href="http://54.243.53.242/reports/regression_tests">view results</a>';
     		}
     	}
 
-		return $response->withRedirect('/dashboard/main');
+    	if ($sendEmailNotification) {
+    		// Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
+    		// Spire::sendEmailNotification('LIMQualityAssurance@nbcuni.com', $emailContent, $emailSubject);
+    		echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
+    		$this->logger->info("Alert notification email sent; type: ". $sendEmailNotificationType);
+    	}
+
+		// return $response->withRedirect('/dashboard/main');
         
     });
 
