@@ -94,6 +94,10 @@
 						<label for="checkbox1">NBC Bay Area</label>
 					</div>
 					<div class="checkbox">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcboston">
+						<label for="checkbox1">NBC Boston</label>
+					</div>
+					<div class="checkbox">
 						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcdfw">
 						<label for="checkbox1">NBC DFW</label>
 					</div>
