@@ -77,7 +77,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     } else if (envConfig === 'prod') {
         var configURL = 'http://54.243.53.242';
         var saveLocation = 'test_results/screenshots/';
-        
+
     } else {
         var configURL = 'http://54.243.53.242';
         var saveLocation = 'test_results/screenshots/';
@@ -100,7 +100,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     }
 
 
-    if (['local', 'dev'].indexOf(envConfig) < 0) {
+    if (['local', 'dev', 'prod'].indexOf(envConfig) < 0) {
         var process = require("child_process"),
             spawn = process.spawn,
             child = spawn("chown", ["-hR", "ec2-user:apache", saveLocation]);
