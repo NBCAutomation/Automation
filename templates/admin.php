@@ -169,7 +169,6 @@
 
 		<?php
 			}
-
 			if ($uAuth && $mainView) {
 		?>
 		<div class="row">
@@ -191,10 +190,35 @@
 					</ul>
 				</div>
 			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">Misc</div>
+				<div class="panel-body">
+					<ul>
+						<li><a href="/admin/logger">Site log</a></li>
+					</ul>
+				</div>
+			</div>
 		</div>
 		<?php
 			}
-
-		 ?>
+			if ($uAuth && $loggerView) {
+		 		// var_dump($siteLog);
+		?>
+			<div class="panel panel-default">
+				<div class="panel-heading">Site Log</div>
+				<div class="panel-body">
+					<table id="app_log" class="table table-bordered table-striped">
+						<tbody>
+						<?php
+							while(!feof($siteLog)) {
+								echo "<tr><td></td><td>".fgets($siteLog)."</td></tr>";
+							}
+					 		fclose($siteLog);
+					 	?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		<?php } ?>
 	</div>
 <?php include_once 'base/footer.php' ?>
