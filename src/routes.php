@@ -875,13 +875,15 @@ $app->group('/admin', function () use ($app) {
 	$this->get('/logger', function ($request, $response, $args) {
 
 		$permissions = $request->getAttribute('spPermissions');
+		$siteAppLog = fopen(__DIR__ . '/../logs/app.log', "r");
 
 		return $this->renderer->render($response, 'admin.php', [
-	        'title' => 'Admin Dashboard',
+	        'title' => 'Site Log',
 	        'page_name' => 'admin-main',
 	        'admin_dashClass' => true,
 	        'hideBreadcrumbs' => true,
-	        'mainView' => true,
+	        'loggerView' => true,
+	        'siteLog' => $siteAppLog,
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
@@ -1169,7 +1171,6 @@ $app->group('/utils', function () {
     		// echo ($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
     		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
 
-    		
 			if ( array_sum($dashErrorTotals) > 1 ) {
 				$sendEmailNotification = true;
 				$sendEmailNotificationType = 'Automation failures';

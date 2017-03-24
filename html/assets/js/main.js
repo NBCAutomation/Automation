@@ -21,23 +21,36 @@
 	 
 
 	// Table settings
-	$('#zctb').DataTable({
+	$('.reports_table').DataTable({
 		"scrollX": true,
 		"order": [[ 2, "desc" ]],
 		"iDisplayLength": 25
 	});
 
- 	$('.data_table').DataTable();
+ 	$('.data_table').DataTable({
+ 		"order": [[ 2, "desc" ]],
+ 		"iDisplayLength": 50
+ 	});
 
 	$('.report_data_table').DataTable({
 		"scrollX": true,
-		"iDisplayLength": 100
+		"order": [[ 2, "desc" ]],
+		"iDisplayLength": 50
 	});
 
 	$('#stations-table').DataTable({
 		"scrollX": true,
+		"order": [[ 2, "desc" ]],
 		"iDisplayLength": 100
 	});
+
+	$('#zctb_all').DataTable({
+		"scrollX": true,
+		"order": [[ 2, "desc" ]],
+		"iDisplayLength": 100
+	});
+
+
 
 
 	// $.fn.dataTable.ext.search.push(

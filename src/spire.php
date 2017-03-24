@@ -206,7 +206,7 @@ class Spire {
 
 	public static function returnFormattedDataTable($data, $view, $ref){
 
-		// var_dump($data);
+		// var_dump($view);
 		// exit();
 
 		$db = new DbHandler();
@@ -224,10 +224,15 @@ class Spire {
 			} elseif ( strpos($view, 'article') ) {
 		    	$viewName = 'Article/Content';
 		    	$testPath = 'apiContentTest';
+
+		    } elseif ( strpos($view, 'regression_tests')  !== false ) {
+		    	$viewName = 'Regression';
+		    	$testPath = 'regressionTest';
 		    }
 		    
 			if ( strpos($ref, 'all') !== false ) {
 				$urlPath = chop($ref,"/all");
+				$tableClass = '_all';
 			} else {
 				$urlPath = $view;
 			}
@@ -235,8 +240,8 @@ class Spire {
 			$testReportViewData = '<div class="panel panel-default">';
 			$testReportViewData .= '<div class="panel-heading">'.$viewName.' Reports</div>';
 			$testReportViewData .= '<div class="panel-body api_results">';
-			$testReportViewData .= '<table id="zctb" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
-			$testReportViewData .= "<thead><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></thead>";
+			$testReportViewData .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
+			$testReportViewData .= '<thead><tr width="100%"><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></thead>';
 			$testReportViewData .= "<tbody>";
 
 			foreach ($data[0] as $key => $value) {
@@ -257,6 +262,7 @@ class Spire {
 			$testReportViewData .= "<tfoot><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></tfoot>";
 			$testReportViewData .= '</table>';
 			$testReportViewData .= '</div></div>';
+			$testReportViewData .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
          
             print($testReportViewData);
 		}
