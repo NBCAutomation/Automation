@@ -69,9 +69,15 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     if (envConfig === 'local') {
         var configURL = 'http://spire.app';
         var saveLocation = '../test_results/screenshots/';
+
     } else if (envConfig === 'dev') {
         var configURL = 'http://45.55.209.68';
         var saveLocation = '../test_results/screenshots/';
+
+    } else if (envConfig === 'prod') {
+        var configURL = 'http://54.243.53.242';
+        var saveLocation = 'test_results/screenshots/';
+        
     } else {
         var configURL = 'http://54.243.53.242';
         var saveLocation = 'test_results/screenshots/';
