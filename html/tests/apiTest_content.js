@@ -46,6 +46,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
     var manifestTestRefID;
     var manifestTestStatus = 'Pass';
     var setFail = 0;
+    var sourceString;
 
     // Testing Suite Functions
     var apiSuite = function(url) {
@@ -65,7 +66,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/navigation?apiVersion=6';
+        // Strip and clean url to avoid 301 redirects and endpoint load error.
+        url = 'http://www.' + sourceString + '.com/apps/news-app/navigation?apiVersion=6';
+        console.log(url);
 
         /*******************
         *
@@ -228,7 +231,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
             
             var status = this.status().currentHTTPStatus;
 
-            if ( status == 200) {
+            if ( status == 200 || status == 301) {
                 if (showOutput) {console.log(url + colorizer.colorize(' Status: ' + status, 'INFO') )};
                 
                 var validated = false;
@@ -312,9 +315,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                                 if (subObject[subItem].indexOf('/apps') > -1) {
 
                                     if (subObject[subItem].indexOf('?') > -1) {
-                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '&apiVersion=5'
+                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '&apiVersion=6'
                                     } else {
-                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '?apiVersion=5'
+                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '?apiVersion=6'
                                     }
                                     
                                     if (debugOutput) {
@@ -370,7 +373,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                 var output = this.getPageContent();
                 var currentTestResults = {};
 
-                if ( status == 200) {
+                if ( status == 200 || status == 301) {
                     if (showOutput) {
                         if (url.indexOf('submit-your-photos') > -1) {
                             if (showOutput) {console.log('Skipping UGC url....')};
@@ -396,8 +399,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                                     console.log('-------------------');
                                     console.log('Unable to test parse JSON data via validateJson(). url: ' + url);
                                     console.log(e);
-                                    setFail++;
                                 };
+                                setFail++;
+                                currentTestResults['jsonValidated'] = 'JSON Parse error (Unable to test parse JSON data via validateJson(). url: ' + url + ') <br /> JSON Error: ' + e;
                             }
 
                             if (validated) {
@@ -487,6 +491,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
     apiSuite.prototype.endpointContentValidation = function(endpointName, endpointUrl, testID) {
         var suite = this;
         var baseUrl = casper.cli.get('url');
+        // var baseUrl = 'http://www.' + sourceString + '.com';
 
         if (endpointUrl) {
             casper.thenOpen(endpointUrl, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }, function(resp) {
@@ -576,7 +581,11 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                                             console.log('    > articleLeadMedia : ' + articleLeadMedia);
                                         }
 
-                                        if (articleTypeName !== 'FeaturePageHeader') {
+                                        if (articleTitle === 'false' && articleDisplayDate === 'false') {
+                                            setFail++;
+                                            subTestResults['innerEndpoint'] = 'FAIL: Endpoint returning False values for required data. EndpointName: ' + endpointName + ' <br /> EndpointURL: ' + endpointUrl;
+
+                                        } else if (articleTypeName !== 'FeaturePageHeader') {
                                             // If gallery collect into gallery object
                                             if (articleTypeName == 'Gallery') {
                                                 var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
@@ -688,11 +697,12 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
 
                                                     var urlHealthStatus = suite.checkURLHealth(galleryContentURL, function (data) {
                                                         if (! data) {
-                                                            setFail++;
+                                                            
                                                             if (showOutput) {
                                                                console.log(' > Lead media: Gallery loaded failed to load correctly: ' + colorizer.colorize(data, 'FAIL'));
-                                                               subTestResults['leadMedia_gallery_urlHealthStatus'] = 'Lead media: Gallery loaded failed to load correctly';
-                                                            } 
+                                                            }
+                                                            setFail++;
+                                                            subTestResults['leadMedia_gallery_urlHealthStatus'] = 'Lead media: Gallery loaded failed to load correctly';
                                                         }
                                                     });
                                                 }
@@ -710,11 +720,12 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
 
                                                     var urlHealthStatus = suite.checkURLHealth(videoURL, function (data) {
                                                         if (! data) {
-                                                            setFail++;
+                                                            
                                                             if (showOutput) {
                                                                 console.log(' > Lead media: Video release file url Failed to load: ' + colorizer.colorize(data, 'FAIL'));
-                                                                subTestResults['leadMedia_video_urlHealthStatus'] = 'Lead media: Video release file url Failed to load';
                                                             }
+                                                            setFail++;
+                                                            subTestResults['leadMedia_video_urlHealthStatus'] = 'Lead media: Video release file url Failed to load';
                                                         }
                                                     });
                                                 }
@@ -755,11 +766,11 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                         // console.log('  ------------------------------');
                         // console.log( JSON.stringify(output));
                         // console.log('  ------------------------------');
-
-                        subTestResults['endpointContentValidationError_' + endpointName] = 'endpoint: ' + endpointUrl + ' // \n JSON Error: ' + e;
-                        manifestTestStatus = 'Fail';
-                        setFail++;
                     };
+
+                    subTestResults['endpointContentValidationError_' + endpointName] = 'endpoint: ' + endpointUrl + ' // \n JSON Error: ' + e;
+                    manifestTestStatus = 'Fail';
+                    setFail++;
                 }
             });
         }
@@ -771,7 +782,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
             var status = this.status().currentHTTPStatus;
 
-            if ( status == 200) {
+            if ( status == 200 || status == 301) {
                 var output = this.getPageContent();
                 if (debugOutput) {
                     console.log(' > Gallery url: ' + resp.url);
@@ -823,15 +834,18 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                 } catch (e) {
                     if (showOutput) {
                         console.log('-------------------');
-                        console.log(' JSON Parse Error  ');
+                        console.log(' JSON Parse Error / Gal Obj Test  ');
                         console.log('-------------------');
                         console.log(' > mainContentID: ' + articleContentID);
                         console.log(' > Gallery url: ' + resp.url);
-                        console.log(e)
-                        subTestResults['jsonParseError_' + articleContentID] = 'galleryURL: ' + resp.url + ' // \n JSON Error: ' + e;
-                        manifestTestStatus = 'Fail';
-                        setFail++;
+                        console.log(e);
+                        console.log('------- output object output ---------');
+                        console.log(output);
+                        console.log('------- output ---------');
                     };
+                    subTestResults['jsonParseError_' + articleContentID] = 'galleryURL: ' + resp.url + ' // \n JSON Error: ' + e;
+                    manifestTestStatus = 'Fail';
+                    setFail++;
                 }
                 if (Object.keys(galleryTestingResults).length > 0){
                     subTestResults[articleContentID + '_galleryResults'] = galleryTestingResults;
