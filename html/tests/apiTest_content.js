@@ -477,9 +477,29 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
             var endpointUrl = collectionObject[thisCollectionItem];
 
             if (endpointUrl) {
-                if (endpointUrl.indexOf('submit-your-photos') > -1) {
+                var runValidateEndpoint = true;
+
+                if (endpointUrl.indexOf('submit-your-photos') > -1 || endpointUrl.indexOf('submit-media') > -1) {
                     if (showOutput) {console.log('Skipping UGC url....')};
-                } else {
+                    var runValidateEndpoint = false;
+                }
+
+                if (endpointUrl.indexOf('telemundo') > -1 ) {
+                    if (endpointUrl.indexOf('el-tiempo/modules') > -1) {
+                        if (showOutput) {console.log('Exception: Skipping TLM Weather moduels endpoint url....')};
+                        var runValidateEndpoint = false;
+                    } else if (endpointUrl.indexOf('news-app/investigations/modules') > -1) {
+                        if (showOutput) {console.log('Exception: Skipping TLM Investigations moduels endpoint url....')};
+                        var runValidateEndpoint = false;
+                    }
+                }
+
+                if (debugOutput) {
+                    console.log('> ------- endpoint URL ' + endpointUrl);
+                    console.log('runValidateEndpoint ' + runValidateEndpoint);
+                }
+
+                if (runValidateEndpoint) {
                     suite.endpointContentValidation(endpointName, endpointUrl, testID);
                 }
             } else {
