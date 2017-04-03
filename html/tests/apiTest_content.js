@@ -759,7 +759,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                                             }
 
                                             if (Object.keys(endpointTestResults).length > 0){
-                                                testResultsObject['endpointContentTests'] = endpointTestResults;
+                                                testResultsObject['testResults'] = endpointTestResults;
                                             }
                                         }
                                         if (debugOutput) {console.log('  -----------------')};
