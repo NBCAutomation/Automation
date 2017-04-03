@@ -1227,7 +1227,7 @@ $app->group('/utils', function () {
 
     	if ($sendEmailNotification) {
     		$this->logger->info("Alert notification email sent; type: ". $utilPostParams['taskType'] . ", process: " . $utilPostParams['taskRef'] . ", note: " . $utilPostParams['logNote']);
-    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
+    		// Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
     		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
     	}
 		

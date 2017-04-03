@@ -450,7 +450,18 @@
 								foreach ($reportFailures as $thisReportKey => $thisReportValue) {
 									echo "<tr>";
 									echo "<td><div class=\"report_status fail\">Fail</div></td>";
-									echo "<td>".$thisReportKey."</td>";
+									echo "<td>";
+									
+
+									if (strstr($thisReportKey, 'article_')) {
+										$contentKeyName = explode("_", $thisReportKey);
+										echo $contentKeyName[1];
+									} else {
+										echo $thisReportKey;
+									}
+
+									echo "</td>";
+
 
 									if (is_array($thisReportValue)) {
 										foreach ($thisReportValue as $subReportKey => $subReportValue) {
