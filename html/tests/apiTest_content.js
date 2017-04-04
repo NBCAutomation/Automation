@@ -787,10 +787,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                         // console.log( JSON.stringify(output));
                         // console.log('  ------------------------------');
                     };
-
+                    setFail++;
                     subTestResults['endpointContentValidationError_' + endpointName] = 'endpoint: ' + endpointUrl + ' // \n JSON Error: ' + e;
                     manifestTestStatus = 'Fail';
-                    setFail++;
                 }
             });
         }
@@ -863,9 +862,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                         console.log(output);
                         console.log('------- output ---------');
                     };
+                    setFail++;
                     subTestResults['jsonParseError_' + articleContentID] = 'galleryURL: ' + resp.url + ' // \n JSON Error: ' + e;
                     manifestTestStatus = 'Fail';
-                    setFail++;
                 }
                 if (Object.keys(galleryTestingResults).length > 0){
                     subTestResults[articleContentID + '_galleryResults'] = galleryTestingResults;

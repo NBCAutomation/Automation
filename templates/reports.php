@@ -450,8 +450,11 @@
 								echo '<ul>';
 								if (is_array($thisReportValue)) {
 									foreach ($thisReportValue as $subReportKey => $subReportValue) {
-										// echo "<li>".$subReportValue."</li>";
-										echo "<li>".str_replace('// ', '</li><li>', $subReportValue)."</li>";
+										if (strstr($subReportValue, '// ')) {
+											echo "<li>".str_replace('// ', '</li><li>', $subReportValue)."</li>";	
+										} else {
+											echo $subReportValue;
+										}
 									}
 								} else {
 									echo "paco taco gelato flako - supa hot fire";
