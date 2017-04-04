@@ -425,9 +425,44 @@
 						}
 					} else {
 						if ($articleData) {
-							echo "<p>Data will only be display when errors exist.</p>";
-						}
-				?>
+							echo '<p class="text-muted small"><i>Data will only be display when errors exist.</i></p>';
+
+							$obj = json_decode($reportData, true);
+							$reportFailures = $obj['testResults'];
+							echo '<div class="panel panel-default">
+									<div class="panel-heading">
+										<h3 class="panel-title">Failure details</h3>
+									</div>';
+							echo '<div class="panel-body">';
+							echo '<p class="text-muted small"><i> * Content ID\'s are clickable and will link to the CMS Search.</i></p>';
+
+							foreach ($reportFailures as $thisReportKey => $thisReportValue) {	
+								echo '<div class="panel panel-default">';
+								
+								if (strstr($thisReportKey, 'article_')) {
+									$contentKeyName = explode("_", $thisReportKey);
+									echo '<div class="panel-heading"><h4 class="panel-title"><a href="https://cms.clickability.com/cms?searchTab=contentTab&searchText='.$contentKeyName[1].'&action=consolidatedSearch" target="_blank">Content ID: '.$contentKeyName[1].'</a></h4></div>';
+								} else {
+									echo '<div class="panel-heading"><h4 class="panel-title"><a href="https://cms.clickability.com/cms?searchTab=contentTab&searchText='.$thisReportKey.'&action=consolidatedSearch" target="_blank">Content ID: '.$thisReportKey.'</a></h4></div>';
+								}
+
+								echo '<div class="panel-body">';
+								echo '<ul>';
+								if (is_array($thisReportValue)) {
+									foreach ($thisReportValue as $subReportKey => $subReportValue) {
+										// echo "<li>".$subReportValue."</li>";
+										echo "<li>".str_replace('// ', '</li><li>', $subReportValue)."</li>";
+									}
+								} else {
+									echo "paco taco gelato flako - supa hot fire";
+								}
+								echo '</ul>';
+								    
+				             	echo '</div>
+				             	</div>';
+							}
+							echo '</div></div>';
+					} else { ?>
 						<p>Errors displayed first</p>
 						<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 							<thead>
@@ -478,6 +513,7 @@
 							</tbody>
 						</table>
 				<?php
+						}
 					}
 				?>
 				
