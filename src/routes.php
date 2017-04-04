@@ -411,6 +411,11 @@ $app->group('/scripts', function () {
     	$allPostPutVars = $request->getParsedBody();
 
     	// Configure testing vars from POST config
+    		// Set protocol flag
+    		if($allPostPutVars['protocol'] == 'Secure (HTTPS)') {
+    			$secureTesting = true;
+    		}
+
 	    	// Set stage flag
 	    	if($allPostPutVars['enviroment'] == 'Stage') {
 	    		$stageTesting = true;
@@ -432,7 +437,11 @@ $app->group('/scripts', function () {
 	    		if ($stageTesting) {
 	    			$__tmpFile = './stage_sites.txt';
 	    		} else {
-	    			$__tmpFile = './sites.txt';
+	    			if ($secureTesting) {
+	    				$__tmpFile = './secure-sites.txt';
+	    			} else {
+	    				$__tmpFile = './sites.txt';
+	    			}
 	    		}
 	    	}
 
@@ -442,7 +451,11 @@ $app->group('/scripts', function () {
 	    		if ($stageTesting) {
 	    			$__tmpFile = './stage_sites-nbc.txt';
 	    		} else {
-	    			$__tmpFile = './sites-nbc.txt';
+	    			if ($secureTesting) {
+	    				$__tmpFile = './secure-sites-nbc.txt';
+	    			} else {
+	    				$__tmpFile = './sites-nbc.txt';
+	    			}
 	    		}
 	    	}
 
@@ -452,7 +465,11 @@ $app->group('/scripts', function () {
 	    		if ($stageTesting) {
 	    			$__tmpFile = './stage_sites-tsg.txt';
 	    		} else {
-	    			$__tmpFile = './sites-tsg.txt';
+	    			if ($secureTesting) {
+	    				$__tmpFile = './secure-sites-tsg.txt';
+	    			} else {
+	    				$__tmpFile = './sites-tsg.txt';
+	    			}
 	    		}
 	    	}
 
@@ -466,7 +483,11 @@ $app->group('/scripts', function () {
 	    			if ($stageTesting) {
 	    				$__data .= 'http://stage.www.'.$__value.'.com';
 	    			} else {
-	    				$__data .= 'http://www.'.$__value.'.com';
+	    				if ($secureTesting) {
+	    					$__data .= 'https://www.'.$__value.'.com';
+	    				} else {
+	    					$__data .= 'http://www.'.$__value.'.com';
+	    				}
 	    			}
 	    			$__data .= "\r\n";
 	    		}

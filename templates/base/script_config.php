@@ -26,6 +26,16 @@
 			<hr />
 			<?php } ?>
 			<?php if ($view != 'updateDictionaries') { ?>
+			<div class="form-group" style="display: none;">
+				<label class="col-sm-2 control-label">Protocol</label>
+				<div class="col-sm-10">
+					<select class="form-control" name="protocol">
+						<option>Normal (HTTP)</option>
+						<option>Secure (HTTPS)</option>
+					</select>
+				</div>
+			</div>
+			<hr / style="display: none;">
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Enviroment</label>
 				<div class="col-sm-10">
