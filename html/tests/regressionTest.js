@@ -38,6 +38,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     var testStatus = 'Pass';
     var setFail = 0;
     var testInfo = 'Engine: Chrome/WebKit';
+    var browser;
 
     // Util vars
     var currentTime = new Date();
@@ -97,6 +98,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     runEngine = casper.cli.get('ff');
     if ( runEngine ) {
         var testInfo = 'Engine: FF/Gecko';
+        var browser = 'ff'
     }
 
 
@@ -335,7 +337,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     },
                     function fail () {
-                        this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '.jpg', 'body');
+                        this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
                         test.fail("Unable to test page elements. Did not load element .sfbox");
                     },
                     null // timeout limit in milliseconds
@@ -389,7 +391,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     },
                     function fail () {
-                        this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '.jpg', 'body');
+                        this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
                         test.fail("Unable to test page elements. Did not load properly.");
                     },
                     null // timeout limit in milliseconds
@@ -426,9 +428,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var suite = this;
         var entityName = testingEntity.replace('.','_').replace('\/',"_").split(' ').join('_').toLowerCase();
         
-        casper.captureSelector(saveLocation + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.jpg', 'body');
+        casper.captureSelector(saveLocation + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
         
-        var failureScreenshot = configURL + '/test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '.jpg';
+        var failureScreenshot = configURL + '/test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '_' + browser + '.jpg';
 
         refErrors['failure'] = 'unable to locate "' + refName + '" entitiy: "' + testingEntity + '". Unable to test item visibility correctly.';
         refErrors['screenshot'] = failureScreenshot;
