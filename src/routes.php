@@ -1206,8 +1206,8 @@ $app->group('/utils', function () {
 				return $boxColor;
 			}
 
-			// $emailRecipient = 'deltrie.allen@nbcuni.com';
-			$emailRecipient = 'LIMQualityAssurance@nbcuni.com';
+			$emailRecipient = 'deltrie.allen@nbcuni.com';
+			// $emailRecipient = 'LIMQualityAssurance@nbcuni.com';
 
 			$emailSubject = 'Automation Failures/Warnings';
 
@@ -1234,8 +1234,8 @@ $app->group('/utils', function () {
     		$db = new DbHandler();
 
     		$todayRegressionCronFailures = $db->getTestReportCount('regression_tests', 'fail', 'today');
-    		// $emailRecipient = 'deltrie.allen@nbcuni.com';
-    		$emailContent = 'LIMQualityAssurance@nbcuni.com';
+    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+    		// $emailContent = 'LIMQualityAssurance@nbcuni.com';
     		$sendEmailNotification = true;
     		$emailSubject = 'Automation Regression '.$utilPostParams['taskRef'];
     		$emailContent .= 'Regression cron process: '.$utilPostParams['taskRef'].'ed';
@@ -1248,7 +1248,7 @@ $app->group('/utils', function () {
 
     	if ($sendEmailNotification) {
     		$this->logger->info("Alert notification email sent; type: ". $utilPostParams['taskType'] . ", process: " . $utilPostParams['taskRef'] . ", note: " . $utilPostParams['logNote']);
-    		// Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
+    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
     		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
     	}
 		
