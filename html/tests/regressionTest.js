@@ -40,6 +40,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     var testInfo = 'Engine: Chrome/WebKit';
     var browser;
 
+    manifestTestRefID = casper.cli.get('refID');
+
     // Util vars
     var currentTime = new Date();
 
@@ -132,7 +134,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         casper.start( url ).then(function(response) {
             if ( response.status == 200 || response.status == 302 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-                suite.createTestID(url, 'regressionTest', urlUri);
+                
+                if (manifestTestRefID) {
+                    testResultsObject['testID'] = manifestTestRefID;
+                } else {
+                    suite.createTestID(url, 'regressionTest', urlUri);
+                }
+
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
@@ -171,6 +179,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             // Test navigation items and pages
             suite.collectNavigation(testProperty, url, false);
         }).then(function() {
+            console.log('were here 2');
             console.log('-----------------------------------');
             console.log(' Test completed with ' + setFail + ' failures.');
             console.log('-----------------------------------');
@@ -224,7 +233,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         if (!logResults){
             if (debugOutput) { console.log(colorizer.colorize('TestID: ', 'COMMENT') + 'xx') };
-            var manifestTestRefID = 'xx';
+            manifestTestRefID = 'xx';
         } else {
             if (dbUrl) {
                 casper.thenOpen(dbUrl).then(function(resp) {
@@ -234,7 +243,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
                         var output = this.getHTML();
-                        var manifestTestRefID = casper.getElementInfo('body').text;
+                        manifestTestRefID = casper.getElementInfo('body').text;
                         
                         testResultsObject['testID'] = manifestTestRefID;
 
@@ -464,21 +473,45 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             } else {
                 var selector = '.nav-more .nav-section-subnav a';
             }
+            
+            /*casper.on('remote.message', function(msg) {
+                this.echo('remote message caught: ' + msg);
+            })*/
 
-            // Collect nav items
+            // collect nav URLS
             var evaluatedUrls = this.evaluate(function(mainURL, selector) {
+                var output = [];
                 // Grab the current url data, href and link text
-                return __utils__.findAll(selector).map(function(element) {
-                    return {
-                        url: element.getAttribute('href'),
-                        innerText: element.innerText
-                    };
-                }).map(function(elementObj) {
-                    return elementObj;
+                var elementObjects = __utils__.findAll(selector).map(function(element) {
+                    console.log('map1: ', $(element).text());
+                    if (!! element.getAttribute('href')) {
+                        var title = element.getAttribute('title'),
+                            alt = element.getAttribute('alt');
+
+                        return {
+                            url: element.getAttribute('href'),
+                            // innerText: element.innerText
+                            innerText: title ? title : alt
+                        }
+                    } 
+                    return null;
                 });
+
+                for (var i = elementObjects.length - 1; i >= 0; i--) {
+                    var el = elementObjects[i];
+                    if (el !== null) {
+                        output.push(el);
+                    }
+                }
+                return output;
             }, mainURL, selector);
 
+            // loop and append to testDestinations
             evaluatedUrls.forEach(function(elementObj) {
+                if (elementObj === null) {
+                    return;
+                }
+
                 var url = elementObj.url;
                 var innerText = elementObj.innerText;
                 
@@ -490,6 +523,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     testDesinations[innerText] = url;
                 }
             });
+            
+            if (debugOutput) {
+                console.log('testDesinations', JSON.stringify(testDesinations));
+            }
 
             if (! runOnce) {
                 suite.collectNavigation(testProperty, url, true);
