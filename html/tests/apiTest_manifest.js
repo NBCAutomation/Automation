@@ -52,6 +52,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var manifestTestRefID;
     var manifestTestStatus;
     var setFail = 0;
+    var testStartTime;
+    var manifestLoadTime;
+    
 
     // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
     var reqKeys = new Array(
@@ -209,6 +212,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             // Add manifest url    
             url = url + '/apps/news-app/manifest/json/?apiVersion=6';
 
+            testStartTime = Date.now();
+
             /*******************
             *
             * Start Testing
@@ -216,6 +221,12 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             *******************/
             casper.start( url ).then(function(response) {
                 if ( response.status == 200 ) {
+                    manifestLoadTime = Date.now() - testStartTime;
+
+                    if (showOutput) {
+                        console.log(' > Loadtime: ', manifestLoadTime, 'ms');
+                    };
+
                     if(createDictionary){
                         console.log(urlUri + ' Dictionary creation/update started.');
                     } else {
@@ -231,6 +242,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     // Create ref test ID and start manifest data collection for testing
                     suite.createTestID(url, type, urlUri);
                 }
+
+                // Log test load time. Moved to allow for waiting of testID to get set
             }).then(function () {
                 if(createDictionary){
                     suite.updateInsertManifestDictionary(urlUri, collectionObject);
@@ -265,7 +278,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 //Process test results to DB
                 if (logResults) {
-                    suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiManifestTest', manifestTestStatus);
+                    suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiManifestTest', manifestLoadTime, manifestTestStatus);
+                    suite.logLoadTime(manifestTestRefID, 'apiManifestTest', manifestLoadTime, url);
                 }
 
             }).run(function() {
@@ -300,7 +314,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
                         var output = this.getHTML();
-                        var manifestTestRefID = casper.getElementInfo('body').text;
+                        manifestTestRefID = casper.getElementInfo('body').text;
+                        console.log(manifestTestRefID);
 
                         suite.collectManifestData(url, type, manifestTestRefID);
                     } else {
@@ -309,6 +324,28 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 });
             }
         }
+    };
+
+    // Log endpoint time
+    apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, testInfo) {
+        var processUrl = configURL + '/utils/processRequest';
+
+        if (debugOutput) {
+            console.log(processUrl);
+            console.log(testID, testType, manifestLoadTime, endPoint, testInfo);
+        }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'task': 'logLoadTime',
+                'testID': testID,
+                'testType': testType,
+                'manifestLoadTime': manifestLoadTime,
+                'endPoint': endPoint,
+                'testInfo': testInfo
+            }
+        });
     };
 
     apiSuite.prototype.updateInsertManifestDictionary = function(urlUri, collectionObject) {
@@ -331,7 +368,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         });
     };
 
-    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestTestStatus) {
+    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestLoadTime, manifestTestStatus) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
@@ -346,7 +383,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 'testType': testType,
                 'testProperty': urlUri,
                 'testStatus': manifestTestStatus,
-                'testFailureCount':testFailureCount,
+                'testFailureCount': testFailureCount,
+                'manifestLoadTime': manifestLoadTime,
                 'testResults':  JSON.stringify(testResultsObject)
             }
         });

@@ -44,6 +44,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var manifestTestRefID;
     var manifestTestStatus = 'Pass';
     var setFail = 0;
+    var testStartTime;
+    var manifestLoadTime;
+    var apiVersion = '6';
 
     var reqKeys = new Array(
         "navigationID",
@@ -70,7 +73,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/navigation/?apiVersion=6';
+        url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion;
+        testStartTime = Date.now();
 
         /*******************
         *
@@ -78,8 +82,13 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         *
         *******************/
         casper.start( url ).then(function(response) {
-            
             if ( response.status == 200 ) {
+                manifestLoadTime = Date.now() - testStartTime;
+
+                if (showOutput) {
+                    console.log(' > Loadtime: ', manifestLoadTime, 'ms');
+                };
+
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
                 suite.createTestID(url, type, urlUri);
             } else {
@@ -130,6 +139,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             //Process test results to DB
             if (logResults) {
                 suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiNavTest', manifestTestStatus);
+                suite.logLoadTime(manifestTestRefID, 'apiNavTest', manifestLoadTime, url);
             }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
@@ -166,6 +176,28 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 });
             }
         }
+    };
+
+    // Log endpoint time
+    apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, testInfo) {
+        var processUrl = configURL + '/utils/processRequest';
+
+        if (debugOutput) {
+            console.log(processUrl);
+            console.log(testID, testType, manifestLoadTime, endPoint, testInfo);
+        }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'task': 'logLoadTime',
+                'testID': testID,
+                'testType': testType,
+                'manifestLoadTime': manifestLoadTime,
+                'endPoint': endPoint,
+                'testInfo': testInfo
+            }
+        });
     };
 
     // Log results in DB
@@ -284,9 +316,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 if (subObject[subItem].indexOf('/apps') > -1) {
 
                                     if (subObject[subItem].indexOf('?') > -1) {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=5'
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion;
                                     } else {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=5'
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion;
                                     }
                                     
                                     if (debugOutput) {

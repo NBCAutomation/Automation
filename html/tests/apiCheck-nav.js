@@ -165,6 +165,28 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
+    // Log endpoint time
+    apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, testInfo) {
+        var processUrl = configURL + '/utils/processRequest';
+
+        if (debugOutput) {
+            console.log(processUrl);
+            console.log(testID, testType, manifestLoadTime, endPoint, testInfo);
+        }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'task': 'logLoadTime',
+                'testID': testID,
+                'testType': testType,
+                'manifestLoadTime': manifestLoadTime,
+                'endPoint': endPoint,
+                'testInfo': testInfo
+            }
+        });
+    };
+
     // Log results in DB
     apiSuite.prototype.processTestResults = function(resultsFile) {
         var testResultFileLocation = encodeURIComponent(save);

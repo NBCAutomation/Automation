@@ -1145,15 +1145,31 @@ $app->group('/utils', function () {
     		$station = $utilPostParams['testProperty'];
     		$status = $utilPostParams['testStatus'];
     		$testFailureCount = $utilPostParams['testFailureCount'];
+    		$testLoadtime = $utilPostParams['testLoadtime'];
     		$results = $utilPostParams['testResults'];
     		$info = $utilPostParams['testInfo'];
 
-    		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $results, $info);
+    		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $testLoadtime, $results, $info);
     		
     		if ($processManifestTestResults){
-    			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",testType=>". $testType .",testStatus=>". $status ."]");
+    			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",loadTime=>". $testLoadtime .",testType=>". $testType .",testStatus=>". $status ."]");
     		}
     	}
+
+    	if ($utilPostParams['task'] == 'logLoadTime') {
+    		$testID = $utilPostParams['testID'];
+    		$testType = $utilPostParams['testType'];
+    		$manifestLoadTime = $utilPostParams['manifestLoadTime'];
+    		$endPoint = $utilPostParams['endPoint'];
+    		$testInfo = $utilPostParams['testInfo'];
+
+    		$logLoadTime = $db->logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $testInfo);
+    		
+    		if ($logLoadTime){
+    			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",loadTime=>". $testLoadtime .",testType=>". $testType .",testStatus=>". $status ."]");
+    		}
+    	}
+
 
     	if ($utilPostParams['taskType'] == 'api-notification') {
     		$db = new DbHandler();
