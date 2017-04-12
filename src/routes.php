@@ -1145,12 +1145,12 @@ $app->group('/utils', function () {
     		$station = $utilPostParams['testProperty'];
     		$status = $utilPostParams['testStatus'];
     		$testFailureCount = $utilPostParams['testFailureCount'];
-    		$testLoadtime = $utilPostParams['testLoadtime'];
+    		$testLoadtime = $utilPostParams['manifestLoadTime'];
     		$results = $utilPostParams['testResults'];
     		$info = $utilPostParams['testInfo'];
 
     		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $testLoadtime, $results, $info);
-    		
+
     		if ($processManifestTestResults){
     			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",loadTime=>". $testLoadtime .",testType=>". $testType .",testStatus=>". $status ."]");
     		}
@@ -1166,7 +1166,7 @@ $app->group('/utils', function () {
     		$logLoadTime = $db->logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $testInfo);
     		
     		if ($logLoadTime){
-    			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",loadTime=>". $testLoadtime .",testType=>". $testType .",testStatus=>". $status ."]");
+    			$this->logger->info("Loadtime logged: [testID=>". $testID .",endPoint=>". $endPoint .",loadTime=>". $manifestLoadTime .",testType=>". $testType ."]");
     		}
     	}
 

@@ -449,7 +449,7 @@ class DbHandler {
     public function insertTestResults($testID, $testType, $station, $status, $testFailureCount, $testLoadtime, $results, $info) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("INSERT INTO test_results(ref_test_id, test_type, property, loadtime, status, failures, results_data, info) VALUES(?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $db_con->prepare("INSERT INTO test_results(ref_test_id, test_type, property, loadtime, status, failures, results_data, info) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
         $insertStatement = $stmt->execute(array($testID, $testType, $station, $testLoadtime, $status, $testFailureCount, $results, $info));
 
         if ($insertStatement) {
@@ -535,7 +535,7 @@ class DbHandler {
         return $output;
     }
 
-
+    
     public function logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $testInfo) {
         $db_con = Spire::getConnection();
 
