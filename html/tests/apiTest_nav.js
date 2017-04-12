@@ -46,7 +46,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var setFail = 0;
     var testStartTime;
     var manifestLoadTime;
+    
     var apiVersion = '6';
+
+    if ( ! casper.cli.get('enablevalidation') ) {
+        var enableJsonValidation = '&enableJsonValidation=false';
+    }
 
     var reqKeys = new Array(
         "navigationID",
@@ -73,7 +78,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion;
+        url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation;
         testStartTime = Date.now();
 
         /*******************
@@ -316,9 +321,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 if (subObject[subItem].indexOf('/apps') > -1) {
 
                                     if (subObject[subItem].indexOf('?') > -1) {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion;
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion + enableJsonValidation;
                                     } else {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion;
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion + enableJsonValidation;
                                     }
                                     
                                     if (debugOutput) {

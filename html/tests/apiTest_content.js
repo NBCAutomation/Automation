@@ -48,6 +48,12 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
     var setFail = 0;
     var sourceString;
 
+    var apiVersion = '6';
+
+    if ( ! casper.cli.get('enablevalidation') ) {
+        var enableJsonValidation = '&enableJsonValidation=false';
+    }
+
     // Testing Suite Functions
     var apiSuite = function(url) {
 
@@ -67,7 +73,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         var urlUri = sourceString.replace('.','_');
         
         // Strip and clean url to avoid 301 redirects and endpoint load error.
-        url = 'http://www.' + sourceString + '.com/apps/news-app/navigation?apiVersion=6';
+        url = 'http://www.' + sourceString + '.com/apps/news-app/navigation?apiVersion=' + apiVersion + enableJsonValidation;
         console.log(url);
 
         /*******************
@@ -315,9 +321,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                                 if (subObject[subItem].indexOf('/apps') > -1) {
 
                                     if (subObject[subItem].indexOf('?') > -1) {
-                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '&apiVersion=6'
+                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion + enableJsonValidation;
                                     } else {
-                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '?apiVersion=6'
+                                        var navItemAppLocationURL = baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion + enableJsonValidation;
                                     }
                                     
                                     if (debugOutput) {

@@ -11,7 +11,7 @@
 //      --testing               > disables DB logging of test results
 //
 // JSON Manifest
-// templates/nbc_news_app_json_manifest?apiVersion=5
+// templates/nbc_news_app_json_manifest?apiVersion=6
 //
 // Testing starts @ Line 250
 
@@ -54,8 +54,13 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var setFail = 0;
     var testStartTime;
     var manifestLoadTime;
-    
 
+    var apiVersion = '6';
+
+    if ( ! casper.cli.get('enablevalidation') ) {
+        var enableJsonValidation = '&enableJsonValidation=false';
+    }
+    
     // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
     var reqKeys = new Array(
         "domain",
@@ -210,7 +215,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             var urlUri = sourceString.replace('.','_');
 
             // Add manifest url    
-            url = url + '/apps/news-app/manifest/json/?apiVersion=6';
+            url = url + '/apps/news-app/manifest/json/?apiVersion=' + apiVersion + enableJsonValidation;
 
             testStartTime = Date.now();
 
