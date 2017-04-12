@@ -47,6 +47,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
     var manifestTestStatus = 'Pass';
     var setFail = 0;
     var sourceString;
+    var testStartTime;
+    var manifestLoadTime;
 
     var apiVersion = '6';
 
@@ -76,6 +78,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         url = 'http://www.' + sourceString + '.com/apps/news-app/navigation?apiVersion=' + apiVersion + enableJsonValidation;
         console.log(url);
 
+        testStartTime = Date.now();
+
         /*******************
         *
         * Start Testing
@@ -84,12 +88,19 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         casper.start( url ).then(function(response) {
             
             if ( response.status == 200 ) {
+                manifestLoadTime = Date.now() - testStartTime;
+                if (showOutput) {
+                    console.log(' > Loadtime: ', manifestLoadTime, 'ms');
+                };
+
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
                 console.log('...creating testID, collecting manifest data, and content endpoints');
                 suite.createTestID(url, type, urlUri);
             } else {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
+        }).then(function () {
+            suite.logLoadTime(manifestTestRefID, 'apiContentTest', manifestLoadTime, url);
         }).then(function () {
             console.log('------------------------------------------');
             console.log(colorizer.colorize('...testing collected manifest data', 'PARAMETER'));
@@ -202,6 +213,28 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                 });
             }
         }
+    };
+
+    // Log endpoint time
+    apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, testInfo) {
+        var processUrl = configURL + '/utils/processRequest';
+
+        if (debugOutput) {
+            console.log(processUrl);
+            console.log(testID, testType, manifestLoadTime, endPoint, testInfo);
+        }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'task': 'logLoadTime',
+                'testID': testID,
+                'testType': testType,
+                'manifestLoadTime': manifestLoadTime,
+                'endPoint': endPoint,
+                'testInfo': testInfo
+            }
+        });
     };
 
     // Log results in DB

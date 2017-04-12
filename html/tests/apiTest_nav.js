@@ -100,6 +100,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
         }).then(function () {
+            suite.logLoadTime(manifestTestRefID, 'apiNavTest', manifestLoadTime, url, null);
+        }).then(function () {
             // Display collection object
             if (debugOutput) {
                 console.log('---------------------');
@@ -121,6 +123,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 console.log('---------------------');
                 console.log(' Test Results object   ');
                 console.log('---------------------');
+                console.log('Test Status: ' + manifestTestStatus);
                 for (var resultsCollectionItem in testResultsObject) {
                     console.log('- ' + resultsCollectionItem + ' : ' + testResultsObject[resultsCollectionItem]);
                     
@@ -143,8 +146,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
             //Process test results to DB
             if (logResults) {
-                suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiNavTest', manifestTestStatus);
-                suite.logLoadTime(manifestTestRefID, 'apiNavTest', manifestLoadTime, url);
+                suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiNavTest', manifestLoadTime, manifestTestStatus);
             }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
@@ -206,11 +208,21 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     // Log results in DB
-    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestTestStatus) {
+    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestLoadTime, manifestTestStatus) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
-            console.log(processUrl);
+            // console.log('>> process url: ' + processUrl);
+            console.log('------------------------');
+            console.log(' Process Results Data  ');
+            console.log('------------------------');
+            console.log('urlUri => ' + urlUri);
+            console.log('testResultsObject => ' + testResultsObject);
+            console.log('testID => ' + testID);
+            console.log('testFailureCount => ' + testFailureCount);
+            console.log('testType => ' + testType);
+            console.log('manifestLoadTime => ' + manifestLoadTime);
+            console.log('manifestTestStatus => ' + manifestTestStatus);
         }
 
         casper.open(processUrl, {
@@ -222,6 +234,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 'testProperty': urlUri,
                 'testStatus': manifestTestStatus,
                 'testFailureCount':testFailureCount,
+                'manifestLoadTime': manifestLoadTime,
                 'testResults':  JSON.stringify(testResultsObject)
             }
         });
@@ -363,7 +376,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             if (endpointUrl) {
                 suite.validateJson(endpointName, endpointUrl, testID);
             } else {
-                throw new Error('NavTestError: No url provided to test against.').exit();
+                console.log(colorizer.colorize('ERROR: ', 'WARNING') + 'NavTestError: No url provided to test against: ' + endpointName);
+                currentTestObject[endpointName] = 'NavDataTestError: No url provided to test against for the current endpoint.';
+                testResultsObject['testResults'] = currentTestObject;
+                manifestTestStatus = 'Fail';
+                setFail++;
             }
         }
     };

@@ -250,6 +250,8 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 // Log test load time. Moved to allow for waiting of testID to get set
             }).then(function () {
+                suite.logLoadTime(manifestTestRefID, 'apiManifestTest', manifestLoadTime, url);
+            }).then(function () {
                 if(createDictionary){
                     suite.updateInsertManifestDictionary(urlUri, collectionObject);
 
@@ -284,7 +286,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 //Process test results to DB
                 if (logResults) {
                     suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiManifestTest', manifestLoadTime, manifestTestStatus);
-                    suite.logLoadTime(manifestTestRefID, 'apiManifestTest', manifestLoadTime, url);
                 }
 
             }).run(function() {
