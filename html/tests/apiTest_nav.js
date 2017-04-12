@@ -8,7 +8,7 @@
 //      --output=debug          > to show logged key/val strings
 //      --output=console        > will show test results
 //
-// Run form console.
+// Run form console. 
 // ./run.sh apiCheck-article --url=http://www.telemundolasvegas.com --output=console
 
 
