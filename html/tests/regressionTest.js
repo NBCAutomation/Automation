@@ -132,23 +132,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         *******************/
         // casper.start().then(function(response) {
         casper.start( url ).then(function(response) {
-
-            // merge captured PDFs with default system shell (bash on Linux) calling /usr/bin/gs, and runs a small script to remove files
-            casper.waitForExec('/bin/bash -c', ['cd',{ /Documents/Repositories/Applications/OTS-Spire/html/tests casperjs test apiTest_nav.js --url=http://www.nbcnewyork.com --output=console --env=local; }'],
-                function(response) {
-                    this.echo("Program finished by itself: completed");
-                }, function(timeout, response) {
-                    this.echo("Program finished by casper: timeout");
-            });
-
-            this.exit();
             if ( response.status == 200 || response.status == 302 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
                 
                 if (manifestTestRefID) {
                     testResultsObject['testID'] = manifestTestRefID;
                 } else {
-                    // suite.createTestID(url, 'regressionTest', urlUri);
+                    suite.createTestID(url, 'regressionTest', urlUri);
                 }
 
             } else {
@@ -180,23 +170,23 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         this.exit();
                     }
 
-                    // suite.visualTests(testProperty, urlUri, url);
+                    suite.visualTests(testProperty, urlUri, url);
                 } else {
                     casper.test.fail('Page did not load correctly. Response: ' + response.status);
                 }
             })
         }).then(function() {
             // Test navigation items and pages
-            // suite.collectNavigation(testProperty, url, false);
+            suite.collectNavigation(testProperty, url, false);
         }).then(function() {
-            console.log('were here 2');
+            // console.log('were here 2');
             console.log('-----------------------------------');
             console.log(' Test completed with ' + setFail + ' failures.');
             console.log('-----------------------------------');
 
             //Log test results
             if (setFail > 0) {
-                // suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus);
+                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus);
 
                 if (debugOutput) {
                     console.log('---------------------');
@@ -226,7 +216,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     }
                 }
             } else {
-                // suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus, testInfo);
+                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus, testInfo);
             }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
