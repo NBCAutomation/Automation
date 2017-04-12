@@ -100,6 +100,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
         }).then(function () {
+            // Log the endpoint load time
             suite.logLoadTime(manifestTestRefID, 'apiNavTest', manifestLoadTime, url, null);
         }).then(function () {
             // Display collection object
@@ -244,6 +245,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         manifestTestRefID = testID;
+        
+        var subTestLoadStartTime = Date.now();
 
         casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 
@@ -252,7 +255,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             var status = this.status().currentHTTPStatus;
 
             if ( status == 200) {
-                if (showOutput) {console.log(url + colorizer.colorize(' Status: ' + status, 'INFO') )};
+                var subTestLoadTime = Date.now() - subTestLoadStartTime;
+
+                if (showOutput) {
+                    console.log(url + colorizer.colorize(' Status: ' + status, 'INFO') );
+                    console.log(' - load time: ' + subTestLoadTime);
+                };
                 
                 var validated = false;
                 var output = this.getPageContent();
@@ -385,10 +393,35 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
+    apiSuite.prototype.getLoadTime = function(url, callback) {
+        var suite = this;
+
+        if (url) {
+            subTestStartTime = Date.now();
+
+            casper.open(url).then(function(resp) {
+                var status = this.status().currentHTTPStatus,
+                    output = false;
+
+                if ( status == 200) {
+                    currentSubTestLoadTime = Date.now() - subTestStartTime;
+                    output = currentSubTestLoadTime;
+                }
+
+                suite.logLoadTime(manifestTestRefID, 'apiSectionContent', currentSubTestLoadTime, url, null);
+
+                if (typeof(callback) === "function") {
+                    callback(output);
+                }
+            })
+        } else {
+            throw new Error('checkURLHealth: Unable to test url, missing url;');
+        }
+    };
+
     apiSuite.prototype.validateJson = function(urlName, url, status, testID) {
         var suite = this;
         var currentTestStatus = "Pass";
-
 
         if (url) {
             casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
@@ -405,6 +438,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                             if (showOutput) {console.log('Skipping UGC url....')};
                         } else {
                             console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
+
+                            var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
+                                if (data) {
+                                    console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
+                                } else {
+                                    console.log('-- no timing returned.');
+                                }
+                            });
                             
                             // Test parsing JSON
                             if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
@@ -465,8 +506,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                     setFail++;
                                 }
                             }
-                            if (showOutput) {console.log('-----------------')};
                         }
+                        if (showOutput) {console.log('-----------------')};
                     }
                 } else {
                     currentTestResults['url'] = url;
