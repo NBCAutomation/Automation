@@ -350,6 +350,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                     if (debugOutput) {
                                         console.log(navItemAppLocationURL);
                                     };
+                                } else {
+                                    navItemAppLocationURL = subObject[subItem]
                                 }
                                 
                                 if (debugOutput) {
