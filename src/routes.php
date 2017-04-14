@@ -61,13 +61,9 @@ $app->group('/dashboard', function () use ($app) {
 		$apiNavTestLoadTime = $db->getAverageLoadTime('apiNavTest', 'today');
 		$apiContentTestLoadTime = $db->getAverageLoadTime('apiContentTest', 'today');
 		$apiSectionContentLoadTime = $db->getAverageLoadTime('apiSectionContent', 'today');
-		
-		echo '$apiManifestTestLoadTime  => '.$apiManifestTestLoadTime.'<br />';
-		echo '$apiNavTestLoadTime  => '.$apiNavTestLoadTime.'<br />';
-		echo '$apiContentTestLoadTime  => '.$apiContentTestLoadTime.'<br />';
-		echo '$apiSectionContentLoadTime  => '.$apiSectionContentLoadTime.'<br />';
 
-		exit();
+		$chartLoadTimeData = $db->getAllAverageLoadTimes();
+
 
 		// Server time
 		$info = getdate();
@@ -92,6 +88,11 @@ $app->group('/dashboard', function () use ($app) {
 			'man30Day' => $man30Day,
 			'nav30Day' => $nav30Day,
 			'cont30Day' => $cont30Day,
+			'apiManifestTestLoadTime' => $apiManifestTestLoadTime,
+			'apiNavTestLoadTime' => $apiNavTestLoadTime,
+			'apiContentTestLoadTime' => $apiContentTestLoadTime,
+			'apiSectionContentLoadTime' => $apiSectionContentLoadTime,
+			'chartLoadTimeData' => $chartLoadTimeData,
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
