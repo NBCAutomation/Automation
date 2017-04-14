@@ -509,6 +509,30 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         }
     };
 
+    apiSuite.prototype.getLoadTime = function(url, callback) {
+        var suite = this;
+
+        if (url) {
+            subTestStartTime = Date.now();
+
+            casper.thenOpen(url).then(function(resp) {
+                var status = this.status().currentHTTPStatus,
+                    output = false;
+
+                if ( status == 200) {
+                    currentSubTestLoadTime = Date.now() - subTestStartTime;
+                    output = currentSubTestLoadTime;
+                }
+
+                if (typeof(callback) === "function") {
+                    callback(output);
+                }
+            })
+        } else {
+            throw new Error('checkURLHealth: Unable to test url, missing url;');
+        }
+    };
+
     apiSuite.prototype.testEndpointContent = function(collectionObject, testID) {
         var suite = this;
         for (var thisCollectionItem in collectionObject) {
