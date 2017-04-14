@@ -76,55 +76,6 @@
 				</div>
 			</div>
 		</div> -->
-		<?php 
-			// echo '<pre>';
-			// var_dump($chartLoadTimeData[0]);
-			// echo '</pre>';
-
-
-			$allLoadTimeData = $chartLoadTimeData[0];
-
-
-
-
-			foreach ($allLoadTimeData as $thisReportKey => $thisReportData) {	
-				// echo $thisReportKey;
-				// echo $thisReportData;
-
-				// if (is_array($thisReportData)) {
-					
-					// dataPointName, dayDate, hourInterval 
-
-					// if (strstr($thisReportData['dataPointName'], 'Manifest')) {
-						echo 'Manifest Stuff </br >';
-						echo 'averageLoadTime => ' . $thisReportData['averageLoadTime'].'<br />';
-						echo 'dataPointName => ' . $thisReportData['dataPointName'].'<br />';
-						// echo 'dayDate => ' . $thisReportData['dayDate'].'<br />';
-						echo 'dayDate => ' . Date('n/d/Y', strtotime($thisReportData['dayDate'])).'<br />';
-						echo 'hourInterval => ' . $thisReportData['hourInterval'].'<br />';
-					// }
-
-					echo '----------------<br />';
-
-					
-
-					// foreach ($thisReportData as $subReportKey => $subReportValue) {
-					// 	// if (strstr($subReportValue, '// ')) {
-					// 		// echo "<li>".str_replace('// ', '</li><li>', $subReportValue)."</li>";	
-					// 	// } else {
-					// 	echo '<pre>';
-					// 		var_dump($subReportValue);
-					// 	echo '</pre>';
-					// 	// }
-					// }
-				// } else {
-				// 	echo "paco taco gelato flako - supa hot fire";
-				// }
-			}
-
-
-
-		?>
 		<div class="panel panel-default">
 			<div class="panel-heading">Line Chart</div>
 			<div class="panel-body">
