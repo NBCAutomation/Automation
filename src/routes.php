@@ -56,6 +56,19 @@ $app->group('/dashboard', function () use ($app) {
 	// 	echo "---------------------------<br />";
 	// 	$cont30Day = $db->getFailuresPer30Day('api_article_audits');
 
+		// var_dump($db->getLoadTimes('all', 'yesterday'));
+		$apiManifestTestLoadTime = $db->getAverageLoadTime('apiManifestTest', 'today');
+		$apiNavTestLoadTime = $db->getAverageLoadTime('apiNavTest', 'today');
+		$apiContentTestLoadTime = $db->getAverageLoadTime('apiContentTest', 'today');
+		$apiSectionContentLoadTime = $db->getAverageLoadTime('apiSectionContent', 'today');
+		
+		echo '$apiManifestTestLoadTime  => '.$apiManifestTestLoadTime.'<br />';
+		echo '$apiNavTestLoadTime  => '.$apiNavTestLoadTime.'<br />';
+		echo '$apiContentTestLoadTime  => '.$apiContentTestLoadTime.'<br />';
+		echo '$apiSectionContentLoadTime  => '.$apiSectionContentLoadTime.'<br />';
+
+		exit();
+
 		// Server time
 		$info = getdate();
 		$date = $info['mday'];
