@@ -698,7 +698,8 @@ class DbHandler {
 
             $db_con = Spire::getConnection();
 
-            $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS dataPointName, Date(created) AS dayDate, Hour(created) AS hourInterval FROM loadtimes GROUP BY test_type, DAY(created), HOUR(created)");
+            // $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS dataPointName, Date(created) AS dayDate, Hour(created) AS hourInterval FROM loadtimes GROUP BY test_type, DAY(created), HOUR(created)");
+            $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS loadTimeFrom, Date(created) AS date FROM loadtimes GROUP BY test_type, DAY(created)");
 
             $loadTimeArray = array();
 
