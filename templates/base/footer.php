@@ -11,9 +11,9 @@
 			</div>
 		</div>
 	</div>
-	<style type="text/css">
+	<!-- <style type="text/css">
 		.ts-sidebar {display: none !important;}
-	</style>
+	</style> -->
 	<!-- Loading Scripts -->
 	<script src="/assets/js/bootstrap-select.min.js"></script>
 	<script src="/assets/js/bootstrap.min.js"></script>
@@ -49,19 +49,6 @@
 
 
 		foreach ($allLoadTimeData as $thisReportKey => $thisReportData) {
-
-			// echo $thisReportKey;
-			// echo $thisReportData;
-
-			// echo '<pre>';
-			// var_dump($thisReportData);
-			// echo '</pre>';
-
-echo $thisReportData['loadTimeFrom'].'<br />';
-echo $thisReportData['averageLoadTime'].'<br />';
-// echo $thisReportData['date'].'<br />';
-echo Date('n/d/Y', strtotime($thisReportData['date'])).'<br />';
-
 			$loadTimeLabelArrayData['type'] = $thisReportData['loadTimeFrom'];
 			$loadTimeLabelArrayData['loadtime'] = $thisReportData['averageLoadTime'];
 			$loadTimeLabelArrayData['date'] = Date('n/d/Y', strtotime($thisReportData['date']));
@@ -87,17 +74,6 @@ echo Date('n/d/Y', strtotime($thisReportData['date'])).'<br />';
 				$contentDataPointArray['loadtime'] = $thisReportData['averageLoadTime'];
 				$contentDataPointArrayData[$thisReportKey] = $contentDataPointArray;
 			}
-
-			// echo 'Manifest Stuff </br >';
-			// echo 'averageLoadTime => ' . $thisReportData['averageLoadTime'].'<br />';
-			// echo 'dataPointName => ' . $thisReportData['dataPointName'].'<br />';
-			// 			// echo 'dayDate => ' . $thisReportData['dayDate'].'<br />';
-			// echo 'dayDate => ' . Date('n/d/Y', strtotime($thisReportData['dayDate'])).'<br />';
-			// echo 'hourInterval => ' . $thisReportData['hourInterval'].'<br />';
-
-			// echo '"' . Date('n/d/Y', strtotime($thisReportData['dayDate'])).'_'.$thisReportData['hourInterval'].'", ';
-
-			// echo '----------------<br />';
 		}
 
 		$dateLabels = array_column($loadTimeLabelArray, 'date');
@@ -108,8 +84,8 @@ echo Date('n/d/Y', strtotime($thisReportData['date'])).'<br />';
 		$contentPointData = array_column($contentDataPointArrayData, 'loadtime');
 
 
-
 		$loadTimeDataLabels = '"' . implode('","', $dateLabels).'"';
+		$cleanedTimeDataLabels = implode(',',array_unique(explode(',', $loadTimeDataLabels)));
 
 		$manifestLinePoints = implode(",", $manifestPointData);
 		$navLinePoints = implode(",", $navPointData);
@@ -117,18 +93,18 @@ echo Date('n/d/Y', strtotime($thisReportData['date'])).'<br />';
 		$contentLinePoints = implode(",", $contentPointData);
 
 		// echo '<pre>';
-		// var_dump($manifestDataPointArrayData);
+		// var_dump();
 		// echo $manifestLinePoints;
 		// echo '</pre>';
 
 	?>
 	<script type="text/javascript">
 		var swirlData = {
-		    labels: [<?php echo $loadTimeDataLabels; ?>],
+		    labels: [<?php echo $cleanedTimeDataLabels; ?>],
 		    datasets: [
 		        {
 		            label: "Manifest Endpoint",
-		            fillColor: "rgba(220,220,220,0.2)",
+		            fillColor: "rgba(255,255,255,0)",
 		            strokeColor: "rgba(220,220,220,1)",
 		            pointColor: "rgba(220,220,220,1)",
 		            pointStrokeColor: "#fff",
@@ -138,8 +114,8 @@ echo Date('n/d/Y', strtotime($thisReportData['date'])).'<br />';
 		        },
 		        {
 		            label: "Nav API Loadtimes",
-		            fillColor: "rgba(151,187,205,0.2)",
-		            strokeColor: "rgba(151,187,205,1)",
+		            fillColor: "rgba(255,255,255,0)",
+		            strokeColor: "rgba(86,152,56,1)",
 		            pointColor: "rgba(151,187,205,1)",
 		            pointStrokeColor: "#fff",
 		            pointHighlightFill: "#fff",
@@ -148,8 +124,8 @@ echo Date('n/d/Y', strtotime($thisReportData['date'])).'<br />';
 		        },
 		        {
 		            label: "Section API Loadtimes",
-		            fillColor: "rgba(151,187,205,0.2)",
-		            strokeColor: "rgba(51,87,20,1)",
+		            fillColor: "rgba(255,255,255,0)",
+		            strokeColor: "rgba(248,127,6,1)",
 		            pointColor: "rgba(151,187,205,1)",
 		            pointStrokeColor: "#fff",
 		            pointHighlightFill: "#fff",
@@ -158,7 +134,7 @@ echo Date('n/d/Y', strtotime($thisReportData['date'])).'<br />';
 		        },
 		        {
 		            label: "Content API Loadtimes",
-		            fillColor: "rgba(151,187,205,0.2)",
+		            fillColor: "rgba(255,255,255,0)",
 		            strokeColor: "rgba(100,181,200,1)",
 		            pointColor: "rgba(151,187,205,1)",
 		            pointStrokeColor: "#fff",

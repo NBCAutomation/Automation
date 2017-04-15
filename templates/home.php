@@ -55,34 +55,17 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div class="panel panel-default">
-			<div class="panel-body">
-				<div class="col-md-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">Current failures over 30 Days</div>
-						<div class="panel-body">
-							<div class="chart">
-								<canvas id="chart-bar" height="250" width="1200"></canvas>
-							</div>
-							<div id="legendDiv">
-								<li class="manifest"><div></div>Manifest</li>
-								<li class="nagivation"><div></div>Navigation</li>
-								<li class="content"><div></div>Content</li>
-							</div>
-							<hr />
-							<p><i>* Today - 30 days, failures older than 30 Days are automatically purged.</i></p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div> -->
 		<div class="panel panel-default">
-			<div class="panel-heading">Line Chart</div>
+			<div class="panel-heading">Average API Endpoint Loadtime (uncached)</div>
 			<div class="panel-body">
 				<div class="chart">
 					<canvas id="lineChart" height="310" width="600"></canvas>
 				</div>
-				<div id="legendDiv"></div>
+				<div id="legendDiv">
+					<li class="manifest"><div></div>Manifest</li>
+					<li class="nagivation"><div></div>Navigation</li>
+					<li class="content"><div></div>Content</li>
+				</div>
 			</div>
 		</div>
 	</div>
