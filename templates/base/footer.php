@@ -105,8 +105,8 @@
 		        {
 		            label: "Manifest Endpoint",
 		            fillColor: "rgba(255,255,255,0)",
-		            strokeColor: "rgba(220,220,220,1)",
-		            pointColor: "rgba(220,220,220,1)",
+		            strokeColor: "rgba(204,29,20,1)",
+		            pointColor: "rgba(204,29,20,1)",
 		            pointStrokeColor: "#fff",
 		            pointHighlightFill: "#fff",
 		            pointHighlightStroke: "rgba(220,220,220,1)",
@@ -116,7 +116,7 @@
 		            label: "Nav API Loadtimes",
 		            fillColor: "rgba(255,255,255,0)",
 		            strokeColor: "rgba(86,152,56,1)",
-		            pointColor: "rgba(151,187,205,1)",
+		            pointColor: "rgba(86,152,56,1)",
 		            pointStrokeColor: "#fff",
 		            pointHighlightFill: "#fff",
 		            pointHighlightStroke: "rgba(151,187,205,1)",
@@ -126,7 +126,7 @@
 		            label: "Section API Loadtimes",
 		            fillColor: "rgba(255,255,255,0)",
 		            strokeColor: "rgba(248,127,6,1)",
-		            pointColor: "rgba(151,187,205,1)",
+		            pointColor: "rgba(248,127,6,1)",
 		            pointStrokeColor: "#fff",
 		            pointHighlightFill: "#fff",
 		            pointHighlightStroke: "rgba(151,187,205,1)",
@@ -136,7 +136,7 @@
 		            label: "Content API Loadtimes",
 		            fillColor: "rgba(255,255,255,0)",
 		            strokeColor: "rgba(100,181,200,1)",
-		            pointColor: "rgba(151,187,205,1)",
+		            pointColor: "rgba(100,181,200,1)",
 		            pointStrokeColor: "#fff",
 		            pointHighlightFill: "#fff",
 		            pointHighlightStroke: "rgba(151,187,205,1)",
@@ -154,35 +154,6 @@
 				multiTooltipTemplate: "<%if (label){%><%=label%>: <%}%><%= value %>",
 			});
 		}
-		// var barChartData = {
-		// 	labels: ["January", "February", "March"],
-		//     datasets: [
-		//         {
-		//             label: "Manifest Errors",
-		//             fillColor: "rgba(220,220,100,0.5)",
-		//             strokeColor: "rgba(220,220,100,0.8)",
-		//             highlightFill: "rgba(220,220,100,0.75)",
-		//             highlightStroke: "rgba(220,220,100,1)",
-		//             data: [<?php echo $man30Day ?>]
-		//         },
-		//         {
-		//             label: "Navigation Errors",
-		//             fillColor: "rgba(220,220,220,0.5)",
-		//             strokeColor: "rgba(220,220,220,0.8)",
-		//             highlightFill: "rgba(220,220,220,0.75)",
-		//             highlightStroke: "rgba(220,220,220,1)",
-		//             data: [<?php echo $nav30Day ?>]
-		//         },
-		//         {
-		//             label: "Content Errors",
-		//             fillColor: "rgba(151,187,205,0.5)",
-		//             strokeColor: "rgba(151,187,205,0.8)",
-		//             highlightFill: "rgba(151,187,205,0.75)",
-		//             highlightStroke: "rgba(151,187,205,1)",
-		//             data: [<?php echo $cont30Day ?>]
-		//         }
-		//     ]
-		// }
 	</script>
 	<?php } ?>
 	<script type="text/javascript">

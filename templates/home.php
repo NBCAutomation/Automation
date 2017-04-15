@@ -51,20 +51,24 @@
 							</div>
 						</div>
 					</div>
-					<p>*totals are at current UTC server time: <?php echo $serverTimeStamp; ?> </p>
+					<p class="text-muted small">* Note: totals are at current UTC server time: <?php echo $serverTimeStamp; ?> </p>
 				</div>
 			</div>
 		</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">Average API Endpoint Loadtime (uncached)</div>
 			<div class="panel-body">
+				<p class="text-muted small">* Note: times are in ms</p>
 				<div class="chart">
 					<canvas id="lineChart" height="310" width="600"></canvas>
 				</div>
 				<div id="legendDiv">
-					<li class="manifest"><div></div>Manifest</li>
-					<li class="nagivation"><div></div>Navigation</li>
-					<li class="content"><div></div>Content</li>
+					<ul>
+						<li class="manifest"><div></div>Manifest</li>
+						<li class="navigation"><div></div>Navigation</li>
+						<li class="section"><div></div>Section</li>
+						<li class="content"><div></div>Content</li>
+					</ul>
 				</div>
 			</div>
 		</div>
