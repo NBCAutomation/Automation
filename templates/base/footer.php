@@ -11,9 +11,9 @@
 			</div>
 		</div>
 	</div>
-	<!-- <style type="text/css">
+	<style type="text/css">
 		.ts-sidebar {display: none !important;}
-	</style> -->
+	</style>
 	<!-- Loading Scripts -->
 	<script src="/assets/js/bootstrap-select.min.js"></script>
 	<script src="/assets/js/bootstrap.min.js"></script>
@@ -76,6 +76,7 @@
 			}
 		}
 
+		natsort($dateLabels);
 		$dateLabels = array_column($loadTimeLabelArray, 'date');
 
 		$manifestPointData = array_column($manifestDataPointArrayData, 'loadtime');
@@ -92,10 +93,11 @@
 		$sectionLinePoints = implode(",", $sectionPointData);
 		$contentLinePoints = implode(",", $contentPointData);
 
-		// echo '<pre>';
-		// var_dump();
+		echo '<pre>';
+		
+		var_dump($cleanedTimeDataLabels);
 		// echo $manifestLinePoints;
-		// echo '</pre>';
+		echo '</pre>';
 
 	?>
 	<script type="text/javascript">
