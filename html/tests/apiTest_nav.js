@@ -441,72 +441,73 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     } else {
                         if (showOutput) {
                             console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
-
-                            var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
-                                if (data) {
+                        }
+                        var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
+                            if (data) {
+                                if (showOutput) {
                                     console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
-
-                                    if (logResults) {
-                                        suite.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, null);
-                                    }
-                                } else {
-                                    console.log('-- no timing returned.');
                                 }
-                                if (showOutput) {console.log('-----------------')};
-                            });
-                            
-                            // Test parsing JSON
-                            if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
 
-                            try {
-                                output = JSON.parse(output);
-
-                                if( output instanceof Object ) {
-                                    var validated = true;
-                                 }
-                            } catch (e) {
-                                // ...
-                                if (showOutput) {console.log(e)};
-                            }
-
-                            if (validated) {
-                                if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
+                                if (logResults) {
+                                    suite.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, null);
+                                }
                             } else {
-                                if (showOutput) {console.log('...re-testing JSON')};
-                                var reg = /\<body[^>]*\>([^]*)\<\/body/m;
-                                cleanedJson = output.match(reg)[1];
+                                console.log('-- no timing returned.');
+                            }
+                            if (showOutput) {console.log('-----------------')};
+                        });
+                        
+                        // Test parsing JSON
+                        if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
 
-                                if (cleanedJson) {
-                                    try {
-                                        JSONTestOutput = JSON.parse(cleanedJson);
+                        try {
+                            output = JSON.parse(output);
 
-                                        if( JSONTestOutput instanceof Object ) {
-                                            if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
-                                        } else {
-                                            if (showOutput) {
-                                                console.log('-------------------');
-                                                console.log(' JSON Parse Error  ');
-                                                console.log('-------------------');
-                                                console.log(cleanedJson)
-                                            };
-                                        }
-                                    } catch (e) {
-                                        // ...
+                            if( output instanceof Object ) {
+                                var validated = true;
+                             }
+                        } catch (e) {
+                            // ...
+                            if (showOutput) {console.log(e)};
+                        }
+
+                        if (validated) {
+                            if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
+                        } else {
+                            if (showOutput) {console.log('...re-testing JSON')};
+                            var reg = /\<body[^>]*\>([^]*)\<\/body/m;
+                            cleanedJson = output.match(reg)[1];
+
+                            if (cleanedJson) {
+                                try {
+                                    JSONTestOutput = JSON.parse(cleanedJson);
+
+                                    if( JSONTestOutput instanceof Object ) {
+                                        if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
+                                    } else {
                                         if (showOutput) {
                                             console.log('-------------------');
                                             console.log(' JSON Parse Error  ');
                                             console.log('-------------------');
-                                            console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!');
-                                        }
-
-                                        currentTestResults['jsonValidation'] = 'Fail';
-                                        currentTestStatus = 'Fail';
-                                        manifestTestStatus = 'Fail';
-                                        setFail++;
+                                            console.log(cleanedJson)
+                                        };
                                     }
-                                } else {
-                                    console.log('non cleaned');
+                                } catch (e) {
+                                    // ...
+                                    if (showOutput) {
+                                        console.log('-------------------');
+                                        console.log(' JSON Parse Error  ');
+                                        console.log('-------------------');
+                                        console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!');
+                                    }
+
+                                    currentTestResults['jsonValidation'] = 'Fail';
+                                    currentTestStatus = 'Fail';
+                                    manifestTestStatus = 'Fail';
+                                    setFail++;
                                 }
+                            } else {
+                                console.log('non cleaned');
                             }
                         }
                     }
