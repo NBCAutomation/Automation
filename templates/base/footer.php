@@ -12,7 +12,7 @@
 		</div>
 	</div>
 	<style type="text/css">
-		.ts-sidebar {display: none !important;}
+		/*.ts-sidebar {display: none !important;}*/
 	</style>
 	<!-- Loading Scripts -->
 	<script src="/assets/js/bootstrap-select.min.js"></script>
@@ -23,7 +23,7 @@
 	<script src="/assets/js/fileinput.js"></script>
 	<!-- <script src="/assets/js/chartData.js"></script> -->
 	<script src="/assets/js/main.js"></script>
-	<?php if ($page_name == 'home') {?>
+	<?php if ($page_name == 'home' || $loadTimesView) {?>
 	<?php 
 		// echo '<pre>';
 		// var_dump($chartLoadTimeData[0]);
@@ -93,11 +93,10 @@
 		$sectionLinePoints = implode(",", $sectionPointData);
 		$contentLinePoints = implode(",", $contentPointData);
 
-		echo '<pre>';
-		
-		var_dump($cleanedTimeDataLabels);
+		// echo '<pre>';
+		// var_dump($cleanedTimeDataLabels);
 		// echo $manifestLinePoints;
-		echo '</pre>';
+		// echo '</pre>';
 
 	?>
 	<script type="text/javascript">
@@ -160,14 +159,6 @@
 	<?php } ?>
 	<script type="text/javascript">
 	$(window).load(function() {
-		<?php if ($page_name == 'home') { ?>
-		// Bar Chart from barChartData
-		// var $ctx = document.getElementById("chart-bar").getContext("2d");
-		// window.myBar = new Chart($ctx).Bar(barChartData, {
-		// 	responsive : true
-		// });
-		<?php } ?>
-
 		$('input[class^="class"]').click(function() {
 		    var $this = $(this);
 		    if ($this.is(".class1")) {

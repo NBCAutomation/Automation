@@ -21,7 +21,7 @@
 							<div class="panel panel-default">
 								<div class="panel-body text-light <?php if ( $todayManifestTotalFailureReports > 0 ){ echo 'bk-danger'; } else { echo 'bk-success'; } ?>">
 									<div class="stat-panel text-center">
-										<div class="stat-panel-number h1 "><?php echo $todayManifestTotalFailureReports; ?></div>
+										<div class="stat-panel-number h2"><?php echo $todayManifestTotalFailureReports; ?></div>
 										<div class="stat-panel-title text-uppercase">Manifest errors</div>
 									</div>
 								</div>
@@ -32,7 +32,7 @@
 							<div class="panel panel-default">
 								<div class="panel-body text-light <?php if ( $todayNavTotalFailureReports > 0 ){ echo 'bk-danger'; } else { echo 'bk-success'; } ?>">
 									<div class="stat-panel text-center">
-										<div class="stat-panel-number h1 "><?php echo $todayNavTotalFailureReports; ?></div>
+										<div class="stat-panel-number h2"><?php echo $todayNavTotalFailureReports; ?></div>
 										<div class="stat-panel-title text-uppercase">Navigation Errors</div>
 									</div>
 								</div>
@@ -43,7 +43,7 @@
 							<div class="panel panel-default">
 								<div class="panel-body text-light <?php if ( $todayContentTotalFailureReports > 0 ){ echo 'bk-danger'; } else { echo 'bk-success'; } ?>">
 									<div class="stat-panel text-center">
-										<div class="stat-panel-number h1 "><?php echo $todayContentTotalFailureReports; ?></div>
+										<div class="stat-panel-number h2"><?php echo $todayContentTotalFailureReports; ?></div>
 										<div class="stat-panel-title text-uppercase">Content errors</div>
 									</div>
 								</div>
@@ -55,9 +55,66 @@
 				</div>
 			</div>
 		</div>
+		<hr />
+		<div class="panel panel-default">
+			<div class="panel-heading"><i class="fa fa-clock-o"></i> Average loadtimes today</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-3">
+								<div class="panel panel-default">
+									<div class="panel-body loadTime_manifest text-light">
+										<div class="stat-panel text-center">
+											<div class="stat-panel-number h4 "><?php echo round($apiManifestTestLoadTime); ?> ms</div>
+											<div class="stat-panel-title text-uppercase">Manifest</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="panel panel-default">
+									<div class="panel-body loadTime_navigation text-light">
+										<div class="stat-panel text-center">
+											<div class="stat-panel-number h4 "><?php echo round($apiNavTestLoadTime); ?> ms</div>
+											<div class="stat-panel-title text-uppercase">Navigation</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="panel panel-default">
+									<div class="panel-body loadTime_section text-light">
+										<div class="stat-panel text-center">
+											<div class="stat-panel-number h4 "><?php echo round($apiSectionContentLoadTime); ?> ms</div>
+											<div class="stat-panel-title text-uppercase">Section</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="panel panel-default">
+									<div class="panel-body loadTime_content text-light">
+										<div class="stat-panel text-center">
+											<div class="stat-panel-number h4 "><?php echo round($apiContentTestLoadTime); ?> ms</div>
+											<div class="stat-panel-title text-uppercase">Content</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<hr />
 		<div class="panel panel-default">
 			<div class="panel-heading">Average API Endpoint Loadtime (uncached)</div>
 			<div class="panel-body">
+				<div>
+					<p><a href="/reports/loadtimes"><i class="fa fa-line-chart"></i> See current loadtimes</a></p>
+				</div>
+				<hr />
 				<p class="text-muted small">* Note: times are in ms</p>
 				<div class="chart">
 					<canvas id="lineChart" height="310" width="600"></canvas>

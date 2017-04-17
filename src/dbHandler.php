@@ -557,76 +557,84 @@ class DbHandler {
 
 
     public function getLoadTimes($testType, $dataRange) {
-        $db_con = Spire::getConnection();
+        $output = Spire::spireCache('getLoadTimes_'.$testType.'_'.$dataRange, 10, function() use ($testType, $range) {
+            $db_con = Spire::getConnection();
 
-        switch ($testType) {
-            case "apiManifestTest":
-                $testTypeName = "WHERE `test_type` = 'apiManifestTest'";
-                break;
+            switch ($testType) {
+                case "apiManifestTest":
+                    $testTypeName = "WHERE `test_type` = 'apiManifestTest'";
+                    break;
 
-            case "apiContentTest":
-                $testTypeName = "WHERE `test_type` = 'apiContentTest'";
-                break;
+                case "apiContentTest":
+                    $testTypeName = "WHERE `test_type` = 'apiContentTest'";
+                    break;
 
-            case "apiNavTest":
-                $testTypeName = "WHERE `test_type` = 'apiNavTest'";
-                break;
+                case "apiNavTest":
+                    $testTypeName = "WHERE `test_type` = 'apiNavTest'";
+                    break;
 
-            case "apiSectionContent":
-                $testTypeName = "WHERE `test_type` = 'apiSectionContent'";
-                break;
+                case "apiSectionContent":
+                    $testTypeName = "WHERE `test_type` = 'apiSectionContent'";
+                    break;
 
-            default:
-                $testTypeName = '';
-        }
-
-        switch ($range) {
-            case "all":
-                $dataRange = '';
-                break;
-
-            case "today":
-                $dataRange = 'AND DATE(created) >= CURDATE()';
-                break;
-
-            case "yesterday":
-                $dataRange = 'AND DATE(created) = CURDATE()-1';
-                break;
-
-            case "currentMonth":
-                $dataRange = 'AND Month(created) = Month(CURRENT_DATE())';
-                break;
-
-            case "lastMonth":
-                $dataRange = 'AND Month(created) = Month(CURRENT_DATE())-1';
-                break;
-
-            default:
-                $dataRange = 'AND DATE(created) >= CURDATE()';
-        }
-
-
-        $stmt = $db_con->prepare("SELECT test_type, loadtime FROM loadtimes '".$testTypeName." ".$dataRange );
-
-        // SELECT test_type, loadtime FROM loadtimes WHERE test_type = 'apiSectionContent' AND DATE(created) >= CURDATE()
-        var_dump($stmt);
-        exit();
-
-        if ($insertStatement) {
-            $lastInsertId = $db_con->lastInsertId();
-
-            if (! $lastInsertId) {
-                return FALSE;
-            } else {
-                return TRUE;
+                default:
+                    $testTypeName = '';
             }
-        }
 
-        $stmt->closeCursor();
+            switch ($range) {
+                case "all":
+                    $dataRange = '';
+                    break;
+
+                case "today":
+                    $dataRange = 'AND DATE(created) >= CURDATE()';
+                    break;
+
+                case "yesterday":
+                    $dataRange = 'AND DATE(created) = CURDATE()-1';
+                    break;
+
+                case "currentMonth":
+                    $dataRange = 'AND Month(created) = Month(CURRENT_DATE())';
+                    break;
+
+                case "lastMonth":
+                    $dataRange = 'AND Month(created) = Month(CURRENT_DATE())-1';
+                    break;
+
+                default:
+                    $dataRange = 'AND DATE(created) >= CURDATE()';
+            }
+
+
+            $stmt = $db_con->prepare("SELECT test_type, loadtime, endpoint, created FROM loadtimes ".$testTypeName." ".$dataRange );
+
+            // SELECT test_type, loadtime FROM loadtimes WHERE test_type = 'apiSectionContent' AND DATE(created) >= CURDATE()
+
+            $loadTimeArray = array();
+
+            if ($stmt->execute()) {
+                $loadTimeResults = $stmt->fetchAll();
+                    
+                foreach( $loadTimeResults as $key => $value ){
+                    $loadTimeArray[$key] = $value;
+                }
+
+                $storedLoadTimes[] = $loadTimeArray;
+
+                $stmt->closeCursor();
+                return $storedLoadTimes;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
     }
 
     public function getAverageLoadTime($testType, $range) {
-        $output = Spire::spireCache('getAverageLoadTime_'.$testType.'_'.$dataRange, 10, function() use ($testType, $range) {
+        $output = Spire::spireCache('getAverageLoadTime_'.$testType.'_'.$dataRange, 1000, function() use ($testType, $range) {
 
             $db_con = Spire::getConnection();
 
@@ -694,7 +702,7 @@ class DbHandler {
     }
 
     public function getAllAverageLoadTimes() {
-        $output = Spire::spireCache('getAllAverageLoadTimes', 1000, function() {
+        $output = Spire::spireCache('getAllAverageLoadTimes', 10000, function() {
 
             $db_con = Spire::getConnection();
 
