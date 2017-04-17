@@ -6,19 +6,13 @@
 	// Set default server time zone
 	date_default_timezone_set('UTC');
 	$usersTimezone = new DateTimeZone('America/New_York');
-	echo '<pre>';
-	var_dump($apiManifestLoadTimes[0]);
-	echo '</pre>';
-	// $apiNavLoadTimes
-	// $apiContentLoadTimes
-	// $apiSectionContentLoadTimes
 ?>
 	<div class="panel-body api_results">
 	<div class="panel panel-default">
 		<div class="panel-heading" role="tab" id="headingOne">
-				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-				<i class="fa fa-bars" aria-hidden="true"></i> &nbsp;Average API Endpoint Loadtime (uncached)
-				</a>
+			<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+				<i class="fa fa-bars" aria-hidden="true"></i> &nbsp;Average API Endpoint Loadtime DTD (uncached)
+			</a>
 		</div>
 		<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 			<div class="panel-body">
@@ -94,54 +88,57 @@
 
 	<div class="api_results">
 		<ul class="nav nav-tabs">
-			<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Today's Reports</a></li>
-			<li class=""><a href="#yesterday_reports_tab" data-toggle="tab" aria-expanded="true">Yesterday's Reports</a></li>
-			<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
-			<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
+			<li class="active"><a href="#manifests_tab" data-toggle="tab" aria-expanded="false">Manifest</a></li>
+			<li class=""><a href="#navigation_tab" data-toggle="tab" aria-expanded="true">Navigation</a></li>
+			<li class=""><a href="#content_tab" data-toggle="tab" aria-expanded="true">Content</a></li>
+			<li class=""><a href="#section_content_tab" data-toggle="tab" aria-expanded="true">Section Content</a></li>
+			<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Loadtimes</a></li>
 		</ul>
 		<br />
 		<div class="tab-content">
-			<div class="tab-pane fade active in" id="today_reports_tab">
+			<div class="tab-pane fade active in" id="manifests_tab">
 				<div class="panel-body">
-					<div class="tab-pane fade active in" id="errors_tab">
-						<?php if ($todayFailureReports) { 
-								Spire::returnFormattedDataTable($todayFailureReports, $view);
+					<div class="tab-pane fade active in">
+						<?php if ($apiManifestLoadTimes) { 
+								Spire::formatLoadTimesTable($apiManifestLoadTimes);
 							} else {
-								echo "No error reports currently.";
+								echo "No loadtimes to display currently.";
 							}
 						?>
 					</div>
 				</div>
 			</div>
-			<div class="tab-pane" id="yesterday_reports_tab">
-				<div class="tab-pane fade active in" id="today_reports_tab">
-					<div class="panel-body">
-						<ul class="nav nav-tabs">
-							<li class="active"><a href="#yesterday_errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
-							<li class=""><a href="#yesterday_all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
-						</ul>
-						<br>
-						<div class="tab-content">
-							<div class="tab-pane fade active in" id="yesterday_errors_tab">
-								<?php if ($yesterdayFailureReports) { 
-										Spire::returnFormattedDataTable($yesterdayFailureReports, $view);
-									} else {
-										echo "No error reports currently.";
-									}
-								?>
-							</div>
-							<!-- // End errors tab -->
-							<!-- // All reports tab -->
-							<div class="tab-pane" id="yesterday_all_reports_tab">
-								<?php if ($yesterdayReports) { 
-										Spire::returnFormattedDataTable($yesterdayReports, $view);
-									} else {
-										echo "No error reports currently.";
-									}
-								?>
-							</div>
-							<!-- // End all reports tab -->
-						</div>
+			<div class="tab-pane" id="navigation_tab">
+				<div class="panel-body">
+					<div class="tab-pane fade active in">
+						<?php if ($apiNavLoadTimes) { 
+								Spire::formatLoadTimesTable($apiNavLoadTimes);
+							} else {
+								echo "No loadtimes to display currently.";
+							}
+						?>
+					</div>
+				</div>
+			</div><div class="tab-pane" id="content_tab">
+				<div class="panel-body">
+					<div class="tab-pane fade active in">
+						<?php if ($apiContentLoadTimes) { 
+								Spire::formatLoadTimesTable($apiContentLoadTimes);
+							} else {
+								echo "No loadtimes to display currently.";
+							}
+						?>
+					</div>
+				</div>
+			</div><div class="tab-pane" id="section_content_tab">
+				<div class="panel-body">
+					<div class="tab-pane fade active in">
+						<?php if ($apiSectionContentLoadTimes) { 
+								Spire::formatLoadTimesTable($apiSectionContentLoadTimes);
+							} else {
+								echo "No loadtimes to display currently.";
+							}
+						?>
 					</div>
 				</div>
 			</div>

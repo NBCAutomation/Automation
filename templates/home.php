@@ -109,7 +109,7 @@
 		</div>
 		<hr />
 		<div class="panel panel-default">
-			<div class="panel-heading">Average API Endpoint Loadtime (uncached)</div>
+			<div class="panel-heading">Average API Endpoint Loadtime DTD (uncached)</div>
 			<div class="panel-body">
 				<div>
 					<p><a href="/reports/loadtimes"><i class="fa fa-line-chart"></i> See current loadtimes</a></p>

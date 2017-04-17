@@ -607,7 +607,7 @@ class DbHandler {
             }
 
 
-            $stmt = $db_con->prepare("SELECT test_type, loadtime, endpoint, created FROM loadtimes ".$testTypeName." ".$dataRange );
+            $stmt = $db_con->prepare("SELECT * FROM loadtimes ".$testTypeName." ".$dataRange );
 
             // SELECT test_type, loadtime FROM loadtimes WHERE test_type = 'apiSectionContent' AND DATE(created) >= CURDATE()
 

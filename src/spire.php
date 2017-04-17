@@ -269,6 +269,41 @@ class Spire {
 
 	}
 
+		public static function formatLoadTimesTable($data){
+			// var_dump($view);
+			// exit();
+
+			foreach ($data as $testReport) {
+				$testReportViewData = '<div class="panel panel-default">';
+				$testReportViewData .= '<div class="panel-heading">Today Loadtime Reports</div>';
+				$testReportViewData .= '<div class="panel-body api_results">';
+				$testReportViewData .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
+				$testReportViewData .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
+				$testReportViewData .= '<thead><tr width="100%"><th>ID</th><th>Ref Test ID</th><th>Loadtime (ms)</th><th>Endpoint URL</th><th>Created</th></tr></thead>';
+				$testReportViewData .= "<tbody>";
+
+				foreach ($data[0] as $key => $value) {
+					$l10nDate = new DateTime($value['created']);
+					$l10nDate->setTimeZone($usersTimezone);
+
+					$testReportViewData .= '<tr>';
+					$testReportViewData .= '<td>'.$value['id'].'</td>';
+					$testReportViewData .= '<td>'.$value['ref_test_id'].'</td>';
+					$testReportViewData .= '<td>'.$value['loadtime'].'</td>';
+					$testReportViewData .= '<td>'.str_replace('stage_', 'stage.', $value['endpoint']).'</td>';
+					$testReportViewData .= '<td>'.$l10nDate->format('n/d/Y, g:i A').'</td>';
+					$testReportViewData .= '</tr>';
+				}
+				$testReportViewData .= "</tbody>";
+				$testReportViewData .= "<tfoot><tr><th>ID</th><th>Ref Test ID</th><th>Loadtime (ms)</th><th>Endpoint URL</th><th>Created</th></tr></tfoot>";
+				$testReportViewData .= '</table>';
+				$testReportViewData .= '</div></div>';
+	         
+	            print($testReportViewData);
+			}
+
+		}
+
 	public static function countDataResults($data, $view){
 		$c = 0;
 		foreach ($data as $key => $value) {

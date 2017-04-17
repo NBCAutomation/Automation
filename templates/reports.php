@@ -66,6 +66,17 @@
 						</div>
 					</div>
 				</li>
+				<li>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<i class="fa fa-folder" aria-hidden="true"></i>
+							<a href="/reports/loadtimes">API Loadtimes</a>
+						</div>
+						<div class="panel-body">
+							<span class="note">API Loadtimes overview.</span>
+						</div>
+					</div>
+				</li>
 			</ul>
 		<?php } ?>
 		<?php if ($reportsView) { ?>
