@@ -75,7 +75,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         var urlUri = sourceString.replace('.','_');
         
         // Strip and clean url to avoid 301 redirects and endpoint load error.
-        url = 'http://www.' + sourceString + '.com/apps/news-app/navigation?apiVersion=' + apiVersion + enableJsonValidation;
+        // url = 'http://www.' + sourceString + '.com/apps/news-app/navigation?apiVersion=' + apiVersion + enableJsonValidation;
+        url = 'http://www.' + sourceString + '.com/apps/news-app/navigation';
         console.log(url);
 
         testStartTime = Date.now();
@@ -237,6 +238,28 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         });
     };
 
+    // Log endpoint JSON Errors
+    apiSuite.prototype.logPaylodError = function(testID, testType, error, endpoint, payload) {
+        var processUrl = configURL + '/utils/processRequest';
+        
+        if (debugOutput) {
+            console.log(processUrl);
+            console.log(testID, testType, error, payload);
+        }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'task': 'logPaylodError',
+                'testID': testID,
+                'testType': testType,
+                'error': error,
+                'endpoint': endpoint,
+                'payload': payload
+            }
+        });
+    };
+
     // Log results in DB
     apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testFailureCount, testID, testType, manifestTestStatus) {
         var processUrl = configURL + '/utils/processRequest';
@@ -302,6 +325,11 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                         console.log('Unable to test parse JSON data via collectionNavigationItems(). url: ' + url);
                         console.log(e)
                     }
+
+                    var JSONerror = "'" + e + "'";
+                    var brokenJSONString = "{" + output.replace(/[\n\t\s]+/g, " ") + "}";
+
+                    suite.logPaylodError(manifestTestRefID, 'apiContentTest', JSONerror, url, brokenJSONString);
                 }
             } else {
                 console.log(colorizer.colorize('Unable to open the manifest endpoint. ', 'ERROR'));
@@ -395,7 +423,11 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
             if (endpointUrl) {
                 suite.validateJson(endpointName, endpointUrl, testID);
             } else {
-                throw new Error('NavTestError: No url provided to test against.').exit();
+                console.log(colorizer.colorize('ERROR: ', 'WARNING') + 'NavTestError: No url provided to test against: ' + endpointName);
+                currentTestObject[endpointName] = 'ContentDataTestError: No url provided to test against for the current endpoint.';
+                testResultsObject['testResults'] = currentTestObject;
+                manifestTestStatus = 'Fail';
+                setFail++;
             }
         }
     };
@@ -441,6 +473,11 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                                 };
                                 setFail++;
                                 currentTestResults['jsonValidated'] = 'JSON Parse error (Unable to test parse JSON data via validateJson(). url: ' + url + ') <br /> JSON Error: ' + e;
+
+                                var JSONerror = e;
+                                var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+
+                                suite.logPaylodError(manifestTestRefID, 'apiContentTest', JSONerror, url, brokenJSONString);
                             }
 
                             if (validated) {
@@ -472,6 +509,12 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                                             };
                                             setFail++;
                                             currentTestResults['jsonValidated'] = 'Warning';
+
+                                            var JSONerror = e;
+                                            cleanedJson = output.match(reg)[1];
+                                            var brokenJSONString = cleanedJson.replace(/[\n\t\s]+/g, " ");
+
+                                            suite.logPaylodError(manifestTestRefID, 'apiContentTest', JSONerror, url, brokenJSONString);
                                         }
                                     }
 
@@ -485,6 +528,12 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                                     setFail++;
                                     currentTestResults['jsonValidated'] = 'Fail';
                                     manifestTestStatus = 'Fail';
+
+                                    var JSONerror = e;
+                                    cleanedJson = output.match(reg)[1];
+                                    var brokenJSONString = cleanedJson.replace(/[\n\t\s]+/g, " ");
+
+                                    suite.logPaylodError(manifestTestRefID, 'apiContentTest', JSONerror, url, brokenJSONString);
                                 }
                             }
                             if (showOutput) {console.log('-----------------')};
@@ -566,7 +615,11 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                     suite.endpointContentValidation(endpointName, endpointUrl, testID);
                 }
             } else {
-                throw new Error('NavTestError: No url provided to test against.').exit();
+                console.log(colorizer.colorize('ERROR: ', 'WARNING') + 'NavTestError: No url provided to test against: ' + endpointName);
+                currentTestObject[endpointName] = 'Nav/Content-DataTestError: No url provided to test against for the current endpoint.';
+                testResultsObject['testResults'] = currentTestObject;
+                manifestTestStatus = 'Fail';
+                setFail++;
             }
         }
     };

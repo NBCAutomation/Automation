@@ -354,6 +354,28 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         });
     };
 
+    // Log endpoint JSON Errors
+    apiSuite.prototype.logPaylodError = function(testID, testType, error, endpoint, payload) {
+        var processUrl = configURL + '/utils/processRequest';
+        
+        if (debugOutput) {
+            console.log(processUrl);
+            console.log(testID, testType, error, payload);
+        }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'task': 'logPaylodError',
+                'testID': testID,
+                'testType': testType,
+                'error': error,
+                'endpoint': endpoint,
+                'payload': payload
+            }
+        });
+    };
+
     apiSuite.prototype.updateInsertManifestDictionary = function(urlUri, collectionObject) {
         var processUrl = configURL + '/utils/processRequest';
         // &dictionaryStation=' + urlUri + '&dictionaryData=' + JSON.stringify(collectionObject);
@@ -437,7 +459,19 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     }
                 } catch (e) {
                     // ...
-                    if (showOutput) {console.log(e)};
+                    if (showOutput) {
+                        console.log('-------------------');
+                        console.log(' JSON Parse Error  ');
+                        console.log('-------------------');
+                        console.log(e)
+                        console.log('-------------------');
+                        console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'collectManifestData failure: Parse fail!');
+                    };
+
+                    var JSONerror = "'" + e + "'";
+                    var brokenJSONString = "{" + output.replace(/[\n\t\s]+/g, " ") + "}";
+
+                    suite.logPaylodError(manifestTestRefID, 'apiManifestTest', JSONerror, url, brokenJSONString);
                 }
             } else {
                 console.log(colorizer.colorize('Unable to open the manifest endpoint. ', 'ERROR'));
@@ -535,7 +569,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     test.assertEquals(obj1[key], obj2[key]);
                 } catch (e) {        
                     // casper.test.error(e);
-                    console.log(colorizer.colorize('FAIL:', 'ERROR') + ' [' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
+                    if (showOutput) {
+                        console.log(colorizer.colorize('FAIL:', 'ERROR') + ' [' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
+                    }
                     testErrors.push('[' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
                     
                     currentTestObjectFailures['expectedValue'] = obj1[key];

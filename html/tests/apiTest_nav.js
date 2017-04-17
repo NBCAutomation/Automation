@@ -204,6 +204,28 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         });
     };
 
+    // Log endpoint JSON Errors
+    apiSuite.prototype.logPaylodError = function(testID, testType, error, endpoint, payload) {
+        var processUrl = configURL + '/utils/processRequest';
+        
+        if (debugOutput) {
+            console.log(processUrl);
+            console.log(testID, testType, error, payload);
+        }
+
+        casper.open(processUrl, {
+            method: 'post',
+            data:   {
+                'task': 'logPaylodError',
+                'testID': testID,
+                'testType': testType,
+                'error': error,
+                'endpoint': endpoint,
+                'payload': payload
+            }
+        });
+    };
+
     // Log results in DB
     apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestLoadTime, manifestTestStatus) {
         var processUrl = configURL + '/utils/processRequest2';
@@ -282,6 +304,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 } catch (e) {
                     console.log('here 2');
                     console.log(e)
+
+                    var JSONerror = e;
+                    var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+
+                    suite.logPaylodError(manifestTestRefID, 'apiContentTest', JSONerror, url, brokenJSONString);
                     
                     if (showOutput) {console.log(e)};
                 }
@@ -469,6 +496,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         } catch (e) {
                             // ...
                             if (showOutput) {console.log(e)};
+
+                            var JSONerror = e;
+                            var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+
+                            suite.logPaylodError(manifestTestRefID, 'apiSectionContent', JSONerror, url, brokenJSONString);
                         }
 
                         if (validated) {
@@ -500,6 +532,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                         console.log('-------------------');
                                         console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!');
                                     }
+
+                                    var JSONerror = e;
+                                    cleanedJson = output.match(reg)[1];
+                                    var brokenJSONString = cleanedJson.replace(/[\n\t\s]+/g, " ");
+
+                                    suite.logPaylodError(manifestTestRefID, 'apiSectionContent', JSONerror, url, brokenJSONString);
 
                                     currentTestResults['jsonValidation'] = 'Fail';
                                     currentTestStatus = 'Fail';

@@ -536,6 +536,26 @@ class DbHandler {
     }
 
     
+    public function logPaylodError($testID, $testType, $error, $endpoint, $payload) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO payload_errors(ref_test_id, test_type, error, endpoint, payload) VALUES(?, ?, ?, ?, ?)");
+        $insertStatement = $stmt->execute(array($testID, $testType, $error, $endpoint, $payload));
+
+        if ($insertStatement) {
+            $lastInsertId = $db_con->lastInsertId();
+
+            if (! $lastInsertId) {
+                return FALSE;
+            } else {
+                return TRUE;
+            }
+        }
+
+        $stmt->closeCursor();
+    }
+
+
     public function logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $testInfo) {
         $db_con = Spire::getConnection();
 

@@ -1208,6 +1208,20 @@ $app->group('/utils', function () {
     		}
     	}
 
+    	if ($utilPostParams['task'] == 'logPaylodError') {
+    		$testID = $utilPostParams['testID'];
+    		$testType = $utilPostParams['testType'];
+    		$error = $utilPostParams['error'];
+    		$endpoint = $utilPostParams['endpoint'];
+    		$payload = $utilPostParams['payload'];
+
+    		$logPaylodError = $db->logPaylodError($testID, $testType, $error, $endpoint, $payload);
+    		
+    		if ($logPaylodError){
+    			$this->logger->info("Loadtime logged: [testID=>". $testID .",endPoint=>". $endPoint .",loadTime=>". $manifestLoadTime .",testType=>". $testType ."]");
+    		}
+    	}
+
 
     	if ($utilPostParams['taskType'] == 'api-notification') {
     		$db = new DbHandler();
