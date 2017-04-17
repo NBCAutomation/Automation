@@ -75,8 +75,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         var urlUri = sourceString.replace('.','_');
         
         // Strip and clean url to avoid 301 redirects and endpoint load error.
-        // url = 'http://www.' + sourceString + '.com/apps/news-app/navigation?apiVersion=' + apiVersion + enableJsonValidation;
-        url = 'http://www.' + sourceString + '.com/apps/news-app/navigation';
+        url = 'http://www.' + sourceString + '.com/apps/news-app/navigation?apiVersion=' + apiVersion + enableJsonValidation;
         console.log(url);
 
         testStartTime = Date.now();
