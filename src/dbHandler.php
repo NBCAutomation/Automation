@@ -557,7 +557,7 @@ class DbHandler {
 
 
     public function getLoadTimes($testType, $dataRange) {
-        $output = Spire::spireCache('getLoadTimes_'.$testType.'_'.$dataRange, 10, function() use ($testType, $range) {
+        $output = Spire::spireCache('getLoadTimes_'.$testType.'_'.$dataRange, 10000, function() use ($testType, $range) {
             $db_con = Spire::getConnection();
 
             switch ($testType) {
@@ -634,7 +634,7 @@ class DbHandler {
     }
 
     public function getAverageLoadTime($testType, $range) {
-        $output = Spire::spireCache('getAverageLoadTime_'.$testType.'_'.$dataRange, 1000, function() use ($testType, $range) {
+        $output = Spire::spireCache('getAverageLoadTime_'.$testType.'_'.$dataRange, 10000, function() use ($testType, $range) {
 
             $db_con = Spire::getConnection();
 

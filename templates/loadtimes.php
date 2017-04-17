@@ -92,7 +92,6 @@
 			<li class=""><a href="#navigation_tab" data-toggle="tab" aria-expanded="true">Navigation</a></li>
 			<li class=""><a href="#content_tab" data-toggle="tab" aria-expanded="true">Content</a></li>
 			<li class=""><a href="#section_content_tab" data-toggle="tab" aria-expanded="true">Section Content</a></li>
-			<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Loadtimes</a></li>
 		</ul>
 		<br />
 		<div class="tab-content">
@@ -141,12 +140,6 @@
 						?>
 					</div>
 				</div>
-			</div>
-			<div class="tab-pane" id="alltime_reports_tab">
-				<div class="alert alert-dismissible alert-info">
-					<p><i class="fa fa-info-circle" aria-hidden="true"></i> This page may take a few moments to load after clicking the linke. Once the page/query cache is built, subsequent loads should load faster.</p>
-				</div>
-				<a href="/reports/<?php echo $view; ?>/all" class="btn btn-primary">View all reports</a>
 			</div>
 		</div>
 	</div>
