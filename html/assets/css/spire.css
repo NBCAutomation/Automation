@@ -52,10 +52,6 @@ h1 {
 	padding: 0.3em;
 }
 
-/*.panel-body table tr:nth-child(5) {
-	font-weight: bold;
-}*/
-
 .panel-body .test_fail {
 	color: red;
 	font-weight: bold;
