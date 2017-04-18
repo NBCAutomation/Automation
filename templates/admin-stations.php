@@ -57,14 +57,14 @@
 								</div>
 							<?php } ?>
 						<?php } ?>
+						<div>
+							<h3><?php echo $editingStation->brand; ?></h3>
+							<a href="/utils/tasks?task=getDictionaryData&property=<?php echo $editingStation->shortname; ?>" target="_blank">View Dictionary Data</a>
+						</div>
+						<hr />
 						<form action="/admin/stations/update/<?php echo $editingStation->id; ?>" method="post" id="user_main_entry_form" class="mt">
 							<table class="table table-bordered table">
 								<tbody>
-									<tr>
-										<td>
-											<h3><?php echo $editingStation->brand; ?></h3>
-										</td>
-									</tr>
 									<tr>
 										<!--<td>
 											<div class="form_field">
