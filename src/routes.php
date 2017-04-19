@@ -987,7 +987,7 @@ $app->group('/login', function () use ($app) {
 
 		$__postVars = $request->getParsedBody();
 
-		var_dump($__postVars);
+		// var_dump($__postVars);
 		
 
 		if ($__postVars['method'] == 'login') {
