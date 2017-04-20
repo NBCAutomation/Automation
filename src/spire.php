@@ -315,12 +315,13 @@ class Spire {
 			$failureData->id;
 			// $strippedData = $failureData->payload;
 			$strippedData = str_replace('<', '&lt;', $failureData->payload);
+			$strippedData = str_replace('>', '&gt;', $strippedData);
 			
 			$testReportViewData .= '<table id="" class="reports_table display table table-bordered" cellspacing="0" width="100%">';
 			$testReportViewData .= "<tbody>";
 			$testReportViewData .= "<tr><td>JSON Error: ".$failureData->error."</td></tr>";
 			$testReportViewData .= "<tr><td>JSON Payload</td></tr>";
-			$testReportViewData .= "<tr><td><pre class=\"payload_error\">".$strippedData."</pre></td></tr>";
+			$testReportViewData .= "<tr><td><pre class=\"payload_error\"><code>".$strippedData."</code></pre></td></tr>";
 			$testReportViewData .= "</tbody>";
 			$testReportViewData .= '</table>';
          
