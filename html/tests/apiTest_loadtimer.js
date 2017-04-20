@@ -78,7 +78,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             // Add manifest url    
             url = url + '/apps/news-app/manifest/json/?apiVersion=' + apiVersion + enableJsonValidation;
 
-            testStartTime = Date.now();
+            testStartTime =  new Date();
 
             /*******************
             *
@@ -86,25 +86,85 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             *
             *******************/
             casper.start( url ).then(function(response) {
-                if ( response.status == 200 ) {
-                    manifestLoadTime = Date.now() - testStartTime;
+                // if ( response.status == 200 ) {
+                //     manifestLoadTime = new Date() - testStartTime;
 
-                    console.log(' > Loadtime: ', manifestLoadTime, 'ms');
+                //     console.log(' > Loadtime: ', manifestLoadTime, 'ms');
+                // } else {
+                //     casper.test.fail('Page did not load correctly. Response: ' + response.status);
+                // }
 
-                    var webPage = require('webpage');
-                    var page = webPage.create();
-
-                    casper.onResourceReceived = function(response) {
-                      console.log('Response (#' + response.id + ', stage "' + response.stage + '"): ' + JSON.stringify(response));
-                    };
-                } else {
-                    casper.test.fail('Page did not load correctly. Response: ' + response.status);
-                }
+                var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
+                    if (data) {
+                        // if (showOutput) {
+                            console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
+                        // }
+                    } else {
+                        console.log('-- no timing returned.');
+                    }
+                    
+                });
             }).run(function() {
+                // utils.dump(resourcesTime);
+                // console.log(collectionObject['loadtime']);
+
 
                 this.exit();
                 test.done();
             });
+        }
+    };
+
+    apiSuite.prototype.getLoadTime = function(url, callback) {
+        var suite = this;
+
+        if (url) {
+            subTestStartTime = Date.now();
+            var resourcesTime = [];
+
+            casper.on('resource.requested', function(resource) {
+                var date_start = new Date();
+
+                resourcesTime[resource.id] = {
+                    'id': resource.id,
+                    'id_received': '', /* to debug */
+                    'start': date_start.getTime(),
+                    'end': -1,
+                    'time': -1,
+                    'status': resource.status,
+                    'url': resource.url,
+                    'url_received': '' /* to debug */
+                }
+            });
+
+            casper.on('resource.received', function(resource) {
+                var date_end = new Date();
+
+                resourcesTime[resource.id]['end']  = date_end.getTime();
+                resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
+
+                /* to debug and compare */
+                // resourcesTime[resource.id]['id_received']  = resource.id;
+                // resourcesTime[resource.id]['url_received'] = resource.url;
+                // console.log(resourcesTime[resource.id]['time']);
+                collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
+            });
+
+            casper.thenOpen(url).then(function(resp) {
+                var status = this.status().currentHTTPStatus,
+                    output = false;
+
+                if ( status == 200) {
+                    currentSubTestLoadTime = Date.now() - subTestStartTime;
+                    output = currentSubTestLoadTime;
+                }
+
+                if (typeof(callback) === "fuwwwnction") {
+                    callback(output);
+                }
+            })
+        } else {
+            throw new Error('checkURLHealth: Unable to test url, missing url;');
         }
     };
     
