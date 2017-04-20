@@ -54,6 +54,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var setFail = 0;
     var testStartTime;
     var manifestLoadTime;
+    var testManifestData = true;
 
     var apiVersion = '6';
 
@@ -216,6 +217,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
             // Add manifest url    
             url = url + '/apps/news-app/manifest/json/?apiVersion=' + apiVersion + enableJsonValidation;
+            // url = url + '/apps/news-app/manifest/json/';
 
             testStartTime = Date.now();
 
@@ -270,7 +272,9 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                     }
                 } else {
-                    suite.testManifestData(urlUri, collectionObject, manifestTestRefID);
+                    if (testManifestData) {
+                        suite.testManifestData(urlUri, collectionObject, manifestTestRefID);
+                    }
                 }
 
             }).then(function () {
@@ -469,9 +473,16 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     };
 
                     var JSONerror = "'" + e + "'";
-                    var brokenJSONString = "{" + output.replace(/[\n\t\s]+/g, " ") + "}";
+                    var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+                    setFail++;
 
                     suite.logPaylodError(manifestTestRefID, 'apiManifestTest', JSONerror, url, brokenJSONString);
+
+                    manifestTestStatus = 'Fail';
+                    testResultsObject['testStatus'] = 'FullFail';
+                    testResultsObject['testResults'] = 'JSON Parse Error: Unable to collect manifest data, manifest failed to load properly.';
+                    
+                    testManifestData = false;
                 }
             } else {
                 console.log(colorizer.colorize('Unable to open the manifest endpoint. ', 'ERROR'));

@@ -1054,6 +1054,37 @@ class DbHandler {
         return $output;
     }
 
+
+    public function getPayLoadError($testReferenceID, $testResultID) {
+        $output = Spire::spireCache('getPayLoadError_'.$testReferenceID.'_'.$testResultID, 10, function() use ($testReferenceID, $testResultID) {
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM payload_errors WHERE ref_test_id = ".$testReferenceID);
+            
+            $payLoadErrors = array();
+
+            if ($stmt->execute()) {
+
+                /* fetch values */
+                $payLoadErrorData = $stmt->fetchAll();
+
+                foreach( $payLoadErrorData as $key => $value ){
+                    $payLoadErrors[$key] = $value;
+                }
+
+                $stmt->closeCursor();
+                return $payLoadErrors;
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
+
+
+    /* ------------- Stations data lookups ------------------ */
     public function getAllStations() {
         $output = Spire::spireCache('getAllStations', 259200, function() {
             

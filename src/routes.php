@@ -195,10 +195,6 @@ $app->group('/reports', function () {
 		        $mainView = true;
 		        break;
 
-		    case "overview":
-		        $overView = true;
-		        break;
-
 		    case "api_article_audits":
 		        $reportsView = true;
 		        break;
@@ -250,6 +246,8 @@ $app->group('/reports', function () {
 			$apiNavLoadTimes = $db->getLoadTimes('apiNavTest', 'today');
 			$apiContentLoadTimes = $db->getLoadTimes('apiContentTest', 'today');
 			$apiSectionContentLoadTimes = $db->getLoadTimes('apiSectionContent', 'today');
+		} else if ($regressionView) {
+			$pageTemplate = 'reports-single.php';
 		} else {
 			$pageTemplate = 'reports.php';
 		}
@@ -353,7 +351,7 @@ $app->group('/reports', function () {
 		$viewPath = $args['view']."/".$args['subView'];
 
 		// Report View
-		return $this->renderer->render($response, 'reports.php', [
+		return $this->renderer->render($response, 'reports-single.php', [
 		    'title' => 'Reports',
 		    'page_name' => 'reports',
 		    'view' => 'single',
