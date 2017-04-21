@@ -66,7 +66,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         if (!url) {
             throw new Error('A URL is required!');
         } else {
-            var suite = this;
+            var suite = this; 
 
             var parser = document.createElement('a');
             parser.href = url;
