@@ -61,7 +61,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             'time': -1,
             'status': resource.status
         }
-        this.echo('resourcesTime :: ' + resourcesTime[resource.id]['time']);
+        // this.echo('resourcesTime :: ' + resourcesTime[resource.id]['time']);
     };
 
     var receivedListener = function(resource, request) {
@@ -74,7 +74,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         
         // if (debugOutput) {
             /* to debug and compare */
-            this.echo('resource time >> ' + resourcesTime[resource.id]['time']);
+            // this.echo('manifestLoadTime >> ' + manifestLoadTime);
+            // this.echo('resource time >> ' + resourcesTime[resource.id]['time']);
         // }
     };
     
@@ -104,7 +105,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation;
+        url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation + '&xv=erb';
 
         /*******************
         *
@@ -264,7 +265,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     callback(output);
                 }
                 this.removeListener("resource.requested", listener);
-                this.removeListener("resource.received", listener);
+                this.removeListener("resource.received", receivedListener);
             });
         } else {
             throw new Error('checkURLHealth: Unable to test url, missing url;');
@@ -455,9 +456,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 if (subObject[subItem].indexOf('/apps') > -1) {
 
                                     if (subObject[subItem].indexOf('?') > -1) {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion + enableJsonValidation;
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion + enableJsonValidation + '&xv=erb';
                                     } else {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion + enableJsonValidation;
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion + enableJsonValidation + '&xv=erb';
                                     }
                                     
                                     if (debugOutput) {
