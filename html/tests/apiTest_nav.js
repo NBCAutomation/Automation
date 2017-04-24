@@ -51,7 +51,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     var resourcesTime = [];
 
     var listener = function(resource, request) {
-        this.echo('listner: ' + resource.url);
         var date_start = new Date();
 
         resourcesTime[resource.id] = {
@@ -61,7 +60,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             'time': -1,
             'status': resource.status
         }
-        // this.echo('resourcesTime :: ' + resourcesTime[resource.id]['time']);
+
+        if (debugOutput) {
+            this.echo('resourcesTime :: ' + resourcesTime[resource.id]['time']);
+        }
     };
 
     var receivedListener = function(resource, request) {
@@ -69,14 +71,13 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
         resourcesTime[resource.id]['end']  = date_end.getTime();
         resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
-        // collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
         manifestLoadTime = resourcesTime[resource.id]['time'];
         
-        // if (debugOutput) {
+        if (debugOutput) {
             /* to debug and compare */
-            // this.echo('manifestLoadTime >> ' + manifestLoadTime);
-            // this.echo('resource time >> ' + resourcesTime[resource.id]['time']);
-        // }
+            this.echo('manifestLoadTime >> ' + manifestLoadTime);
+            this.echo('resource time >> ' + resourcesTime[resource.id]['time']);
+        }
     };
     
     var apiVersion = '6';
@@ -105,7 +106,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
         var urlUri = sourceString.replace('.','_');
         
-        url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation + '&xv=erb';
+        url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation;
 
         /*******************
         *
@@ -131,6 +132,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
         }).then(function () {
+            this.exit();
             // Log the endpoint load time
             suite.logLoadTime(manifestTestRefID, 'apiNavTest', manifestLoadTime, url, null);
         }).then(function () {
@@ -198,7 +200,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             suite.collectionNavigationItems(url, type, 'xx');
         } else {
             if (dbUrl) {
-                casper.open(dbUrl).then(function(resp) {
+                casper.thenOpen(dbUrl).then(function(resp) {
 
                     var status = this.status().currentHTTPStatus;
 
@@ -206,7 +208,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
                         var output = this.getHTML();
-                        var manifestTestRefID = casper.getElementInfo('body').text;
+                        manifestTestRefID = casper.getElementInfo('body').text;
 
                         suite.collectionNavigationItems(url, type, manifestTestRefID);
                     } else {
@@ -221,36 +223,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         if (url) {
-            // var resourcesTime = [];
-            // manifestLoadTime = 0;
-
             casper.on('resource.requested', listener);
-            // casper.on('resource.requested', function(resource) {
-            //     var date_start = new Date();
-
-            //     resourcesTime[resource.id] = {
-            //         'id': resource.id,
-            //         'start': date_start.getTime(),
-            //         'end': -1,
-            //         'time': -1,
-            //         'status': resource.status
-            //     }
-            // });
-
             casper.on('resource.received', receivedListener);
-            // casper.on('resource.received', function(resource) {
-            //     var date_end = new Date();
-
-            //     resourcesTime[resource.id]['end']  = date_end.getTime();
-            //     resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
-            //     // collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
-            //     manifestLoadTime = resourcesTime[resource.id]['time'];
-                
-            //     if (debugOutput) {
-            //         /* to debug and compare */
-            //         console.log('resource time >> ' + resourcesTime[resource.id]['time']);
-            //     }
-            // });
 
             casper.thenOpen(url).then(function(resp) {
                 var status = this.status().currentHTTPStatus,
@@ -456,9 +430,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 if (subObject[subItem].indexOf('/apps') > -1) {
 
                                     if (subObject[subItem].indexOf('?') > -1) {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion + enableJsonValidation + '&xv=erb';
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion + enableJsonValidation;
                                     } else {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion + enableJsonValidation + '&xv=erb';
+                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion + enableJsonValidation;
                                     }
                                     
                                     if (debugOutput) {

@@ -50,6 +50,38 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
     var testStartTime;
     var manifestLoadTime;
 
+    var resourcesTime = [];
+
+    var listener = function(resource, request) {
+        var date_start = new Date();
+
+        resourcesTime[resource.id] = {
+            'id': resource.id,
+            'start': date_start.getTime(),
+            'end': -1,
+            'time': -1,
+            'status': resource.status
+        }
+
+        if (debugOutput) {
+            this.echo('resourcesTime :: ' + resourcesTime[resource.id]['time']);
+        }
+    };
+
+    var receivedListener = function(resource, request) {
+        var date_end = new Date();
+
+        resourcesTime[resource.id]['end']  = date_end.getTime();
+        resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
+        manifestLoadTime = resourcesTime[resource.id]['time'];
+        
+        if (debugOutput) {
+            /* to debug and compare */
+            this.echo('manifestLoadTime >> ' + manifestLoadTime);
+            this.echo('resource time >> ' + resourcesTime[resource.id]['time']);
+        }
+    };
+
     var apiVersion = '6';
 
     if ( ! casper.cli.get('enablevalidation') ) {
@@ -197,7 +229,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
             suite.collectionNavigationItems(url, type, 'xx');
         } else {
             if (dbUrl) {
-                casper.open(dbUrl).then(function(resp) {
+                casper.thenOpen(dbUrl).then(function(resp) {
 
                     var status = this.status().currentHTTPStatus;
 
@@ -205,7 +237,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                         if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
 
                         var output = this.getHTML();
-                        var manifestTestRefID = casper.getElementInfo('body').text;
+                        manifestTestRefID = casper.getElementInfo('body').text;
+
                         if (showOutput) {
                             console.log(colorizer.colorize('Test ID created: ', 'COMMENT') + manifestTestRefID);   
                         }
@@ -223,41 +256,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
         var suite = this;
 
         if (url) {
-            var resourcesTime = [];
-
-            casper.on('resource.requested', function(resource) {
-                var date_start = new Date();
-
-                resourcesTime[resource.id] = {
-                    'id': resource.id,
-                    'id_received': '', /* to debug */
-                    'start': date_start.getTime(),
-                    'end': -1,
-                    'time': -1,
-                    'status': resource.status,
-                    'url': resource.url,
-                    'url_received': '' /* to debug */
-                }
-            });
-
-            casper.on('resource.received', function(resource) {
-                var date_end = new Date();
-
-                resourcesTime[resource.id]['end']  = date_end.getTime();
-                resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
-                // collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
-                manifestLoadTime = resourcesTime[resource.id]['time'];
-                
-                if (debugOutput) {
-                    /* to debug and compare */
-                    resourcesTime[resource.id]['id_received']  = resource.id;
-                    resourcesTime[resource.id]['url_received'] = resource.url;
-                    console.log('id >> ' + resourcesTime[resource.id]['id_received']);
-                    console.log('resource >> ' + resourcesTime[resource.id]['url_received']);
-                    console.log('resource time >> ' + resourcesTime[resource.id]['time']);
-                    collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
-                }
-            });
+            casper.on('resource.requested', listener);
+            casper.on('resource.received', receivedListener);
 
             casper.thenOpen(url).then(function(resp) {
                 var status = this.status().currentHTTPStatus,
@@ -271,7 +271,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function suite(test) {
                 if (typeof(callback) === "function") {
                     callback(output);
                 }
-            })
+                this.removeListener("resource.requested", listener);
+                this.removeListener("resource.received", receivedListener);
+            });
         } else {
             throw new Error('checkURLHealth: Unable to test url, missing url;');
         }
