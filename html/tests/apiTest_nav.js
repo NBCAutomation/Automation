@@ -75,7 +75,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var urlUri = sourceString.replace('.','_');
         
         url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation;
-        testStartTime = Date.now();
 
         /*******************
         *
@@ -84,11 +83,16 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         *******************/
         casper.start( url ).then(function(response) {
             if ( response.status == 200 ) {
-                manifestLoadTime = Date.now() - testStartTime;
-
-                if (showOutput) {
-                    console.log(' > Loadtime: ', manifestLoadTime, 'ms');
-                };
+                var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
+                    if (data) {
+                        if (showOutput) {
+                            console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
+                        }
+                    } else {
+                        console.log('-- no timing returned.');
+                    }
+                    
+                });
 
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
                 suite.createTestID(url, type, urlUri);
@@ -182,6 +186,65 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
+    apiSuite.prototype.getLoadTime = function(url, callback) {
+        var suite = this;
+
+        if (url) {
+            var resourcesTime = [];
+            manifestLoadTime = 0;
+
+            casper.on('resource.requested', function(resource) {
+                var date_start = new Date();
+
+                resourcesTime[resource.id] = {
+                    'id': resource.id,
+                    'id_received': '', /* to debug */
+                    'start': date_start.getTime(),
+                    'end': -1,
+                    'time': -1,
+                    'status': resource.status,
+                    'url': resource.url,
+                    'url_received': '' /* to debug */
+                }
+            });
+
+            casper.on('resource.received', function(resource) {
+                var date_end = new Date();
+
+                resourcesTime[resource.id]['end']  = date_end.getTime();
+                resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
+                // collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
+                manifestLoadTime = resourcesTime[resource.id]['time'];
+                
+                if (debugOutput) {
+                    /* to debug and compare */
+                    resourcesTime[resource.id]['id_received']  = resource.id;
+                    resourcesTime[resource.id]['url_received'] = resource.url;
+                    console.log('id >> ' + resourcesTime[resource.id]['id_received']);
+                    console.log('resource >> ' + resourcesTime[resource.id]['url_received']);
+                    console.log('resource time >> ' + resourcesTime[resource.id]['time']);
+                    collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
+                }
+            });
+
+            casper.thenOpen(url).then(function(resp) {
+                var status = this.status().currentHTTPStatus,
+                    output = false;
+
+                if ( status == 200) {
+                    currentSubTestLoadTime = manifestLoadTime;
+                    output = currentSubTestLoadTime;
+                }
+
+                if (typeof(callback) === "function") {
+                    callback(output);
+                }
+            })
+        } else {
+            throw new Error('checkURLHealth: Unable to test url, missing url;');
+        }
+    };
+
     // Log endpoint time
     apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, testInfo) {
         var processUrl = configURL + '/utils/processRequest1';
@@ -263,8 +326,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         var suite = this;
 
         manifestTestRefID = testID;
-        
-        var subTestLoadStartTime = Date.now();
 
         casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
                 
@@ -273,12 +334,16 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             var status = this.status().currentHTTPStatus;
 
             if ( status == 200) {
-                var subTestLoadTime = Date.now() - subTestLoadStartTime;
-
-                if (showOutput) {
-                    console.log(url + colorizer.colorize(' Status: ' + status, 'INFO') );
-                    console.log(' - load time: ' + subTestLoadTime);
-                };
+                var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
+                    if (data) {
+                        if (showOutput) {
+                            console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
+                        }
+                    } else {
+                        console.log('-- no timing returned.');
+                    }
+                    
+                });
                 
                 var validated = false;
                 var output = this.getPageContent();
@@ -414,30 +479,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 manifestTestStatus = 'Fail';
                 setFail++;
             }
-        }
-    };
-
-    apiSuite.prototype.getLoadTime = function(url, callback) {
-        var suite = this;
-
-        if (url) {
-            subTestStartTime = Date.now();
-
-            casper.thenOpen(url).then(function(resp) {
-                var status = this.status().currentHTTPStatus,
-                    output = false;
-
-                if ( status == 200) {
-                    currentSubTestLoadTime = Date.now() - subTestStartTime;
-                    output = currentSubTestLoadTime;
-                }
-
-                if (typeof(callback) === "function") {
-                    callback(output);
-                }
-            })
-        } else {
-            throw new Error('checkURLHealth: Unable to test url, missing url;');
         }
     };
 

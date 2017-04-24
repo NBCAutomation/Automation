@@ -119,7 +119,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var suite = this;
 
         if (url) {
-            subTestStartTime = Date.now();
+            console.log(url);
             var resourcesTime = [];
 
             casper.on('resource.requested', function(resource) {
@@ -142,12 +142,17 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                 resourcesTime[resource.id]['end']  = date_end.getTime();
                 resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
-
-                /* to debug and compare */
-                // resourcesTime[resource.id]['id_received']  = resource.id;
-                // resourcesTime[resource.id]['url_received'] = resource.url;
-                // console.log(resourcesTime[resource.id]['time']);
                 collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
+                
+                if (debugOutput) {
+                    /* to debug and compare */
+                    resourcesTime[resource.id]['id_received']  = resource.id;
+                    resourcesTime[resource.id]['url_received'] = resource.url;
+                    console.log('id >> ' + resourcesTime[resource.id]['id_received']);
+                    console.log('resource >> ' + resourcesTime[resource.id]['url_received']);
+                    console.log('resource time >> ' + resourcesTime[resource.id]['time']);
+                    collectionObject['loadtime'] = resourcesTime[resource.id]['time'];
+                }
             });
 
             casper.thenOpen(url).then(function(resp) {
@@ -155,11 +160,11 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     output = false;
 
                 if ( status == 200) {
-                    currentSubTestLoadTime = Date.now() - subTestStartTime;
+                    currentSubTestLoadTime = collectionObject['loadtime'];
                     output = currentSubTestLoadTime;
                 }
 
-                if (typeof(callback) === "fuwwwnction") {
+                if (typeof(callback) === "function") {
                     callback(output);
                 }
             })
