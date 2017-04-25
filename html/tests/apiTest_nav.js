@@ -132,7 +132,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
         }).then(function () {
-            this.exit();
             // Log the endpoint load time
             suite.logLoadTime(manifestTestRefID, 'apiNavTest', manifestLoadTime, url, null);
         }).then(function () {
