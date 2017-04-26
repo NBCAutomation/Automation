@@ -152,11 +152,12 @@
 								$contentKeyName = explode("_", $thisReportKey);
 								echo '<div class="panel-heading"><h4 class="panel-title"><a href="https://cms.clickability.com/cms?searchTab=contentTab&searchText='.$contentKeyName[1].'&action=consolidatedSearch" target="_blank">Content ID: '.$contentKeyName[1].'</a></h4></div>';
 							} else {
-								echo '<div class="panel-heading"><h4 class="panel-title"><a href="https://cms.clickability.com/cms?searchTab=contentTab&searchText='.$thisReportKey.'&action=consolidatedSearch" target="_blank">Content ID: '.$thisReportKey.'</a></h4></div>';
+								echo '<div class="panel-heading"><h4 class="panel-title">Endpoint Failure: '.$thisReportKey.'</h4></div>';
 							}
 
 							echo '<div class="panel-body">';
 							echo '<ul>';
+							
 							if (is_array($thisReportValue)) {
 								foreach ($thisReportValue as $subReportKey => $subReportValue) {
 									if (strstr($subReportValue, '// ')) {
@@ -166,7 +167,8 @@
 									}
 								}
 							} else {
-								echo "paco taco gelato flako - supa hot fire";
+								// echo "paco taco gelato flako - supa hot fire";
+								echo $thisReportValue;
 							}
 							echo '</ul>';
 							    

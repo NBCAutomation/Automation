@@ -91,7 +91,7 @@
 			<li class="active"><a href="#manifests_tab" data-toggle="tab" aria-expanded="false">Manifest</a></li>
 			<li class=""><a href="#navigation_tab" data-toggle="tab" aria-expanded="true">Navigation</a></li>
 			<li class=""><a href="#content_tab" data-toggle="tab" aria-expanded="true">Content</a></li>
-			<li class=""><a href="#section_content_tab" data-toggle="tab" aria-expanded="true">Section Content</a></li>
+			<li class=""><a href="#section_content_tab" data-toggle="tab" aria-expanded="true">Section &amp; Content</a></li>
 		</ul>
 		<br />
 		<div class="tab-content">
