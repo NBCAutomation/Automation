@@ -244,3 +244,7 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
     max-width: 100%;
     max-height: 300px;
 }
+
+table .fail {
+	color: red;
+}

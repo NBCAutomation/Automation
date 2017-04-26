@@ -233,7 +233,7 @@ $app->group('/reports', function () {
 
 		// Loadtimes page data
 		if ($args['view'] == 'loadtimes') {
-			$pageTemplate = 'loadtimes.php';
+			$pageTemplate = 'reports-loadtimes.php';
 			$loadTimesView = true;
 			$chartLoadTimeData = $db->getAllAverageLoadTimes();
 
@@ -312,7 +312,7 @@ $app->group('/reports', function () {
 
 		// Report View
 		if ($args['view'] == 'loadtimes') {
-			$pageTemplate = 'loadtimes.php';
+			$pageTemplate = 'reports-loadtimes.php';
 		} else {
 			$pageTemplate = 'reports.php';
 		}
