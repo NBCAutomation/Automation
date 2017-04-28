@@ -334,17 +334,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             var status = this.status().currentHTTPStatus;
 
             if ( status == 200) {
-                var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
-                    if (data) {
-                        if (showOutput) {
-                            console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
-                        }
-                    } else {
-                        console.log('-- no timing returned.');
-                    }
-                    
-                });
-                
                 var validated = false;
                 var output = this.getPageContent();
 
@@ -464,11 +453,54 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
     apiSuite.prototype.testNavigationData = function(url, collectionObject, testID) {
         var suite = this;
+        var baseUrl = casper.cli.get('url');
 
         // Test collection object and add to results object
         for (var thisCollectionItem in collectionObject) {
             var endpointName = thisCollectionItem;
-            var endpointUrl = collectionObject[thisCollectionItem];
+
+            if (collectionObject[thisCollectionItem].indexOf('.html') > -1) {
+                if (
+                    collectionObject[thisCollectionItem].indexOf('contests') > -1
+                    || collectionObject[thisCollectionItem].indexOf('community') > -1
+                    || collectionObject[thisCollectionItem].indexOf('tve') > -1
+                    || collectionObject[thisCollectionItem].indexOf('weather-alerts') > -1
+                    || collectionObject[thisCollectionItem].indexOf('tv-listings') > -1
+                    || collectionObject[thisCollectionItem].indexOf('bit.ly') > -1
+                    || collectionObject[thisCollectionItem].indexOf('traffic') > -1
+                    || collectionObject[thisCollectionItem].indexOf('horoscopo') > -1
+                    || collectionObject[thisCollectionItem].indexOf('lottery') > -1
+                    || collectionObject[thisCollectionItem].indexOf('avisos-del-tiempo') > -1
+                    || collectionObject[thisCollectionItem].indexOf('data.nbcstations.com') > -1
+                    || collectionObject[thisCollectionItem].indexOf('FAQ') > -1
+                    || collectionObject[thisCollectionItem].indexOf('faq') > -1
+                    || collectionObject[thisCollectionItem].indexOf('investigations') > -1
+                    || collectionObject[thisCollectionItem].indexOf('Tips') > -1
+                    || collectionObject[thisCollectionItem].indexOf('CazaTormentas') > -1)
+                {
+                    if (showOutput) {
+                        test.comment('> Skipping UGC/static content url, skipping JSON test.' );
+                        test.comment('  > ' + endpointName );
+                        test.comment('  > ' + collectionObject[thisCollectionItem] );
+                    }
+                } else {
+                    var location_url = collectionObject[thisCollectionItem],
+                        cms_contentID = null;
+
+                    if (/^https?:\/\/www\.(nbc|telemundo)/.exec(location_url)) {
+                        cms_contentID = /(\d+)\.html$/.exec(location_url);
+                        if (cms_contentID) {
+                            location_url = '?contentId=' + cms_contentID[1];
+                        }
+                    }
+                    // http://www.nbclosangeles.com/apps/news-app/content/?contentId=389777331&apiVersion=6
+                    endpointUrl = baseUrl + '/apps/news-app/content/' + location_url + '&apiVersion=' + apiVersion + enableJsonValidation;
+                    
+                    if (debugOutput) { console.log('> parsedLocationURL: ' + location_url) };
+                }
+            } else {
+                var endpointUrl = collectionObject[thisCollectionItem];
+            }
 
             if (endpointUrl) {
                 suite.validateJson(endpointName, endpointUrl, testID);
@@ -503,8 +535,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     }
                     
                     if (currentPageContentType.indexOf('html') > -1) {
-                        console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
-                        test.comment('> Skipping UGC/static content url, skipping JSON test.' );
+                        if (showOutput) {
+                            console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
+                        }
+
                         if (showOutput) {console.log('-----------------')};
                     } else {
                         if (showOutput) {
