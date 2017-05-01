@@ -152,6 +152,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             }
 
         }).then(function () {
+            // Porcess All Test Results Data
+            
+            console.log(colorizer.colorize('Processing test results...', 'COMMENT'));
+            
+            // Process test results
             if (debugOutput) {
                 console.log('---------------------');
                 console.log(' Test Results object   ');
@@ -177,7 +182,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 }
             }
 
-            //Process test results to DB
+            //Process test results to the DB
             if (logResults) {
                 suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiNavTest', manifestLoadTime, manifestTestStatus);
             }
@@ -247,7 +252,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
     // Log endpoint time
     apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, testInfo) {
-        var processUrl = configURL + '/utils/processRequest1';
+        var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
             console.log(processUrl);
@@ -291,7 +296,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
     // Log results in DB
     apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestLoadTime, manifestTestStatus) {
-        var processUrl = configURL + '/utils/processRequest2';
+        var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
             // console.log('>> process url: ' + processUrl);
@@ -551,7 +556,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 }
 
                                 if (logResults) {
-                                    suite.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, null);
+                                    suite.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, 'null');
                                 }
                             } else {
                                 console.log('-- no timing returned.');
