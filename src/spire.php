@@ -296,7 +296,7 @@ class Spire {
 				$testReportViewData .= '</tr>';
 			}
 			$testReportViewData .= "</tbody>";
-			$testReportViewData .= "<tfoot><tr><th>ID</th><th>Ref Test ID</th><th>Loadtime (ms)</th><th>Endpoint URL</th><th>Created</th></tr></tfoot>";
+			$testReportViewData .= "<tfoot><tr><th>ID</th><th>Ref Test ID</th><th>Loadtime (ms)</th><th>Endpoint URL</th><th>Notes/info</th><th>Created</th></tr></tfoot>";
 			$testReportViewData .= '</table>';
 			$testReportViewData .= '</div></div>';
          
