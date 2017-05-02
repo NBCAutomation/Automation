@@ -556,7 +556,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                 }
 
                                 if (logResults) {
-                                    suite.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, 'null');
+                                    suite.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, null);
                                 }
                             } else {
                                 console.log('-- no timing returned.');
