@@ -14,32 +14,29 @@
 // ./run.sh apiCheck-article --url=http://www.telemundolasvegas.com --output=console
 // curl -I "http://www.nbcnewyork.com/templates/nbc_news_app_json_manifest?apiVersion=5&c=n" -H "bowl: arch" -H "Pragma: akamai-x-cache-on,akamai-x-get-cache-key,akamai-x-check-cacheable"
 
-
-casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
+casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
     'use strict';
     // Global Vars
     var logResults = true,
-        _self = this,
+        apiSuiteInstance = null,
         colorizer = require('colorizer').create('Colorizer'),
         envConfig = casper.cli.get('env'),
         configURL = 'http://54.243.53.242',
-        type = casper.cli.get('output'),
+        testType = casper.cli.get('output'),
         debugOutput = false,
         showOutput = false,
-        collectionObject = {},
-        testResultsObject = {},
         currentTestObject = {},
         loadTimesCollectionObject = {},
-        manifestTestRefID,
         manifestTestStatus = 'Pass',
         setFail = 0,
         testStartTime,
-        manifestLoadTime,
-        resourcesTime = [],
+        resourcesTime = {},
         apiVersion = '6',
         enableJsonValidation = '',
-        listener = function (resource, request) {
-            if (/apiVersion/.exec(resource.url) === null) {
+        linkParser = document.createElement('a'),
+        listener = function (resource) {
+            linkParser.href = resource.url;
+            if (/^\/apps\/news-app/.exec(linkParser.pathname) === null) {
                 // not an api call, skip it.
                 return;
             }
@@ -58,7 +55,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 this.echo('resourcesTime :: ' + resourcesTime[resource.id].time);
             }
         },
-        receivedListener = function (resource, request) {
+        receivedListener = function (resource) {
             if (resourcesTime.hasOwnProperty(resource.id) === false) {
                 // we don't have any data for this request.
                 return;
@@ -67,16 +64,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             var date_end = new Date();
             resourcesTime[resource.id].end  = date_end.getTime();
             resourcesTime[resource.id].time = resourcesTime[resource.id].end - resourcesTime[resource.id].start;
-            manifestLoadTime = resourcesTime[resource.id].time;
 
             if (debugOutput) {
                 /* to debug and compare */
-                this.echo('manifestLoadTime >> ' + manifestLoadTime);
+                this.echo('manifestLoadTime >> ' + resourcesTime[resource.id].time);
                 this.echo('resource time >> ' + resourcesTime[resource.id].time);
-            }
-
-            if (resource.url.indexOf('apiVersion=') > -1) {
-                _self.logLoadTime(manifestTestRefID, 'apiSectionContent', resource.url, resourcesTime[resource.id].time, null);
             }
         },
         apiSuite = function (url) {
@@ -84,70 +76,45 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 throw new Error('A URL is required!');
             }
 
-            this.__collected = {};
-
-            var parser = document.createElement('a'),
-                newUrl,
-                sourceString,
-                urlUri;
-
-            parser.href = url;
-            newUrl = parser.href;
-            sourceString = newUrl.replace('http://', '')
-                                 .replace('https://', '')
-                                 .replace('www.', '')
-                                 .replace('.com', '')
-                                 .split(/[/?#]/)[0];
-
-            urlUri = sourceString.replace('.', '_');
-
-            url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation;
+            this.nav_url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation;
+            this.stationProperty = /www\.(\S+)\.com/.exec(this.nav_url)[1];
+            this.manifestTestRefID = null;
+            this.collectionObject = {};
+            this.testResultsObject = {};
 
             /*******************
             *
             * Start Testing
             *
             *******************/
-            casper.start(url).then(function (response) {
+            casper.start(this.nav_url).then(function (response) {
                 if (response.status === 200) {
-                    /*_self.getLoadTime(url, function (data) {
-                        if (data) {
-                            if (showOutput) {
-                                console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO'));
-                            }
-                        } else {
-                            console.log('-- no timing returned.');
-                        }
-                    });*/
-
-                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url);
-                    _self.createTestID(url, type, urlUri);
+                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + response.url);
+                    apiSuiteInstance.createTestID(response.url, apiSuiteInstance.stationProperty);
                 } else {
                     throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
                 }
-            }).then(function () {
-                // Log the endpoint load time
-                _self.logLoadTime(manifestTestRefID, 'apiNavTest', manifestLoadTime, url, null);
             }).then(function () {
                 // Display collection object
                 if (debugOutput) {
                     console.log('---------------------');
                     console.log(' Collection object   ');
                     console.log('---------------------');
-                    casper.wait(700, function () {
-                        var thisCollectionOtem;
-                        for (thisCollectionOtem in collectionObject) {
-                            console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
-                        }
-                    });
+                    var keys = Object.keys(apiSuiteInstance.collectionObject),
+                        thisItem = null,
+                        i = 0;
+
+                    for (i = 0; i < keys.length; i += 1) {
+                        thisItem = apiSuiteInstance.collectionObject[keys[i]];
+                        console.log('>>>>> ' + thisItem + ' : ' + thisItem);
+                    }
                 } else {
                     // Test Collection data
-                    _self.testNavigationData(urlUri, collectionObject, manifestTestRefID);
+                    apiSuiteInstance.testNavigationData();
                 }
 
             }).then(function () {
                 // Porcess All Test Results Data
-
                 console.log(colorizer.colorize('Processing test results...', 'COMMENT'));
 
                 // Process test results
@@ -156,34 +123,51 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     console.log(' Test Results object   ');
                     console.log('---------------------');
                     console.log('Test Status: ' + manifestTestStatus);
-                    for (var resultsCollectionItem in testResultsObject) {
-                        console.log('- ' + resultsCollectionItem + ' : ' + testResultsObject[resultsCollectionItem]);
+                    console.log('starting for loop..');
 
-                        if (typeof testResultsObject[resultsCollectionItem] == 'object') {
-                            var resultsItemSubObject = testResultsObject[resultsCollectionItem];
+                    var i = 0,
+                        i2 = 0,
+                        i3 = 0,
+                        keys = Object.keys(apiSuiteInstance.testResultsObject),
+                        keys2 = null,
+                        keys3 = null,
+                        resultsCollectionItem = null,
+                        resultsItemSubObject = null,
+                        thisSubItem = null,
+                        thisChildObject = null,
+                        thisChildItem = null;
 
-                            for (var thisSubItem in resultsItemSubObject){
-                                console.log('     -- ' + thisSubItem + ' : ' + resultsItemSubObject[thisSubItem]);
+                    for (i = 0; i < keys.length; i += 1) {
+                        resultsCollectionItem = keys[i];
+                        resultsItemSubObject = apiSuiteInstance.testResultsObject[keys[i]];
+                        console.log('- ' + resultsCollectionItem + ' : ' + resultsItemSubObject);
 
-                                var thisChildObject = resultsItemSubObject[thisSubItem];
-                                if (typeof thisChildObject == 'object') {
-                                    for (var thisChildItem in thisChildObject){
+                        if (resultsItemSubObject instanceof Object) {
+                            keys2 = Object.keys(resultsItemSubObject);
+                            for (i2 = 0; i2 < keys2.length; i += 1) {
+                                thisSubItem = keys2[i2];
+                                thisChildObject = resultsItemSubObject[thisSubItem];
+                                if (thisChildObject instanceof Object) {
+                                    keys3 = Object.keys(thisChildObject);
+                                    for (i3 = 0; i < keys3.length; i += 1) {
+                                        thisChildItem = keys3[i3];
                                         console.log('      --- ' + thisChildItem + ' : ' + thisChildObject[thisChildItem]);
                                     }
                                 }
                             }
                         }
                     }
+                    console.log('done');
                 }
 
                 //Process test results to the DB
                 if (logResults) {
-                    _self.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiNavTest', manifestLoadTime, manifestTestStatus);
+                    apiSuiteInstance.processTestResults(setFail, 'apiNavTest', manifestTestStatus);
+                    apiSuiteInstance.processLoadTimes();
                 }
-            }).run(function() {
+            }).run(function () {
                 console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
                 this.exit();
-                test.done();
             });
         };
 
@@ -191,14 +175,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     casper.on('resource.received', receivedListener);
 
     if (envConfig === 'local') {
-        configURL = 'http://spire.app';
+        configURL = 'http://127.0.0.1:8080/index.php';
     } else if (envConfig === 'dev') {
         configURL = 'http://45.55.209.68';
     }
 
-    if (type === 'debug') {
+    if (testType === 'debug') {
         debugOutput = true;
-    } else if (type === 'console') {
+    } else if (testType === 'console') {
         showOutput = true;
     }
 
@@ -207,31 +191,47 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     }
 
     if (!casper.cli.get('enablevalidation')) {
-        var enableJsonValidation = '&enableJsonValidation=false';
+        enableJsonValidation = '&enableJsonValidation=false';
     }
 
+    apiSuite.prototype.processLoadTimes = function () {
+        var i = 0,
+            keys = Object.keys(resourcesTime),
+            thisResource = null,
+            typeName = null;
+
+        for (i = 0; i < keys.length; i += 1) {
+            thisResource = resourcesTime[keys[i]];
+
+            typeName = 'apiSectionContent';
+
+            if (thisResource.url.indexOf('/apps/news-app/navigation') > -1) {
+                typeName = 'apiNavTest';
+            }
+
+            this.logLoadTime(typeName, thisResource.time, thisResource.url, null);
+        }
+    };
+
     // Create test id in DB
-    apiSuite.prototype.createTestID = function(url, type, stationProperty) {
-        var _self = this;
+    apiSuite.prototype.createTestID = function (url, stationProperty) {
+        // var apiSuiteInstance = this;
 
         var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty + '&fileLoc=json_null';
 
         if (!logResults){
-            if (debugOutput) { console.log(colorizer.colorize('TestID: ', 'COMMENT') + 'xx') };
-            _self.collectionNavigationItems(url, type, 'xx');
+            if (debugOutput) { console.log(colorizer.colorize('TestID: ', 'COMMENT') + 'xx'); }
+            apiSuiteInstance.collectionNavigationItems(url, 'xx');
         } else {
             if (dbUrl) {
                 casper.thenOpen(dbUrl).then(function(resp) {
-
-                    var status = this.status().currentHTTPStatus;
-
-                    if ( status == 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ) };
+                    if ( resp.status == 200) {
+                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ); }
 
                         var output = this.getHTML();
-                        manifestTestRefID = casper.getElementInfo('body').text;
+                        apiSuiteInstance.manifestTestRefID = casper.getElementInfo('body').text;
 
-                        _self.collectionNavigationItems(url, type, manifestTestRefID);
+                        apiSuiteInstance.collectionNavigationItems(url);
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }
@@ -240,42 +240,25 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
-    apiSuite.prototype.getLoadTime = function(url, callback) {
-        var _self = this;
-
-        if (url) {
-            casper.thenOpen(url).then(function(resp) {
-                var status = this.status().currentHTTPStatus,
-                    output = false;
-
-                if ( status == 200) {
-                    output = manifestLoadTime;
-                }
-
-                if (typeof(callback) === "function") {
-                    callback(output);
-                }
-            });
-        } else {
-            throw new Error('checkURLHealth: Unable to test url, missing url;');
-        }
-    };
-
     // Log endpoint time
-    apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, testInfo) {
+    apiSuite.prototype.logLoadTime = function (typeName, manifestLoadTime, endPoint, testInfo) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
             console.log(processUrl);
-            console.log(testID, testType, manifestLoadTime, endPoint, testInfo);
+            console.log(this.manifestTestRefID, typeName, manifestLoadTime, endPoint, testInfo);
         }
 
-        casper.open(processUrl, {
+        if (testInfo === null) {
+            testInfo = '';
+        }
+
+        casper.thenOpen(processUrl, {
             method: 'post',
             data:   {
                 'task': 'logLoadTime',
-                'testID': testID,
-                'testType': testType,
+                'testID': this.manifestTestRefID,
+                'testType': typeName,
                 'manifestLoadTime': manifestLoadTime,
                 'endPoint': endPoint,
                 'testInfo': testInfo
@@ -284,20 +267,20 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     // Log endpoint JSON Errors
-    apiSuite.prototype.logPaylodError = function(testID, testType, error, endpoint, payload) {
+    apiSuite.prototype.logPayloadError = function(typeName, error, endpoint, payload) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
             console.log(processUrl);
-            console.log(testID, testType, error, payload);
+            console.log(this.manifestTestRefID, typeName, error, payload);
         }
 
         casper.open(processUrl, {
             method: 'post',
             data:   {
-                'task': 'logPaylodError',
-                'testID': testID,
-                'testType': testType,
+                'task': 'logPayloadError',
+                'testID': this.manifestTestRefID,
+                'testType': typeName,
                 'error': error,
                 'endpoint': endpoint,
                 'payload': payload
@@ -306,7 +289,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     };
 
     // Log results in DB
-    apiSuite.prototype.processTestResults = function(urlUri, testResultsObject, testID, testFailureCount, testType, manifestLoadTime, manifestTestStatus) {
+    apiSuite.prototype.processTestResults = function (testFailureCount, typeName, manifestTestStatus) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
@@ -314,12 +297,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             console.log('------------------------');
             console.log(' Process Results Data  ');
             console.log('------------------------');
-            console.log('urlUri => ' + urlUri);
-            console.log('testResultsObject => ' + testResultsObject);
-            console.log('testID => ' + testID);
+            console.log('urlUri => ' + this.stationProperty);
+            console.log('testResultsObject => ' + apiSuiteInstance.testResultsObject);
+            console.log('testID => ' + this.manifestTestRefID);
             console.log('testFailureCount => ' + testFailureCount);
-            console.log('testType => ' + testType);
-            console.log('manifestLoadTime => ' + manifestLoadTime);
+            console.log('testType => ' + typeName);
+            // console.log('manifestLoadTime => ' + manifestLoadTime);
             console.log('manifestTestStatus => ' + manifestTestStatus);
         }
 
@@ -327,34 +310,26 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             method: 'post',
             data:   {
                 'task': 'processManifestTestResults',
-                'testID': testID,
-                'testType': testType,
-                'testProperty': urlUri,
+                'testID': this.manifestTestRefID,
+                'testType': typeName,
+                'testProperty': this.stationProperty,
                 'testStatus': manifestTestStatus,
-                'testFailureCount':testFailureCount,
-                'manifestLoadTime': manifestLoadTime,
-                'testResults':  JSON.stringify(testResultsObject)
+                'testFailureCount': testFailureCount,
+                'manifestLoadTime': 123,
+                'testResults':  JSON.stringify(apiSuiteInstance.testResultsObject)
             }
         });
     };
 
-    apiSuite.prototype.collectionNavigationItems = function(url, testType, testID) {
-        var _self = this;
+    apiSuite.prototype.collectionNavigationItems = function(url) {
+        casper.open(url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
+            if (resp.status === 200) {
+                var validated = false,
+                    output = this.getPageContent(),
+                    jsonParsedOutput = null;
 
-        manifestTestRefID = testID;
-
-        casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
-
-            resp = resp;
-
-            var status = this.status().currentHTTPStatus;
-
-            if ( status == 200) {
-                var validated = false;
-                var output = this.getPageContent();
-
-                try{
-                    var jsonParsedOutput = JSON.parse(output);
+                try {
+                    jsonParsedOutput = JSON.parse(output);
 
                     for (var parentManifestItem in jsonParsedOutput) {
 
@@ -366,28 +341,28 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                             var manifestKeyName = parentManifestItem.toLowerCase();
                             var manifestKeyValue = jsonParsedOutput[parentManifestItem];
                         } else {
-                            _self.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem], true);
+                            apiSuiteInstance.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem], true);
                         }
                     }
                 } catch (e) {
                     console.log('here 2');
-                    console.log(e)
+                    console.log(e);
 
                     var JSONerror = e;
                     var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
 
-                    _self.logPaylodError(manifestTestRefID, 'apiContentTest', JSONerror, url, brokenJSONString);
+                    apiSuiteInstance.logPayloadError('apiContentTest', JSONerror, url, brokenJSONString);
 
-                    if (showOutput) {console.log(e)};
+                    if (showOutput) {console.log(e); }
                 }
             } else {
                 console.log(colorizer.colorize('Unable to open the manifest endpoint. ', 'ERROR'));
             }
-        })
+        });
     };
 
     apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject, initialPass) {
-        var _self = this;
+        // var apiSuiteInstance = this;
         var firstPass = true;
         var __baseUrl = casper.cli.get('url');
 
@@ -406,6 +381,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
             } else {
                 var subObject = childManifestObject[childItem];
                 for (var subItem in subObject) {
+                    var navItemAppTitleNiceName = subObject[subItem],
+                        navItemAppTitle,
+                        navItemAppLocationURL;
 
                         if (subObject.length <= 0) {
                             throw new Error('key blank ' + subItem);
@@ -413,35 +391,33 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
                             if (subItem === 'appTitle') {
                                 if (initialPass) {
-                                    var navItemAppTitleNiceName = subObject[subItem];
-                                    var navItemAppTitle = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
+                                    navItemAppTitle = navItemAppTitleNiceName.replace('\/',"_").split(' ').join('_').toLowerCase();
                                 } else {
-                                    var navItemAppTitleNiceName = subObject[subItem];
-                                    var mainNavItemTitle = parentObjectName.replace('\/',"_").split(' ').join('_').toLowerCase();
-                                    var subNavItemTitle = subObject[subItem].replace('\/',"_").split(' ').join('_').toLowerCase();
-                                    var navItemAppTitle = mainNavItemTitle + '__' + subNavItemTitle;
+                                    navItemAppTitle = parentObjectName.replace('\/',"_").split(' ').join('_').toLowerCase() +
+                                                      '__' +
+                                                      navItemAppTitleNiceName.replace('\/',"_").split(' ').join('_').toLowerCase();
                                 }
                             }
 
                             if (subItem === 'location') {
                                 if (debugOutput) {
-                                    console.log(subItem + ' : ' + subObject[subItem]);
-                                };
+                                    console.log(subItem + ' : ' + navItemAppTitleNiceName);
+                                }
 
                                 // Find actual links and append the corrent version string to the end of the url
-                                if (subObject[subItem].indexOf('/apps') > -1) {
+                                if (navItemAppTitleNiceName.indexOf('/apps') > -1) {
 
-                                    if (subObject[subItem].indexOf('?') > -1) {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '&apiVersion=' + apiVersion + enableJsonValidation;
+                                    if (navItemAppTitleNiceName.indexOf('?') > -1) {
+                                        navItemAppLocationURL = __baseUrl + navItemAppTitleNiceName + '&apiVersion=' + apiVersion + enableJsonValidation;
                                     } else {
-                                        var navItemAppLocationURL = __baseUrl + subObject[subItem] + '?apiVersion=' + apiVersion + enableJsonValidation;
+                                        navItemAppLocationURL = __baseUrl + navItemAppTitleNiceName + '?apiVersion=' + apiVersion + enableJsonValidation;
                                     }
 
                                     if (debugOutput) {
                                         console.log(navItemAppLocationURL);
-                                    };
+                                    }
                                 } else {
-                                    navItemAppLocationURL = subObject[subItem];
+                                    navItemAppLocationURL = navItemAppTitleNiceName;
                                 }
 
                                 if (debugOutput) {
@@ -450,55 +426,61 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                     console.log('navItemAppLocationURL > ' + navItemAppLocationURL);
                                 }
                                 // Push data into collection
-                                collectionObject[navItemAppTitle] = navItemAppLocationURL;
+                                this.collectionObject[navItemAppTitle] = navItemAppLocationURL;
                             }
 
-                            if (typeof subObject[subItem] == 'object') {
+                            if (typeof __thisItem == 'object') {
                                 parentObjectName = false;
-                                _self.spiderObject(navItemAppTitle, subObject[subItem], false);
+                                apiSuiteInstance.spiderObject(navItemAppTitle, subObject[subItem], false);
                             }
                         }
                     }
-                if (debugOutput) { console.log('------') }
+                if (debugOutput) { console.log('------'); }
             }
         }
     };
 
 
-    apiSuite.prototype.testNavigationData = function(url, collectionObject, testID) {
-        var _self = this;
-        var baseUrl = casper.cli.get('url');
+    apiSuite.prototype.testNavigationData = function() {
+        // var apiSuiteInstance = this;
+        var baseUrl = casper.cli.get('url'),
+            endpointUrl = null,
+            keys = Object.keys(this.collectionObject),
+            i = 0,
+            thisURL = null,
+            endpointName = null;
 
         // Test collection object and add to results object
-        for (var thisCollectionItem in collectionObject) {
-            var endpointName = thisCollectionItem;
+        for (var i = 0; i < keys.length; i += 1) {
+            endpointName = keys[i];
+            thisURL = this.collectionObject[endpointName];
 
-            if (collectionObject[thisCollectionItem].indexOf('.html') > -1) {
+            if (thisURL.indexOf('tve') > -1 || thisURL.indexOf('.html') > -1) {
                 if (
-                    collectionObject[thisCollectionItem].indexOf('contests') > -1
-                    || collectionObject[thisCollectionItem].indexOf('community') > -1
-                    || collectionObject[thisCollectionItem].indexOf('tve') > -1
-                    || collectionObject[thisCollectionItem].indexOf('weather-alerts') > -1
-                    || collectionObject[thisCollectionItem].indexOf('tv-listings') > -1
-                    || collectionObject[thisCollectionItem].indexOf('bit.ly') > -1
-                    || collectionObject[thisCollectionItem].indexOf('traffic') > -1
-                    || collectionObject[thisCollectionItem].indexOf('horoscopo') > -1
-                    || collectionObject[thisCollectionItem].indexOf('lottery') > -1
-                    || collectionObject[thisCollectionItem].indexOf('avisos-del-tiempo') > -1
-                    || collectionObject[thisCollectionItem].indexOf('data.nbcstations.com') > -1
-                    || collectionObject[thisCollectionItem].indexOf('FAQ') > -1
-                    || collectionObject[thisCollectionItem].indexOf('faq') > -1
-                    || collectionObject[thisCollectionItem].indexOf('investigations') > -1
-                    || collectionObject[thisCollectionItem].indexOf('Tips') > -1
-                    || collectionObject[thisCollectionItem].indexOf('CazaTormentas') > -1)
+                    thisURL.indexOf('contests') > -1 ||
+                    thisURL.indexOf('community') > -1 ||
+                    thisURL.indexOf('tve') > -1 ||
+                    thisURL.indexOf('weather-alerts') > -1 ||
+                    thisURL.indexOf('tv-listings') > -1 ||
+                    thisURL.indexOf('bit.ly') > -1 ||
+                    thisURL.indexOf('traffic') > -1 ||
+                    thisURL.indexOf('horoscopo') > -1 ||
+                    thisURL.indexOf('lottery') > -1 ||
+                    thisURL.indexOf('avisos-del-tiempo') > -1 ||
+                    thisURL.indexOf('data.nbcstations.com') > -1 ||
+                    thisURL.indexOf('FAQ') > -1 ||
+                    thisURL.indexOf('faq') > -1 ||
+                    thisURL.indexOf('investigations') > -1 ||
+                    thisURL.indexOf('Tips') > -1 ||
+                    thisURL.indexOf('CazaTormentas') > -1)
                 {
                     if (showOutput) {
                         test.comment('> Skipping UGC/static content url, skipping JSON test.' );
                         test.comment('  > ' + endpointName );
-                        test.comment('  > ' + collectionObject[thisCollectionItem] );
+                        test.comment('  > ' + thisURL );
                     }
                 } else {
-                    var location_url = collectionObject[thisCollectionItem],
+                    var location_url = thisURL,
                         cms_contentID = null;
 
                     if (/^https?:\/\/www\.(nbc|telemundo)/.exec(location_url)) {
@@ -510,26 +492,26 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                     // http://www.nbclosangeles.com/apps/news-app/content/?contentId=389777331&apiVersion=6
                     endpointUrl = baseUrl + '/apps/news-app/content/' + location_url + '&apiVersion=' + apiVersion + enableJsonValidation;
 
-                    if (debugOutput) { console.log('> parsedLocationURL: ' + location_url) };
+                    if (debugOutput) { console.log('> parsedLocationURL: ' + location_url); }
                 }
             } else {
-                var endpointUrl = collectionObject[thisCollectionItem];
+                endpointUrl = thisURL;
             }
 
-            if (endpointUrl) {
-                _self.validateJson(endpointName, endpointUrl, testID);
+            if (!!endpointUrl) {
+                this.validateJson(endpointName, endpointUrl);
             } else {
                 console.log(colorizer.colorize('ERROR: ', 'WARNING') + 'NavTestError: No url provided to test against: ' + endpointName);
                 currentTestObject[endpointName] = 'NavDataTestError: No url provided to test against for the current endpoint.';
-                testResultsObject['testResults'] = currentTestObject;
+                testResultsObject.testResults = currentTestObject;
                 manifestTestStatus = 'Fail';
                 setFail++;
             }
         }
     };
 
-    apiSuite.prototype.validateJson = function(urlName, url, status, testID) {
-        var _self = this;
+    apiSuite.prototype.validateJson = function(urlName, url, status) {
+        // var apiSuiteInstance = this;
         var currentTestStatus = "Pass";
 
         if (url) {
@@ -558,20 +540,6 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         if (showOutput) {
                             console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
                         }
-                        // var urlCurrentLoadTime = _self.getLoadTime(url, function (data) {
-                        //     if (data) {
-                        //         if (showOutput) {
-                        //             console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
-                        //         }
-
-                        //         if (logResults) {
-                        //             _self.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, null);
-                        //         }
-                        //     } else {
-                        //         console.log('-- no timing returned.');
-                        //     }
-                        //     if (showOutput) {console.log('-----------------')};
-                        // });
 
                         // Test parsing JSON
                         if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
@@ -589,7 +557,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                             var JSONerror = e;
                             var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
 
-                            _self.logPaylodError(manifestTestRefID, 'apiSectionContent', JSONerror, url, brokenJSONString);
+                            apiSuiteInstance.logPayloadError('apiSectionContent', JSONerror, url, brokenJSONString);
                         }
 
                         if (validated) {
@@ -626,7 +594,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                                     cleanedJson = output.match(reg)[1];
                                     var brokenJSONString = cleanedJson.replace(/[\n\t\s]+/g, " ");
 
-                                    _self.logPaylodError(manifestTestRefID, 'apiSectionContent', JSONerror, url, brokenJSONString);
+                                    apiSuiteInstance.logPayloadError('apiSectionContent', JSONerror, url, brokenJSONString);
 
                                     currentTestResults['jsonValidation'] = 'Fail';
                                     currentTestStatus = 'Fail';
@@ -649,7 +617,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 }
 
                 if (Object.keys(currentTestResults).length > 0) {
-                    testResultsObject['testResults'] = currentTestObject;
+                    apiSuiteInstance.testResultsObject.testResults = currentTestObject;
                 }
 
             })
@@ -658,5 +626,5 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         }
     };
 
-    new apiSuite(casper.cli.get('url'));
+    apiSuiteInstance = new apiSuite(casper.cli.get('url'));
 });
