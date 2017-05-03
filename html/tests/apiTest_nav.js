@@ -19,6 +19,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
     'use strict';
     // Global Vars
     var logResults = true,
+        _self = this,
         colorizer = require('colorizer').create('Colorizer'),
         envConfig = casper.cli.get('env'),
         configURL = 'http://54.243.53.242',
@@ -28,6 +29,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
         collectionObject = {},
         testResultsObject = {},
         currentTestObject = {},
+        loadTimesCollectionObject = {},
         manifestTestRefID,
         manifestTestStatus = 'Pass',
         setFail = 0,
@@ -72,6 +74,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                 this.echo('manifestLoadTime >> ' + manifestLoadTime);
                 this.echo('resource time >> ' + resourcesTime[resource.id].time);
             }
+
+            if (resource.url.indexOf('apiVersion=') > -1) {
+                _self.logLoadTime(manifestTestRefID, 'apiSectionContent', resource.url, resourcesTime[resource.id].time, null);
+            }
         },
         apiSuite = function (url) {
             if (!url) {
@@ -80,8 +86,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
 
             this.__collected = {};
 
-            var _self = this,
-                parser = document.createElement('a'),
+            var parser = document.createElement('a'),
                 newUrl,
                 sourceString,
                 urlUri;
@@ -553,20 +558,20 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function suite(test) {
                         if (showOutput) {
                             console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
                         }
-                        /*var urlCurrentLoadTime = _self.getLoadTime(url, function (data) {
-                            if (data) {
-                                if (showOutput) {
-                                    console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
-                                }
+                        // var urlCurrentLoadTime = _self.getLoadTime(url, function (data) {
+                        //     if (data) {
+                        //         if (showOutput) {
+                        //             console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
+                        //         }
 
-                                if (logResults) {
-                                    _self.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, null);
-                                }
-                            } else {
-                                console.log('-- no timing returned.');
-                            }
-                            if (showOutput) {console.log('-----------------')};
-                        });*/
+                        //         if (logResults) {
+                        //             _self.logLoadTime(manifestTestRefID, 'apiSectionContent', data, url, null);
+                        //         }
+                        //     } else {
+                        //         console.log('-- no timing returned.');
+                        //     }
+                        //     if (showOutput) {console.log('-----------------')};
+                        // });
 
                         // Test parsing JSON
                         if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
