@@ -1206,14 +1206,14 @@ $app->group('/utils', function () {
     		}
     	}
 
-    	if ($utilPostParams['task'] == 'logPaylodError') {
+    	if ($utilPostParams['task'] == 'logPayloadError') {
     		$testID = $utilPostParams['testID'];
     		$testType = $utilPostParams['testType'];
     		$error = $utilPostParams['error'];
     		$endpoint = $utilPostParams['endpoint'];
     		$payload = $utilPostParams['payload'];
 
-    		$logPaylodError = $db->logPaylodError($testID, $testType, $error, $endpoint, $payload);
+    		$logPaylodError = $db->logPayloadError($testID, $testType, $error, $endpoint, $payload);
     		
     		if ($logPaylodError){
     			$this->logger->info("Loadtime logged: [testID=>". $testID .",endPoint=>". $endPoint .",loadTime=>". $manifestLoadTime .",testType=>". $testType ."]");

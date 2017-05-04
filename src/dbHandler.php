@@ -536,7 +536,7 @@ class DbHandler {
     }
 
     
-    public function logPaylodError($testID, $testType, $error, $endpoint, $payload) {
+    public function logPayloadError($testID, $testType, $error, $endpoint, $payload) {
         $db_con = Spire::getConnection();
 
         $stmt = $db_con->prepare("INSERT INTO payload_errors(ref_test_id, test_type, error, endpoint, payload) VALUES(?, ?, ?, ?, ?)");
@@ -630,6 +630,7 @@ class DbHandler {
             $stmt = $db_con->prepare("SELECT * FROM loadtimes ".$testTypeName." ".$dataRange );
 
             // SELECT test_type, loadtime FROM loadtimes WHERE test_type = 'apiSectionContent' AND DATE(created) >= CURDATE()
+            // SELECT * FROM loadtimes WHERE loadtime >= '400' AND DATE(created) = DATE(NOW()) - INTERVAL 7 DAY ORDER BY loadtime DESC
 
             $loadTimeArray = array();
 
