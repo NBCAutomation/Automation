@@ -175,7 +175,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
     casper.on('resource.received', receivedListener);
 
     if (envConfig === 'local') {
-        configURL = 'http://127.0.0.1:8080/index.php';
+        configURL = 'http://spire.app';
     } else if (envConfig === 'dev') {
         configURL = 'http://45.55.209.68';
     }
@@ -219,14 +219,14 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
 
         var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-nav&property=' + stationProperty + '&fileLoc=json_null';
 
-        if (!logResults){
+        if (!logResults) {
             if (debugOutput) { console.log(colorizer.colorize('TestID: ', 'COMMENT') + 'xx'); }
             apiSuiteInstance.collectionNavigationItems(url, 'xx');
         } else {
             if (dbUrl) {
-                casper.thenOpen(dbUrl).then(function(resp) {
-                    if ( resp.status == 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl ); }
+                casper.thenOpen(dbUrl).then(function (resp) {
+                    if (resp.status === 200) {
+                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl); }
 
                         var output = this.getHTML();
                         apiSuiteInstance.manifestTestRefID = casper.getElementInfo('body').text;
@@ -267,7 +267,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
     };
 
     // Log endpoint JSON Errors
-    apiSuite.prototype.logPayloadError = function(typeName, error, endpoint, payload) {
+    apiSuite.prototype.logPayloadError = function (typeName, error, endpoint, payload) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
@@ -321,7 +321,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
         });
     };
 
-    apiSuite.prototype.collectionNavigationItems = function(url) {
+    apiSuite.prototype.collectionNavigationItems = function (url) {
         casper.open(url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             if (resp.status === 200) {
                 var validated = false,
@@ -361,7 +361,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
         });
     };
 
-    apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject, initialPass) {
+    apiSuite.prototype.spiderObject = function (parentObjectName, childManifestObject, initialPass) {
         // var apiSuiteInstance = this;
         var firstPass = true;
         var __baseUrl = casper.cli.get('url');
@@ -441,7 +441,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
     };
 
 
-    apiSuite.prototype.testNavigationData = function() {
+    apiSuite.prototype.testNavigationData = function () {
         // var apiSuiteInstance = this;
         var baseUrl = casper.cli.get('url'),
             endpointUrl = null,
@@ -510,12 +510,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
         }
     };
 
-    apiSuite.prototype.validateJson = function(urlName, url, status) {
+    apiSuite.prototype.validateJson = function (urlName, url, status) {
         // var apiSuiteInstance = this;
         var currentTestStatus = "Pass";
 
         if (url) {
-            casper.thenOpen(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(resp) {
+            casper.thenOpen(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
 
                 if (debugOutput) { require('utils').dump(resp); }
 
