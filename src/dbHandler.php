@@ -1142,7 +1142,7 @@ class DbHandler {
     public function purgeOldTestResults() {
         $db_con = Spire::getConnection();
 
-        $testTableNames = array('tests','article_tests','nav_tests','manifest_tests');
+        $testTableNames = array('tests','test_results','tasks','regression_tests','payload_errors','loadtimes','article_tests','nav_tests','manifest_tests');
 
         $purgedData = array();
 
