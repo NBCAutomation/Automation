@@ -110,6 +110,10 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         console.log('>>>>> ' + thisItem + ' : ' + thisItem);
                     }
                 } else {
+                    // Manually created collection of test items
+                    apiSuiteInstance.collectionObject['breaking__modules'] = url + '/apps/news-app/breaking/modules/?apiVersion=' + apiVersion + enableJsonValidation;
+                    apiSuiteInstance.collectionObject['just-in__live'] = url + '/apps/news-app/just-in/live/?apiVersion=' + apiVersion + enableJsonValidation;
+                
                     // Test Collection data
                     apiSuiteInstance.testNavigationData();
                 }

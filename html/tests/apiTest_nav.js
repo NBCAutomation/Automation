@@ -109,6 +109,11 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                         console.log('>>>>> ' + thisItem + ' : ' + thisItem);
                     }
                 } else {
+                    // Add addtional test endpoints for testing
+                    apiSuiteInstance.collectionObject['breaking__modules'] = url + '/apps/news-app/breaking/modules/?apiVersion=' + apiVersion + enableJsonValidation;
+                    apiSuiteInstance.collectionObject['just-in__live'] = url + '/apps/news-app/just-in/live/?apiVersion=' + apiVersion + enableJsonValidation;
+                    apiSuiteInstance.collectionObject['school_closings__alerts'] = url + '/apps/news-app/alerts?apiVersion=' + apiVersion + enableJsonValidation;
+
                     // Test Collection data
                     apiSuiteInstance.testNavigationData();
                 }
