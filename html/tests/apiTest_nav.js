@@ -522,20 +522,25 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
 
                 if (debugOutput) { require('utils').dump(resp); }
 
-                var currentPageContentType = resp.contentType;
-                var validated = false;
-                var status = this.status().currentHTTPStatus;
-                var output = this.getPageContent();
-                var currentTestResults = {};
+                var currentPageContentType = resp.contentType,
+                    validated = false,
+                    status = this.status().currentHTTPStatus,
+                    output = this.getPageContent(),
+                    currentTestResults = {};
 
                 if ( status == 200) {
                     if (debugOutput) {
-                        console.log(currentPageContentType);
+                        console.log(' > currentPageContentType: ' + currentPageContentType);
                     }
 
                     if (
-                        currentPageContentType.indexOf('.html') > -1 ||
+                        currentPageContentType.indexOf('html') > -1 ||
                         urlName.indexOf('submit_photos_videos') > -1 ||
+                        urlName.indexOf('el_tiempo') > -1 ||
+                        urlName.indexOf('responde') > -1 ||
+                        urlName.indexOf('mbta_report_card') > -1 ||
+                        urlName.indexOf('meet_the_team') > -1 ||
+                        urlName.indexOf('live_faq') > -1 ||
                         resp.url.indexOf('contests') > -1 ||
                         resp.url.indexOf('community') > -1 ||
                         resp.url.indexOf('tve') > -1 ||
@@ -558,9 +563,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                     ) {
                         if (showOutput) {
                             console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
+                            console.log('-----------------');
                         }
-
-                        if (showOutput) {console.log('-----------------')};
                     } else {
                         if (showOutput) {
                             console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
