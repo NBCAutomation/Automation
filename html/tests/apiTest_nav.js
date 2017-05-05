@@ -272,7 +272,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
 
         if (debugOutput) {
             console.log(processUrl);
-            console.log(this.manifestTestRefID, typeName, error, payload);
+            console.log(this.manifestTestRefID, typeName, error, endpoint, payload);
         }
 
         casper.open(processUrl, {
@@ -348,8 +348,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                     console.log('here 2');
                     console.log(e);
 
-                    var JSONerror = e;
-                    var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+                    var JSONerror = 'Parse Failure: ' + e,
+                        brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
 
                     apiSuiteInstance.logPayloadError('apiContentTest', JSONerror, url, brokenJSONString);
 
@@ -469,9 +469,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                     thisURL.indexOf('avisos-del-tiempo') > -1 ||
                     thisURL.indexOf('data.nbcstations.com') > -1 ||
                     thisURL.indexOf('FAQ') > -1 ||
+                    thisURL.indexOf('Frequently-Asked-Questions') > -1 ||
                     thisURL.indexOf('faq') > -1 ||
                     thisURL.indexOf('investigations') > -1 ||
                     thisURL.indexOf('Tips') > -1 ||
+                    thisURL.indexOf('submit-your-photos') > -1 ||
+                    thisURL.indexOf('submit-media') > -1 ||
                     thisURL.indexOf('CazaTormentas') > -1)
                 {
                     if (showOutput) {
@@ -530,7 +533,29 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                         console.log(currentPageContentType);
                     }
 
-                    if (currentPageContentType.indexOf('html') > -1) {
+                    if (
+                        currentPageContentType.indexOf('.html') > -1 ||
+                        urlName.indexOf('submit_photos_videos') > -1 ||
+                        resp.url.indexOf('contests') > -1 ||
+                        resp.url.indexOf('community') > -1 ||
+                        resp.url.indexOf('tve') > -1 ||
+                        resp.url.indexOf('weather-alerts') > -1 ||
+                        resp.url.indexOf('tv-listings') > -1 ||
+                        resp.url.indexOf('bit.ly') > -1 ||
+                        resp.url.indexOf('traffic') > -1 ||
+                        resp.url.indexOf('horoscopo') > -1 ||
+                        resp.url.indexOf('lottery') > -1 ||
+                        resp.url.indexOf('avisos-del-tiempo') > -1 ||
+                        resp.url.indexOf('data.nbcstations.com') > -1 ||
+                        resp.url.indexOf('FAQ') > -1 ||
+                        resp.url.indexOf('Frequently-Asked-Questions') > -1 ||
+                        resp.url.indexOf('faq') > -1 ||
+                        resp.url.indexOf('Tips') > -1 ||
+                        resp.url.indexOf('submit-your-photos') > -1 ||
+                        resp.url.indexOf('submit-your-photos-videos') > -1 ||
+                        resp.url.indexOf('submit-media') > -1 ||
+                        resp.url.indexOf('CazaTormentas') > -1
+                    ) {
                         if (showOutput) {
                             console.log('> ' + urlName + ' : ' + url + colorizer.colorize(' // Status: ' + status, 'INFO') );
                         }
@@ -554,8 +579,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                             // ...
                             if (showOutput) {console.log(e)};
 
-                            var JSONerror = e;
-                            var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+                            var JSONerror = 'Parse Failure: ' + e,
+                                brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
 
                             apiSuiteInstance.logPayloadError('apiSectionContent', JSONerror, url, brokenJSONString);
                         }
@@ -565,7 +590,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                         } else {
                             if (showOutput) {console.log('...re-testing JSON')};
                             var reg = /\<body[^>]*\>([^]*)\<\/body/m;
-                            cleanedJson = output.match(reg)[1];
+                            var cleanedJson = output.match(reg)[1];
 
                             if (cleanedJson) {
                                 try {
@@ -590,9 +615,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                                         console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!');
                                     }
 
-                                    var JSONerror = e;
-                                    cleanedJson = output.match(reg)[1];
-                                    var brokenJSONString = cleanedJson.replace(/[\n\t\s]+/g, " ");
+                                    var JSONerror = 'Parse Failure: ' + e,
+                                        brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
 
                                     apiSuiteInstance.logPayloadError('apiSectionContent', JSONerror, url, brokenJSONString);
 

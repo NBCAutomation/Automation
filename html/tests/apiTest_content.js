@@ -175,7 +175,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                 //Process test results to the DB
                 if (logResults) {
-                    apiSuiteInstance.processTestResults(setFail, 'apiNavTest', manifestTestStatus);
+                    apiSuiteInstance.processTestResults(setFail, 'apiContentTest', manifestTestStatus);
                     apiSuiteInstance.processLoadTimes();
                 }
             }).run(function () {
@@ -289,11 +289,14 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
+            console.log('------------------------');
+            console.log(' Payload Error Data  ');
+            console.log('------------------------');
             console.log(processUrl);
-            console.log(this.manifestTestRefID, typeName, error, payload);
+            console.log(this.manifestTestRefID, typeName, error, endpoint, payload);
         }
 
-        casper.open(processUrl, {
+        casper.thenOpen(processUrl, {
             method: 'post',
             data:   {
                 'task': 'logPayloadError',
@@ -356,8 +359,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                 console.log(colorizer.colorize(parentManifestItem.toLowerCase(), 'INFO') + ' : ' + jsonParsedOutput[parentManifestItem]);
                             }
 
-                            var manifestKeyName = parentManifestItem.toLowerCase();
-                            var manifestKeyValue = jsonParsedOutput[parentManifestItem];
+                            var manifestKeyName = parentManifestItem.toLowerCase(),
+                                manifestKeyValue = jsonParsedOutput[parentManifestItem];
                         } else {
                             apiSuiteInstance.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem], true);
                         }
@@ -366,8 +369,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     console.log('here 2');
                     console.log(e);
 
-                    var JSONerror = e;
-                    var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+                    var JSONerror = 'Parse Failure: ' + e,
+                        brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
 
                     apiSuiteInstance.logPayloadError('apiContentTest', JSONerror, url, brokenJSONString);
 
@@ -381,8 +384,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
     apiSuite.prototype.spiderObject = function (parentObjectName, childManifestObject, initialPass) {
         // var apiSuiteInstance = this;
-        var firstPass = true;
-        var __baseUrl = casper.cli.get('url');
+        var firstPass = true,
+            __baseUrl = casper.cli.get('url');
 
         for (var childItem in childManifestObject) {
             if (typeof childManifestObject[childItem] != 'object') {
@@ -572,8 +575,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                             // ...
                             if (showOutput) {console.log(e)};
 
-                            var JSONerror = e;
-                            var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+                            var JSONerror = 'Parse Failure: ' + e,
+                                brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
 
                             apiSuiteInstance.logPayloadError('apiSectionContent', JSONerror, url, brokenJSONString);
                         }
@@ -582,8 +585,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                             if (showOutput) {console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )};
                         } else {
                             if (showOutput) {console.log('...re-testing JSON')};
-                            var reg = /\<body[^>]*\>([^]*)\<\/body/m;
-                            cleanedJson = output.match(reg)[1];
+                            var reg = /\<body[^>]*\>([^]*)\<\/body/m,
+                                cleanedJson = output.match(reg)[1];
 
                             if (cleanedJson) {
                                 try {
@@ -594,10 +597,20 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                     } else {
                                         if (showOutput) {
                                             console.log('-------------------');
-                                            console.log(' JSON Parse Error  ');
+                                            console.log(' JSON Parse Error: Re-Eval  ');
                                             console.log('-------------------');
                                             console.log(cleanedJson)
                                         };
+                                        
+                                        var JSONerror = 'Parse Failure: ' + e,
+                                            brokenJSONString = JSONTestOutput.replace(/[\n\t\s]+/g, " ");
+
+                                        apiSuiteInstance.logPayloadError('apiSectionContent', JSONerror, url, brokenJSONString);
+
+                                        currentTestResults['jsonValidation'] = 'Fail: Re-Eval JSON Parse Fail';
+                                        currentTestStatus = 'Fail';
+                                        manifestTestStatus = 'Fail';
+                                        setFail++;
                                     }
                                 } catch (e) {
                                     // ...
@@ -608,9 +621,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                         console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!');
                                     }
 
-                                    var JSONerror = e;
-                                    cleanedJson = output.match(reg)[1];
-                                    var brokenJSONString = cleanedJson.replace(/[\n\t\s]+/g, " ");
+                                    var JSONerror = 'Parse Failure: ' + e,
+                                        cleanedJson = output.match(reg)[1],
+                                        brokenJSONString = cleanedJson.replace(/[\n\t\s]+/g, " ");
 
                                     apiSuiteInstance.logPayloadError('apiSectionContent', JSONerror, url, brokenJSONString);
 
@@ -895,7 +908,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                         console.log('------------------------------------------');
                                                     }
                                                     // Test gallery content
-                                                    suite.galleryObjectTest(articleContentID, galleryContentURL, testID);
+                                                   apiSuiteInstance.galleryObjectTest(articleContentID, galleryContentURL, testID);
                                                 }
 
                                                 if (articleFullsizeImageURL.indexOf('0*false') > -1 || articleFullsizeImageURL == null) {
@@ -967,9 +980,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                             console.log('       gallery url to test: ' + galleryContentURL);
                                                         }
 
-                                                        suite.galleryObjectTest(articleContentID, galleryContentURL, testID);
+                                                       apiSuiteInstance.galleryObjectTest(articleContentID, galleryContentURL, testID);
 
-                                                        var urlHealthStatus = suite.checkURLHealth(galleryContentURL, function (data) {
+                                                        var urlHealthStatus =apiSuiteInstance.checkURLHealth(galleryContentURL, function (data) {
                                                             if (! data) {
                                                                 
                                                                 if (showOutput) {
@@ -992,7 +1005,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                             console.log('       video url to test ' + videoURL);
                                                         }
 
-                                                        var urlHealthStatus = suite.checkURLHealth(videoURL, function (data) {
+                                                        var urlHealthStatus =apiSuiteInstance.checkURLHealth(videoURL, function (data) {
                                                             if (! data) {
                                                                 
                                                                 if (showOutput) {
@@ -1036,7 +1049,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         console.log('-------------------');
                         console.log(' endpointName: '  + endpointName);
                         console.log(' endpointUrl: ' + endpointUrl);
-                        console.log(' ' + colorizer.colorize('JSON Parse Fail:', 'FAIL') + e);
+                        console.log(' ' + colorizer.colorize('JSON Parse Fail: ', 'WARN') + e);
 
                         // console.log('   JSON Object ');
                         // console.log('  ------------------------------');
@@ -1044,8 +1057,16 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         // console.log('  ------------------------------');
                     };
                     setFail++;
-                    subTestResults['endpointContentValidationError_' + endpointName] = 'endpoint: ' + endpointUrl + ' // \n JSON Error: ' + e;
+
+                    var JSONerror = 'Parse Failure: ' + e,
+                        brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
+
+                    subTestResults['endpointContentValidationError_' + endpointName] = 'endpoint: ' + endpointUrl + ' // \n JSON Parsing Error.';
+
+                    apiSuiteInstance.testResultsObject.testResults = subTestResults;
                     manifestTestStatus = 'Fail';
+
+                    apiSuiteInstance.logPayloadError('apiContentTest', JSONerror, endpointUrl, brokenJSONString);
                 }
             });
         }
