@@ -369,9 +369,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                         this.test.assertNotEquals('body', 'tlmd', 'TLM Body class set');
 
-                        testingObject['siteHeader'] = '.masthead';
-                        testingObject['headerLogo'] = '#logo img';
-                        testingObject['manNav'] = '.nav';
+                        testingObject['siteHeader'] = '.site-header';
+                        testingObject['headerLogo'] = '.brand a img';
+                        testingObject['mainNav'] = '.navbar';
                         testingObject['lowerModules'] = '.lower.left';
                         testingObject['mainFooter'] = '.page_footer';
 
@@ -465,11 +465,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             // Collect initial navigation items, then re-loop and collect more navigation items.
             if (! runOnce) {
                 // Set collection selector
-                if (testProperty == 'otsTestSuite') {
+                // if (testProperty == 'otsTestSuite') {
                     var selector = '.nav-section a.nav-section-title';
-                } else {
-                    var selector = '.nav.black a';
-                }
+                // } else {
+                //     var selector = '.nav.black a';
+                // }
             } else {
                 var selector = '.nav-more .nav-section-subnav a';
             }

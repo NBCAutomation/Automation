@@ -248,3 +248,7 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 table .fail {
 	color: red;
 }
+
+.panel-title .endpointName {
+	text-transform: capitalize;
+}

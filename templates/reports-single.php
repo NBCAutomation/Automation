@@ -84,6 +84,7 @@
 
 			<div class="panel">
 			<?php
+				// -- Regression Data View -- //
 				if ($regressionData) {
 					if ($fullReportData['failures'] > 0) {
 						echo '<div class="panel panel-default">
@@ -133,7 +134,9 @@
 						</ul>';
 					}
 				} else {
+					// -- Article Data View -- //
 					if ($articleData) {
+						echo '<p class="text-muted small">Article Data</p>';
 						echo '<p class="text-muted small"><i>Data will only be display when errors exist.</i></p>';
 
 						$obj = json_decode($reportData, true);
@@ -151,14 +154,17 @@
 							if (strstr($thisReportKey, 'article_')) {
 								$contentKeyName = explode("_", $thisReportKey);
 								echo '<div class="panel-heading"><h4 class="panel-title"><a href="https://cms.clickability.com/cms?searchTab=contentTab&searchText='.$contentKeyName[1].'&action=consolidatedSearch" target="_blank">Content ID: '.$contentKeyName[1].'</a></h4></div>';
+							} elseif (strstr($thisReportKey, 'endpointContentValidationError_')) {
+								$endpointName = str_replace('_', ' ', str_replace('endpointContentValidationError_', '', $thisReportKey));
+								echo '<div class="panel-heading"><h4 class="panel-title">Endpoint Name: <span class="endpointName">'.$endpointName.'</span></h4></div>';
 							} else {
 								echo '<div class="panel-heading"><h4 class="panel-title">Endpoint Failure: '.$thisReportKey.'</h4></div>';
 							}
 
 							echo '<div class="panel-body">';
-							echo '<ul>';
 							
 							if (is_array($thisReportValue)) {
+								echo '<ul>';
 								foreach ($thisReportValue as $subReportKey => $subReportValue) {
 									if (strstr($subReportValue, '// ')) {
 										echo "<li>".str_replace('// ', '</li><li>', $subReportValue)."</li>";	
@@ -166,18 +172,21 @@
 										echo $subReportValue;
 									}
 								}
+								echo '</ul>';
 							} else {
-								// echo "paco taco gelato flako - supa hot fire";
-								echo $thisReportValue;
+								echo str_replace('// ', '<br />', $thisReportValue);
 							}
-							echo '</ul>';
 							    
 			             	echo '</div>
 			             	</div>';
 						}
+						// Look up failure data and display it
+			             	// $testReferenceID = $fullReportData['ref_test_id'];
+			             	// $testResultID = $fullReportData['id'];
+			             	
+			             	// Spire::displayPayLoadError($testReferenceID, $testResultID);
 						echo '</div></div>';
-				} else { ?>
-					<?php 
+					} else {
 						// var_dump($reportData);
 
 						$obj = json_decode($reportData, true);
@@ -195,6 +204,7 @@
 						?>
 
 					<?php elseif (is_array($obj['testResults'])): ?>
+						<!-- // Nav Report Data view --> 						
 						<p>Errors displayed first</p>
 						<table class="report_data_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 							<thead>
@@ -247,7 +257,8 @@
 				
 			<?php } ?>
 			</div>
-		<?php if ($overView) { ?>
+		<!-- // Overview Data view -->
+		<?php if ($overView): ?>
 			<h3>Overview</h3>
 			<p></p>
 			<?php
@@ -286,7 +297,6 @@
 				<tbody>
 				<?php
 					foreach ($recentTests as $testReport) {
-
 						if (strpos($testReport['type'], 'manifest')) {
 							$reportsURL = '/reports/api_manifest_audits';
 						} elseif (strpos($testReport['type'], 'nav')) {
@@ -294,11 +304,9 @@
 						} elseif (strpos($testReport['type'], 'article')) {
 							$reportsURL = '/reports/api_article_audits';
 						}
-
 						
 						// $testReportStatus = $db->checkForTestFailures($testReport['id'], $testReport['type']);
-
-					    echo '<tr class="report_row_status '.$testReportStatus.'">';
+						echo '<tr class="report_row_status '.$testReportStatus.'">';
 						    echo '<td><div class="report_status '.$testReportStatus.'">'.$testReportStatus.'</div></td>';
 						    echo '<td><a href="'.$reportsURL.'">'.$testReport['id'].'</a></td>';
 						    echo '<td><a href="'.$reportsURL.'">'.$testReport['type'].'</a></td>';
@@ -308,65 +316,66 @@
 				?>
 				</tbody>
 			</table>
-
-		<?php } ?>
-		<?php if ($allView) {
-			if ($allReports) { 
-				Spire::returnFormattedDataTable($allReports, $view, $fullPath);
-			} else {
-				echo "No error reports currently.";
+		<?php endif; ?>
+		<!-- // End: Overview Data view -->
+		<!-- // All Report Data view -->
+		<?php
+			if ($allView) {
+				echo "jeezy";
+				if ($allReports) { 
+					Spire::returnFormattedDataTable($allReports, $view, $fullPath);
+				} else {
+					echo "No error reports currently.";
+				}
 			}
-		?>			
-		<?php } ?>
-		<?php 
-			if ($regressionView) {
 		?>
-				<div class="api_results">
-					<ul class="nav nav-tabs">
-						<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Recent Reports</a></li>
-						<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
-					</ul>
-					<br />
-					<div class="tab-content">
-						<div class="tab-pane fade active in" id="today_reports_tab">
-							<div class="panel-body">
-								<ul class="nav nav-tabs">
-									<li class="active"><a href="#errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
-									<li class=""><a href="#all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
-								</ul>
-								<br>
-								<div class="tab-content">
-									<div class="tab-pane fade active in" id="errors_tab">
-										<?php if ($todayFailureReports) {
-												Spire::returnFormattedDataTable($todayFailureReports, $view);
-											} else {
-												echo "No error reports currently.";
-											}
-										?>
-									</div>
-									<!-- // End errors tab -->
-									<!-- // All reports tab -->
-									<div class="tab-pane" id="all_reports_tab">
-										<?php if ($todayReports) {
-												Spire::returnFormattedDataTable($todayReports, $view);
-											} else {
-												echo "No error reports currently.";
-											}
-										?>
-									</div>
-									<!-- // End all reports tab -->
+		<!-- // End: All Report Data view -->
+		<!-- // Regression Data view -->
+		<?php  if ($regressionView): ?>
+			<div class="api_results">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Recent Reports</a></li>
+					<li class=""><a href="#alltime_reports_tab" data-toggle="tab" aria-expanded="true">All Reports</a></li>
+				</ul>
+				<br />
+				<div class="tab-content">
+					<div class="tab-pane fade active in" id="today_reports_tab">
+						<div class="panel-body">
+							<ul class="nav nav-tabs">
+								<li class="active"><a href="#errors_tab" data-toggle="tab" aria-expanded="false"><i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp;Errors</a></li>
+								<li class=""><a href="#all_reports_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-file" aria-hidden="true"></i> &nbsp;All</a></li>
+							</ul>
+							<br>
+							<div class="tab-content">
+								<div class="tab-pane fade active in" id="errors_tab">
+									<?php
+										if ($todayFailureReports) {
+											Spire::returnFormattedDataTable($todayFailureReports, $view);
+										} else {
+											echo "No error reports currently.";
+										}
+									?>
+								</div>
+								<div class="tab-pane" id="all_reports_tab">
+									<?php
+										if ($todayReports) {
+											Spire::returnFormattedDataTable($todayReports, $view);
+										} else {
+											echo "No error reports currently.";
+										}
+									?>
 								</div>
 							</div>
 						</div>
-						<div class="tab-pane" id="alltime_reports_tab">
-							<div class="alert alert-dismissible alert-info">
-								<p><i class="fa fa-info-circle" aria-hidden="true"></i> This page may take a few moments to load after clicking the linke. Once the page/query cache is built, subsequent loads should load faster.</p>
-							</div>
-							<a href="/reports/<?php echo $view; ?>/all" class="btn btn-primary">View all reports</a>
+					</div>
+					<div class="tab-pane" id="alltime_reports_tab">
+						<div class="alert alert-dismissible alert-info">
+							<p><i class="fa fa-info-circle" aria-hidden="true"></i> This page may take a few moments to load after clicking the linke. Once the page/query cache is built, subsequent loads should load faster.</p>
 						</div>
+						<a href="/reports/<?php echo $view; ?>/all" class="btn btn-primary">View all reports</a>
 					</div>
 				</div>
-		<?php
-			}
-		?>
+			</div>
+		<?php endif; ?>
+		<!-- // End: Regression Data view -->
 <?php include_once 'base/footer.php' ?>
