@@ -627,7 +627,7 @@ class DbHandler {
             }
 
 
-            $stmt = $db_con->prepare("SELECT * FROM loadtimes ".$testTypeName." ".$dataRange );
+            $stmt = $db_con->prepare("SELECT * FROM loadtimes ".$testTypeName." ".$dataRange." AND loadtime > 300" );
 
             // SELECT test_type, loadtime FROM loadtimes WHERE test_type = 'apiSectionContent' AND DATE(created) >= CURDATE()
             // SELECT * FROM loadtimes WHERE loadtime >= '400' AND DATE(created) = DATE(NOW()) - INTERVAL 7 DAY ORDER BY loadtime DESC
@@ -729,6 +729,55 @@ class DbHandler {
 
             // $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS dataPointName, Date(created) AS dayDate, Hour(created) AS hourInterval FROM loadtimes GROUP BY test_type, DAY(created), HOUR(created)");
             $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS loadTimeFrom, Date(created) AS date FROM loadtimes GROUP BY test_type, DAY(created)");
+
+            $loadTimeArray = array();
+
+            if ($stmt->execute()) {
+                $loadTimeResults = $stmt->fetchAll();
+                    
+                foreach( $loadTimeResults as $key => $value ){
+                    $loadTimeArray[$key] = $value;
+                    // echo $value['dataPointName'].' // '.$value['dayDate'].' - '.$value['hourInterval'].'<br />';
+                }
+
+                $storedLoadTimes[] = $loadTimeArray;
+
+                $stmt->closeCursor();
+                return $storedLoadTimes;
+                
+            } else {
+                return NULL;
+            }
+
+
+        });
+
+        return $output;
+    }
+
+
+    public function getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm) {
+        $output = Spire::spireCache('getHighLoadTimesOverTime', 10, function() use ($dayRange, $minResponseTime, $searchTerm) {
+
+            $db_con = Spire::getConnection();
+
+            // $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS dataPointName, Date(created) AS dayDate, Hour(created) AS hourInterval FROM loadtimes GROUP BY test_type, DAY(created), HOUR(created)");
+            
+            if (! $dayRange) {
+                $dayRange = '7';
+            }
+
+            if (! $minResponseTime) {
+                $searchTimeClause = ' AND loadtime > 300';
+            } else {
+                $searchTimeClause = ' AND loadtime > ' . $minResponseTime;
+            }
+
+            if ($searchTerm) {
+                $searchClause .= " AND endpoint LIKE '%".$searchTerm."%'";
+            }
+
+            $stmt = $db_con->prepare("SELECT endpoint, max(loadtime) AS `max_load_time`, `created` FROM loadtimes WHERE DATE(`created`) >= CURDATE()-".$dayRange."".$searchTimeClause."".$searchClause." GROUP BY endpoint ORDER BY `max_load_time` DESC");
 
             $loadTimeArray = array();
 

@@ -87,7 +87,8 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
             * Start Testing
             *
             *******************/
-            casper.start(this.nav_url).then(function (response) {
+            // casper.start(this.nav_url).then(function (response) {
+            casper.start().thenOpen(this.nav_url, { method: 'get'}, function (response) {
                 if (response.status === 200) {
                     console.log(colorizer.colorize('Testing started: ', 'COMMENT') + response.url);
                     apiSuiteInstance.createTestID(response.url, apiSuiteInstance.stationProperty);
@@ -280,7 +281,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
             console.log(this.manifestTestRefID, typeName, error, endpoint, payload);
         }
 
-        casper.open(processUrl, {
+        casper.thenOpen(processUrl, {
             method: 'post',
             data:   {
                 'task': 'logPayloadError',
@@ -311,7 +312,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
             console.log('manifestTestStatus => ' + manifestTestStatus);
         }
 
-        casper.open(processUrl, {
+        casper.thenOpen(processUrl, {
             method: 'post',
             data:   {
                 'task': 'processManifestTestResults',
@@ -327,7 +328,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
     };
 
     apiSuite.prototype.collectionNavigationItems = function (url) {
-        casper.open(url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
+        casper.thenOpen(url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             if (resp.status === 200) {
                 var validated = false,
                     output = this.getPageContent(),

@@ -88,7 +88,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             * Start Testing
             *
             *******************/
-            casper.start(this.nav_url).then(function (response) {
+            casper.start().thenOpen(this.nav_url, { method: 'get'}, function (response) {
+            // casper.start(this.nav_url).then(function (response) {
                 if (response.status === 200) {
                     console.log(colorizer.colorize('Testing started: ', 'COMMENT') + response.url);
                     apiSuiteInstance.createTestID(response.url, apiSuiteInstance.stationProperty);
@@ -348,7 +349,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     };
 
     apiSuite.prototype.collectionNavigationItems = function (url) {
-        casper.open(url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
+        casper.thenOpen(url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             if (resp.status === 200) {
                 var validated = false,
                     output = this.getPageContent(),
@@ -541,8 +542,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         var currentTestStatus = "Pass";
 
         if (url) {
-            casper.thenOpen(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
-
+            casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
+                test.comment(' > validateJson() url open');
+                
                 if (debugOutput) { require('utils').dump(resp); }
 
                 var currentPageContentType = resp.contentType;
@@ -569,7 +571,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                         // Test parsing JSON
                         if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
-
                         try {
                             output = JSON.parse(output);
 
@@ -611,7 +612,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                             brokenJSONString = JSONTestOutput.replace(/[\n\t\s]+/g, " ");
 
                                         apiSuiteInstance.logPayloadError('apiSectionContent', JSONerror, url, brokenJSONString);
-
                                         currentTestResults['jsonValidation'] = 'Fail: Re-Eval JSON Parse Fail';
                                         currentTestStatus = 'Fail';
                                         manifestTestStatus = 'Fail';
@@ -650,20 +650,16 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 // Set current test status & results
                 if (Object.keys(currentTestResults).length > 0) {
                     currentTestObject[urlName] = currentTestResults;
-                }
-
-                if (Object.keys(currentTestResults).length > 0) {
                     apiSuiteInstance.testResultsObject.testResults = currentTestObject;
                 }
 
-            })
+            });
         } else {
             if (showOutput) {console.log(colorizer.colorize('No url provided for JSON validation!', 'ERROR'))};
         }
     };
 
     apiSuite.prototype.testEndpointContent = function (collectionObject, testID) {
-        
         for (var thisCollectionItem in collectionObject) {
             var endpointName = thisCollectionItem,
                 endpointUrl = collectionObject[thisCollectionItem];
@@ -722,10 +718,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     };
 
     apiSuite.prototype.endpointContentValidation = function (endpointName, endpointUrl, testID) {
-        var suite = this;
+        // var suite = this;
         var baseUrl = casper.cli.get('url');
         // var baseUrl = 'http://www.' + sourceString + '.com';
-
         if (endpointUrl) {
             casper.thenOpen(endpointUrl, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }, function (resp) {
                 var status = resp.status,
@@ -1018,7 +1013,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                                 console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
                                                                 console.log('       gallery url to test: ' + galleryContentURL);
                                                             }
-
                                                            apiSuiteInstance.galleryObjectTest(articleContentID, galleryContentURL, testID);
 
                                                             var urlHealthStatus =apiSuiteInstance.checkURLHealth(galleryContentURL, function (data) {
@@ -1114,7 +1108,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
     apiSuite.prototype.galleryObjectTest = function (articleContentID, galleryURL, testID) {
         var suite = this;
-            
         casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             var status = this.status().currentHTTPStatus;
 
@@ -1129,7 +1122,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 }
 
                 var galleryTestingResults = {};
-
                 try{
                     jsonParsedOutput = JSON.parse(output);
 

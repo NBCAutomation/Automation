@@ -211,6 +211,10 @@ $app->group('/reports', function () {
                 $regressionView = true;
                 break;
 
+           	case "search":
+           	    $loadtimeSearchView = true;
+           	    break;
+
 		    default:
 		        $testTypeName = 'none-existent';
 		}
@@ -228,13 +232,15 @@ $app->group('/reports', function () {
 
 			$todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
 			$todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
-			// var_dump($todayTotalErrors);			
+			// var_dump($todayTotalErrors);
+			// exit();
 		}
 
 		// Loadtimes page data
 		if ($args['view'] == 'loadtimes') {
 			$pageTemplate = 'reports-loadtimes.php';
 			$loadTimesView = true;
+			$loadtimeSubnavClass = true;
 			$chartLoadTimeData = $db->getAllAverageLoadTimes();
 
 			$apiManifestAverageLoadTime = $db->getAverageLoadTime('apiManifestTest', 'today');
@@ -262,8 +268,10 @@ $app->group('/reports', function () {
             'singleView' => $singleView,
             'overView' => $overView,
             'regressionView' => $regressionView,
+            'loadtimeSearchView' => $loadtimeSearchView,
             'fileView' => $fileView,
             'reportClass' => true,
+            'reportLoadtimeSubNav' => $loadtimeSubnavClass,
     		'allReports' => $allReports,
     		'todayReports' => $todayReports,
     		'todayFailureReports' => $todayFailureReports,
@@ -310,11 +318,46 @@ $app->group('/reports', function () {
 		// View path
 		$viewPath = $args['view']."/".$args['subView'];
 
+		switch ($args['view']) {
+
+		    case "main":
+		        $mainView = true;
+		        break;
+
+		    case "api_article_audits":
+		        $reportsView = true;
+		        break;
+
+		    case "api_navigation_audits":
+		        $reportsView = true;
+		        break;
+
+	        case "api_manifest_audits":
+	            $reportsView = true;
+	            break;
+
+            case "regression_tests":
+                $regressionView = true;
+                break;
+
+           	case "loadtime-search":
+           	    $loadtimeSearchView = true;
+           	    break;
+
+		    default:
+		        $testTypeName = 'none-existent';
+		}
+
 		// Report View
 		if ($args['view'] == 'loadtimes') {
+			$pageTemplate = 'reports-loadtimes-search.php';
+			$loadtimeSubnavClass = true;
+		} else if ($args['view'] == 'loadtime-search') {
 			$pageTemplate = 'reports-loadtimes.php';
+			$loadtimeSubnavClass = true;
 		} else {
 			$pageTemplate = 'reports.php';
+			$loadtimeSubnavClass = false;
 		}
 
         return $this->renderer->render($response, $pageTemplate, [
@@ -324,7 +367,8 @@ $app->group('/reports', function () {
 		    'viewPath' => $args['view'],
 		    'fullPath' => $viewPath,
 		    'allView' => true,
-		    'reportClass' => true,
+		    'reportClass' => $loadtimeSubnavClass,
+		    'reportLoadtimeSubNav' => $loadtimeSubnavClass,
 		    'allReports' => $allReports,
 
 		    //Auth Specific
@@ -372,6 +416,54 @@ $app->group('/reports', function () {
 	        'uAthMessage' => $permissions['uAthMessage']
 		]);
     })->setName('report-subview')->add( new SpireAuth() );
+
+    // Search results.
+    $this->post('/{view}/{subView}', function ($request, $response, $args) {
+    	$db = new DbHandler();
+
+    	$__postVars = $request->getParsedBody();
+      	
+      	$dayRange = $__postVars['range'];
+      	$minResponseTime = $__postVars['mintime'];
+      	$searchTerm = $__postVars['term'];
+      	// var_dump($dayRange, $minResponseTime, $searchTerm);
+
+      	if ($__postVars['processDownload'] == true) {
+      		$downloadFile = "loadtimes_export_".date('m-d-Y_hia').'.csv';
+      		$downloadData = urldecode($__postVars['downloadData']);
+
+			header("Content-type: text/x-csv");
+			header('Content-Disposition: attachment; filename="'.$downloadFile.'"');
+			header('Content-Transfer-Encoding: binary');
+			header('Content-Length: '.strlen($downloadData));
+			set_time_limit(0);
+			echo $downloadData;
+			exit();
+      	}
+
+      	if ($__postVars['queryLoadtimes'] == true) {
+      		$loadtimeSearchResults = $db->getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm);	
+      	}
+
+      	return $this->renderer->render($response, 'reports-loadtimes-search.php', [
+	        'title' => 'Loadtime Search',
+	        'page_name' => 'loadtime-search',
+	        'reportClass' => true,
+	        'reportLoadtimeSubNav' => true,
+	        'hideBreadcrumbs' => true,
+	        'loadtimeSearchResults' => $loadtimeSearchResults,
+	        'formResponse' => true,
+	        'searchDayRange' => $dayRange,
+			'searchMinResponseTime' => $minResponseTime,
+			'searchTerm' => $searchTerm,
+
+	        //Auth Specific
+	        'user' => $request->getAttribute('spAuth'),
+	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
+	        'uAthMessage' => $permissions['uAthMessage']
+	    ]);
+    })->setName('loadtimes-search')->add( new SpireAuth() );
 
 });
 

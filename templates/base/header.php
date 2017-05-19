@@ -47,7 +47,21 @@
 			<ul class="ts-sidebar-menu">
 				<li class="ts-label">Main Menu</li>
 				<li <?php if ($dashClass) { echo 'class="open"'; } ?>><a href="/"><i class="fa fa-desktop"></i> Dashboard</a></li>
-				<li <?php if ($reportClass) { echo 'class="open"'; } ?>><a href="/reports/main"><i class="fa fa-table"></i> Reports</a></li>
+				<li <?php if ($reportClass) { echo 'class="open"'; } ?>>
+					<a href="/reports/main"><i class="fa fa-table"></i> Reports</a>
+					<ul>
+						<li><a href="/reports/api_manifest_audits">Manifest Audits</a></li>
+						<li><a href="/reports/api_navigation_audits">Article/Content Audits</a></li>
+						<li><a href="/reports/api_article_audits">Article/Content Audits</a></li>
+						<li><a href="/reports/regression_tests">Regression Results</a></li>
+						<li <?php if ($reportLoadtimeSubNav) { echo 'class="open"'; } ?>><a href="#">API Loadtimes</a>
+							<ul>
+								<li><a href="/reports/loadtimes">Overview</a></li>
+								<li><a href="/reports/loadtimes/loadtime-search">Search</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
 				<li <?php if ($scriptClass) { echo 'class="open"'; } ?>><a href="/scripts/main"><i class="fa fa-bolt"></i> Scripts</a></li>
 				<li><a href="#"><i class="fa fa-bell"></i> Alerts</a></li>
 				<li <?php if ($helpClass) { echo 'class="open"'; } ?>><a href="/help"><i class="fa fa-book"></i> Help</a></li>
