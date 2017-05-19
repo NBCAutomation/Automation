@@ -275,7 +275,7 @@ class Spire {
 
 		foreach ($data as $testReport) {
 			$testReportViewData = '<div class="panel panel-default">';
-			$testReportViewData .= '<div class="panel-heading">Today Loadtime Reports</div>';
+			$testReportViewData .= '<div class="panel-heading">Today Loadtime Reports ( x > 300 ms)</div>';
 			$testReportViewData .= '<div class="panel-body api_results">';
 			$testReportViewData .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
 			$testReportViewData .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
@@ -302,7 +302,55 @@ class Spire {
          
             print($testReportViewData);
 		}
+	}
 
+
+	public static function formatLoadTimeSearchResultsTable($data){
+		// var_dump($view);
+		// exit();
+
+		foreach ($data as $testReport) {
+			$testReportViewData = '<div class="panel panel-default">';
+			$testReportViewData .= '<div class="panel-body api_results">';
+			$testReportViewData .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
+			$testReportViewData .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
+			$testReportViewData .= '<thead><tr width="100%"><th>Endpoint URL</th><th>Loadtime (ms)</th><th>Created</th></tr></thead>';
+			$testReportViewData .= "<tbody>";
+
+			foreach ($data[0] as $key => $value) {
+				$l10nDate = new DateTime($value['created']);
+				$l10nDate->setTimeZone($usersTimezone);
+
+				$testReportViewData .= '<tr>';
+				$testReportViewData .= '<td>'.str_replace('stage_', 'stage.', $value['endpoint']).'</td>';
+				$testReportViewData .= '<td>'.$value['max_load_time'].'</td>';
+				$testReportViewData .= '<td>'.$l10nDate->format('n/d/Y, g:i A').'</td>';
+				$testReportViewData .= '</tr>';
+			}
+			$testReportViewData .= "</tbody>";
+			$testReportViewData .= '<tfoot><tr width="100%"><th>Endpoint URL</th><th>Loadtime (ms)</th><th>Created</th></tr></tfoot>';
+			$testReportViewData .= '</table>';
+			$testReportViewData .= '</div></div>';
+         
+            print($testReportViewData);
+		}
+	}
+
+	public static function downloadLoadTimeResults($data){
+		// var_dump($view);
+		// exit();
+		$csv_export = '';
+		$csv_export .= '"endpoint","max_load_time","created"'.PHP_EOL;
+
+		foreach ($data as $testReport) {
+			foreach ($data[0] as $key => $value) {
+				$l10nDate = new DateTime($value['created']);
+				$l10nDate->setTimeZone($usersTimezone);
+
+				$csv_export .= '"'.str_replace('stage_', 'stage.', $value['endpoint']).'","'.$value['max_load_time'].'","'.$l10nDate->format('n/d/Y, g:i A').'"'.PHP_EOL;
+			}
+			return $csv_export;
+		}
 	}
 
 
@@ -328,7 +376,6 @@ class Spire {
          
             print($testReportViewData);
 		}
-
 	}
 
 	public static function countDataResults($data, $view){
