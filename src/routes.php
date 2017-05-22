@@ -349,12 +349,15 @@ $app->group('/reports', function () {
 		}
 
 		// Report View
-		if ($args['view'] == 'loadtimes') {
+		if ($args['subView'] == 'loadtime-search') {
 			$pageTemplate = 'reports-loadtimes-search.php';
 			$loadtimeSubnavClass = true;
-		} else if ($args['view'] == 'loadtime-search') {
-			$pageTemplate = 'reports-loadtimes.php';
+		
+		} else if ($args['subView'] == 'loadtime-trending') {
+			$pageTemplate = 'reports-loadtimes-trending.php';
 			$loadtimeSubnavClass = true;
+			$trendingSearchResults = $db->getHighLoadTimesOverTime('7', 300, $searchTerm);
+		
 		} else {
 			$pageTemplate = 'reports.php';
 			$loadtimeSubnavClass = false;
@@ -370,6 +373,7 @@ $app->group('/reports', function () {
 		    'reportClass' => $loadtimeSubnavClass,
 		    'reportLoadtimeSubNav' => $loadtimeSubnavClass,
 		    'allReports' => $allReports,
+		    'trendingSearchResults' => $trendingSearchResults,
 
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
@@ -442,7 +446,7 @@ $app->group('/reports', function () {
       	}
 
       	if ($__postVars['queryLoadtimes'] == true) {
-      		$loadtimeSearchResults = $db->getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm);	
+      		$loadtimeSearchResults = $db->getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm);
       	}
 
       	return $this->renderer->render($response, 'reports-loadtimes-search.php', [

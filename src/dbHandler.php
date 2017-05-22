@@ -757,7 +757,7 @@ class DbHandler {
 
 
     public function getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm) {
-        $output = Spire::spireCache('getHighLoadTimesOverTime', 10, function() use ($dayRange, $minResponseTime, $searchTerm) {
+        $output = Spire::spireCache('getHighLoadTimesOverTime_'.$dayRange.'_'.$minResponseTime.'_', 10, function() use ($dayRange, $minResponseTime, $searchTerm) {
 
             $db_con = Spire::getConnection();
 
