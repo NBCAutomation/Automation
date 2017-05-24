@@ -14,8 +14,8 @@
 // ./run.sh apiCheck-article --url=http://www.telemundolasvegas.com --output=console
 // curl -I "http://www.nbcnewyork.com/templates/nbc_news_app_json_manifest?apiVersion=5&c=n" -H "bowl: arch" -H "Pragma: akamai-x-cache-on,akamai-x-get-cache-key,akamai-x-check-cacheable"
 
-casper.options.stepTimeout = 3000;
-casper.options.timeout = 5000;
+casper.options.stepTimeout = 15000;
+casper.options.timeout = 15000;
 
 casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     'use strict';
