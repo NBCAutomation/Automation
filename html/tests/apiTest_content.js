@@ -189,8 +189,93 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             });
         };
 
+    casper.on('starting', function() {
+        test.comment("-------- casper starting");
+    });
+
+    casper.on('started', function() {
+        test.comment("-------- casper started");
+    });
+
     casper.on('resource.requested', listener);
     casper.on('resource.received', receivedListener);
+    
+    casper.on('step.start', function(data) {
+        test.comment("-------- starting step: " + data);
+        test.comment("-------- starting step typeof: " + typeof(data));
+        test.comment("-------- starting step stringified: " + JSON.stringify(data));
+    });
+
+    casper.on('step.error', function() {
+        test.comment("-------- Step has failed");
+    });
+
+    casper.on('step.timeout', function() {
+        test.comment("-------- Step timedout");
+    });
+
+    casper.on('url.changed', function() {
+        test.comment("-------- url.changed");
+    });
+    casper.on('step.complete', function(results) {
+        test.comment("-------- step.complete " + results);
+        test.comment("-------- step.typeof" + typeof(results));
+        test.comment("-------- step.complete" + JSON.stringify(results));
+    });
+    casper.on('complete.error', function() {
+        test.comment("-------- complete.error");
+    });
+    casper.on('frame.change', function() {
+        test.comment("-------- frame.change");
+    });
+    casper.on('load.started', function() {
+        test.comment("-------- load.started");
+    });
+    casper.on('load.failed', function() {
+        test.comment("-------- load.failed");
+    });
+    casper.on('load.finished', function() {
+        test.comment("-------- load.finished");
+    });
+    casper.on('navigation.requested', function(url, navigationType, navigationLocked, isMainFrame) {
+        test.comment("-------- navigation.requested");
+        test.comment(JSON.stringify({
+            'url': url,
+            'navigationType': navigationType,
+            'navigationLocked': navigationLocked,
+            'isMainFrame': isMainFrame
+        }));
+    });
+    casper.on('resource.error', function(resourceError) {
+        test.comment("-------- resource.error");
+        test.comment('  errorCode => ' + resourceError.errorCode);
+        test.comment('  errorString => ' + resourceError.errorString);
+        test.comment('  url => ' + resourceError.url);
+        test.comment('  id => ' + resourceError.id);
+    });
+    casper.on('resource.timeout', function() {
+        test.comment("-------- resource.timeout");
+    });
+    casper.on('run.complete', function() {
+        test.comment("-------- run.complete");
+    });
+    casper.on('remote.alert', function() {
+        test.comment("-------- remote.alert");
+    });
+    casper.on('remote.callback', function() {
+        test.comment("-------- remote.callback");
+    });
+    casper.on('remote.error', function() {
+        test.comment("-------- remote.error");
+    });
+    casper.on('timeout', function() {
+        test.comment("-------- timeout");
+    });
+    casper.on('url.changed', function() {
+        test.comment("-------- url.changed");
+    });
+
+
 
     if (envConfig === 'local') {
         configURL = 'http://spire.app';
@@ -548,7 +633,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                 var currentPageContentType = resp.contentType;
                 var validated = false;
-                var status = this.status().currentHTTPStatus;
+                // var status = this.status().currentHTTPStatus;
+                var status = resp.status;
                 var output = this.getPageContent();
                 var currentTestResults = {};
 
@@ -570,6 +656,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                         // Test parsing JSON
                         if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
+
                         try {
                             output = JSON.parse(output);
 
@@ -636,8 +723,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                     manifestTestStatus = 'Fail';
                                     setFail++;
                                 }
-                            } else {
-                                console.log('non cleaned');
                             }
                         }
                     }
@@ -1106,6 +1191,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     };
 
     apiSuite.prototype.galleryObjectTest = function (articleContentID, galleryURL, testID) {
+        console.log('galleryURL: ', galleryURL);
+        // return;
         var suite = this;
         casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             var status = this.status().currentHTTPStatus;
@@ -1137,6 +1224,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                 }
 
                                 if (gallerySingleImageURL) {
+                                    console.log("HIIII: gallerySingleImageURL: ", gallerySingleImageURL);
                                     casper.thenOpen(gallerySingleImageURL).then(function (galResp) {
                                         var httpStatus = null;
 
