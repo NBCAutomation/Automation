@@ -90,34 +90,62 @@
 		<?php
 
 		$endpointTrendArray = array();
+		$loadtimesSubArray = array();
 
 		echo "<pre>";
-			// var_dump($trendingSearchResults);
+			// var_dump($trendingSearchResults[0]);
 
 			foreach ($data as $trendingSearchResults) {
-				// var_dump($data['trendingSearchResults'][0]);
-				
 				foreach ($data['trendingSearchResults'][0] as $key => $value) {
-					$l10nDate = new DateTime($value['created']);
-					$l10nDate->setTimeZone($usersTimezone);
-
-
-					$endpointTrendArray[$key] = array_shift(explode('contentId=', strstr($value['endpoint'], '/apps')));
-					$endpointTrendArray[$key.'_loadtime'] = $value['max_load_time'];
-					$endpointTrendArray[$key.'_created'] = $l10nDate->format('n/d/Y, g:i A');
-
-					// $endpointTrendArray[$key] = array_shift(explode('contentId=', strstr($value['endpoint'], '/apps'))).'|'.$value['max_load_time'].'|'.$l10nDate->format('n/d/Y, g:i A');
-					// echo $value['endpoint'].'<br />';
-					// echo $value['max_load_time'];
-					// echo $l10nDate->format('n/d/Y, g:i A').'"'.PHP_EOL;
+					$endpointArrayKey = array_shift(explode('contentId=', strstr($value['endpoint'], '/apps')));
+					$endpointTrendArray[$endpointArrayKey] = [];
 				}
 			}
 
 			foreach ($endpointTrendArray as $columnkey => $columnvalue) {
-				// echo "columnvalue[columnkey] > ". $columnvalue[$columnkey].'<br />';
-				// echo "columnkey > ". $columnkey.'<br />';
-				echo "columnvalue > ". $columnvalue.'<br />';
+				foreach ($data as $trendingSearchResults) {
+					foreach ($data['trendingSearchResults'][0] as $key => $value) {
+						if (strpos($value['endpoint'], $columnkey)) {
+							// echo $value['max_load_time'].'<br />';
+							// array_push($loadtimesSubArray, $value['max_load_time']);
+							$loadtimesSubArray[$key.'_loadtime'] = $value['max_load_time'];
+						}
+					}
+				}
+				$endpointTrendArray[$columnkey] = $loadtimesSubArray;
+				$loadtimesSubArray = [];
 			}
+
+
+			foreach ($endpointTrendArray as $key => $value) {
+				echo $key;
+				$loadtimeAverage = array_sum($value) / count($value);
+				echo round($loadtimeAverage).'<br/>';
+
+				// foreach ($value as $loadtimeKey => $loadtimeVal) {
+				// 	echo $loadtimeVal.'<br />';
+				// }
+
+			}
+
+			// foreach ($endpointTrendArray as $columnkey => $columnvalue) {
+			// 	if ($endpointArrayKey === $columnkey) {
+			// 		// echo "key found";
+			// 		$loadtimesSubArray[$key.'_loadtime'] = $value['max_load_time'];
+
+			// 		if (stripos($value['endpoint'], $endpointArrayKey)) {
+			// 			echo $endpointArrayKey.'<br />';
+			// 			echo $key.' -- '.$value['endpoint'].' -- '.$value['max_load_time'].'<br />';
+			// 			echo "------<br />";
+			// 			// echo $key.' -- '.$value['endpoint'].' -- '.$value['max_load_time'].'<br />';
+			// 		// 	$endpointTrendArray[$endpointArrayKey] = $loadtimesSubArray;	
+			// 		}
+			// 	} else {
+			// 		// echo "not found<br/>";
+			// 	}
+			// }
+
+			// var_dump($endpointTrendArray);
 		echo "</pre>";
 		?>
 	</div>
