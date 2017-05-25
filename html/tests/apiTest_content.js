@@ -190,94 +190,208 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
                 this.exit();
             });
+        },
+        triggerEvent = function (event, args) {
+            // test.comment(arguments);
+            var array_args = Array.prototype.slice.call(args);
+            console.log("EVENT: " + event);
+            console.log("\t" + JSON.stringify(args));
+            console.log("\t" + JSON.stringify(array_args));
+            console.log("\t" + array_args);
         };
 
-    casper.on('starting', function() {
-        test.comment("-------- casper starting");
+    casper.on("back", function () {
+        triggerEvent("back", arguments);
     });
-
-    casper.on('started', function() {
-        test.comment("-------- casper started");
+    casper.on("capture.saved", function () {
+        triggerEvent("capture.saved", arguments);
     });
-
-    casper.on('resource.requested', listener);
-    casper.on('resource.received', receivedListener);
-
-    casper.on('step.start', function(data) {
-        test.comment("-------- starting step: " + data);
-        test.comment("-------- starting step typeof: " + typeof(data));
-        test.comment("-------- starting step stringified: " + JSON.stringify(data));
+    casper.on("click", function () {
+        triggerEvent("click", arguments);
     });
-
-    casper.on('step.error', function() {
-        test.comment("-------- Step has failed");
+    casper.on("complete.error", function () {
+        triggerEvent("complete.error", arguments);
     });
-
-    casper.on('step.timeout', function() {
-        test.comment("-------- Step timedout");
+    casper.on("die", function () {
+        triggerEvent("die", arguments);
     });
-
-    casper.on('url.changed', function() {
-        test.comment("-------- url.changed");
+    casper.on("downloaded.file", function () {
+        triggerEvent("downloaded.file", arguments);
     });
-    casper.on('step.complete', function(results) {
-        test.comment("-------- step.complete " + results);
-        test.comment("-------- step.typeof" + typeof(results));
-        test.comment("-------- step.complete" + JSON.stringify(results));
+    casper.on("downloaded.error", function () {
+        triggerEvent("downloaded.error", arguments);
     });
-    casper.on('complete.error', function() {
-        test.comment("-------- complete.error");
+    casper.on("error", function () {
+        triggerEvent("error", arguments);
     });
-    casper.on('frame.change', function() {
-        test.comment("-------- frame.change");
+    casper.on("exit", function () {
+        triggerEvent("exit", arguments);
     });
-    casper.on('load.started', function() {
-        test.comment("-------- load.started");
+    casper.on("fill", function () {
+        triggerEvent("fill", arguments);
     });
-    casper.on('load.failed', function() {
-        test.comment("-------- load.failed");
+    casper.on("forward", function () {
+        triggerEvent("forward", arguments);
     });
-    casper.on('load.finished', function() {
-        test.comment("-------- load.finished");
+    casper.on("frame.changed", function () {
+        triggerEvent("frame.changed", arguments);
     });
-    casper.on('navigation.requested', function(url, navigationType, navigationLocked, isMainFrame) {
-        test.comment("-------- navigation.requested");
-        test.comment(JSON.stringify({
-            'url': url,
-            'navigationType': navigationType,
-            'navigationLocked': navigationLocked,
-            'isMainFrame': isMainFrame
-        }));
+    casper.on("http.auth", function () {
+        triggerEvent("http.auth", arguments);
     });
-    casper.on('resource.error', function(resourceError) {
-        test.comment("-------- resource.error");
-        test.comment('  errorCode => ' + resourceError.errorCode);
-        test.comment('  errorString => ' + resourceError.errorString);
-        test.comment('  url => ' + resourceError.url);
-        test.comment('  id => ' + resourceError.id);
+    casper.on("http.status.[code]", function () {
+        triggerEvent("http.status.[code]", arguments);
     });
-    casper.on('resource.timeout', function() {
-        test.comment("-------- resource.timeout");
+    casper.on("load.started", function () {
+        triggerEvent("load.started", arguments);
     });
-    casper.on('run.complete', function() {
-        test.comment("-------- run.complete");
+    casper.on("load.failed", function () {
+        triggerEvent("load.failed", arguments);
     });
-    casper.on('remote.alert', function() {
-        test.comment("-------- remote.alert");
+    casper.on("load.finished", function () {
+        triggerEvent("load.finished", arguments);
     });
-    casper.on('remote.callback', function() {
-        test.comment("-------- remote.callback");
+    casper.on("log", function () {
+        triggerEvent("log", arguments);
     });
-    casper.on('remote.error', function() {
-        test.comment("-------- remote.error");
+    casper.on("mouse.click", function () {
+        triggerEvent("mouse.click", arguments);
     });
-    casper.on('timeout', function() {
-        test.comment("-------- timeout");
+    casper.on("mouse.down", function () {
+        triggerEvent("mouse.down", arguments);
     });
-    casper.on('url.changed', function() {
-        test.comment("-------- url.changed");
+    casper.on("mouse.move", function () {
+        triggerEvent("mouse.move", arguments);
     });
-
+    casper.on("mouse.up", function () {
+        triggerEvent("mouse.up", arguments);
+    });
+    casper.on("navigation.requested", function () {
+        triggerEvent("navigation.requested", arguments);
+    });
+    casper.on("open", function () {
+        triggerEvent("open", arguments);
+    });
+    casper.on("page.created", function () {
+        triggerEvent("page.created", arguments);
+    });
+    casper.on("page.error", function () {
+        triggerEvent("page.error", arguments);
+    });
+    casper.on("page.initialized", function () {
+        triggerEvent("page.initialized", arguments);
+    });
+    casper.on("page.resource.received", function () {
+        triggerEvent("page.resource.received", arguments);
+    });
+    casper.on("page.resource.requested", function () {
+        triggerEvent("page.resource.requested", arguments);
+    });
+    casper.on("popup.created", function () {
+        triggerEvent("popup.created", arguments);
+    });
+    casper.on("popup.loaded", function () {
+        triggerEvent("popup.loaded", arguments);
+    });
+    casper.on("popup.closed", function () {
+        triggerEvent("popup.closed", arguments);
+    });
+    casper.on("remote.alert", function () {
+        triggerEvent("remote.alert", arguments);
+    });
+    casper.on("remote.callback", function () {
+        triggerEvent("remote.callback", arguments);
+    });
+    casper.on("remote.longRunningScript", function () {
+        triggerEvent("remote.longRunningScript", arguments);
+    });
+    casper.on("remote.message", function () {
+        triggerEvent("remote.message", arguments);
+    });
+    casper.on("resource.error", function () {
+        triggerEvent("resource.error", arguments);
+    });
+    casper.on("resource.received", function () {
+        triggerEvent("resource.received", arguments);
+    });
+    casper.on("resource.requested", function () {
+        triggerEvent("resource.requested", arguments);
+    });
+    casper.on("resource.timeout", function () {
+        triggerEvent("resource.timeout", arguments);
+    });
+    casper.on("run.complete", function () {
+        triggerEvent("run.complete", arguments);
+    });
+    casper.on("run.start", function () {
+        triggerEvent("run.start", arguments);
+    });
+    casper.on("starting", function () {
+        triggerEvent("starting", arguments);
+    });
+    casper.on("started", function () {
+        triggerEvent("started", arguments);
+    });
+    casper.on("step.added", function () {
+        triggerEvent("step.added", arguments);
+    });
+    casper.on("step.bypassed", function () {
+        triggerEvent("step.bypassed", arguments);
+    });
+    casper.on("step.complete", function () {
+        triggerEvent("step.complete", arguments);
+    });
+    casper.on("step.created", function () {
+        triggerEvent("step.created", arguments);
+    });
+    casper.on("step.error", function () {
+        triggerEvent("step.error", arguments);
+    });
+    casper.on("step.start", function () {
+        triggerEvent("step.start", arguments);
+    });
+    casper.on("step.timeout", function () {
+        triggerEvent("step.timeout", arguments);
+    });
+    casper.on("timeout", function () {
+        triggerEvent("timeout", arguments);
+    });
+    casper.on("url.changed", function () {
+        triggerEvent("url.changed", arguments);
+    });
+    casper.on("viewport.changed", function () {
+        triggerEvent("viewport.changed", arguments);
+    });
+    casper.on("wait.done", function () {
+        triggerEvent("wait.done", arguments);
+    });
+    casper.on("wait.start", function () {
+        triggerEvent("wait.start", arguments);
+    });
+    casper.on("waitFor.timeout", function () {
+        triggerEvent("waitFor.timeout", arguments);
+    });
+    casper.on("capture.target_filename", function () {
+        triggerEvent("capture.target_filename", arguments);
+    });
+    casper.on("echo.message", function () {
+        triggerEvent("echo.message", arguments);
+    });
+    casper.on("log.message", function () {
+        triggerEvent("log.message", arguments);
+    });
+    casper.on("open.location", function () {
+        triggerEvent("open.location", arguments);
+    });
+    casper.on("page.confirm", function () {
+        triggerEvent("page.confirm", arguments);
+    });
+    casper.on("page.filePicker", function () {
+        triggerEvent("page.filePicker", arguments);
+    });
+    casper.on("page.prompt", function () {
+        triggerEvent("page.prompt", arguments);
+    });
 
 
     if (envConfig === 'local') {
