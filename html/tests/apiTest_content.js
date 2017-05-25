@@ -190,208 +190,46 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
                 this.exit();
             });
-        },
-        triggerEvent = function (event, args) {
-            // test.comment(arguments);
-            var array_args = Array.prototype.slice.call(args);
-            console.log("EVENT: " + event);
-            console.log("\t" + JSON.stringify(args));
-            console.log("\t" + JSON.stringify(array_args));
-            console.log("\t" + array_args);
         };
 
-    casper.on("back", function () {
-        triggerEvent("back", arguments);
-    });
-    casper.on("capture.saved", function () {
-        triggerEvent("capture.saved", arguments);
-    });
-    casper.on("click", function () {
-        triggerEvent("click", arguments);
-    });
-    casper.on("complete.error", function () {
-        triggerEvent("complete.error", arguments);
-    });
-    casper.on("die", function () {
-        triggerEvent("die", arguments);
-    });
-    casper.on("downloaded.file", function () {
-        triggerEvent("downloaded.file", arguments);
-    });
-    casper.on("downloaded.error", function () {
-        triggerEvent("downloaded.error", arguments);
-    });
-    casper.on("error", function () {
-        triggerEvent("error", arguments);
-    });
-    casper.on("exit", function () {
-        triggerEvent("exit", arguments);
-    });
-    casper.on("fill", function () {
-        triggerEvent("fill", arguments);
-    });
-    casper.on("forward", function () {
-        triggerEvent("forward", arguments);
-    });
-    casper.on("frame.changed", function () {
-        triggerEvent("frame.changed", arguments);
-    });
-    casper.on("http.auth", function () {
-        triggerEvent("http.auth", arguments);
-    });
-    casper.on("http.status.[code]", function () {
-        triggerEvent("http.status.[code]", arguments);
-    });
-    casper.on("load.started", function () {
-        triggerEvent("load.started", arguments);
-    });
-    casper.on("load.failed", function () {
-        triggerEvent("load.failed", arguments);
-    });
-    casper.on("load.finished", function () {
-        triggerEvent("load.finished", arguments);
-    });
-    casper.on("log", function () {
-        triggerEvent("log", arguments);
-    });
-    casper.on("mouse.click", function () {
-        triggerEvent("mouse.click", arguments);
-    });
-    casper.on("mouse.down", function () {
-        triggerEvent("mouse.down", arguments);
-    });
-    casper.on("mouse.move", function () {
-        triggerEvent("mouse.move", arguments);
-    });
-    casper.on("mouse.up", function () {
-        triggerEvent("mouse.up", arguments);
-    });
-    casper.on("navigation.requested", function () {
-        triggerEvent("navigation.requested", arguments);
-    });
-    casper.on("open", function () {
-        triggerEvent("open", arguments);
-    });
-    casper.on("page.created", function () {
-        triggerEvent("page.created", arguments);
-    });
-    casper.on("page.error", function () {
-        triggerEvent("page.error", arguments);
-    });
-    casper.on("page.initialized", function () {
-        triggerEvent("page.initialized", arguments);
-    });
-    casper.on("page.resource.received", function () {
-        triggerEvent("page.resource.received", arguments);
-    });
-    casper.on("page.resource.requested", function () {
-        triggerEvent("page.resource.requested", arguments);
-    });
-    casper.on("popup.created", function () {
-        triggerEvent("popup.created", arguments);
-    });
-    casper.on("popup.loaded", function () {
-        triggerEvent("popup.loaded", arguments);
-    });
-    casper.on("popup.closed", function () {
-        triggerEvent("popup.closed", arguments);
-    });
-    casper.on("remote.alert", function () {
-        triggerEvent("remote.alert", arguments);
-    });
-    casper.on("remote.callback", function () {
-        triggerEvent("remote.callback", arguments);
-    });
-    casper.on("remote.longRunningScript", function () {
-        triggerEvent("remote.longRunningScript", arguments);
-    });
-    casper.on("remote.message", function () {
-        triggerEvent("remote.message", arguments);
-    });
-    casper.on("resource.error", function () {
-        triggerEvent("resource.error", arguments);
-    });
-    casper.on("resource.received", function () {
-        triggerEvent("resource.received", arguments);
-    });
-    casper.on("resource.requested", function () {
-        triggerEvent("resource.requested", arguments);
-    });
-    casper.on("resource.timeout", function () {
-        triggerEvent("resource.timeout", arguments);
-    });
-    casper.on("run.complete", function () {
-        triggerEvent("run.complete", arguments);
-    });
-    casper.on("run.start", function () {
-        triggerEvent("run.start", arguments);
-    });
-    casper.on("starting", function () {
-        triggerEvent("starting", arguments);
-    });
-    casper.on("started", function () {
-        triggerEvent("started", arguments);
-    });
-    casper.on("step.added", function () {
-        triggerEvent("step.added", arguments);
-    });
-    casper.on("step.bypassed", function () {
-        triggerEvent("step.bypassed", arguments);
-    });
-    casper.on("step.complete", function () {
-        triggerEvent("step.complete", arguments);
-    });
-    casper.on("step.created", function () {
-        triggerEvent("step.created", arguments);
-    });
-    casper.on("step.error", function () {
-        triggerEvent("step.error", arguments);
-    });
-    casper.on("step.start", function () {
-        triggerEvent("step.start", arguments);
-    });
-    casper.on("step.timeout", function () {
-        triggerEvent("step.timeout", arguments);
-    });
-    casper.on("timeout", function () {
-        triggerEvent("timeout", arguments);
-    });
-    casper.on("url.changed", function () {
-        triggerEvent("url.changed", arguments);
-    });
-    casper.on("viewport.changed", function () {
-        triggerEvent("viewport.changed", arguments);
-    });
-    casper.on("wait.done", function () {
-        triggerEvent("wait.done", arguments);
-    });
-    casper.on("wait.start", function () {
-        triggerEvent("wait.start", arguments);
-    });
-    casper.on("waitFor.timeout", function () {
-        triggerEvent("waitFor.timeout", arguments);
-    });
-    casper.on("capture.target_filename", function () {
-        triggerEvent("capture.target_filename", arguments);
-    });
-    casper.on("echo.message", function () {
-        triggerEvent("echo.message", arguments);
-    });
-    casper.on("log.message", function () {
-        triggerEvent("log.message", arguments);
-    });
-    casper.on("open.location", function () {
-        triggerEvent("open.location", arguments);
-    });
-    casper.on("page.confirm", function () {
-        triggerEvent("page.confirm", arguments);
-    });
-    casper.on("page.filePicker", function () {
-        triggerEvent("page.filePicker", arguments);
-    });
-    casper.on("page.prompt", function () {
-        triggerEvent("page.prompt", arguments);
-    });
+    function setDebugEvents() {
+        var triggerEvent = function (event, args) {
+                // test.comment(arguments);
+                var array_args = Array.prototype.slice.call(args);
+                console.log("EVENT: " + event);
+                console.log("\t" + JSON.stringify(array_args));
+                console.log("\t" + array_args);
+            },
+            setTriggerEvent = function (evtName) {
+                casper.on(evtName, function () {
+                    triggerEvent(evtName, arguments);
+                });
+            },
+            eventsArray = [
+                "back", "capture.saved", "click", "complete.error", "die", "downloaded.file",
+                "downloaded.error", "error", "exit", "fill", "forward", "frame.changed", "http.auth",
+                "http.status.[code]", "load.started", "load.failed", "load.finished", "log",
+                "mouse.click", "mouse.down", "mouse.move", "mouse.up", "navigation.requested", "open",
+                "page.created", "page.error", "page.initialized", "page.resource.received",
+                "page.resource.requested", "popup.created", "popup.loaded", "popup.closed",
+                "remote.alert", "remote.callback", "remote.longRunningScript", "remote.message",
+                "resource.error", "resource.received", "resource.requested", "resource.timeout",
+                "run.complete", "run.start", "starting", "started", "step.added", "step.bypassed",
+                "step.complete", "step.created", "step.error", "step.start", "step.timeout", "timeout",
+                "url.changed", "viewport.changed", "wait.done", "wait.start", "waitFor.timeout",
+                "capture.target_filename", "echo.message", "log.message", "open.location", "page.confirm",
+                "page.filePicker", "page.prompt"
+            ],
+            i,
+            event;
+
+        for (i = eventsArray.length - 1; i >= 0; i -= 1) {
+            event = eventsArray[i];
+            setTriggerEvent(event);
+        }
+    }
+
+    setDebugEvents();
 
 
     if (envConfig === 'local') {
