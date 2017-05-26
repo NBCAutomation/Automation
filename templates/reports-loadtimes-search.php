@@ -6,6 +6,39 @@
 	// Set default server time zone
 	date_default_timezone_set('UTC');
 	$usersTimezone = new DateTimeZone('America/New_York');
+
+	if ($trending) {
+		// var_dump($trendingSearchResults[0]);
+		// $loadtimeSearchResults = $trendingSearchResults[0];
+
+		$endpointTrendArray = array();
+		$loadtimesSubArray = array();
+
+		foreach ($data as $trendingSearchResults) {
+			foreach ($data['trendingSearchResults'][0] as $key => $value) {
+				$endpointArrayKey = array_shift(explode('contentId=', strstr($value['endpoint'], '/apps')));
+				$endpointTrendArray[$endpointArrayKey] = [];
+			}
+		}
+
+		foreach ($endpointTrendArray as $columnkey => $columnvalue) {
+			foreach ($data as $trendingSearchResults) {
+				foreach ($data['trendingSearchResults'][0] as $key => $value) {
+					if (strpos($value['endpoint'], $columnkey)) {
+						$loadtimesSubArray[$key.'_loadtime'] = $value['max_load_time'];
+					}
+				}
+			}
+			$endpointTrendArray[$columnkey] = $loadtimesSubArray;
+			$loadtimesSubArray = [];
+		}
+		
+		$downloadFile = $endpointTrendArray;
+		$downloadDataType = 'trending';
+	} else {
+		$downloadFile = $loadtimeSearchResults;
+		$downloadDataType = 'default';
+	}
 ?>
 	<div class="panel-body api_results">
 	<div class="panel panel-default">
@@ -46,6 +79,12 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label class="col-sm-2 control-label">Combine occurrences</label>
+						<div class="col-sm-10">
+							<input id="checkbox1" type="checkbox" name="trending" value="true"><span class="help-block m-b-none">Combine multiple occurrences of the endpoint and create averages based on those occurrences. </span>
+						</div>
+					</div>
+					<div class="form-group">
 						<div class="col-sm-8 col-sm-offset-2">
 							<input type="hidden" name="queryLoadtimes" value="true">
 							<button class="btn btn-primary" type="submit">Search</button>
@@ -64,7 +103,8 @@
 	<div class="api_results">
 		<div class="panel-body">
 			<div class="tab-pane fade active in">
-				<?php if ($apiSectionContentLoadTimes) { 
+				<?php
+					if ($apiSectionContentLoadTimes) { 
 						Spire::formatLoadTimesTable($apiSectionContentLoadTimes);
 					} elseif ($formResponse) {
 						if (! $searchMinResponseTime) { $searchMinResponseTime = '300'; }
@@ -78,13 +118,46 @@
 						<div class="form-group">
 							<div class="col-sm-8 col-sm">
 								<input type="hidden" name="processDownload" value="true">
-								<input type="hidden" name="downloadData" value="<?php echo urlencode(Spire::downloadLoadTimeResults($loadtimeSearchResults)); ?>">
+								<input type="hidden" name="downloadData" value="<?php echo urlencode(Spire::downloadLoadTimeResults($downloadFile, $downloadDataType)); ?>">
 								<button class="btn btn-primary" type="submit">Export Reuslts</button>
 							</div>
 						</div>
 					</form>
 					<?php
-						Spire::formatLoadTimeSearchResultsTable($loadtimeSearchResults);
+						if (! $trending) {
+							Spire::formatLoadTimeSearchResultsTable($loadtimeSearchResults);
+						} else {
+					?>
+						<div class="panel panel-default">
+							<div class="panel-heading">Trending endpoints</div>
+							<div class="panel-body">
+								<p class="text-muted small"><i>* If the table doesn't style properly, click one of the sorting headers to update the view.</i></p>
+								<table id="trending-table" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+									<thead>
+										<tr>
+											<th>Endpoint URL</th>
+											<th>Avg. Loadtime (ms)</th>
+										</tr>
+									</thead>
+									<tfoot>
+										<tr>
+											<th>Endpoint</th>
+											<th>Avg. Loadtime (ms)</th>
+										</tr>
+									</tfoot>
+									<tbody>
+										<?php
+											foreach ($endpointTrendArray as $key => $value) {
+												$loadtimeAverage = array_sum($value) / count($value);
+												echo '<tr><td>'.$key.'</td><td>'.round($loadtimeAverage).'</td></tr>';
+											}
+										?>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					<?php
+						}
 					}
 				?>
 			</div>

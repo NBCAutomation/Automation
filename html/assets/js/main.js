@@ -23,8 +23,6 @@
 	// Table settings
 	$('#zctb').DataTable();
 
-	$('#zctb-trending').DataTable();
-
 	$('.reports_table').DataTable({
 		"scrollX": true,
 		"order": [[ 2, "desc" ]],
@@ -52,6 +50,12 @@
 		"scrollX": true,
 		"order": [[ 2, "desc" ]],
 		"iDisplayLength": 100
+	});
+
+	$('#trending-table').DataTable({
+		"scrollX": true,
+		"order": [[ 1, "desc" ]],
+		"iDisplayLength": 50
 	});
 
 

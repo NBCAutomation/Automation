@@ -353,11 +353,6 @@ $app->group('/reports', function () {
 			$pageTemplate = 'reports-loadtimes-search.php';
 			$loadtimeSubnavClass = true;
 		
-		} else if ($args['subView'] == 'loadtime-trending') {
-			$pageTemplate = 'reports-loadtimes-trending.php';
-			$loadtimeSubnavClass = true;
-			$trendingSearchResults = $db->getHighLoadTimesOverTime('7', 300, $searchTerm);
-		
 		} else {
 			$pageTemplate = 'reports.php';
 			$loadtimeSubnavClass = false;
@@ -373,7 +368,6 @@ $app->group('/reports', function () {
 		    'reportClass' => $loadtimeSubnavClass,
 		    'reportLoadtimeSubNav' => $loadtimeSubnavClass,
 		    'allReports' => $allReports,
-		    'trendingSearchResults' => $trendingSearchResults,
 
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
@@ -430,6 +424,7 @@ $app->group('/reports', function () {
       	$dayRange = $__postVars['range'];
       	$minResponseTime = $__postVars['mintime'];
       	$searchTerm = $__postVars['term'];
+      	
       	// var_dump($dayRange, $minResponseTime, $searchTerm);
 
       	if ($__postVars['processDownload'] == true) {
@@ -449,6 +444,11 @@ $app->group('/reports', function () {
       		$loadtimeSearchResults = $db->getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm);
       	}
 
+      	if ($__postVars['trending']) {
+      		$trending = true;
+      		$trendingSearchResults = $db->getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm);
+      	}
+
       	return $this->renderer->render($response, 'reports-loadtimes-search.php', [
 	        'title' => 'Loadtime Search',
 	        'page_name' => 'loadtime-search',
@@ -460,6 +460,8 @@ $app->group('/reports', function () {
 	        'searchDayRange' => $dayRange,
 			'searchMinResponseTime' => $minResponseTime,
 			'searchTerm' => $searchTerm,
+			'trending' => $trending,
+			'trendingSearchResults' => $trendingSearchResults,
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),

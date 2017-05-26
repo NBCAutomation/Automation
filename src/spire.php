@@ -336,20 +336,32 @@ class Spire {
 		}
 	}
 
-	public static function downloadLoadTimeResults($data){
-		// var_dump($view);
+	public static function downloadLoadTimeResults($data, $method){
+		// var_dump($data);
 		// exit();
+
 		$csv_export = '';
-		$csv_export .= '"endpoint","max_load_time","created"'.PHP_EOL;
 
-		foreach ($data as $testReport) {
-			foreach ($data[0] as $key => $value) {
-				$l10nDate = new DateTime($value['created']);
-				$l10nDate->setTimeZone($usersTimezone);
+		if ($method == 'trending') {
+			$csv_export .= '"endpoint","Average Loadtime (ms)"'.PHP_EOL;
 
-				$csv_export .= '"'.str_replace('stage_', 'stage.', $value['endpoint']).'","'.$value['max_load_time'].'","'.$l10nDate->format('n/d/Y, g:i A').'"'.PHP_EOL;
+			foreach ($data as $key => $value) {
+				$loadtimeAverage = array_sum($value) / count($value);
+				$csv_export .= '"'.$key.'","'.round($loadtimeAverage).'"'.PHP_EOL;
 			}
 			return $csv_export;
+		} else {
+			$csv_export .= '"endpoint","max_load_time","created"'.PHP_EOL;
+
+			foreach ($data as $testReport) {
+				foreach ($data[0] as $key => $value) {
+					$l10nDate = new DateTime($value['created']);
+					$l10nDate->setTimeZone($usersTimezone);
+
+					$csv_export .= '"'.str_replace('stage_', 'stage.', $value['endpoint']).'","'.$value['max_load_time'].'","'.$l10nDate->format('n/d/Y, g:i A').'"'.PHP_EOL;
+				}
+				return $csv_export;
+			}
 		}
 	}
 
