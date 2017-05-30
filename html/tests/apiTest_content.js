@@ -14,6 +14,9 @@
 // ./run.sh apiCheck-article --url=http://www.telemundolasvegas.com --output=console
 // curl -I "http://www.nbcnewyork.com/templates/nbc_news_app_json_manifest?apiVersion=5&c=n" -H "bowl: arch" -H "Pragma: akamai-x-cache-on,akamai-x-get-cache-key,akamai-x-check-cacheable"
 
+// casper.options.stepTimeout = 60000;
+casper.options.timeout = 3600000;
+
 casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     'use strict';
     // Global Vars
@@ -114,7 +117,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     // Manually created collection of test items
                     apiSuiteInstance.collectionObject['breaking__modules'] = url + '/apps/news-app/breaking/modules/?apiVersion=' + apiVersion + enableJsonValidation;
                     apiSuiteInstance.collectionObject['just-in__live'] = url + '/apps/news-app/just-in/live/?apiVersion=' + apiVersion + enableJsonValidation;
-                    apiSuiteInstance.collectionObject['tve__featured'] = url + '/apps/news-app/?location=/feature/tve-featured-clips&apiVersion=' + apiVersion + enableJsonValidation;
 
                     // Test Collection data
                     apiSuiteInstance.testNavigationData();
@@ -190,8 +192,42 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             });
         };
 
-    casper.on('resource.requested', listener);
-    casper.on('resource.received', receivedListener);
+    function setDebugEvents() {
+        var triggerEvent = function (event, args) {
+                // test.comment(arguments);
+                var array_args = Array.prototype.slice.call(args);
+                console.log("EVENT: " + event);
+                console.log("\t" + JSON.stringify(array_args));
+                console.log("\t" + array_args);
+            },
+            setTriggerEvent = function (evtName) {
+                casper.on(evtName, function () {
+                    triggerEvent(evtName, arguments);
+                });
+            },
+            eventsArray = [
+                "back", "capture.saved", "click", "complete.error", "die", "downloaded.file",
+                "downloaded.error", "error", "exit", "fill", "forward", "frame.changed", "http.auth",
+                "http.status.[code]", "load.started", "load.failed", "load.finished", "log",
+                "mouse.click", "mouse.down", "mouse.move", "mouse.up", "navigation.requested", "open",
+                "page.created", "page.error", "page.initialized", "page.resource.received",
+                "page.resource.requested", "popup.created", "popup.loaded", "popup.closed",
+                "remote.alert", "remote.callback", "remote.longRunningScript", "remote.message",
+                "resource.error", "resource.received", "resource.requested", "resource.timeout",
+                "run.complete", "run.start", "starting", "started", "step.added", "step.bypassed",
+                "step.complete", "step.created", "step.error", "step.start", "step.timeout", "timeout",
+                "url.changed", "viewport.changed", "wait.done", "wait.start", "waitFor.timeout",
+                "capture.target_filename", "echo.message", "log.message", "open.location", "page.confirm",
+                "page.filePicker", "page.prompt"
+            ],
+            i,
+            event;
+
+        for (i = eventsArray.length - 1; i >= 0; i -= 1) {
+            event = eventsArray[i];
+            setTriggerEvent(event);
+        }
+    }
 
     if (envConfig === 'local') {
         configURL = 'http://spire.app';
@@ -211,6 +247,11 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
     if (!casper.cli.get('enablevalidation')) {
         enableJsonValidation = '&enableJsonValidation=false';
+    }
+
+    // Output debug logging
+    if (debugOutput) {
+        setDebugEvents();
     }
 
     apiSuite.prototype.processLoadTimes = function () {
@@ -544,12 +585,13 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         if (url) {
             casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
                 test.comment(' > validateJson() url open');
-                
+
                 if (debugOutput) { require('utils').dump(resp); }
 
                 var currentPageContentType = resp.contentType;
                 var validated = false;
-                var status = this.status().currentHTTPStatus;
+                // var status = this.status().currentHTTPStatus;
+                var status = resp.status;
                 var output = this.getPageContent();
                 var currentTestResults = {};
 
@@ -571,6 +613,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                         // Test parsing JSON
                         if (debugOutput) {console.log('### Content Type ' + resp.headers.get('Content-Type'))};
+
                         try {
                             output = JSON.parse(output);
 
@@ -607,7 +650,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                             console.log('-------------------');
                                             console.log(cleanedJson)
                                         };
-                                        
+
                                         var JSONerror = 'Parse Failure: ' + e,
                                             brokenJSONString = JSONTestOutput.replace(/[\n\t\s]+/g, " ");
 
@@ -637,8 +680,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                     manifestTestStatus = 'Fail';
                                     setFail++;
                                 }
-                            } else {
-                                console.log('non cleaned');
                             }
                         }
                     }
@@ -728,7 +769,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     endpointTestResults = {},
                     jsonParsedOutput = null,
                     currentPageContentType = resp.contentType;
-                
+
                 if (
                     currentPageContentType.indexOf('html') > -1 ||
                     endpointName.indexOf('submit_photos_videos') > -1 ||
@@ -790,7 +831,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                     setFail++;
 
                                     var __curError = 'Feature flag set to TRUE but featureId empty.';
-                                    
+
                                     console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + jsonParsedOutput.contentID + ', but featureId empty.', 'ERROR'));
                                     subTestResults['featureFeatureID'] = 'FAIL: Feature flag set to TRUE for ' + jsonParsedOutput.contentID + ', but featureId empty.';
                                     var __curError = '';
@@ -811,7 +852,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                             if (jsonParsedOutput.sponsored === true) {
                                 if (jsonParsedOutput.sponsorName.length <= 0) {
                                     setFail++;
-                                    
+
                                     var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
 
                                     console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + jsonParsedOutput.contentID + ', but sponsorName empty.', 'ERROR'));
@@ -819,7 +860,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                     var __curError = '';
                                 } else if (jsonParsedOutput.sponsorID.length <= 0) {
                                     setFail++;
-                                    
+
                                     var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
 
                                     console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + jsonParsedOutput.contentID + ', but sponsorID empty.', 'ERROR'));
@@ -837,7 +878,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                 for (var singleArticleItem in singleArticleItemObject) {
 
                                     if (singleArticleItem === 'items' && typeof singleArticleItemObject[singleArticleItem] === 'object') {
-                                        
+
                                         var singleArticleInnerItems = singleArticleItemObject[singleArticleItem],
                                             __subCount = 0;
 
@@ -920,7 +961,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                             setFail++;
 
                                                             var __curError = 'Feature flag set to TRUE but featureId empty.';
-                                                            
+
                                                             console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
                                                             subTestResults['articleFeatureID'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.';
                                                             var __curError = '';
@@ -959,7 +1000,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                     if (articleSponsored === true) {
                                                         if (articleSponsorName.length <= 0) {
                                                             setFail++;
-                                                            
+
                                                             var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
 
                                                             console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
@@ -967,7 +1008,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                             var __curError = '';
                                                         } else if (articleSponsorID.length <= 0) {
                                                             setFail++;
-                                                            
+
                                                             var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
 
                                                             console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
@@ -989,7 +1030,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                             var __curError = '';
                                                         } else if (articleLiveAppVideoEmbed.length <= 0) {
                                                             setFail++;
-                                                            
+
                                                             var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
 
                                                             console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
@@ -1017,7 +1058,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                                                             var urlHealthStatus =apiSuiteInstance.checkURLHealth(galleryContentURL, function (data) {
                                                                 if (! data) {
-                                                                    
+
                                                                     if (showOutput) {
                                                                        console.log(' > Lead media: Gallery loaded failed to load correctly: ' + colorizer.colorize(data, 'FAIL'));
                                                                     }
@@ -1040,7 +1081,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                                                             var urlHealthStatus =apiSuiteInstance.checkURLHealth(videoURL, function (data) {
                                                                 if (! data) {
-                                                                    
+
                                                                     if (showOutput) {
                                                                         console.log(' > Lead media: Video release file url Failed to load: ' + colorizer.colorize(data, 'FAIL'));
                                                                     }
@@ -1051,7 +1092,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                         }
                                                         if (debugOutput) {console.log('  >---------------')};
                                                     }
-                                                    
+
                                                     if (Object.keys(subTestResults).length > 0){
                                                         // Add article ID to the results object
                                                         // endpointTestResults['articleContentID'] = articleContentID;
@@ -1074,7 +1115,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                             casper.wait(200, function () {
                                 console.log(' > Endpoint testing completed with ' + setFail + ' FAILs.');
                             });
-                        }                    
+                        }
                     } catch (e) {
                         if (showOutput) {
                             console.log('-------------------');
@@ -1107,6 +1148,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     };
 
     apiSuite.prototype.galleryObjectTest = function (articleContentID, galleryURL, testID) {
+        console.log('galleryURL: ', galleryURL);
+        // return;
         var suite = this;
         casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             var status = this.status().currentHTTPStatus;
@@ -1125,19 +1168,20 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 try{
                     jsonParsedOutput = JSON.parse(output);
 
-                    for (var parentManifestItem in jsonParsedOutput) {    
+                    for (var parentManifestItem in jsonParsedOutput) {
                         if (parentManifestItem === 'items') {
                             var innerGalleryObjects = jsonParsedOutput[parentManifestItem];
                             for (var thisGalleryObject in innerGalleryObjects){
                                 gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID;
                                 gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
-                                
+
                                 if (debugOutput) {
                                     console.log('gallerySingleImageID > ' + gallerySingleImageID);
                                     console.log('gallerySingleImageURL > ' + gallerySingleImageURL);
                                 }
 
                                 if (gallerySingleImageURL) {
+                                    // console.log("HIIII: gallerySingleImageURL: ", gallerySingleImageURL);
                                     casper.thenOpen(gallerySingleImageURL).then(function (galResp) {
                                         var httpStatus = null;
 
@@ -1187,7 +1231,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             }
         });
     };
-    
+
     apiSuite.prototype.checkURLHealth = function (url, callback) {
         var suite = this;
 
