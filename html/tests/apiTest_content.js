@@ -229,6 +229,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         }
     }
 
+    casper.on('resource.requested', listener);
+    casper.on('resource.received', receivedListener);
+
     if (envConfig === 'local') {
         configURL = 'http://spire.app';
     } else if (envConfig === 'dev') {
