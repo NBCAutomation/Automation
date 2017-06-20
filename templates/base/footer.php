@@ -86,7 +86,9 @@
 
 
 		$loadTimeDataLabels = '"' . implode('","', $dateLabels).'"';
-		$cleanedTimeDataLabels = implode(',',array_unique(explode(',', $loadTimeDataLabels)));
+		$interimCleanedTimeDataLabels = array_unique(explode(',', $loadTimeDataLabels));
+		asort($interimCleanedTimeDataLabels);
+		$cleanedTimeDataLabels = implode(',',$interimCleanedTimeDataLabels);
 
 		$manifestLinePoints = implode(",", $manifestPointData);
 		$navLinePoints = implode(",", $navPointData);
@@ -94,6 +96,7 @@
 		$contentLinePoints = implode(",", $contentPointData);
 
 		// echo '<pre>';
+		// natsort($cleanedTimeDataLabels);
 		// var_dump($cleanedTimeDataLabels);
 		// echo $manifestLinePoints;
 		// echo '</pre>';
