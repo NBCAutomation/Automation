@@ -57,22 +57,22 @@
 			
 			if (strstr($thisReportData['loadTimeFrom'], 'ManifestTest')) {
 				$manifestDataPointArray['loadtime'] = $thisReportData['averageLoadTime'];
-				$manifestDataPointArrayData[$thisReportKey] = $manifestDataPointArray;
+				$manifestDataPointArrayData[$thisReportKey] = ($manifestDataPointArray);
 			}
 
 			if (strstr($thisReportData['loadTimeFrom'], 'NavTest')) {
 				$navDataPointArray['loadtime'] = $thisReportData['averageLoadTime'];
-				$navDataPointArrayData[$thisReportKey] = $navDataPointArray;
+				$navDataPointArrayData[$thisReportKey] = ($navDataPointArray);
 			}
 
 			if (strstr($thisReportData['loadTimeFrom'], 'SectionContent')) {
 				$sectionDataPointArray['loadtime'] = $thisReportData['averageLoadTime'];
-				$sectionDataPointArrayData[$thisReportKey] = $sectionDataPointArray;
+				$sectionDataPointArrayData[$thisReportKey] = ($sectionDataPointArray);
 			}
 
 			if (strstr($thisReportData['loadTimeFrom'], 'ContentTest')) {
 				$contentDataPointArray['loadtime'] = $thisReportData['averageLoadTime'];
-				$contentDataPointArrayData[$thisReportKey] = $contentDataPointArray;
+				$contentDataPointArrayData[$thisReportKey] = ($contentDataPointArray);
 			}
 		}
 
@@ -90,10 +90,10 @@
 		asort($interimCleanedTimeDataLabels);
 		$cleanedTimeDataLabels = implode(',',$interimCleanedTimeDataLabels);
 
-		$manifestLinePoints = implode(",", $manifestPointData);
-		$navLinePoints = implode(",", $navPointData);
-		$sectionLinePoints = implode(",", $sectionPointData);
-		$contentLinePoints = implode(",", $contentPointData);
+		$manifestLinePoints = (implode(",", $manifestPointData));
+		$navLinePoints = (implode(",", $navPointData));
+		$sectionLinePoints = (implode(",", $sectionPointData));
+		$contentLinePoints = (implode(",", $contentPointData));
 
 		// echo '<pre>';
 		// natsort($cleanedTimeDataLabels);
@@ -102,6 +102,10 @@
 		// echo '</pre>';
 
 	?>
+	<?php echo $manifestLinePoints; ?>
+	<?php echo $navLinePoints; ?>
+	<?php echo $sectionLinePoints; ?>
+	<?php echo $contentLinePoints; ?>
 	<script type="text/javascript">
 		var swirlData = {
 		    labels: [<?php echo $cleanedTimeDataLabels; ?>],
