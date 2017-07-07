@@ -23,7 +23,7 @@
 		"hourly_navCheck": "shuf -n 3 sites.txt | xargs -P3 -I{} casperjs test \"./tests/apiTest_nav.js\" --url=\"{}\"",
 		"hourly_contentCheck": "shuf -n 3 sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_content.js\" --url=\"{}\"",
 		"local-manifest": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_manifest.js\" --url=\"{}\" --env=local --cron",
-		"local-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_nav.js\" --url=\"{}\" --env=local",
+		"local-nav": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_nav.js\" --url=\"{}\" --output=console --env=local",
 		"local-article": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_content.js\" --output=console --url=\"{}\" --env=local",
 		"local-create-dictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_manifest.js\" --env=local --url=\"{}\" --task=createDictionary",
 		"stageRegressionLocal": "cat stage_sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --env=local --url=\"{}\"",
