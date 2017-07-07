@@ -33,7 +33,7 @@
 		"sendAlert": "casperjs test \"./utils/tasker.js\" --task=send_alert --taskType=api-notification --taskRef=complete --logNote=casperTask"
 	},
 	"dependencies": {
-	    "casperjs": "^1.1.3",
+	    "casperjs": "^1.1.4",
 	    "phantomjs": "^2.1.7",
 	    "slimerjs": "^0.10.3",
 	    "shelljs": "^0.7.5"

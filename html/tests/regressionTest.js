@@ -18,38 +18,33 @@
 
 
 casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
+    casper.options.viewportSize = { width: 1280, height: 5000 };
 
     // Config vars
-    var utils = require('utils');
-    var url = casper.cli.get("url");
-    var mouse = require("mouse").create(casper);
-    casper.options.viewportSize = { width: 1280, height: 5000 };
-    var logResults = true;
-    var colorizer = require('colorizer').create('Colorizer');
-    
-    var otsTestSuite = false;
-    var tlmTestSuite = false;
-    var testProperty;
-    var manifestTestRefID;
-    var testDesinations = {};
-    var testResultsObject = {};
-    var regressionResults = {};
-    var testingObject = {};
-    var testStatus = 'Pass';
-    var setFail = 0;
-    var testInfo = 'Engine: Chrome/WebKit';
-    var browser;
-
-    manifestTestRefID = casper.cli.get('refID');
-
-    // Util vars
-    var currentTime = new Date();
-
-    var month = currentTime.getMonth() + 1;
-    var day = currentTime.getDate();
-    var year = currentTime.getFullYear();
-    var hours = currentTime.getHours();
-    var minutes = currentTime.getMinutes();
+    var utils = require('utils'),
+        envConfig = casper.cli.get('env'),
+        url = casper.cli.get("url"),
+        mouse = require("mouse").create(casper),
+        logResults = true,
+        colorizer = require('colorizer').create('Colorizer'),
+        otsTestSuite = false,
+        tlmTestSuite = false,
+        testProperty,
+        manifestTestRefID,
+        testDesinations = {},
+        testResultsObject = {},
+        regressionResults = {},
+        testingObject = {},
+        testStatus = 'Pass',
+        setFail = 0,
+        testInfo = 'Engine: Chrome/WebKit',
+        browser,
+        currentTime = new Date(),
+        month = currentTime.getMonth() + 1,
+        day = currentTime.getDate(),
+        year = currentTime.getFullYear(),
+        hours = currentTime.getHours(),
+        minutes = currentTime.getMinutes();
 
         if (minutes < 10){
             minutes = "0" + minutes;
@@ -67,23 +62,23 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
 
-    var envConfig = casper.cli.get('env');
+    manifestTestRefID = casper.cli.get('refID');
 
     if (envConfig === 'local') {
-        var configURL = 'http://spire.app';
-        var saveLocation = '../test_results/screenshots/';
+        var configURL = 'http://spire.app',
+            saveLocation = '../test_results/screenshots/';
 
     } else if (envConfig === 'dev') {
-        var configURL = 'http://45.55.209.68';
-        var saveLocation = '../test_results/screenshots/';
+        var configURL = 'http://45.55.209.68',
+            saveLocation = '../test_results/screenshots/';
 
     } else if (envConfig === 'prod') {
-        var configURL = 'http://54.243.53.242';
-        var saveLocation = 'test_results/screenshots/';
+        var configURL = 'http://54.243.53.242',
+            saveLocation = 'test_results/screenshots/';
 
     } else {
-        var configURL = 'http://54.243.53.242';
-        var saveLocation = 'test_results/screenshots/';
+        var configURL = 'http://54.243.53.242',
+            saveLocation = 'test_results/screenshots/';
     }
 
     var type = casper.cli.get('output');
@@ -99,8 +94,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     runEngine = casper.cli.get('ff');
     if ( runEngine ) {
-        var testInfo = 'Engine: FF/Gecko';
-        var browser = 'ff'
+        var testInfo = 'Engine: FF/Gecko',
+            browser = 'ff';
     }
 
 
@@ -121,15 +116,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var parser = document.createElement('a');
         parser.href = url;
 
-        newUrl = parser.href;
-        var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-        var urlUri = sourceString.replace('.','_');
+        var newUrl = parser.href,
+            sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
+            urlUri = sourceString.replace('.','_');
 
         /*******************
         *
         * Start Testing
         *
         *******************/
+
         // casper.start().then(function(response) {
         casper.start( url ).then(function(response) {
             if ( response.status == 200 || response.status == 302 ) {
@@ -453,12 +449,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     // Regressiong test actions
     regressionSuite.prototype.collectNavigation = function(testProperty, url, runOnce) {
-
         var suite = this;
 
         casper.thenOpen(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-            var mainURL = this.getCurrentUrl().slice(0,-1);
-            var pageItem = casper.getElementInfo('body');
+            var mainURL = this.getCurrentUrl().slice(0,-1),
+                pageItem = casper.getElementInfo('body');
 
             if (debugOutput) {console.log('main url ' + mainURL)};
 
@@ -512,8 +507,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     return;
                 }
 
-                var url = elementObj.url;
-                var innerText = elementObj.innerText;
+                var url = elementObj.url,
+                    innerText = elementObj.innerText;
                 
                 if (debugOutput) {
                     console.log(url, elementObj);
@@ -543,7 +538,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
 
     regressionSuite.prototype.testNavigationItems = function(mainURL, destinations, testProperty) {
-
         var suite = this;
 
         for (var navLocation in destinations) {
@@ -567,16 +561,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 test.comment('skipping subnav check, unnecessary for current page: ' + currentNavUrl);
             } else {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-
                     // Grab url info
                     var parser = document.createElement('a');
+                    
                     parser.href = response.url;
-                    newUrl = parser.href;
-                    urlPath = parser.pathname;
-
-                    var pagePathName = urlPath.replace('/','').split(/[/?#]/)[0];
-                    var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-                    var urlUri = sourceString.replace('.','_');
+                    
+                    var newUrl = parser.href,
+                        urlPath = parser.pathname,
+                        pagePathName = urlPath.replace('/','').split(/[/?#]/)[0],
+                        sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
+                        urlUri = sourceString.replace('.','_');
 
                     // Check for property type
                     if (response.url.indexOf('telemundo') > -1) {
@@ -719,22 +713,22 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         // Set testing item
         if (testProperty == 'otsTestSuite') {
-            var otsTestSuite = true;
-
-            var addtnlDestinations = [
-                'http://www.telexitos.com',
-                'http://www.cozitv.com'
-            ];
+            var otsTestSuite = true,
+                addtnlDestinations = [
+                    '/contact-us/tv-listings/',
+                    'http://www.telexitos.com',
+                    'http://www.cozitv.com'
+                ];
 
         } else {
-            var tlmTestSuite = true;
-
-            var addtnlDestinations = [
-                '/envia-tus-comentarios',
-                '/trafico',
-                'http://www.telexitos.com',
-                'http://www.cozitv.com'
-            ];
+            var tlmTestSuite = true,
+                addtnlDestinations = [
+                    '/conectate/tv-listings',
+                    '/envia-tus-comentarios',
+                    '/trafico',
+                    'http://www.telexitos.com',
+                    'http://www.cozitv.com'
+                ];
         }
 
         addtnlDestinations.reverse();
@@ -755,9 +749,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                 var parser = document.createElement('a');
                 parser.href = response.url;
-                newUrl = parser.href;
-                var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-                var urlUri = sourceString.replace('.','_');
+                
+                var newUrl = parser.href,
+                    sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
+                    urlUri = sourceString.replace('.','_');
 
                 // OTS Checks
                 if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
@@ -765,15 +760,19 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 }
 
                 if ( response.url.indexOf('contact-us') > -1 || response.url.indexOf('conectate') > -1 ) {
-                    suite.testAssertion('.contact-landing-module', urlUri, 'contactPageModule');
+                    suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
                 }
 
                 if ( response.url.indexOf('weather') > -1 ) {
-                    suite.testAssertion('.contact-landing-module', urlUri, 'contactPageModule');
+                    suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
                 }
 
                 if ( response.url.indexOf('investigations') > -1 ) {
                     suite.testAssertion('#leadMedia img', urlUri, 'investigationsLeadThumb');
+                }
+
+                if ( response.url.indexOf('contact-us/tv-listings') > -1 ) {
+                    suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
                 }
 
                 // Telexitos testing
@@ -791,6 +790,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     // this.mouse.move('.playButtonLarge');
                     // this.mouse.click('.playButtonLarge');
                     // test.assertVisible('#_VODPlayer108PdkSwfObject', "video player laoded, test manually to ensure video plays.");
+
+                    test.comment('....testing Cozi TV Listings page.');
+                    casper.thenOpen('http://www.cozitv.com/tv-listings/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                        suite.testAssertion('#listings #tvListingContainer', urlUri, 'coziTVListingsContainer');
+                    });
+
+                    test.comment('....testing Cozi Affiliate map page.');
+                    casper.thenOpen('http://www.cozitv.com/get-cozi-tv/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                        suite.testAssertion('#bodyContainer', urlUri, 'coziTVAffiliateMap');
+                    });
                 }
 
             })
