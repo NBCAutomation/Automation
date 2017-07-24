@@ -544,7 +544,11 @@ $app->group('/scripts', function () {
 
     	$allPostPutVars = $request->getParsedBody();
 
-    	// Configure testing vars from POST config
+    	/********************************************
+    	*
+    	*   Configure testing vars from POST config
+    	*
+    	*********************************************/
     		// Set protocol flag
     		if($allPostPutVars['protocol'] == 'Secure (HTTPS)') {
     			$secureTesting = true;
@@ -636,14 +640,20 @@ $app->group('/scripts', function () {
     		$__delCMD = '';
     	}
 
+    	if ($_SERVER['SERVER_NAME'] == 'spire.app') {
+    		$serverEnv = '--env=local';
+    	} else {
+    		$serverEnv = '';
+    	}
+
 		if ($__runScript == 'spire-run') {
 		        $__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_manifest.js" --url="{}"'.$__output;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_manifest.js" --url="{}"'.$__output .' '. $serverEnv;
 		} elseif ($__runScript == 'apiCheck-nav') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_nav.js" --url="{}"'.$__output;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_nav.js" --url="{}"'.$__output .' '. $serverEnv;
 		} elseif ($__runScript == 'regressionTest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output .' '. $serverEnv;
 		} elseif ($__runScript == 'updateDictionaries') {
 			$updateNotesObject = array();
 

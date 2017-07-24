@@ -308,38 +308,54 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                         // Setup testing object. testingObject[referenceName] = testingHTMLElement
                         
-                        testingObject['siteHeader'] = '.site-header';
-                        testingObject['headerLogo'] = '.brand a img';
-                        testingObject['mainNav'] = '.navbar';
-                        testingObject['tveMenu'] = '.nav-small-section.nav-live-tv';
-                        testingObject['tveSubMenu'] = '.nav-small-section.nav-live-tv a';
-                        testingObject['weatherRadar'] = '.weather-module-radar iframe';
-                        testingObject['spredfastModules'] = '.sfbox';
-                        testingObject['mainFooter'] = '.footer';
+                        // test.assertVisible('.weather-module-radar iframe', 'weather-iframe' + ' is visibile');
+                        // test.assertExists('.weather-module-radar iframe');
 
-                        if(casper.exists('.weather-module')){
-                            testingObject['weatherModule'] = '.weather-module';
-                        // If severe weather module is displayed
-                        } else if(casper.exists('.weather-module-severe')){
-                            testingObject['weatherModuleSevere'] = '.weather-module-severe';
-                            testingObject['weatherAlert'] = '.weather-alert-info';
-                        }
+                        casper.withFrame(0, function () {
+                            this.test.assertVisible('.wxmap--layers__toggle-button', '.wxmap--layers__toggle-button is clickable');
+                            this.mouse.move('.wxmap--layers__toggle-button');
+                            this.mouse.click('.wxmap--layers__toggle-button.wxmap--button__root wxmap--button__dark-gray');
+                            this.captureSelector(saveLocation + urlUri + '_weather_choose_layer_open' + timeStamp + '_' + browser + '.jpg', 'body');
+                        });
 
-                        for (var testingItem in testingObject) {
-                            if (debugOutput) {
-                                console.log('---------------------------');
-                                console.log(' testingObject Properties');
-                                console.log('---------------------------');
-                                console.log('testingItem > ' + testingItem);
-                                console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
-                            }
 
-                            var refName = testingItem;
-                            var testingEntity = testingObject[testingItem];
+                        // this.mouse.move('.weather-module-radar iframe');
+                        
 
-                            // Test the item/classes within the testObject
-                            suite.testAssertion(testingEntity, urlUri, refName);
-                        }
+                        
+
+                        // testingObject['siteHeader'] = '.site-header';
+                        // testingObject['headerLogo'] = '.brand a img';
+                        // testingObject['mainNav'] = '.navbar';
+                        // testingObject['tveMenu'] = '.nav-small-section.nav-live-tv';
+                        // testingObject['tveSubMenu'] = '.nav-small-section.nav-live-tv a';
+                        // testingObject['weatherRadar'] = '.weather-module-radar iframe';
+                        // testingObject['spredfastModules'] = '.sfbox';
+                        // testingObject['mainFooter'] = '.footer';
+
+                        // if(casper.exists('.weather-module')){
+                        //     testingObject['weatherModule'] = '.weather-module';
+                        // // If severe weather module is displayed
+                        // } else if(casper.exists('.weather-module-severe')){
+                        //     testingObject['weatherModuleSevere'] = '.weather-module-severe';
+                        //     testingObject['weatherAlert'] = '.weather-alert-info';
+                        // }
+
+                        // for (var testingItem in testingObject) {
+                        //     if (debugOutput) {
+                        //         console.log('---------------------------');
+                        //         console.log(' testingObject Properties');
+                        //         console.log('---------------------------');
+                        //         console.log('testingItem > ' + testingItem);
+                        //         console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                        //     }
+
+                        //     var refName = testingItem;
+                        //     var testingEntity = testingObject[testingItem];
+
+                        //     // Test the item/classes within the testObject
+                        //     suite.testAssertion(testingEntity, urlUri, refName);
+                        // }
                     },
                     function fail () {
                         this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
@@ -523,14 +539,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('testDesinations', JSON.stringify(testDesinations));
             }
 
-            if (! runOnce) {
-                suite.collectNavigation(testProperty, url, true);
-            };
+            // if (! runOnce) {
+            //     suite.collectNavigation(testProperty, url, true);
+            // };
 
-            if (runOnce) {
-                // Send items to be tested
-                suite.testNavigationItems(mainURL, testDesinations, testProperty);
-            };
+            // if (runOnce) {
+            //     // Send items to be tested
+            //     suite.testNavigationItems(mainURL, testDesinations, testProperty);
+            // };
             
         });
     };
@@ -754,13 +770,17 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
                     urlUri = sourceString.replace('.','_');
 
-                // OTS Checks
+                // OTS / TLM Checks
                 if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
                     suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap');
                 }
 
                 if ( response.url.indexOf('contact-us') > -1 || response.url.indexOf('conectate') > -1 ) {
-                    suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
+                    if ( response.url.indexOf('tv-listings') > -1 ) {
+                        suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
+                    } else {
+                        suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
+                    }
                 }
 
                 if ( response.url.indexOf('weather') > -1 ) {
@@ -771,10 +791,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     suite.testAssertion('#leadMedia img', urlUri, 'investigationsLeadThumb');
                 }
 
-                if ( response.url.indexOf('contact-us/tv-listings') > -1 ) {
-                    suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
-                }
-
                 // Telexitos testing
                 if ( response.url.indexOf('telexitos') > -1 ) {
                     test.assertVisible('.primary', "main page loaded and displayed.");
@@ -783,6 +799,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                 // Cozi testing
                 if ( response.url.indexOf('cozi') > -1 ) {
+                    test.comment('CoziTV Tests');
+
                     suite.testAssertion('.headerLogo', urlUri, 'coziLogo');
                     suite.testAssertion('.page .feature-full', urlUri, 'coziMainContent');
 
@@ -791,12 +809,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     // this.mouse.click('.playButtonLarge');
                     // test.assertVisible('#_VODPlayer108PdkSwfObject', "video player laoded, test manually to ensure video plays.");
 
-                    test.comment('....testing Cozi TV Listings page.');
                     casper.thenOpen('http://www.cozitv.com/tv-listings/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'coziTVListingsContainer');
                     });
 
-                    test.comment('....testing Cozi Affiliate map page.');
                     casper.thenOpen('http://www.cozitv.com/get-cozi-tv/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                         suite.testAssertion('#bodyContainer', urlUri, 'coziTVAffiliateMap');
                     });
