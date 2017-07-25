@@ -311,18 +311,18 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         // test.assertVisible('.weather-module-radar iframe', 'weather-iframe' + ' is visibile');
                         // test.assertExists('.weather-module-radar iframe');
 
-                        casper.withFrame(0, function () {
+                        // testing weather map clicking
+                        casper.withFrame('.wx-standalone-map', function () {
+                            console.log('clicked ok, new location is ' + this.getCurrentUrl());
                             this.test.assertVisible('.wxmap--layers__toggle-button', '.wxmap--layers__toggle-button is clickable');
                             this.mouse.move('.wxmap--layers__toggle-button');
+                            this.mouse.click('.wxmap--layers__toggle-button');
+                            this.captureSelector(saveLocation + urlUri + '_weather_choose_layer_open' + '_' + 'weather-thing' + '.jpg', 'body');
                             this.mouse.click('.wxmap--layers__toggle-button.wxmap--button__root wxmap--button__dark-gray');
-                            this.captureSelector(saveLocation + urlUri + '_weather_choose_layer_open' + timeStamp + '_' + browser + '.jpg', 'body');
                         });
 
 
-                        // this.mouse.move('.weather-module-radar iframe');
-                        
-
-                        
+                        // this.mouse.move('.weather-module-radar iframe');                        
 
                         // testingObject['siteHeader'] = '.site-header';
                         // testingObject['headerLogo'] = '.brand a img';
