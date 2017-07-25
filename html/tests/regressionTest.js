@@ -31,6 +31,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         tlmTestSuite = false,
         testProperty,
         manifestTestRefID,
+        testPropertyPageTitle,
         testDesinations = {},
         testResultsObject = {},
         regressionResults = {},
@@ -153,17 +154,27 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }
                     }
 
+                    /************************
+                    *
+                    * Check site property
+                    *
+                    ************************/
                     if ( initBodyTag.indexOf('nbc') > -1 || initBodyTag.indexOf('necn') > -1 ) {
                         console.log('OTS property...');
                         testProperty = 'otsTestSuite';
                     } else if ( initBodyTag.indexOf('tlmd') > -1 ) {
                         console.log('TLM property...');
                         testProperty = 'tlmTestSuite';
-                    } else {
-                        console.log( 'Unable to get body class, possble header block.' );
-                        console.log( '------- body class -------' );
-                        console.log( initBodyTag );
-                        this.exit();
+                    } else if ( initBodyTag.indexOf('cozi') > -1 ) {
+                        testPropertyPageTitle = this.getTitle();
+
+                        if (testPropertyPageTitle.indexOf('Cozi') > -1) {
+                            console.log('CoziTV...');
+                            testProperty = 'coziTestSuite';
+                        } else if (testPropertyPageTitle.indexOf('Telexitos') > -1) {
+                            console.log('Telexitos...');
+                            testProperty = 'telexitosTestSuite';
+                        }   
                     }
 
                     suite.visualTests(testProperty, urlUri, url);
@@ -282,15 +293,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.visualTests = function(testProperty, urlUri, url) {
         var suite = this;
 
-        // Set testing item
-        if (testProperty == 'otsTestSuite') {
-            var otsTestSuite = true;
-        } else {
-            var tlmTestSuite = true;
-        }
-
         // NBC OTS Testing
-        if (otsTestSuite) {
+        if (testProperty == 'otsTestSuite') {
             casper.wait(700, function() {
             // casper.wait(47000, function() {
                 this.waitForSelector("#sfcontentFill",
@@ -308,54 +312,44 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                         // Setup testing object. testingObject[referenceName] = testingHTMLElement
                         
-                        // test.assertVisible('.weather-module-radar iframe', 'weather-iframe' + ' is visibile');
-                        // test.assertExists('.weather-module-radar iframe');
-
-                        // testing weather map clicking
-                        casper.withFrame('.wx-standalone-map', function () {
-                            console.log('clicked ok, new location is ' + this.getCurrentUrl());
-                            this.test.assertVisible('.wxmap--layers__toggle-button', '.wxmap--layers__toggle-button is clickable');
-                            this.mouse.move('.wxmap--layers__toggle-button');
-                            this.mouse.click('.wxmap--layers__toggle-button');
-                            this.captureSelector(saveLocation + urlUri + '_weather_choose_layer_open' + '_' + 'weather-thing' + '.jpg', 'body');
-                            this.mouse.click('.wxmap--layers__toggle-button.wxmap--button__root wxmap--button__dark-gray');
-                        });
+                        test.assertVisible('.weather-module-radar iframe', 'weather-iframe' + ' is visibile');
+                        test.assertExists('.weather-module-radar iframe');
 
 
                         // this.mouse.move('.weather-module-radar iframe');                        
 
-                        // testingObject['siteHeader'] = '.site-header';
-                        // testingObject['headerLogo'] = '.brand a img';
-                        // testingObject['mainNav'] = '.navbar';
-                        // testingObject['tveMenu'] = '.nav-small-section.nav-live-tv';
-                        // testingObject['tveSubMenu'] = '.nav-small-section.nav-live-tv a';
-                        // testingObject['weatherRadar'] = '.weather-module-radar iframe';
-                        // testingObject['spredfastModules'] = '.sfbox';
-                        // testingObject['mainFooter'] = '.footer';
+                        testingObject['siteHeader'] = '.site-header';
+                        testingObject['headerLogo'] = '.brand a img';
+                        testingObject['mainNav'] = '.navbar';
+                        testingObject['tveMenu'] = '.nav-small-section.nav-live-tv';
+                        testingObject['tveSubMenu'] = '.nav-small-section.nav-live-tv a';
+                        testingObject['weatherRadar'] = '.weather-module-radar iframe';
+                        testingObject['spredfastModules'] = '.sfbox';
+                        testingObject['mainFooter'] = '.footer';
 
-                        // if(casper.exists('.weather-module')){
-                        //     testingObject['weatherModule'] = '.weather-module';
-                        // // If severe weather module is displayed
-                        // } else if(casper.exists('.weather-module-severe')){
-                        //     testingObject['weatherModuleSevere'] = '.weather-module-severe';
-                        //     testingObject['weatherAlert'] = '.weather-alert-info';
-                        // }
+                        if(casper.exists('.weather-module')){
+                            testingObject['weatherModule'] = '.weather-module';
+                        // If severe weather module is displayed
+                        } else if(casper.exists('.weather-module-severe')){
+                            testingObject['weatherModuleSevere'] = '.weather-module-severe';
+                            testingObject['weatherAlert'] = '.weather-alert-info';
+                        }
 
-                        // for (var testingItem in testingObject) {
-                        //     if (debugOutput) {
-                        //         console.log('---------------------------');
-                        //         console.log(' testingObject Properties');
-                        //         console.log('---------------------------');
-                        //         console.log('testingItem > ' + testingItem);
-                        //         console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
-                        //     }
+                        for (var testingItem in testingObject) {
+                            if (debugOutput) {
+                                console.log('---------------------------');
+                                console.log(' testingObject Properties');
+                                console.log('---------------------------');
+                                console.log('testingItem > ' + testingItem);
+                                console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                            }
 
-                        //     var refName = testingItem;
-                        //     var testingEntity = testingObject[testingItem];
+                            var refName = testingItem;
+                            var testingEntity = testingObject[testingItem];
 
-                        //     // Test the item/classes within the testObject
-                        //     suite.testAssertion(testingEntity, urlUri, refName);
-                        // }
+                            // Test the item/classes within the testObject
+                            suite.testAssertion(testingEntity, urlUri, refName);
+                        }
                     },
                     function fail () {
                         this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
@@ -364,8 +358,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     null // timeout limit in milliseconds
                 );
             });
+        }
 
-        } else if (tlmTestSuite) {
+        if (testProperty = 'tlmTestSuite') {
         // TLM Testing
             casper.wait(700, function() {
                 this.waitForSelector(".section.mid",
