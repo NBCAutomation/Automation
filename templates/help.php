@@ -5,7 +5,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">Cronjobs</div>
 					<div class="panel-body">
-						<p>Currently the master job (spire-run), is set to run daily at 9:30 AM EST. This command runs the "spre-run" command below.</p>
+						<p>Currently the master job (spire-run), is set to run every 2 hours everyday.</p>
 					</div>
 				</div>
 			</li>
@@ -35,6 +35,14 @@
 					<div class="panel-body">
 						<p>Console output displays all console messages directly from the script. If unchecked the script will display start/stop messages.</p>
 						<p>If multiple sites are selected and output is selected. Script console messages will be displayed in the order of the sites being processed.</p>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="panel panel-default">
+					<div class="panel-heading">Kill from server</div>
+					<div class="panel-body">
+						<p>~/kill-node.sh</p>
 					</div>
 				</div>
 			</li>

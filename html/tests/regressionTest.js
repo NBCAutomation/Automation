@@ -15,7 +15,7 @@
 //
 // Casper 1.1.0-beta3 and Phantom 1.9.8
 //
-
+casper.options.timeout = 300000;
 
 casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     casper.options.viewportSize = { width: 1280, height: 5000 };

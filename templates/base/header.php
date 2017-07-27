@@ -51,7 +51,7 @@
 					<a href="/reports/main"><i class="fa fa-table"></i> Reports</a>
 					<ul>
 						<li><a href="/reports/api_manifest_audits">Manifest Audits</a></li>
-						<li><a href="/reports/api_navigation_audits">Article/Content Audits</a></li>
+						<li><a href="/reports/api_navigation_audits">Navigation Audits</a></li>
 						<li><a href="/reports/api_article_audits">Article/Content Audits</a></li>
 						<li><a href="/reports/regression_tests">Regression Results</a></li>
 						<li <?php if ($reportLoadtimeSubNav) { echo 'class="open"'; } ?>><a href="#">API Loadtimes</a>
