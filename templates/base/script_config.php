@@ -56,6 +56,7 @@
 				</div>
 			</div>
 			<?php } ?>
+			<?php if(! $view == 'regressionTest'){ ?>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Run Suite
 					<br>
@@ -82,6 +83,7 @@
 					</div>
 				</div>
 			</div>
+			<?php } ?>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Specific Sites
 					<br>
@@ -199,6 +201,16 @@
 						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundopr">
 						<label for="checkbox1">Telemundo PR</label>
 					</div>
+				<?php if( $view == 'regressionTest'){ ?>
+					<div class="checkbox">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="cozitv">
+						<label for="checkbox1">CoziTV</label>
+					</div>
+					<div class="checkbox">
+						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telexitos">
+						<label for="checkbox1">Telexitos</label>
+					</div>
+				<?php } ?>
 				</div>
 			</div>
 			<div class="form-group">

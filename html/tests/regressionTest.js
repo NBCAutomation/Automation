@@ -168,7 +168,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     } else if ( initBodyTag.indexOf('cozi') > -1 ) {
                         testPropertyPageTitle = this.getTitle();
 
-                        if (testPropertyPageTitle.indexOf('Cozi') > -1) {
+                        if (debugOutput) {
+                            console.log(testPropertyPageTitle);
+                        }
+
+                        if (testPropertyPageTitle.indexOf('COZI') > -1) {
                             console.log('CoziTV...');
                             testProperty = 'coziTestSuite';
                         } else if (testPropertyPageTitle.indexOf('Telexitos') > -1) {
@@ -176,7 +180,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             testProperty = 'telexitosTestSuite';
                         }   
                     }
-
                     suite.visualTests(testProperty, urlUri, url);
                 } else {
                     casper.test.fail('Page did not load correctly. Response: ' + response.status);
@@ -360,7 +363,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             });
         }
 
-        if (testProperty = 'tlmTestSuite') {
+        if (testProperty == 'tlmTestSuite') {
         // TLM Testing
             casper.wait(700, function() {
                 this.waitForSelector(".section.mid",
@@ -408,7 +411,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     },
                     function fail () {
                         this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
-                        test.fail("Unable to test page elements. Did not load properly.");
+                        test.fail("Full Fail: Unable to test page elements. Did not load properly.");
                     },
                     null // timeout limit in milliseconds
                 );
@@ -534,14 +537,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('testDesinations', JSON.stringify(testDesinations));
             }
 
-            // if (! runOnce) {
-            //     suite.collectNavigation(testProperty, url, true);
-            // };
+            if (! runOnce) {
+                suite.collectNavigation(testProperty, url, true);
+            };
 
-            // if (runOnce) {
-            //     // Send items to be tested
-            //     suite.testNavigationItems(mainURL, testDesinations, testProperty);
-            // };
+            if (runOnce) {
+                // Send items to be tested
+                suite.testNavigationItems(mainURL, testDesinations, testProperty);
+            };
             
         });
     };
@@ -726,18 +729,23 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         if (testProperty == 'otsTestSuite') {
             var otsTestSuite = true,
                 addtnlDestinations = [
-                    '/contact-us/tv-listings/',
-                    'http://www.telexitos.com',
-                    'http://www.cozitv.com'
+                    '/contact-us/tv-listings/'
                 ];
-
-        } else {
+        } else if (testProperty == 'tlmTestSuite') {
             var tlmTestSuite = true,
                 addtnlDestinations = [
                     '/conectate/tv-listings',
                     '/envia-tus-comentarios',
-                    '/trafico',
-                    'http://www.telexitos.com',
+                    '/trafico'
+                ];
+        } else if (testProperty == 'telexitosTestSuite') {
+            var otsTestSuite = true,
+                addtnlDestinations = [
+                    'http://www.telexitos.com'
+                ];
+        } else if (testProperty == 'coziTestSuite') {
+            var otsTestSuite = true,
+                addtnlDestinations = [
                     'http://www.cozitv.com'
                 ];
         }
@@ -790,6 +798,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 if ( response.url.indexOf('telexitos') > -1 ) {
                     test.assertVisible('.primary', "main page loaded and displayed.");
                     suite.testAssertion('.primary', urlUri, 'telexitosMainDiv');
+
+                    // ensure footer is loaded properly
+                    test.assertVisible('.full.top_nav', "header loaded and displayed.");
+
+                    // check if footer is loaded
+                    test.assertVisible('#footer', "footer loaded and displayed.");
+
+                    casper.thenOpen('http://www.telexitos.com/guia-tv', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                        suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer');
+                    });
                 }
 
                 // Cozi testing
@@ -798,11 +816,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     suite.testAssertion('.headerLogo', urlUri, 'coziLogo');
                     suite.testAssertion('.page .feature-full', urlUri, 'coziMainContent');
-
-                    // console.log('...clicking play icon');
-                    // this.mouse.move('.playButtonLarge');
-                    // this.mouse.click('.playButtonLarge');
-                    // test.assertVisible('#_VODPlayer108PdkSwfObject', "video player laoded, test manually to ensure video plays.");
 
                     casper.thenOpen('http://www.cozitv.com/tv-listings/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'coziTVListingsContainer');
