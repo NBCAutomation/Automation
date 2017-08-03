@@ -106,7 +106,18 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             child = spawn("chown", ["-hR", "ec2-user:apache", saveLocation]);
     }
 
+    /*************************
+    *
+    * Begin test suite setup
+    *
+    *************************/
     var regressionSuite = function(url) {
+        casper.options.onTimeout = function () {
+            console.log(colorizer.colorize(' > Script Stopped! Timeout occured (max execution time reached: 300000ms) ', 'RED_BAR'));
+            
+            this.exit();
+            test.done();
+        };
 
         if (!url) {
             throw new Error('A URL is required!');
@@ -232,7 +243,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
             
             this.exit();
-            test.done();
         });
     };
 
@@ -423,22 +433,24 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.testAssertion = function(testingEntity, urlUri, refName) {
         var suite = this;
 
-        if (casper.exists(testingEntity)) {
-            console.log('----------------------------------')
-            console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
-            try {
-                test.assertVisible(testingEntity, refName + ' is visibile');
-            } catch (e) {
-                console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
-                console.log('   -- failure')
-                console.log('   -- ' +  e);
+        casper.wait(300, function() {
+            if (casper.exists(testingEntity)) {
+                console.log('----------------------------------')
+                console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
+                try {
+                    test.assertVisible(testingEntity, refName + ' is visibile');
+                } catch (e) {
+                    console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
+                    console.log('   -- failure')
+                    console.log('   -- ' +  e);
+                    suite.logRegressionError(testingEntity, urlUri, refName);
+                }
+            } else {
+                console.log('----------------------------------')
+                console.log(colorizer.colorize(refName + ' didnt load correctly, and/or wasn\'t located on the site.', 'ERROR'));
                 suite.logRegressionError(testingEntity, urlUri, refName);
             }
-        } else {
-            console.log('----------------------------------')
-            console.log(colorizer.colorize(refName + ' didnt load correctly, and/or wasn\'t located on the site.', 'ERROR'));
-            suite.logRegressionError(testingEntity, urlUri, refName);
-        }
+        });
     };
 
     regressionSuite.prototype.logRegressionError = function(testingEntity, urlUri, refName) {
@@ -483,9 +495,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 var selector = '.nav-more .nav-section-subnav a';
             }
             
-            /*casper.on('remote.message', function(msg) {
-                this.echo('remote message caught: ' + msg);
-            })*/
+            // casper.on('remote.message', function(msg) {
+            //     this.echo('remote message caught: ' + msg);
+            // });
 
             // collect nav URLS
             var evaluatedUrls = this.evaluate(function(mainURL, selector) {
@@ -517,9 +529,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             // loop and append to testDestinations
             evaluatedUrls.forEach(function(elementObj) {
-                if (elementObj === null) {
-                    return;
-                }
+                // if (elementObj === null) {
+                //     return;
+                // }
 
                 var url = elementObj.url,
                     innerText = elementObj.innerText;
@@ -619,7 +631,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 console.log('\n');
 
                                 if (casper.exists('.subnav-large-container')) {
-                                    casper.wait(700, function() {
+                                    casper.wait(300, function() {
                                         this.waitForSelector('.subnav-large-container',
                                             function pass () {
                                                 console.log('-------------');
@@ -643,7 +655,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             });
 
                         } else if (response.url.indexOf('nbc') > -1) {
-                            casper.wait(700, function() {
+                            casper.wait(300, function() {
                                 if (casper.exists('.subnav-section-landing')) {
                                     this.waitForSelector('.subnav-large-container',
                                         function pass () {

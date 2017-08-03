@@ -140,10 +140,6 @@
 
 						$output = "";
 						$retval = -1;
-
-						if($view == 'regressionTest') {
-							$db->saveRegressionResults(serialize($testLog));	
-						}
 						
 						exec($delCmd, $output, $retval);
 						echo '<script type="text/javascript">

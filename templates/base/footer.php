@@ -102,10 +102,10 @@
 		// echo '</pre>';
 
 	?>
-	<?php echo $manifestLinePoints; ?>
-	<?php echo $navLinePoints; ?>
-	<?php echo $sectionLinePoints; ?>
-	<?php echo $contentLinePoints; ?>
+	<?php //echo $manifestLinePoints; ?>
+	<?php //echo $navLinePoints; ?>
+	<?php //echo $sectionLinePoints; ?>
+	<?php //echo $contentLinePoints; ?>
 	<script type="text/javascript">
 		var swirlData = {
 		    labels: [<?php echo $cleanedTimeDataLabels; ?>],

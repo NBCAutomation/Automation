@@ -193,33 +193,44 @@ $app->group('/reports', function () {
 
 		    case "main":
 		        $mainView = true;
+		        $pullAllReportData = false;
 		        break;
 
 		    case "api_article_audits":
 		        $reportsView = true;
+		        $pullAllReportData = true;
 		        break;
 
 		    case "api_navigation_audits":
 		        $reportsView = true;
+		        $pullAllReportData = true;
 		        break;
 
 	        case "api_manifest_audits":
 	            $reportsView = true;
+	            $pullAllReportData = true;
 	            break;
 
             case "regression_tests":
                 $regressionView = true;
+                $pullAllReportData = true;
                 break;
+
+            case 'loadtimes':
+            	$loadTimesView = true;
+            	$pullAllReportData = false;
+            	break;
 
            	case "search":
            	    $loadtimeSearchView = true;
+           	    $pullAllReportData = false;
            	    break;
 
 		    default:
 		        $testTypeName = 'none-existent';
 		}
 
-		if (! $mainView) {
+		if ($pullAllReportData) {
 			$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
 			$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
 			$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
@@ -237,9 +248,8 @@ $app->group('/reports', function () {
 		}
 
 		// Loadtimes page data
-		if ($args['view'] == 'loadtimes') {
+		if ($loadTimesView) {
 			$pageTemplate = 'reports-loadtimes.php';
-			$loadTimesView = true;
 			$loadtimeSubnavClass = true;
 			$chartLoadTimeData = $db->getAllAverageLoadTimes();
 
@@ -253,7 +263,10 @@ $app->group('/reports', function () {
 			$apiContentLoadTimes = $db->getLoadTimes('apiContentTest', 'today');
 			$apiSectionContentLoadTimes = $db->getLoadTimes('apiSectionContent', 'today');
 		} else if ($regressionView) {
-			$pageTemplate = 'reports-single.php';
+			// $regressionResults = $db->getAllRegressionTestData();
+			// $recentRegressionTests = $db->getAllTestResultData($args['view'], 'all', 'all');
+			$recentRegressionTests = $db->getAllRegressionTests();
+			$pageTemplate = 'reports-regression.php';
 		} else {
 			$pageTemplate = 'reports.php';
 		}
@@ -282,7 +295,7 @@ $app->group('/reports', function () {
 			'todayTotalWarnings' => $todayTotalWarnings,
 			'yesterdayTotalErrors' => $yesterdayTotalErrors,
 			'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
-			'regressionResults' => $regressionResults,
+			'recentRegressionTests' => $recentRegressionTests,
 			'regressionTests' => $regressionTests,
 			// Loadtimes data
 			'loadTimesView' => $loadTimesView,
@@ -309,44 +322,52 @@ $app->group('/reports', function () {
     $this->get('/{view}/{subView}', function ($request, $response, $args) {
     	$db = new DbHandler();
 
-    	$permissions = $request->getAttribute('spPermissions');
-
-    	$allPostPutVars = $request->getQueryParams();
-    	// Reporting Data
-    	$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
-
-		// View path
-		$viewPath = $args['view']."/".$args['subView'];
-
 		switch ($args['view']) {
 
 		    case "main":
 		        $mainView = true;
+		        $pullAllReportData = false;
 		        break;
 
 		    case "api_article_audits":
 		        $reportsView = true;
+		        $pullAllReportData = true;
 		        break;
 
 		    case "api_navigation_audits":
 		        $reportsView = true;
+		        $pullAllReportData = true;
 		        break;
 
 	        case "api_manifest_audits":
 	            $reportsView = true;
+	            $pullAllReportData = true;
 	            break;
 
             case "regression_tests":
                 $regressionView = true;
+                $pullAllReportData = true;
                 break;
 
            	case "loadtime-search":
            	    $loadtimeSearchView = true;
+           	    $pullAllReportData = false;
            	    break;
 
 		    default:
 		        $testTypeName = 'none-existent';
 		}
+
+    	$permissions = $request->getAttribute('spPermissions');
+
+    	$allPostPutVars = $request->getQueryParams();
+    	
+    	if ($pullAllReportData) {
+    		$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
+    	}
+
+		// View path
+		$viewPath = $args['view']."/".$args['subView'];
 
 		// Report View
 		if ($args['subView'] == 'loadtime-search') {
@@ -385,15 +406,21 @@ $app->group('/reports', function () {
 
     	$allPostPutVars = $request->getQueryParams();
 
-    	$currentRecord = $db->getTestDataById($args['page']);
+    	$currentRecord = $db->getTestDataById($args['page'], $allPostPutVars['refID']);
     	$recordViewType = $currentRecord['test_type'];
     	$currentRecordResults = $currentRecord['results_data'];
 
 		// View path
 		$viewPath = $args['view']."/".$args['subView'];
 
+		if ($recordViewType == 'regressionTest') {
+			$pageTemplate = 'reports-regression.php';
+		} else {
+			$pageTemplate = 'reports-single.php';
+		}
+
 		// Report View
-		return $this->renderer->render($response, 'reports-single.php', [
+		return $this->renderer->render($response, $pageTemplate, [
 		    'title' => 'Reports',
 		    'page_name' => 'reports',
 		    'view' => 'single',
@@ -1289,9 +1316,14 @@ $app->group('/utils', function () {
     		$station = $utilPostParams['testProperty'];
     		$status = $utilPostParams['testStatus'];
     		$testFailureCount = $utilPostParams['testFailureCount'];
-    		$testLoadtime = $utilPostParams['manifestLoadTime'];
     		$results = $utilPostParams['testResults'];
     		$info = $utilPostParams['testInfo'];
+
+    		if ($utilPostParams['manifestLoadTime']) {
+    			$testLoadtime = $utilPostParams['manifestLoadTime'];	
+    		} else {
+    			$testLoadtime = '0';
+    		}
 
     		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $testLoadtime, $results, $info);
 

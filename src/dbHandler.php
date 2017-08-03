@@ -417,32 +417,6 @@ class DbHandler {
         }
     }
 
-    public function saveRegressionResults($regressionResults) {
-        $db_con = Spire::getConnection();
-
-        $stmt = $db_con->prepare("INSERT INTO regression_tests(test_data) VALUES(?)");
-        $stmtStatus = $stmt->execute(array($regressionResults));
-
-        if ($stmtStatus) {
-            // task row created
-            // now assign the task to user
-            $new_test_id = $db_con->lastInsertId();
-
-            if ($new_test_id != NULL) {
-                // task created successfully
-                return $new_test_id;
-            } else {
-                // task failed to create
-                return NULL;
-            }
-        } else {
-            // task failed to create
-            return NULL;
-        }
-
-        $stmt->closeCursor();
-    }
-
     /**
      * Insert test results; New formatted table for JSON test results.
      */
@@ -808,11 +782,11 @@ class DbHandler {
 
 
     /* ------------- Reporting ------------------ */
-    public function getTestDataById($testID) {
-        $output = Spire::spireCache('getTestDataById_'.$testID, 1000, function() use ($testID) {
+    public function getTestDataById($testID, $refID) {
+        $output = Spire::spireCache('getTestDataById_'.$testID.'_refID-'.$refID, 10000, function() use ($testID) {
             $db_con = Spire::getConnection();
             
-            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE id = '".$testID."'");
+            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE ref_test_id = '".$testID."'");
             $stmt->execute(array($testID));
 
             $tests = array();
@@ -917,27 +891,33 @@ class DbHandler {
     public function getAllTestResultData($testType, $status, $range) {
         $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
             // echo $testType."<br />".$status."<br />".$range."<br />";
+            // exit();
             $db_con = Spire::getConnection();
 
             switch ($testType) {
                 case "api_manifest_audits":
                     $testTypeName = 'apiManifestTest';
+                    $testTableName = 'test_results';
                     break;
 
                 case "api_navigation_audits":
                     $testTypeName = 'apiNavTest';
+                    $testTableName = 'test_results';
                     break;
 
                 case "api_article_audits":
                     $testTypeName = 'apiContentTest';
+                    $testTableName = 'test_results';
                     break;
 
                 case "regression_tests":
                     $testTypeName = 'regressionTest';
+                    $testTableName = 'regression_tests';
                     break;
 
                 default:
                     $testTypeName = 'none-existent';
+                    $testTableName = 'null';
             }
 
             switch ($status) {
@@ -984,10 +964,43 @@ class DbHandler {
 
 
             if ($testType == 'all') {
-                $stmt = $db_con->prepare("SELECT * FROM test_results ".$dataRange." ORDER BY id DESC");    
+                $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." ".$dataRange." ORDER BY id DESC");
+            } elseif ($testType == 'regression_tests') {
+                $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." ORDER BY id DESC");
             } else {
-                $stmt = $db_con->prepare("SELECT * FROM test_results WHERE test_type = '".$testTypeName."' ".$filterStatus." ".$dataRange."");
+                $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE test_type = '".$testTypeName."' ".$filterStatus." ".$dataRange."");
             }
+
+            $testResultsData = array();
+
+            if ($stmt->execute()) {
+                $testResults = $stmt->fetchAll();
+                    
+                foreach( $testResults as $key => $value ){
+                    $testResultsData[$key] = $value;
+                }
+
+                $storedTestData[] = $testResultsData;
+
+                $stmt->closeCursor();
+                return $storedTestData;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
+    public function getAllRegressionTests() {
+        $output = Spire::spireCache('getAllRegressionTests', 10, function() {
+        // $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
+            // echo $testType."<br />".$status."<br />".$range."<br />";
+            // exit();
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM tests WHERE type = 'regressionTest'");
 
             $testResultsData = array();
 
