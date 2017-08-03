@@ -9,12 +9,23 @@
 ?>
 	<div class="panel-body api_results">
 		<?php
+			if (! $reportData) {
+				echo '<div class="panel panel-danger">
+						<div class="panel-heading">
+							<h3 class="panel-title"><i class="fa fa-exclamation-circle"></i> Report Error!</h3>
+						</div>';
+				echo '<div class="panel-body">';
+				echo '<p>Unable to load report, no results data returned for this record.</p>';
+				echo '</div>';
+				exit();
+			}
+
 			if ($singleView) {
 				// Inidividual Report View
 				// var_dump($viewType);
 				// var_dump($reportData);
 				// exit();
-				
+
 				$db = new DbHandler();
 
 				switch ($viewType) {				    
