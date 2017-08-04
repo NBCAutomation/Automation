@@ -108,7 +108,11 @@
 								if (is_array($reportValue)) {
 									echo '<ul>';
 									echo '<li>'.$reportValue['failure'].'</li>';
-									echo '<li><i class="fa fa-file-image-o" aria-hidden="true"></i> <a href="'.$reportValue['screenshot'].'" target="_black">View screenshot</a></li>';
+									
+									if ($reportValue['screenshot']) {
+										echo '<li><i class="fa fa-file-image-o" aria-hidden="true"></i> <a href="'.$reportValue['screenshot'].'" target="_black">View screenshot</a></li>';	
+									}
+									
 									echo '</ul>';
 								} else {
 									echo $reportValue;	

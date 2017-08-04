@@ -34,6 +34,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         testPropertyPageTitle,
         testDesinations = {},
         testResultsObject = {},
+        timeoutDetails = {},
         regressionResults = {},
         testingObject = {},
         testStatus = 'Pass',
@@ -112,18 +113,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     *
     *************************/
     var regressionSuite = function(url) {
-        casper.options.onTimeout = function () {
-            console.log(colorizer.colorize(' > Script Stopped! Timeout occured (max execution time reached: 300000ms) ', 'RED_BAR'));
-            
-            this.exit();
-            test.done();
-        };
+        var suite = this;
 
         if (!url) {
             throw new Error('A URL is required!');
         }
-
-        var suite = this;
 
         var parser = document.createElement('a');
         parser.href = url;
@@ -131,6 +125,20 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var newUrl = parser.href,
             sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
             urlUri = sourceString.replace('.','_');
+
+
+        casper.options.onTimeout = function () {
+            timeoutDetails['failure'] = 'Script Stopped! Timeout occured, max execution time reached: 300000ms';
+            testResultsObject['testResults'] = timeoutDetails;
+                                     
+            suite.processTestResults(urlUri, testResultsObject, '1', testResultsObject['testID'], 'regressionTest', 'Fail', 'Script timeout');
+            
+            casper.wait(100, function() {
+                console.log(colorizer.colorize(' > Script Stopped! Timeout occured (max execution time reached: 300000ms) ', 'RED_BAR'));
+                this.exit();
+                test.done();
+            });  
+        };
 
         /*******************
         *
