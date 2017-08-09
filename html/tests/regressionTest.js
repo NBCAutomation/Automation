@@ -443,7 +443,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         casper.wait(300, function() {
             if (casper.exists(testingEntity)) {
-                console.log('----------------------------------')
+                console.log('----------------------------------1')
                 console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
                 try {
                     test.assertVisible(testingEntity, refName + ' is visibile');
@@ -454,7 +454,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     suite.logRegressionError(testingEntity, urlUri, refName);
                 }
             } else {
-                console.log('----------------------------------')
+                console.log('----------------------------------2')
                 console.log(colorizer.colorize(refName + ' didnt load correctly, and/or wasn\'t located on the site.', 'ERROR'));
                 suite.logRegressionError(testingEntity, urlUri, refName);
             }
@@ -498,18 +498,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 var selector = '.nav-sections a';
             }
 
-            // if (runOnce == 'subNavRun') {
-            //     var selector = '.nav-section .nav-section-subnav a';
-            // }
-
-            // if (runOnce == 'moreLinksRun') {
-            //     var selector = '.nav-more .nav-section-subnav a';
-            // }
-            
-            // casper.on('remote.message', function(msg) {
-            //     this.echo('remote message caught: ' + msg);
-            // });
-
             // collect nav URLS
             var evaluatedUrls = this.evaluate(function(mainURL, selector) {
                 var output = [];
@@ -540,9 +528,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             // loop and append to testDestinations
             evaluatedUrls.forEach(function(elementObj) {
-                // if (elementObj === null) {
-                //     return;
-                // }
+                if (elementObj === null) {
+                    return;
+                }
 
                 var url = elementObj.url,
                     innerText = elementObj.innerText;
@@ -560,23 +548,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('testDesinations', JSON.stringify(testDesinations));
             }
 
-            if (! runOnce) {
-                suite.collectNavigation(testProperty, url, 'subNavRun');
-            };
-
-            if (runOnce == 'subNavRun') {
-                
-                // suite.collectNavigation(testProperty, url, 'moreLinksRun');
-                // Send items to be tested
-                // suite.testNavigationItems(mainURL, testDesinations, testProperty);
-            };
-
-            if (runOnce == 'moreLinksRun') {
-                console.log('all nav links collected. ');
-                // Send items to be tested
-                // suite.testNavigationItems(mainURL, testDesinations, testProperty);
-            };            
-            
+            // Send items to be tested
+            suite.testNavigationItems(mainURL, testDesinations, testProperty);
         });
     };
 
@@ -602,7 +575,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('testUrl ~ ' + currentNavUrl);
             }
             
-            if ( currentNavUrl == mainURL+'/' || currentNavUrl.indexOf('on-air') > -1) {
+            if ( currentNavUrl == mainURL+'/' || currentNavUrl.indexOf('on-air') > -1 || currentNavUrl.indexOf('.html') > -1) {
                 test.comment('skipping subnav check, unnecessary for current page: ' + currentNavUrl);
             } else {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
@@ -732,9 +705,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                             }
                                         });
                                     } else {
-                                        console.log(response.url);
-                                        console.log('-- Unable to find the "' + pagePathName + '" subnav container, page load/redirect error. Test manually if Stage. [Full Fail]');
-                                        // this.captureSelector(saveLocation + urlUri + '--' + pagePathName + '_subnav_failure-screenshot' + timeStamp + '.jpg', 'body');
+                                        test.comment('Current test url > ' +  response.url);
+                                        console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )
+                                        console.log('HTTP Response - ' + response.status);
+                                        console.log('-- No subnav on the current url.');
                                     }
                                 }
                             })
@@ -757,19 +731,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         console.log('//////////////////////');
 
         // Set testing item
-        if (testProperty == 'otsTestSuite') {
-            var otsTestSuite = true,
-                addtnlDestinations = [
-                    '/contact-us/tv-listings/'
-                ];
-        } else if (testProperty == 'tlmTestSuite') {
-            var tlmTestSuite = true,
-                addtnlDestinations = [
-                    '/conectate/tv-listings',
-                    '/envia-tus-comentarios',
-                    '/trafico'
-                ];
-        } else if (testProperty == 'telexitosTestSuite') {
+        if (testProperty == 'telexitosTestSuite') {
             var otsTestSuite = true,
                 addtnlDestinations = [
                     'http://www.telexitos.com'
