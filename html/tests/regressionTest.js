@@ -494,14 +494,17 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             // Collect initial navigation items, then re-loop and collect more navigation items.
             if (! runOnce) {
                 // Set collection selector
-                // if (testProperty == 'otsTestSuite') {
-                    var selector = '.nav-section a.nav-section-title';
-                // } else {
-                //     var selector = '.nav.black a';
-                // }
-            } else {
-                var selector = '.nav-more .nav-section-subnav a';
+                // var selector = '.nav-section a.nav-section-title';
+                var selector = '.nav-sections a';
             }
+
+            // if (runOnce == 'subNavRun') {
+            //     var selector = '.nav-section .nav-section-subnav a';
+            // }
+
+            // if (runOnce == 'moreLinksRun') {
+            //     var selector = '.nav-more .nav-section-subnav a';
+            // }
             
             // casper.on('remote.message', function(msg) {
             //     this.echo('remote message caught: ' + msg);
@@ -558,13 +561,21 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
 
             if (! runOnce) {
-                suite.collectNavigation(testProperty, url, true);
+                suite.collectNavigation(testProperty, url, 'subNavRun');
             };
 
-            if (runOnce) {
+            if (runOnce == 'subNavRun') {
+                
+                // suite.collectNavigation(testProperty, url, 'moreLinksRun');
                 // Send items to be tested
-                suite.testNavigationItems(mainURL, testDesinations, testProperty);
+                // suite.testNavigationItems(mainURL, testDesinations, testProperty);
             };
+
+            if (runOnce == 'moreLinksRun') {
+                console.log('all nav links collected. ');
+                // Send items to be tested
+                // suite.testNavigationItems(mainURL, testDesinations, testProperty);
+            };            
             
         });
     };
