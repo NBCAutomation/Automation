@@ -443,8 +443,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         casper.wait(300, function() {
             if (casper.exists(testingEntity)) {
-                console.log('----------------------------------1')
-                console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
+                // console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
                 try {
                     test.assertVisible(testingEntity, refName + ' is visibile');
                 } catch (e) {
@@ -454,7 +453,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     suite.logRegressionError(testingEntity, urlUri, refName);
                 }
             } else {
-                console.log('----------------------------------2')
                 console.log(colorizer.colorize(refName + ' didnt load correctly, and/or wasn\'t located on the site.', 'ERROR'));
                 suite.logRegressionError(testingEntity, urlUri, refName);
             }
@@ -594,8 +592,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     if (response.url.indexOf('telemundo') > -1) {
                         console.log('-------------');
                         test.comment('Current url > ' +  response.url);
-                        console.log('HTTP Response - ' + response.status);
+                        // console.log('> HTTP Response - ' + response.status);
+                        if (response.status == '200') {
+                            console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                        } else {
+                            console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                        }
                         console.log('...skipping, no on-page section/page subnav for TLM');
+                        suite.testAssertion('.page_footer', urlUri, 'footer');
                     } else {
                         // if forced to login screen, login
                         if (response.url.indexOf('clickability') > -1) {
@@ -627,10 +631,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                         this.waitForSelector('.subnav-large-container',
                                             function pass () {
                                                 console.log('-------------');
-                                                test.comment('Current test url > ' +  response.url);
-                                                console.log('HTTP Response - ' + response.status);
+                                                console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                                                // console.log('> HTTP Response - ' + response.status);
+                                                if (response.status == '200') {
+                                                    console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                                                } else {
+                                                    console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                                                }
 
                                                 suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
+                                                suite.testAssertion('.footer', urlUri, 'footer');
                                             },
                                             function fail () {
                                                 // test.fail("Unable to test page elements.");
@@ -652,10 +662,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     this.waitForSelector('.subnav-large-container',
                                         function pass () {
                                             console.log('-------------');
-                                            test.comment('Current test url > ' +  response.url);
-                                            console.log('HTTP Response - ' + response.status);
+                                            console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                                            // console.log('> HTTP Response - ' + response.status);
+                                            if (response.status == '200') {
+                                                console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                                            } else {
+                                                console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                                            }
 
                                             suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
+                                            suite.testAssertion('.footer', urlUri, 'footer');
                                         },
                                         function fail () {
                                             testResultsObject[pagePathName + '_subNav'] = 'Unable to locate page subnav.';
@@ -690,10 +706,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                                 this.waitForSelector('.subnav-large-container',
                                                     function pass () {
                                                         console.log('-------------');
-                                                        test.comment('Current test url > ' +  response.url);
-                                                        console.log('HTTP Response - ' + response.status);
+                                                        console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                                                        // console.log('> HTTP Response - ' + response.status);
+                                                        if (response.status == '200') {
+                                                            console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                                                        } else {
+                                                            console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                                                        }
 
                                                         suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
+                                                        suite.testAssertion('.footer', urlUri, 'footer');
                                                     },
                                                     function fail () {
                                                         testResultsObject[pagePathName + '_subNav'] = 'Unable to locate page subnav.';
@@ -705,10 +727,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                             }
                                         });
                                     } else {
-                                        test.comment('Current test url > ' +  response.url);
-                                        console.log('> JSON Validation: ' + colorizer.colorize('PASSED', 'INFO') )
-                                        console.log('HTTP Response - ' + response.status);
-                                        console.log('-- No subnav on the current url.');
+                                        console.log('-------------');
+                                        console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                                        // console.log('> HTTP Response - ' + response.status);
+                                        if (response.status == '200') {
+                                            console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                                        } else {
+                                            console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                                        }
+                                        console.log(colorizer.colorize('-- No subnav on the current url.', 'COMMENT'));
+                                        suite.testAssertion('.footer', urlUri, 'footer');
                                     }
                                 }
                             })
@@ -757,7 +785,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 // console.log(testProperty);
                 console.log('-------------');
                 test.comment('Current url > ' +  response.url);
-                console.log('HTTP Response - ' + response.status);
+                console.log('> HTTP Response - ' + response.status);
 
                 var parser = document.createElement('a');
                 parser.href = response.url;
