@@ -784,8 +784,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                 // console.log(testProperty);
                 console.log('-------------');
-                test.comment('Current url > ' +  response.url);
-                console.log('> HTTP Response - ' + response.status);
+                console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                // console.log('> HTTP Response - ' + response.status);
+                if (response.status == '200') {
+                    console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                } else {
+                    console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                }
 
                 var parser = document.createElement('a');
                 parser.href = response.url;
@@ -819,27 +824,44 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 if ( response.url.indexOf('telexitos') > -1 ) {
                     test.assertVisible('.primary', "main page loaded and displayed.");
                     suite.testAssertion('.primary', urlUri, 'telexitosMainDiv');
-
-                    // ensure footer is loaded properly
                     test.assertVisible('.full.top_nav', "header loaded and displayed.");
-
-                    // check if footer is loaded
                     test.assertVisible('#footer', "footer loaded and displayed.");
 
                     casper.thenOpen('http://www.telexitos.com/guia-tv', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                        console.log('-------------');
+                        console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                        if (response.status == '200') {
+                            console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                        } else {
+                            console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                        }
+
+                        suite.testAssertion('.schedule a', urlUri, 'telexitosTVListingsPDFButton');
+                        suite.testAssertion('#timezoneSelect', urlUri, 'telexitosTV Timezone Selection');
                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer');
+                        suite.testAssertion('#footer', urlUri, 'footer');
                     });
                 }
 
                 // Cozi testing
                 if ( response.url.indexOf('cozi') > -1 ) {
-                    test.comment('CoziTV Tests');
-
                     suite.testAssertion('.headerLogo', urlUri, 'coziLogo');
                     suite.testAssertion('.page .feature-full', urlUri, 'coziMainContent');
+                    suite.testAssertion('#footer .wrap', urlUri, 'footer');
 
                     casper.thenOpen('http://www.cozitv.com/tv-listings/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                        console.log('-------------');
+                        console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                        if (response.status == '200') {
+                            console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                        } else {
+                            console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                        }
+                        
+                        suite.testAssertion('.schedule a', urlUri, 'coziTVListingsPDFButton');
+                        suite.testAssertion('#timezoneSelect', urlUri, 'coziTV Timezone Selection');
                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'coziTVListingsContainer');
+                        suite.testAssertion('#footer .wrap', urlUri, 'footer');
                     });
 
                     casper.thenOpen('http://www.cozitv.com/get-cozi-tv/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
