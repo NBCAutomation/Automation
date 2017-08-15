@@ -161,6 +161,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
         }).then(function() {
+            console.log('-----------------------------------------------');
+            console.log(' Run initial page tests');
+            console.log('-----------------------------------------------');
             casper.thenOpen(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                 if ( response.status == 200 || response.status == 304 || response.status == 302 ) {
                     var pageItem = casper.getElementInfo('body');
@@ -206,6 +209,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             })
         }).then(function() {
             // Test navigation items and pages
+            console.log('-----------------------------------------------');
+            console.log(' Collect navigation links and begin page tests');
+            console.log('-----------------------------------------------');
             suite.collectNavigation(testProperty, url, false);
         }).then(function() {
             // console.log('were here 2');
@@ -218,9 +224,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus);
 
                 if (debugOutput) {
-                    console.log('---------------------');
+                    console.log('-----------------------------------------------');
                     console.log('  ' + setFail + ' Failures!');
-                    console.log('---------------------');
+                    console.log('-----------------------------------------------');
 
                     for (var failureItem in testResultsObject) {
                         if (typeof testResultsObject[failureItem] != 'object') {
@@ -492,8 +498,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             // Collect initial navigation items, then re-loop and collect more navigation items.
             if (! runOnce) {
                 // Set collection selector
-                // var selector = '.nav-section a.nav-section-title';
                 var selector = '.nav-sections a';
+            } else {
+                // Grab additional nav links from Connect link
+                var selector = '.nav-small-section.nav-connect a';
             }
 
             // collect nav URLS
@@ -546,18 +554,29 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('testDesinations', JSON.stringify(testDesinations));
             }
 
-            // Send items to be tested
-            suite.testNavigationItems(mainURL, testDesinations, testProperty);
+            if (! runOnce) {
+                suite.collectNavigation(testProperty, url, true);
+            };
+
+            if (runOnce) {
+                // Send items to be tested
+                suite.testNavigationItems(mainURL, testDesinations, testProperty);
+            };
         });
     };
-
 
 
     regressionSuite.prototype.testNavigationItems = function(mainURL, destinations, testProperty) {
         var suite = this;
 
+        if (debugOutput) {
+            console.log('-----------------------------');
+            console.log(' Navigation links collected');
+            console.log('-----------------------------');
+        }
+
         for (var navLocation in destinations) {
-            if ( destinations[navLocation].indexOf(mainURL) > -1 ) {
+            if ( destinations[navLocation].indexOf(mainURL) > -1 || destinations[navLocation].indexOf('http://') > -1 || destinations[navLocation].indexOf('https://') > -1 ) {
                 // console.log('          url found');
                 var currentNavUrl = destinations[navLocation].replace(/ /g,"");
             } else {
@@ -572,9 +591,25 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('destinations[navLocation] ~ ' + destinations[navLocation]);
                 console.log('testUrl ~ ' + currentNavUrl);
             }
-            
-            if ( currentNavUrl == mainURL+'/' || currentNavUrl.indexOf('on-air') > -1 || currentNavUrl.indexOf('.html') > -1) {
-                test.comment('skipping subnav check, unnecessary for current page: ' + currentNavUrl);
+
+            if (debugOutput) { console.log(currentNavTitle + ' : ' + currentNavUrl) }
+
+            // Skip section
+            if (currentNavUrl.indexOf('cozitv') > -1 || currentNavUrl.indexOf('telexitos') > -1) {
+                test.comment('CoziTV or Telexitos link, skipping page check, run regression directly on that property: ' + currentNavUrl);
+
+            } else if (
+                currentNavUrl.indexOf('facebook.com') > -1 ||
+                currentNavUrl.indexOf('twitter.com') > -1 ||
+                currentNavUrl.indexOf('google.com') > -1 ||
+                currentNavUrl.indexOf('instagram.com') > -1 ||
+                currentNavUrl.indexOf('twitter.com') > -1
+            ) {
+                test.comment('Social link, skipping page check. url: ' + currentNavUrl);
+
+            } else if (currentNavUrl.indexOf('/privacy') > -1){
+                test.comment('External privacy link, skipping page check. url: ' + currentNavUrl);
+
             } else {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                     // Grab url info
@@ -590,7 +625,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     // Check for property type
                     if (response.url.indexOf('telemundo') > -1) {
-                        console.log('-------------');
+                        console.log('-----------------------------------------------');
                         test.comment('Current url > ' +  response.url);
                         // console.log('> HTTP Response - ' + response.status);
                         if (response.status == '200') {
@@ -630,7 +665,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     casper.wait(300, function() {
                                         this.waitForSelector('.subnav-large-container',
                                             function pass () {
-                                                console.log('-------------');
+                                                console.log('-----------------------------------------------');
                                                 console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
                                                 // console.log('> HTTP Response - ' + response.status);
                                                 if (response.status == '200') {
@@ -661,7 +696,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 if (casper.exists('.subnav-section-landing')) {
                                     this.waitForSelector('.subnav-large-container',
                                         function pass () {
-                                            console.log('-------------');
+                                            console.log('-----------------------------------------------');
                                             console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
                                             // console.log('> HTTP Response - ' + response.status);
                                             if (response.status == '200') {
@@ -705,7 +740,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                             if (casper.exists('.subnav-section-landing')) {
                                                 this.waitForSelector('.subnav-large-container',
                                                     function pass () {
-                                                        console.log('-------------');
+                                                        console.log('-----------------------------------------------');
                                                         console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
                                                         // console.log('> HTTP Response - ' + response.status);
                                                         if (response.status == '200') {
@@ -727,7 +762,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                             }
                                         });
                                     } else {
-                                        console.log('-------------');
+                                        console.log('-----------------------------------------------');
                                         console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
                                         // console.log('> HTTP Response - ' + response.status);
                                         if (response.status == '200') {
@@ -742,7 +777,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             })
                         }
                     }
-
                 })
             }
         }
@@ -783,7 +817,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
 
                 // console.log(testProperty);
-                console.log('-------------');
+                console.log('-----------------------------------------------');
                 console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
                 // console.log('> HTTP Response - ' + response.status);
                 if (response.status == '200') {
@@ -828,7 +862,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     test.assertVisible('#footer', "footer loaded and displayed.");
 
                     casper.thenOpen('http://www.telexitos.com/guia-tv', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-                        console.log('-------------');
+                        console.log('-----------------------------------------------');
                         console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
                         if (response.status == '200') {
                             console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
@@ -850,7 +884,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     suite.testAssertion('#footer .wrap', urlUri, 'footer');
 
                     casper.thenOpen('http://www.cozitv.com/tv-listings/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-                        console.log('-------------');
+                        console.log('-----------------------------------------------');
                         console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
                         if (response.status == '200') {
                             console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
