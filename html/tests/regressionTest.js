@@ -560,7 +560,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             if (runOnce) {
                 // Send items to be tested
-                suite.testNavigationItems(mainURL, testDesinations, testProperty);
+                suite.itemLinkPageTesting(mainURL, testDesinations, testProperty);
             };
         });
     };
@@ -604,7 +604,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
 
-    regressionSuite.prototype.testNavigationItems = function(mainURL, destinations, testProperty) {
+    regressionSuite.prototype.itemLinkPageTesting = function(mainURL, destinations, testProperty) {
         var suite = this;
 
         if (debugOutput) {
@@ -630,9 +630,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('testUrl ~ ' + currentNavUrl);
             }
 
-            // if (debugOutput) { 
+            if (debugOutput) {
                 console.log(currentNavTitle + ' : ' + currentNavUrl)
-            // }
+            }
 
             // Skip section
             if (currentNavUrl.indexOf('cozitv') > -1 || currentNavUrl.indexOf('telexitos') > -1) {
@@ -684,8 +684,30 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                         }
 
                                         suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
+
+                                        if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
+                                            suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap container');
+                                            suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
+                                        }
+
+                                        if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {    
+                                            if (/.com\/tv-listings\/?$/.test(response.url)) {
+                                            // if ( response.url.indexOf('tv-listings') > -1 ) {
+                                                suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
+                                            } else {
+                                                suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
+                                            }
+                                        }
+
+                                        if ( response.url.indexOf('weather') > -1 ) {
+                                            suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+                                        }
+
+                                        if ( response.url.indexOf('investigations') > -1 ) {
+                                            suite.testAssertion('#leadMedia img', urlUri, 'investigationsLeadThumb');
+                                        }
                                         
-                                        if (response.url.indexOf('nbc') > -1) {
+                                        if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
                                             suite.testAssertion('.footer', urlUri, 'footer');
                                         } else {
                                             suite.testAssertion('.page_footer', urlUri, 'footer');
@@ -714,6 +736,27 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
                                 }
                                 
+                                if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
+                                    suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap');
+                                }
+
+                                if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {    
+                                    if (/.com\/tv-listings\/?$/.test(response.url)) {
+                                    // if ( response.url.indexOf('tv-listings') > -1 ) {
+                                        suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
+                                    } else {
+                                        suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
+                                    }
+                                }
+
+                                if ( response.url.indexOf('weather') > -1 ) {
+                                    suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+                                }
+
+                                if ( response.url.indexOf('investigations') > -1 ) {
+                                    suite.testAssertion('#leadMedia img', urlUri, 'investigationsLeadThumb');
+                                }
+
                                 if (response.url.indexOf('nbc') > -1) {
                                     suite.testAssertion('.footer', urlUri, 'footer');
                                 } else {
@@ -728,11 +771,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         }
 
         casper.wait(100, function() {
-            suite.pageTests(testProperty, mainURL);
+            suite.additionalPageTests(testProperty, mainURL);
         });
     };
 
-    regressionSuite.prototype.pageTests = function(testProperty, url) {
+    regressionSuite.prototype.additionalPageTests = function(testProperty, url) {
         var suite = this;
         var addtnlDestinations = [];
 
@@ -778,27 +821,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 var newUrl = parser.href,
                     sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
                     urlUri = sourceString.replace('.','_');
-
-                // OTS / TLM Checks
-                if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
-                    suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap');
-                }
-
-                if ( response.url.indexOf('contact-us') > -1 || response.url.indexOf('conectate') > -1 ) {
-                    if ( response.url.indexOf('tv-listings') > -1 ) {
-                        suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
-                    } else {
-                        suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
-                    }
-                }
-
-                if ( response.url.indexOf('weather') > -1 ) {
-                    suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
-                }
-
-                if ( response.url.indexOf('investigations') > -1 ) {
-                    suite.testAssertion('#leadMedia img', urlUri, 'investigationsLeadThumb');
-                }
 
                 // Telexitos testing
                 if ( response.url.indexOf('telexitos') > -1 ) {
