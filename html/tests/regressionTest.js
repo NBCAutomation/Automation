@@ -447,7 +447,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.testAssertion = function(testingEntity, urlUri, refName) {
         var suite = this;
 
-        casper.wait(300, function() {
+        casper.wait(100, function() {
             if (casper.exists(testingEntity)) {
                 // console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
                 try {
@@ -565,6 +565,44 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         });
     };
 
+    regressionSuite.prototype.bypassLogin = function (bypassLogin, callback) {
+        var suite = this,
+        output = false;
+
+        if (bypassLogin) {
+
+            console.log('Clickability login page, attempting to login...');
+
+            casper.waitForSelector("form input[name='j_username']", function() {
+                this.fillSelectors('form#login', {
+                    'input[name = j_username ]' : 'beta@staging.com',
+                    'input[name = j_password ]' : 'ots!!Staging1'
+                }, true);
+            });
+
+            casper.waitWhileSelector('form',
+                // Adding pass/fail wait to wait for page to redirect to new page.
+                function pass () {
+                    // console.log('PASS ]');
+                    output = true;
+                },
+                function fail () {
+                    // console.log('FAIL ]');
+                    output = false;
+                }, 1000);
+
+            casper.then(function(){
+                test.comment('...login successful, continuing.');
+                
+                if (typeof(callback) === "function") {
+                    callback(output);
+                }                
+            })
+        } else {
+            throw new Error('bypassLogin: Unable to attempt login;');
+        }
+    };
+
 
     regressionSuite.prototype.testNavigationItems = function(mainURL, destinations, testProperty) {
         var suite = this;
@@ -592,7 +630,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('testUrl ~ ' + currentNavUrl);
             }
 
-            if (debugOutput) { console.log(currentNavTitle + ' : ' + currentNavUrl) }
+            // if (debugOutput) { 
+                console.log(currentNavTitle + ' : ' + currentNavUrl)
+            // }
 
             // Skip section
             if (currentNavUrl.indexOf('cozitv') > -1 || currentNavUrl.indexOf('telexitos') > -1) {
@@ -610,6 +650,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             } else if (currentNavUrl.indexOf('/privacy') > -1){
                 test.comment('External privacy link, skipping page check. url: ' + currentNavUrl);
 
+            } else if (currentNavUrl.indexOf('mailto:') > -1){
+                test.comment('Misc link, skipping page check. url: ' + currentNavUrl);
+
             } else {
                 casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                     // Grab url info
@@ -623,160 +666,63 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
                         urlUri = sourceString.replace('.','_');
 
-                    // Check for property type
-                    if (response.url.indexOf('telemundo') > -1) {
-                        console.log('-----------------------------------------------');
-                        test.comment('Current url > ' +  response.url);
-                        // console.log('> HTTP Response - ' + response.status);
-                        if (response.status == '200') {
-                            console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
-                        } else {
-                            console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
-                        }
-                        console.log('...skipping, no on-page section/page subnav for TLM');
-                        suite.testAssertion('.page_footer', urlUri, 'footer');
+                    // if forced to login screen, login
+                    if (response.url.indexOf('clickability') > -1) {
+                        test.comment('INSERT CLICK bypassLogin here');
                     } else {
-                        // if forced to login screen, login
-                        if (response.url.indexOf('clickability') > -1) {
-                            console.log('Clickability login page, attempting to login...');
-
-                            casper.waitForSelector("form input[name='j_username']", function() {
-                                this.fillSelectors('form#login', {
-                                    'input[name = j_username ]' : 'beta@staging.com',
-                                    'input[name = j_password ]' : 'ots!!Staging1'
-                                }, true);
-                            });
-
-                            casper.waitWhileSelector('form',
-                                // Adding pass/fail wait to wait for page to redirect to new page.
-                                function pass () {
-                                    // console.log('PASS ]');
-                                },
-                                function fail () {
-                                    // console.log('FAIL ]');  
-                                }, 1000);
-
-                            casper.then(function(){
-                                test.comment('...login successful, continuing.');
-                                // test.comment('-- new page title ' + this.getTitle() );
-                                console.log('\n');
-
-                                if (casper.exists('.subnav-large-container')) {
-                                    casper.wait(300, function() {
-                                        this.waitForSelector('.subnav-large-container',
-                                            function pass () {
-                                                console.log('-----------------------------------------------');
-                                                console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
-                                                // console.log('> HTTP Response - ' + response.status);
-                                                if (response.status == '200') {
-                                                    console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
-                                                } else {
-                                                    console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
-                                                }
-
-                                                suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
-                                                suite.testAssertion('.footer', urlUri, 'footer');
-                                            },
-                                            function fail () {
-                                                // test.fail("Unable to test page elements.");
-                                                testResultsObject[pagePathName + '_subNav'] = 'Unable to test page elements.';
-                                                testStatus = 'Fail';
-                                                setFail++;
-                                            },
-                                            null // timeout limit in milliseconds
-                                        )
-                                    })
-                                } else {
-                                    console.log('Unable to find the subnav container.');
-                                }
-                            });
-
-                        } else if (response.url.indexOf('nbc') > -1) {
-                            casper.wait(300, function() {
-                                if (casper.exists('.subnav-section-landing')) {
-                                    this.waitForSelector('.subnav-large-container',
-                                        function pass () {
-                                            console.log('-----------------------------------------------');
-                                            console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
-                                            // console.log('> HTTP Response - ' + response.status);
-                                            if (response.status == '200') {
-                                                console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
-                                            } else {
-                                                console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
-                                            }
-
-                                            suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
-                                            suite.testAssertion('.footer', urlUri, 'footer');
-                                        },
-                                        function fail () {
-                                            testResultsObject[pagePathName + '_subNav'] = 'Unable to locate page subnav.';
-                                            testStatus = 'Fail';
-                                            setFail++;
-                                        },
-                                        null // timeout limit in milliseconds
-                                    )
-                                } else {
-                                    if (casper.exists('form#login')) {
-                                        console.log('Clickability login page, attempting to login...');
-
-                                        casper.waitForSelector("form input[name='j_username']", function() {
-                                            this.fillSelectors('form#login', {
-                                                'input[name = j_username ]' : 'beta@staging.com',
-                                                'input[name = j_password ]' : 'ots!!Staging1'
-                                            }, true);
-                                        });
-
-                                        casper.waitWhileSelector('form',
-                                            // Adding pass/fail wait to wait for page to redirect to new page.
-                                            function pass () {
-                                                // console.log('PASS ]');
-                                            },
-                                            function fail () {
-                                                // console.log('FAIL ]');  
-                                            }, 1000);
-
-                                        casper.then(function(){
-                                            test.comment('...login successful, continuing.');
-                                            if (casper.exists('.subnav-section-landing')) {
-                                                this.waitForSelector('.subnav-large-container',
-                                                    function pass () {
-                                                        console.log('-----------------------------------------------');
-                                                        console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
-                                                        // console.log('> HTTP Response - ' + response.status);
-                                                        if (response.status == '200') {
-                                                            console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
-                                                        } else {
-                                                            console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
-                                                        }
-
-                                                        suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
-                                                        suite.testAssertion('.footer', urlUri, 'footer');
-                                                    },
-                                                    function fail () {
-                                                        testResultsObject[pagePathName + '_subNav'] = 'Unable to locate page subnav.';
-                                                        testStatus = 'Fail';
-                                                        setFail++;
-                                                    },
-                                                    null // timeout limit in milliseconds
-                                                )
-                                            }
-                                        });
-                                    } else {
-                                        console.log('-----------------------------------------------');
+                        casper.wait(100, function() {
+                            if (casper.exists('.subnav-section-landing')) {
+                                this.waitForSelector('.subnav-large-container',
+                                    function pass () {
+                                        console.log('-------------');
                                         console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
-                                        // console.log('> HTTP Response - ' + response.status);
+
                                         if (response.status == '200') {
                                             console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
                                         } else {
                                             console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
                                         }
-                                        console.log(colorizer.colorize('-- No subnav on the current url.', 'COMMENT'));
-                                        suite.testAssertion('.footer', urlUri, 'footer');
-                                    }
+
+                                        suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
+                                        
+                                        if (response.url.indexOf('nbc') > -1) {
+                                            suite.testAssertion('.footer', urlUri, 'footer');
+                                        } else {
+                                            suite.testAssertion('.page_footer', urlUri, 'footer');
+                                        }
+                                    },
+                                    function fail () {
+                                        testResultsObject[pagePathName + '_subNav'] = 'Unable to locate page subnav.';
+                                        testStatus = 'Fail';
+                                        setFail++;
+                                    },
+                                    null // timeout limit in milliseconds
+                                )
+                            } else {
+                                console.log('-------------');
+                                console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                                
+                                if (response.status == '200') {
+                                    console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
+                                } else {
+                                    console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
                                 }
-                            })
-                        }
+
+                                if (response.url.indexOf('nbc') > -1) {
+                                    console.log(colorizer.colorize('-- [NBC] No subnav on the current url.', 'COMMENT'));
+                                } else {
+                                    console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
+                                }
+                                
+                                if (response.url.indexOf('nbc') > -1) {
+                                    suite.testAssertion('.footer', urlUri, 'footer');
+                                } else {
+                                    suite.testAssertion('.page_footer', urlUri, 'footer');
+                                }
+                            }
+                        })
                     }
+
                 })
             }
         }
