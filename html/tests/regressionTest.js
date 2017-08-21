@@ -343,7 +343,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         test.assertExists('.weather-module-radar iframe');
 
 
-                        // this.mouse.move('.weather-module-radar iframe');                        
+                        // this.mouse.move('.weather-module-radar iframe');
 
                         testingObject['siteHeader'] = '.site-header';
                         testingObject['headerLogo'] = '.brand a img';
@@ -690,21 +690,53 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                             suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
                                         }
 
-                                        if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {    
-                                            if (/.com\/tv-listings\/?$/.test(response.url)) {
-                                            // if ( response.url.indexOf('tv-listings') > -1 ) {
-                                                suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
-                                            } else {
+                                        if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {
+                                            if ( response.url.indexOf('tv-listings') > -1 ){
+                                                if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/\/tv-listings\/?$/.test(response.url)) {
+                                                    suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
+
+                                                    // if (testProperty == 'otsTestSuite') {
+                                                    //     this.mouse.move('#tabSelect .cozi');
+                                                    //     this.mouse.click('#tabSelect .cozi')
+                                                        
+                                                    //     casper.wait(100, function() {
+                                                    //         suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
+                                                    //     });
+
+                                                    // } else if (testProperty == 'tlmTestSuite') {
+
+                                                    // }
+                                                }
+                                            }
+                                            
+                                            if (/.com\/contact-us\/?$/.test(response.url)) {
                                                 suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
                                             }
                                         }
 
-                                        if ( response.url.indexOf('weather') > -1 ) {
-                                            suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+                                        if (response.url.indexOf('/weather') > -1) {
+                                            if (/.com\/weather\/?$/.test(response.url) || response.url.indexOf('/weather/?zipCode=') > -1) {
+                                                suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+
+                                                if (casper.exists('#wunderPane')) {
+                                                    if (testProperty == 'otsTestSuite') {
+                                                        this.mouse.move('#wunderSwitch .PWSV.tab');
+                                                        this.mouse.click('#wunderSwitch .PWSV.tab')
+                                                        
+                                                        casper.wait(100, function() {
+                                                            suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
+                                                        });
+
+                                                    } else if (testProperty == 'tlmTestSuite') {
+
+                                                    }
+                                                }
+                                            }
                                         }
 
-                                        if ( response.url.indexOf('investigations') > -1 ) {
-                                            suite.testAssertion('#leadMedia img', urlUri, 'investigationsLeadThumb');
+                                        if (/.com\/investigations\/?$/.test(response.url)) {
+                                            suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
+                                            suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
                                         }
                                         
                                         if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
@@ -741,20 +773,38 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 }
 
                                 if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {    
-                                    if (/.com\/tv-listings\/?$/.test(response.url)) {
-                                    // if ( response.url.indexOf('tv-listings') > -1 ) {
+                                    if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/\/tv-listings\/?$/.test(response.url)) {
                                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
-                                    } else {
+                                    }
+
+                                    if (/.com\/contact-us\/?$/.test(response.url)) {
                                         suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
                                     }
                                 }
 
-                                if ( response.url.indexOf('weather') > -1 ) {
-                                    suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+                                if (response.url.indexOf('/weather') > -1) {
+                                    if (/.com\/weather\/?$/.test(response.url) || response.url.indexOf('/weather/?zipCode=') > -1) {
+                                        suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+
+                                        if (casper.exists('#wunderPane')) {
+                                            if (testProperty == 'otsTestSuite') {
+                                                this.mouse.move('#wunderSwitch .PWSV.tab');
+                                                this.mouse.click('#wunderSwitch .PWSV.tab');
+
+                                                casper.wait(100, function() {
+                                                    suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap2');
+                                                });
+
+                                            } else if (testProperty == 'tlmTestSuite') {
+
+                                            }
+                                        }
+                                    }
                                 }
 
-                                if ( response.url.indexOf('investigations') > -1 ) {
-                                    suite.testAssertion('#leadMedia img', urlUri, 'investigationsLeadThumb');
+                                if (/.com\/investigations\/?$/.test(response.url)) {
+                                    suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
+                                    suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
                                 }
 
                                 if (response.url.indexOf('nbc') > -1) {
