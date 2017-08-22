@@ -683,7 +683,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             if (casper.exists('.subnav-section-landing')) {
                                 suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
                             } else {
-                                if (response.url.indexOf('nbc') > -1) {
+                                if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
                                     console.log(colorizer.colorize('-- [NBC] No subnav on the current url.', 'COMMENT'));
                                 } else {
                                     console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
@@ -700,13 +700,21 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/\/tv-listings\/?$/.test(response.url)) {
                                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
 
+                                        if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                                            var tvListingsContainerName = 'CoziTVListingsContainer';
+                                            var tvListingsTabName = 'CoziTVListingsTab';
+                                        } else {
+                                            var tvListingsContainerName = 'TelexitosTVListingsContainer';
+                                            var tvListingsTabName = 'TelexitosTVListingsTab';
+                                        }
+
                                         this.mouse.move('#listings #tabSelect');
+                                        suite.testAssertion('#listings #tabSelect li[1]', urlUri, tvListingsTabName);
+
                                         this.mouse.click('#listings #tabSelect li[1]');
-                                        
-                                        this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + '_listings_select_' + '.jpg', 'body');
 
                                         casper.wait(100, function() {
-                                            suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
+                                            suite.testAssertion('#listings #tvListingContainer', urlUri, tvListingsContainerName);
                                         });
                                     }
                                 }
