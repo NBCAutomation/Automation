@@ -671,147 +671,75 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         test.comment('INSERT CLICK bypassLogin here');
                     } else {
                         casper.wait(100, function() {
-                            if (casper.exists('.subnav-section-landing')) {
-                                this.waitForSelector('.subnav-large-container',
-                                    function pass () {
-                                        console.log('-------------');
-                                        console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+                            console.log('-----------------------------');
+                            console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
-                                        if (response.status == '200') {
-                                            console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
-                                        } else {
-                                            console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
-                                        }
-
-                                        suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
-
-                                        if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
-                                            suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap container');
-                                            suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
-                                        }
-
-                                        if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {
-                                            if ( response.url.indexOf('tv-listings') > -1 ){
-                                                if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/\/tv-listings\/?$/.test(response.url)) {
-                                                    suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
-
-                                                    // if (testProperty == 'otsTestSuite') {
-                                                    //     this.mouse.move('#tabSelect .cozi');
-                                                    //     this.mouse.click('#tabSelect .cozi')
-                                                        
-                                                    //     casper.wait(100, function() {
-                                                    //         suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
-                                                    //     });
-
-                                                    // } else if (testProperty == 'tlmTestSuite') {
-
-                                                    // }
-                                                }
-                                            }
-                                            
-                                            if (/.com\/contact-us\/?$/.test(response.url)) {
-                                                suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
-                                            }
-                                        }
-
-                                        if (response.url.indexOf('/weather') > -1) {
-                                            if (/.com\/weather\/?$/.test(response.url) || response.url.indexOf('/weather/?zipCode=') > -1) {
-                                                suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
-
-                                                if (casper.exists('#wunderPane')) {
-                                                    if (testProperty == 'otsTestSuite') {
-                                                        this.mouse.move('#wunderSwitch .PWSV.tab');
-                                                        this.mouse.click('#wunderSwitch .PWSV.tab')
-                                                        
-                                                        casper.wait(100, function() {
-                                                            suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
-                                                        });
-
-                                                    } else if (testProperty == 'tlmTestSuite') {
-
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        if (/.com\/investigations\/?$/.test(response.url)) {
-                                            suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
-                                            suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
-                                        }
-                                        
-                                        if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                                            suite.testAssertion('.footer', urlUri, 'footer');
-                                        } else {
-                                            suite.testAssertion('.page_footer', urlUri, 'footer');
-                                        }
-                                    },
-                                    function fail () {
-                                        testResultsObject[pagePathName + '_subNav'] = 'Unable to locate page subnav.';
-                                        testStatus = 'Fail';
-                                        setFail++;
-                                    },
-                                    null // timeout limit in milliseconds
-                                )
+                            if (response.status == '200') {
+                                console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
                             } else {
-                                console.log('-------------');
-                                console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
-                                
-                                if (response.status == '200') {
-                                    console.log(colorizer.colorize('PASS','INFO') + ' page loaded > HTTP Response: ' + response.status);
-                                } else {
-                                    console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
-                                }
+                                console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                            }
 
+                            if (casper.exists('.subnav-section-landing')) {
+                                suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
+                            } else {
                                 if (response.url.indexOf('nbc') > -1) {
                                     console.log(colorizer.colorize('-- [NBC] No subnav on the current url.', 'COMMENT'));
                                 } else {
                                     console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
                                 }
-                                
-                                if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
-                                    suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap');
-                                }
+                            }
 
-                                if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {    
+                            if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
+                                suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap container');
+                                suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
+                            }
+
+                            if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {
+                                if ( response.url.indexOf('tv-listings') > -1 ){
                                     if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/\/tv-listings\/?$/.test(response.url)) {
                                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
-                                    }
 
-                                    if (/.com\/contact-us\/?$/.test(response.url)) {
-                                        suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
-                                    }
-                                }
+                                        this.mouse.move('#listings #tabSelect');
+                                        this.mouse.click('#listings #tabSelect li[1]');
+                                        
+                                        this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + '_listings_select_' + '.jpg', 'body');
 
-                                if (response.url.indexOf('/weather') > -1) {
-                                    if (/.com\/weather\/?$/.test(response.url) || response.url.indexOf('/weather/?zipCode=') > -1) {
-                                        suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
-
-                                        if (casper.exists('#wunderPane')) {
-                                            if (testProperty == 'otsTestSuite') {
-                                                this.mouse.move('#wunderSwitch .PWSV.tab');
-                                                this.mouse.click('#wunderSwitch .PWSV.tab');
-
-                                                casper.wait(100, function() {
-                                                    suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap2');
-                                                });
-
-                                            } else if (testProperty == 'tlmTestSuite') {
-
-                                            }
-                                        }
+                                        casper.wait(100, function() {
+                                            suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
+                                        });
                                     }
                                 }
-
-                                if (/.com\/investigations\/?$/.test(response.url)) {
-                                    suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
-                                    suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
+                                
+                                if (/.com\/contact-us\/?$/.test(response.url)) {
+                                    suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
                                 }
+                            }
 
-                                if (response.url.indexOf('nbc') > -1) {
-                                    suite.testAssertion('.footer', urlUri, 'footer');
-                                } else {
-                                    suite.testAssertion('.page_footer', urlUri, 'footer');
+                            if (response.url.indexOf('/weather') > -1) {
+                                if (/.com\/weather\/?$/.test(response.url) || response.url.indexOf('/weather/?zipCode=') > -1) {
+                                    suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+
+                                    if (casper.exists('#wunderPane')) {
+                                        this.mouse.move('#wunderSwitch .PWSV.tab');
+                                        this.mouse.click('#wunderSwitch .PWSV.tab')
+                                        
+                                        casper.wait(100, function() {
+                                            suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
+                                        });
+                                    }
                                 }
+                            }
+
+                            if (/.com\/investigations\/?$/.test(response.url)) {
+                                suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
+                                suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
+                            }
+                            
+                            if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                                suite.testAssertion('.footer', urlUri, 'footer');
+                            } else {
+                                suite.testAssertion('.page_footer', urlUri, 'footer');
                             }
                         })
                     }
