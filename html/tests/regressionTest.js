@@ -697,7 +697,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                             if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {
                                 if ( response.url.indexOf('tv-listings') > -1 ){
-                                    if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/\/tv-listings\/?$/.test(response.url)) {
+                                    if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/tv-listings\/?$/.test(response.url)) {
                                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
 
                                         if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
@@ -709,11 +709,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                         }
 
                                         this.mouse.move('#listings #tabSelect');
-                                        suite.testAssertion('#listings #tabSelect li[1]', urlUri, tvListingsTabName);
-
-                                        this.mouse.click('#listings #tabSelect li[1]');
+                                        this.mouse.click('#listings #tabSelect li:last-child');
 
                                         casper.wait(100, function() {
+                                            suite.testAssertion('#listings #tabSelect li:last-child', urlUri, tvListingsTabName);
                                             suite.testAssertion('#listings #tvListingContainer', urlUri, tvListingsContainerName);
                                         });
                                     }
