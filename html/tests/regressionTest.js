@@ -362,21 +362,21 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             testingObject['weatherAlert'] = '.weather-alert-info';
                         }
 
-                        // for (var testingItem in testingObject) {
-                        //     if (debugOutput) {
-                        //         console.log('---------------------------');
-                        //         console.log(' testingObject Properties');
-                        //         console.log('---------------------------');
-                        //         console.log('testingItem > ' + testingItem);
-                        //         console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
-                        //     }
+                        for (var testingItem in testingObject) {
+                            if (debugOutput) {
+                                console.log('---------------------------');
+                                console.log(' testingObject Properties');
+                                console.log('---------------------------');
+                                console.log('testingItem > ' + testingItem);
+                                console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                            }
 
-                        //     var refName = testingItem;
-                        //     var testingEntity = testingObject[testingItem];
+                            var refName = testingItem;
+                            var testingEntity = testingObject[testingItem];
 
-                        //     // Test the item/classes within the testObject
-                        //     suite.testAssertion(testingEntity, urlUri, refName);
-                        // }
+                            // Test the item/classes within the testObject
+                            suite.testAssertion(testingEntity, urlUri, refName);
+                        }
                     },
                     function fail () {
                         this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
