@@ -686,16 +686,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             }
                         })
                     } else {
-                        // console.log('new location is ' + this.getCurrentUrl());
-                        // console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
                         casper.wait(100, function() {
                             console.log('-----------------------------');
                             console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
-
-                            console.log('mainURL ' + mainURL);
-                            // if (/.com\/contact-us\/?$/.test(response.url)) {
-
-                            // }
 
                             if (casper.exists('.subnav-section-landing')) {
                                 suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
