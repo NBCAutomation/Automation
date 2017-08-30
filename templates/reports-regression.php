@@ -136,6 +136,14 @@
 								<li>Traffic page loads</li>
 								<li>Interactive radar loads map</li>
 								<li>Contact us loads</li>
+								<li>Connect dropdown appears</li>
+								<li>TV listings page loads and functional</li>
+								<li>Traffic page loads with map</li>
+								<li>Check the listing tab to ensure the correct tab appears (Cozi for NBC)</li>
+								<li>Check the listing tab to ensure the correct tab appears (Telexitos for TLM)</li>
+								<li>Subsection/sub nav landing page loads</li>
+								<li>Footer appears on all pages</li>
+								<li>Icons in connect dropdown are clickable and linkout</li>
 							</ul>';
 						}
 					?>
