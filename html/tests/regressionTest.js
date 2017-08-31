@@ -39,6 +39,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         testingObject = {},
         testStatus = 'Pass',
         setFail = 0,
+        thirdPartyChecks = false,
         testInfo = 'Engine: Chrome/WebKit',
         browser = 'chrome',
         currentTime = new Date(),
