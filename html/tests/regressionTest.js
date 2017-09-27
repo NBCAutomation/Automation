@@ -149,6 +149,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         // casper.start().then(function(response) {
         casper.start( url ).then(function(response) {
+            casper.on('remote.message', function(message) {
+                this.echo(message);
+            });
+
             if ( response.status == 200 || response.status == 302 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
                 
@@ -394,7 +398,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     },
                     function fail () {
                         this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
-                        test.fail("Unable to test page elements. Did not load element .sfbox");
+                        test.fail("Unable to test page elements. Did not load element .sfbox"); 
                     },
                     null // timeout limit in milliseconds
                 );
@@ -613,6 +617,29 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
 
+    regressionSuite.prototype.selectOptionByValue = function(selector, valueToMatch){
+        var suite = this;
+
+        casper.evaluate(function(selector, valueToMatch){
+            var select = document.querySelector(selector),
+                found = false;
+            Array.prototype.forEach.call(select.children, function(opt, i){
+                if (!found && opt.value.indexOf(valueToMatch) !== -1) {
+                    select.selectedIndex = i;
+                    found = true;
+                }
+            });
+            // dispatch change event in case there is some kind of validation
+            var evt = document.createEvent("UIEvents"); // or "HTMLEvents"
+            evt.initUIEvent("change", true, true);
+            select.dispatchEvent(evt);
+            return true;
+            console.log('######################################.        gucci question mark');
+            return '######################################.        gucci question mark';
+        }, selector, valueToMatch);
+    };
+
+
     regressionSuite.prototype.itemLinkCheckSort = function(mainURL, destinations, testProperty) {
         var suite = this;
 
@@ -815,6 +842,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
     regressionSuite.prototype.thirdPartyPageTests = function(testProperty, url) {
+
         var suite = this;
         var addtnlDestinations = [];
 
@@ -875,10 +903,44 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
                         }
 
-                        suite.testAssertion('.schedule a', urlUri, 'telexitosTVListingsPDFButton');
-                        suite.testAssertion('#timezoneSelect', urlUri, 'telexitosTV Timezone Selection');
-                        suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer');
-                        suite.testAssertion('#footer', urlUri, 'footer');
+                        // suite.testAssertion('.schedule a', urlUri, 'telexitosTVListingsPDFButton');
+                        // suite.testAssertion('#timezoneSelect', urlUri, 'telexitosTV Timezone Selection');
+                        // suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer');
+                        // suite.testAssertion('#footer', urlUri, 'footer');
+
+                        // Wait a few additional moments, change dropdown, then wait/confirm bosy loads
+                        
+                        casper.wait(500, function() {
+                            test.comment('... testing timezone dropdown.');    
+                            // this.evaluate(function() {
+                            //     var selectChanged;
+
+                            //     // $('#daySelect').val('#3').change();
+                            //     var select_element = document.getElementById('#timezoneSelect');
+
+                            //     select_element.value = '-300';
+                            //     select_element.onchange();
+                            //     console.log('drodown shouldve changed');
+
+                            //     if(select_element.value == "-300") {
+                            //         selectChanged = 'shit changed';
+                            //     }
+                                
+                            //     return selectChanged;
+                            // });
+
+                            // suite.fill('#timezoneSelect', {
+                            //     'select': ['-300']
+                            // });
+
+                            suite.selectOptionByValue('#timezoneSelect','-300');
+
+                            // console.log(testTimeZoneSelect);
+                            this.captureSelector(saveLocation + urlUri + '_timeZoneChange-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
+
+                            // this.mouse.move('#listings #tabSelect');
+                            // this.mouse.click('#listings #tabSelect li:last-child');
+                        });
                     });
                 }
 
