@@ -149,9 +149,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         // casper.start().then(function(response) {
         casper.start( url ).then(function(response) {
-            casper.on('remote.message', function(message) {
-                this.echo(message);
-            });
+            // casper.on('remote.message', function(message) {
+            //     this.echo(message);
+            // });
 
             if ( response.status == 200 || response.status == 302 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
@@ -633,10 +633,53 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             var evt = document.createEvent("UIEvents"); // or "HTMLEvents"
             evt.initUIEvent("change", true, true);
             select.dispatchEvent(evt);
-            return true;
-            console.log('######################################.        gucci question mark');
-            return '######################################.        gucci question mark';
         }, selector, valueToMatch);
+    };
+
+
+    regressionSuite.prototype.testPageSelectOptions = function(selectIDorName,  urlUri, refName) {
+        /*
+            Use Case:
+            - If timezone select exists, choose an option from the select timezone
+            - Verify that the listings appear
+            - Test changing the day of the week
+            - Verify that the listings still appear
+        */
+        test.comment('... testing timezone dropdown.');
+
+        casper.wait(200, function() {
+            var selectCurrentVal = parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;})),
+                baseTimeZoneSelectValue = -240,
+                incrementSelectVal = -100,
+                baseDaySelectValue = '0';
+
+            if (casper.exists('#timezoneSelect')) {
+                if (selectCurrentVal === baseTimeZoneSelectValue ) {
+                    var testSelectValue = selectCurrentVal+incrementSelectVal;
+                }
+
+                suite.selectOptionByValue('#timezoneSelect', testSelectValue);
+            }
+            
+            suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer[TZ_changed]');
+
+            if (casper.exists('#timezoneSelect')) {
+                if (selectCurrentVal === baseTimeZoneSelectValue ) {
+                    var testSelectValue = selectCurrentVal+incrementSelectVal;
+                }
+
+                suite.selectOptionByValue('#timezoneSelect', testSelectValue);
+            }
+
+            casper.wait(200, function() {
+                // console.log('current select value:: ' + this.getElementAttribute('select[id="timezoneSelect"][name="select"]', 'value'));
+                
+                if (selectCurrentVal == '-300') {
+                    console.log('.....dropdown changed/working correctly.');
+                    suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer[TZ_changed]');
+                }
+            })
+        })
     };
 
 
@@ -903,40 +946,39 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
                         }
 
-                        // suite.testAssertion('.schedule a', urlUri, 'telexitosTVListingsPDFButton');
-                        // suite.testAssertion('#timezoneSelect', urlUri, 'telexitosTV Timezone Selection');
-                        // suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer');
-                        // suite.testAssertion('#footer', urlUri, 'footer');
+                        suite.testAssertion('.schedule a', urlUri, 'telexitosTVListingsPDFButton');
+                        suite.testAssertion('#timezoneSelect', urlUri, 'telexitosTV Timezone Selection');
+                        suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer');
+                        suite.testAssertion('#footer', urlUri, 'footer');
 
                         // Wait a few additional moments, change dropdown, then wait/confirm bosy loads
                         
                         casper.wait(500, function() {
-                            test.comment('... testing timezone dropdown.');    
-                            // this.evaluate(function() {
-                            //     var selectChanged;
-
-                            //     // $('#daySelect').val('#3').change();
-                            //     var select_element = document.getElementById('#timezoneSelect');
-
-                            //     select_element.value = '-300';
-                            //     select_element.onchange();
-                            //     console.log('drodown shouldve changed');
-
-                            //     if(select_element.value == "-300") {
-                            //         selectChanged = 'shit changed';
-                            //     }
-                                
-                            //     return selectChanged;
-                            // });
-
-                            // suite.fill('#timezoneSelect', {
-                            //     'select': ['-300']
-                            // });
+                            test.comment('... testing timezone dropdown.');
 
                             suite.selectOptionByValue('#timezoneSelect','-300');
 
+                            casper.wait(200, function() {
+                                // console.log('current select value:: ' + this.getElementAttribute('select[id="timezoneSelect"][name="select"]', 'value'));
+                                var selectCurrentVal = parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;}));
+                                console.log('new time: ');
+                                var useThisInt = -100;
+                                console.log(selectCurrentVal);
+                                console.log(typeof(selectCurrentVal));
+                                console.log(typeof(useThisInt));
+
+                                var thisTestVal = selectCurrentVal+useThisInt;
+
+                                console.log(thisTestVal);
+
+                                if (selectCurrentVal == '-300') {
+                                    console.log('.....dropdown changed/working correctly.');
+                                    suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer[TZ_changed]');
+                                }
+                            });
+
                             // console.log(testTimeZoneSelect);
-                            this.captureSelector(saveLocation + urlUri + '_timeZoneChange-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
+                            
 
                             // this.mouse.move('#listings #tabSelect');
                             // this.mouse.click('#listings #tabSelect li:last-child');
