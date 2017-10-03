@@ -864,7 +864,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
                         }
 
-                        // Contact page tests
+                        // Contact & TV Listings page tests
                         if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {
                             if ( response.url.indexOf('tv-listings') > -1 ){
                                 if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/tv-listings\/?$/.test(response.url)) {
@@ -877,14 +877,21 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                         var tvListingsTabName = 'TelexitosTVListingsTab';
                                     }
 
-                                    casper.wait(250, function() {
+                                    casper.then(function(){
                                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
                                     });
 
-                                    this.mouse.move('#listings #tabSelect');
-                                    this.mouse.click('#listings #tabSelect li:last-child');
+                                    casper.then(function(){
+                                        test.comment('.... testing tab switching')
+                                        casper.wait(200, function() {
+                                            this.mouse.move('#listings #tabSelect');
+                                            this.mouse.click('#listings #tabSelect li:last-child');
 
-                                    casper.wait(250, function() {
+                                            casper.test.assertExists('#listings #tabSelect li:last-child' + "." + 'selected');
+                                        })
+                                    });
+
+                                    casper.then(function(){
                                         suite.testAssertion('#listings #tabSelect li:last-child', urlUri, tvListingsTabName);
                                         suite.testAssertion('#listings #tvListingContainer', urlUri, tvListingsContainerName);
                                     });
@@ -998,38 +1005,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer');
                         suite.testAssertion('#footer', urlUri, 'footer');
 
-                        // Wait a few additional moments, change dropdown, then wait/confirm bosy loads
-                        
-                        casper.wait(500, function() {
-                            test.comment('... testing timezone dropdown.');
+                        // Wait a few additional moments, change dropdown, then wait/confirm load
+                        casper.then(function(){
+                            casper.wait(200, function() {
+                                test.comment('... testing timezone dropdown.');
 
-                            // suite.selectOptionByValue('#timezoneSelect','-300');
-                            suite.testPageSelectOptions('#timezoneSelect',urlUri);
-
-                            // casper.wait(200, function() {
-                            //     // console.log('current select value:: ' + this.getElementAttribute('select[id="timezoneSelect"][name="select"]', 'value'));
-                            //     var selectCurrentVal = parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;}));
-                            //     console.log('new time: ');
-                            //     var useThisInt = -100;
-                            //     console.log(selectCurrentVal);
-                            //     console.log(typeof(selectCurrentVal));
-                            //     console.log(typeof(useThisInt));
-
-                            //     var thisTestVal = selectCurrentVal+useThisInt;
-
-                            //     console.log(thisTestVal);
-
-                            //     if (selectCurrentVal == '-300') {
-                            //         console.log('.....dropdown changed/working correctly.');
-                            //         suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer[TZ_changed]');
-                            //     }
-                            // });
-
-                            // console.log(testTimeZoneSelect);
-                            
-
-                            // this.mouse.move('#listings #tabSelect');
-                            // this.mouse.click('#listings #tabSelect li:last-child');
+                                suite.testPageSelectOptions('#timezoneSelect',urlUri);
+                            });
                         });
                     });
                 }
