@@ -623,7 +623,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         console.log('selector ' + selector);
         console.log('valueToMatch ' + valueToMatch);
 
-        casper.evaluate(function(selector, valueToMatch){
+        var deltrieTesting = casper.evaluate(function(selector, valueToMatch){
             var select = document.querySelector(selector),
                 found = false;
             Array.prototype.forEach.call(select.children, function(opt, i){
@@ -636,8 +636,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             var evt = document.createEvent("UIEvents"); // or "HTMLEvents"
             evt.initUIEvent("change", true, true);
             select.dispatchEvent(evt);
+            
+            return document.getElementById(select).value;
         }, selector, valueToMatch);
-        return true;
+        // return false;
+        casper.wait(300, function() {
+            console.log(selector);
+            console.log('checking switched value: ' + deltrieTesting);
+        });
     };
 
 
@@ -674,7 +680,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         console.log('not equal');
                     }
 
-                    suite.selectOptionByValue('#timezoneSelect', testSelectValue);
+                    var someRandomTestingVar = suite.selectOptionByValue('#timezoneSelect', testSelectValue);
+                    console.log('someRandomTestingVar:: ' + someRandomTestingVar);
                 });
 
                 casper.then(function(){
