@@ -620,10 +620,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.selectOptionByValue = function(selector, valueToMatch){
         var suite = this;
         console.log('####### inside select function');
-        console.log('selector ' + selector);
-        console.log('valueToMatch ' + valueToMatch);
+        // console.log('selector ' + selector);
+        // console.log('valueToMatch ' + valueToMatch);
 
-        var deltrieTesting = casper.evaluate(function(selector, valueToMatch){
+        casper.evaluate(function(selector, valueToMatch){
             var select = document.querySelector(selector),
                 found = false;
             Array.prototype.forEach.call(select.children, function(opt, i){
@@ -636,13 +636,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             var evt = document.createEvent("UIEvents"); // or "HTMLEvents"
             evt.initUIEvent("change", true, true);
             select.dispatchEvent(evt);
-            
-            return document.getElementById(select).value;
         }, selector, valueToMatch);
         // return false;
         casper.wait(300, function() {
-            console.log(selector);
-            console.log('checking switched value: ' + deltrieTesting);
+            // console.log(selector);
+            casper.captureSelector(saveLocation + selector + '_' + '-selectorswitch-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
+            console.log('checking switched value: ' + parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;})));
         });
     };
 
@@ -675,13 +674,15 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 casper.then(function(){
                     if (selectCurrentTZVal === baseTimeZoneSelectValue ) {
                         console.log('values equal');
-                        var testSelectValue = selectCurrentTZVal+incrementSelectVal;
+                        // var testSelectValue = selectCurrentTZVal+incrementSelectVal;
+                        var testSelectValue = 300;
+                        console.log('new set value: ' + testSelectValue);
                     } else {
                         console.log('not equal');
                     }
 
                     var someRandomTestingVar = suite.selectOptionByValue('#timezoneSelect', testSelectValue);
-                    console.log('someRandomTestingVar:: ' + someRandomTestingVar);
+                    // console.log('someRandomTestingVar:: ' + someRandomTestingVar);
                 });
 
                 casper.then(function(){
@@ -689,7 +690,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         getSelectCurrentTZVal = parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;}));
                         console.log('selectCurrentTZVal ' + getSelectCurrentTZVal);
                         
-                        if (getSelectCurrentTZVal > -240) {
+                        if (getSelectCurrentTZVal != selectCurrentTZVal) {
                             console.log('.....timezone dropdown changed/working correctly.');
                             suite.testAssertion('#listings #tvListingContainer', urlUri, urlUri + '_TVListingsContainer[TZ_changed]');
                         } else {
