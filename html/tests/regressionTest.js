@@ -230,7 +230,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('-----------------------------------------------');
                 console.log(' Collect navigation links and begin page tests');
                 console.log('-----------------------------------------------');
-                suite.collectNavigation(testProperty, url, false);
+                suite.collectNavigation(testProperty, url, true);
             }
         }).then(function() {
             // console.log('were here 2');
@@ -504,7 +504,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
 
     // Regressiong test actions
-    regressionSuite.prototype.collectNavigation = function(testProperty, url) {
+    regressionSuite.prototype.collectNavigation = function(testProperty, url, runOnce) {
         var suite = this;
 
         casper.thenOpen(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
@@ -515,7 +515,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             // Collect initial navigation items, then re-loop and collect more navigation items.
             // Set collection selector
-            var selector = '.navbar-container a';
+            // var selector = '.navbar-container a';
+            if (runOnce) {
+                // Set collection selector
+                var selector = '.nav-sections a';
+            } else {
+                // Grab additional nav links from Connect link
+                var selector = '.nav-small-section.nav-connect a';
+            }
 
             // collect nav URLS
             var evaluatedUrls = this.evaluate(function(mainURL, selector) {
@@ -563,12 +570,21 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 }
             });
             
-            if (debugOutput) {
+            // if (debugOutput) {
                 console.log('testDesinations', JSON.stringify(testDesinations));
-            }
+            // }
+
+            if (! runOnce) {
+                suite.collectNavigation(testProperty, url, true);
+            };
+
+            if (runOnce) {
+                // Send items to be tested
+                // suite.testNavigationItems(mainURL, testDesinations, testProperty);
+            };
 
             // Send items to be tested
-            suite.itemLinkCheckSort(mainURL, testDesinations, testProperty);
+            // suite.itemLinkCheckSort(mainURL, testDesinations, testProperty);
         });
     };
 
