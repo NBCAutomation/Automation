@@ -619,9 +619,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     regressionSuite.prototype.selectOptionByValue = function(selector, valueToMatch){
         var suite = this;
-        console.log('####### inside select function');
-        // console.log('selector ' + selector);
-        // console.log('valueToMatch ' + valueToMatch);
+        if (debugOutput) {
+            console.log('####### inside select function');
+            console.log('selector ' + selector);
+            console.log('valueToMatch ' + valueToMatch);
+        }
 
         casper.evaluate(function(selector, valueToMatch){
             var select = document.querySelector(selector),
@@ -637,12 +639,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             evt.initUIEvent("change", true, true);
             select.dispatchEvent(evt);
         }, selector, valueToMatch);
-        // return false;
-        casper.wait(300, function() {
-            // console.log(selector);
-            casper.captureSelector(saveLocation + selector + '_' + '-selectorswitch-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
-            console.log('checking switched value: ' + parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;})));
-        });
     };
 
 
@@ -661,77 +657,75 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         casper.wait(200, function() {
             var selectCurrentTZVal = parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;})),
-                selectCurrentDayVal = parseInt(this.evaluate(function(){ return document.getElementById("daySelect").value;})),
+                selectCurrentDayVal = this.evaluate(function(){ return document.getElementById("daySelect").value;}),
                 baseTimeZoneSelectValue = -240,
                 incrementSelectVal = -100,
-                baseDaySelectValue = '0';
+                baseDaySelectValue = '#0';
 
             if (casper.exists('#timezoneSelect')) {
-                console.log('selectCurrentTZVal: ' + selectCurrentTZVal);
-                console.log('baseTimeZoneSelectValue: ' + baseTimeZoneSelectValue);
+                if (debugOutput) {
+                    console.log('selectCurrentTZVal: ' + selectCurrentTZVal);
+                    console.log('baseTimeZoneSelectValue: ' + baseTimeZoneSelectValue);
+                }
 
 
                 casper.then(function(){
                     if (selectCurrentTZVal === baseTimeZoneSelectValue ) {
-                        console.log('values equal');
-                        // var testSelectValue = selectCurrentTZVal+incrementSelectVal;
-                        var testSelectValue = 300;
-                        console.log('new set value: ' + testSelectValue);
+                        if (debugOutput) {console.log('values equal');}
+                        var tzTestSelectValue = 300;
                     } else {
-                        console.log('not equal');
+                        console.log('tz not equal');
                     }
 
-                    var someRandomTestingVar = suite.selectOptionByValue('#timezoneSelect', testSelectValue);
-                    // console.log('someRandomTestingVar:: ' + someRandomTestingVar);
+                    suite.selectOptionByValue('#timezoneSelect', tzTestSelectValue);
                 });
 
                 casper.then(function(){
                     casper.wait(500, function() {
                         getSelectCurrentTZVal = parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;}));
-                        console.log('selectCurrentTZVal ' + getSelectCurrentTZVal);
+                        if (debugOutput) {console.log('selectCurrentTZVal ' + getSelectCurrentTZVal);}
                         
                         if (getSelectCurrentTZVal != selectCurrentTZVal) {
-                            console.log('.....timezone dropdown changed/working correctly.');
+                            test.comment('.....timezone dropdown changed/working correctly.');
+                            if (debugOutput) {casper.captureSelector(saveLocation + urlUri + '_' + '_TVListingsContainerTZ_' + timeStamp + '_' + browser + '.jpg', 'body');}
                             suite.testAssertion('#listings #tvListingContainer', urlUri, urlUri + '_TVListingsContainer[TZ_changed]');
                         } else {
-                            console.log(' - [SelectTest] Timezone may not have chnaged properly.');
+                            test.comment(' - [SelectTest] Timezone may not have chnaged properly.');
                         }
                     })
-                });
-
-                casper.then(function(){
-                    suite.testAssertion('#listings #tvListingContainer', urlUri, 'telexitosTVListingsContainer[TZ_changed]');   
                 });
             }
 
             // -------
 
-            // if (casper.exists('#daySelect')) {
-            //     casper.then(function(){
-            //         if (selectCurrentDayVal === 0 ) {
-            //             var testSelectValue = selectCurrentDayVal+1;
-            //         }
+            if (casper.exists('#daySelect')) {
+                casper.then(function(){
+                    if (selectCurrentDayVal === baseDaySelectValue ) {
+                        var dayTestSelectValue = '#1';
+                    } else {
+                        console.log('day not equal');
+                    }
 
-            //         suite.selectOptionByValue('#daySelect', testSelectValue);
-            //     });
+                    console.log('baseDaySelectValue: ' + baseDaySelectValue);
+                    console.log('dayTestSelectValue: ' + dayTestSelectValue);
+                    suite.selectOptionByValue('#daySelect', dayTestSelectValue);
+                });
 
-            //     casper.then(function(){
-            //         casper.wait(200, function() {
-            //             selectCurrentDayVal = parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;}));
+                casper.then(function(){
+                    casper.wait(500, function() {
+                        getSelectCurrentDayVal = this.evaluate(function(){ return document.getElementById("timezoneSelect").value;});
+                        if (debugOutput) {console.log('getSelectCurrentDayVal ' + getSelectCurrentDayVal);}
                         
-            //             if (selectCurrentDayVal > 0) {
-            //                 console.log('.....date dropdown changed/working correctly.');
-            //                 suite.testAssertion('#listings #tvListingContainer', urlUri, urlUri + '_TVListingsContainer[Day_changed]');
-            //             } else {
-            //                 console.log(' - [SelectTest] Date may not have chnaged properly.');
-            //             }
-            //         })
-            //     });
-
-            //     casper.then(function(){
-            //         suite.testAssertion('#listings #tvListingContainer', urlUri, urlUri + '_TVListingsContainer[Day_changed]');
-            //     });
-            // }
+                        if (getSelectCurrentDayVal != baseDaySelectValue) {
+                            test.comment('.....date dropdown changed/working correctly.');
+                            if (debugOutput) {casper.captureSelector(saveLocation + urlUri + '_' + '_TVListingsContainerDAY_' + timeStamp + '_' + browser + '.jpg', 'body');}
+                            suite.testAssertion('#listings #tvListingContainer', urlUri, urlUri + '_TVListingsContainer[Day_changed]');
+                        } else {
+                            test.comment(' - [SelectTest] Date may not have chnaged properly.');
+                        }
+                    })
+                });
+            }
         })
     };
 
