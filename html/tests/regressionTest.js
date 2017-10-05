@@ -230,7 +230,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('-----------------------------------------------');
                 console.log(' Collect navigation links and begin page tests');
                 console.log('-----------------------------------------------');
-                suite.collectNavigation(testProperty, url, true);
+                suite.testHoverAndCollectNavigation(testProperty, url, false);
             }
         }).then(function() {
             // console.log('were here 2');
@@ -504,7 +504,27 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
 
     // Regressiong test actions
-    regressionSuite.prototype.collectNavigation = function(testProperty, url, runOnce) {
+    regressionSuite.prototype.testHover = function(refIndex) {
+        var suite = this;
+
+        console.log('*** numNavItems:' + refIndex);
+        this.mouse.move('.nav-section:nth-child(' + refIndex + ')');
+        
+        casper.wait(200, function() {                        
+            if (refIndex > 0) {
+                // suite.testAssertion('#listings #tvListingContainer', urlUri, urlUri + '_TVListingsContainer[TZ_changed]');
+
+                console.log('screenshots');
+                casper.captureSelector(saveLocation + '_' + '_menu-hover-screenshot_' + refIndex + '__' + timeStamp + '_' + browser + '.jpg', 'body');
+            }
+            // casper.test.assertExists('.nav-section:nth-child(' + i + ') .subnav-large-container');
+            console.log('---');
+            console.log('..wait');
+        });
+    };
+
+
+    regressionSuite.prototype.testHoverAndCollectNavigation = function(testProperty, url) {
         var suite = this;
 
         casper.thenOpen(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
@@ -513,78 +533,77 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             if (debugOutput) {console.log('main url ' + mainURL)};
 
-            // Collect initial navigation items, then re-loop and collect more navigation items.
-            // Set collection selector
-            // var selector = '.navbar-container a';
-            if (runOnce) {
-                // Set collection selector
-                var selector = '.nav-sections a';
-            } else {
-                // Grab additional nav links from Connect link
-                var selector = '.nav-small-section.nav-connect a';
-            }
+            // Test navigation hover states
+            casper.then(function(){
+                var numNavItems = parseInt(this.evaluate(function(){ return document.querySelectorAll('.nav-section').length;}));
 
-            // collect nav URLS
-            var evaluatedUrls = this.evaluate(function(mainURL, selector) {
-                var output = [];
-                // Grab the current url data, href and link text
-                var elementObjects = __utils__.findAll(selector).map(function(element) {
-                    console.log('map1: ', $(element).text());
-                    if (!! element.getAttribute('href')) {
-                        var title = element.getAttribute('title'),
-                            alt = element.getAttribute('alt');
+                for (var i = numNavItems; i >= 0; i--) {
+                    console.log('*** numNavItems:' + i);
 
-                        return {
-                            url: element.getAttribute('href'),
-                            // innerText: element.innerText
-                            innerText: title ? title : alt
-                        }
-                    } 
-                    return null;
-                });
-
-                for (var i = elementObjects.length - 1; i >= 0; i--) {
-                    var el = elementObjects[i];
-                    if (el !== null) {
-                        output.push(el);
-                    }
-                }
-                return output;
-            }, mainURL, selector);
-
-            // loop and append to testDestinations
-            evaluatedUrls.forEach(function(elementObj) {
-                if (elementObj === null) {
-                    return;
-                }
-
-                var url = elementObj.url,
-                    innerText = elementObj.innerText;
-                
-                if (debugOutput) {
-                    console.log(url, elementObj);
-                };
-
-                if (url.length > 0) {
-                    testDesinations[innerText] = url;
+                    suite.testHover(i);
                 }
             });
-            
-            // if (debugOutput) {
-                console.log('testDesinations', JSON.stringify(testDesinations));
-            // }
 
-            if (! runOnce) {
-                suite.collectNavigation(testProperty, url, true);
-            };
+            // // Collect all navigation items/links
+            // casper.then(function(){
+            //     // Set collection selector
+            //     var selector = '.navbar-container a';
 
-            if (runOnce) {
-                // Send items to be tested
-                // suite.testNavigationItems(mainURL, testDesinations, testProperty);
-            };
+            //     // collect nav URLS
+            //     var evaluatedUrls = this.evaluate(function(mainURL, selector) {
+            //         var output = [];
+            //         // Grab the current url data, href and link text
+            //         var elementObjects = __utils__.findAll(selector).map(function(element) {
+            //             console.log('map1: ', $(element).text());
+            //             if (!! element.getAttribute('href')) {
+            //                 var title = element.getAttribute('title'),
+            //                     alt = element.getAttribute('alt');
 
-            // Send items to be tested
-            // suite.itemLinkCheckSort(mainURL, testDesinations, testProperty);
+            //                 return {
+            //                     url: element.getAttribute('href'),
+            //                     // innerText: element.innerText
+            //                     innerText: title ? title : alt
+            //                 }
+            //             } 
+            //             return null;
+            //         });
+
+            //         for (var i = elementObjects.length - 1; i >= 0; i--) {
+            //             var el = elementObjects[i];
+            //             if (el !== null) {
+            //                 output.push(el);
+            //             }
+            //         }
+            //         return output;
+            //     }, mainURL, selector);
+
+            //     // loop and append to testDestinations
+            //     evaluatedUrls.forEach(function(elementObj) {
+            //         if (elementObj === null) {
+            //             return;
+            //         }
+
+            //         var url = elementObj.url,
+            //             innerText = elementObj.innerText;
+                    
+            //         if (debugOutput) {
+            //             console.log(url, elementObj);
+            //         };
+
+            //         if (url.length > 0) {
+            //             testDesinations[innerText] = url;
+            //         }
+            //     });
+                
+            //     if (debugOutput) {
+            //         console.log('testDesinations', JSON.stringify(testDesinations));
+            //     }
+            // });
+
+            // // Send collected nav items to be tested
+            // casper.then(function(){
+            //     suite.collectedLinkCheckSort(mainURL, testDesinations, testProperty);
+            // });
         });
     };
 
@@ -746,7 +765,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
 
-    regressionSuite.prototype.itemLinkCheckSort = function(mainURL, destinations, testProperty) {
+    regressionSuite.prototype.collectedLinkCheckSort = function(mainURL, destinations, testProperty) {
         var suite = this;
 
         if (debugOutput) {
