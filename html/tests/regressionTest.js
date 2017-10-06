@@ -47,7 +47,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         day = currentTime.getDate(),
         year = currentTime.getFullYear(),
         hours = currentTime.getHours(),
-        minutes = currentTime.getMinutes();
+        minutes = currentTime.getMinutes(),
+        urlUri;
 
         if (minutes < 10){
             minutes = "0" + minutes;
@@ -230,7 +231,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('-----------------------------------------------');
                 console.log(' Collect navigation links and begin page tests');
                 console.log('-----------------------------------------------');
-                suite.testHoverAndCollectNavigation(testProperty, url, false);
+                suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
             }
         }).then(function() {
             // console.log('were here 2');
@@ -504,27 +505,36 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
 
     // Regressiong test actions
-    regressionSuite.prototype.testHover = function(refIndex) {
+    regressionSuite.prototype.testHover = function(refIndex, testProperty) {
         var suite = this;
 
-        console.log('*** numNavItems:' + refIndex);
-        this.mouse.move('.nav-section:nth-child(' + refIndex + ')');
-        
-        casper.wait(200, function() {                        
-            if (refIndex > 0) {
-                // suite.testAssertion('#listings #tvListingContainer', urlUri, urlUri + '_TVListingsContainer[TZ_changed]');
+        if (testProperty == 'otsTestSuite') {
+            var testSubNavContainerClass = ".nav-section-subnav";
+        } else {
+            var testSubNavContainerClass = ".subnav-large-container";
+        }
 
-                console.log('screenshots');
-                casper.captureSelector(saveLocation + '_' + '_menu-hover-screenshot_' + refIndex + '__' + timeStamp + '_' + browser + '.jpg', 'body');
-            }
+        casper.wait(20, function() {
+            casper.mouse.move('.nav-section:nth-child(' + refIndex + ')');
+            casper.wait(200, function() {
+                if (refIndex > 0) {
+                    suite.testAssertion('.nav-section:nth-child(' + refIndex + ') ' + testSubNavContainerClass, urlUri, refIndex + '_menuItem_sub-navigation[display]');
+
+
+                    // console.log('screenshots');
+                    // casper.captureSelector(saveLocation + '_' + '_menu-hover-screenshot_' + refIndex + '__' + timeStamp + '_' + browser + '.jpg', 'body');
+                }
+            });
             // casper.test.assertExists('.nav-section:nth-child(' + i + ') .subnav-large-container');
             console.log('---');
             console.log('..wait');
         });
+        casper.wait(300, function() {});
+
     };
 
 
-    regressionSuite.prototype.testHoverAndCollectNavigation = function(testProperty, url) {
+    regressionSuite.prototype.testHoverAndCollectNavigation = function(testProperty, url, urlUri) {
         var suite = this;
 
         casper.thenOpen(url, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
@@ -535,12 +545,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             // Test navigation hover states
             casper.then(function(){
-                var numNavItems = parseInt(this.evaluate(function(){ return document.querySelectorAll('.nav-section').length;}));
+                var numNavItems = parseInt(casper.evaluate(function(){ return document.querySelectorAll('.nav-section').length;}));
 
                 for (var i = numNavItems; i >= 0; i--) {
                     console.log('*** numNavItems:' + i);
 
-                    suite.testHover(i);
+                    suite.testHover(i, testProperty);
                 }
             });
 
