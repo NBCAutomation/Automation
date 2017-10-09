@@ -228,9 +228,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         }).then(function() {
             if (! thirdPartyChecks) {
                 // Test navigation items and pages
-                console.log('-----------------------------------------------');
-                console.log(' Collect navigation links and begin page tests');
-                console.log('-----------------------------------------------');
+                console.log('-------------');
+                console.log(' Page tests');
+                console.log('-------------');
                 suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
             }
         }).then(function() {
@@ -505,7 +505,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
 
     // Regressiong test actions
-    regressionSuite.prototype.testHover = function(refIndex, testProperty) {
+    regressionSuite.prototype.testHover = function(refIndex, refIndexName, testProperty) {
         var suite = this;
 
         if (testProperty == 'otsTestSuite') {
@@ -517,17 +517,15 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         casper.wait(20, function() {
             casper.mouse.move('.nav-section:nth-child(' + refIndex + ')');
             casper.wait(200, function() {
-                if (refIndex > 0) {
-                    suite.testAssertion('.nav-section:nth-child(' + refIndex + ') ' + testSubNavContainerClass, urlUri, refIndex + '_menuItem_sub-navigation[display]');
-
+                if (refIndex == 1) {
+                    test.comment('Home/Inicio link, skipping no subnav for current nav item.');
+                } else if (refIndex > 1) {
+                    suite.testAssertion('.nav-section:nth-child(' + refIndex + ') ' + testSubNavContainerClass, urlUri, refIndexName + '_sub-navigation');
 
                     // console.log('screenshots');
                     // casper.captureSelector(saveLocation + '_' + '_menu-hover-screenshot_' + refIndex + '__' + timeStamp + '_' + browser + '.jpg', 'body');
                 }
             });
-            // casper.test.assertExists('.nav-section:nth-child(' + i + ') .subnav-large-container');
-            console.log('---');
-            console.log('..wait');
         });
         casper.wait(300, function() {});
 
@@ -543,77 +541,94 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             if (debugOutput) {console.log('main url ' + mainURL)};
 
+            // console.log( casper.evaluate(function(){ return document.querySelector('.nav-section:nth-child(' + i + ')').innerText;}) );
             // Test navigation hover states
             casper.then(function(){
+                console.log('-------------------------------');
+                console.log(' Testing navigation hovers');
+                console.log('-------------------------------');
                 var numNavItems = parseInt(casper.evaluate(function(){ return document.querySelectorAll('.nav-section').length;}));
 
                 for (var i = numNavItems; i >= 0; i--) {
-                    console.log('*** numNavItems:' + i);
+                    var thisRefIndex = i;
 
-                    suite.testHover(i, testProperty);
+                    if (testProperty == 'otsTestSuite' && thisRefIndex == 6) {
+                        var thisRefIndexLinkName = 'More';
+                    } else {
+                        var thisRefIndexLinkName = casper.evaluate(function(thisRefIndex){ return document.querySelector('.nav-section:nth-child(' + thisRefIndex + ')').innerText;}, thisRefIndex);
+                    }
+                    
+                    if (debugOutput) {console.log(i, thisRefIndexLinkName);}
+
+                    if (thisRefIndexLinkName) {
+                        suite.testHover(thisRefIndex, thisRefIndexLinkName, testProperty);
+                    }
                 }
             });
 
-            // // Collect all navigation items/links
-            // casper.then(function(){
-            //     // Set collection selector
-            //     var selector = '.navbar-container a';
+            // Collect all navigation items/links
+            casper.then(function(){
+                console.log('------------------------------------------------');
+                console.log(' Navigation link collection and page tests');
+                console.log('-------------------------------------------------');
+                // Set collection selector
+                var selector = '.navbar-container a';
 
-            //     // collect nav URLS
-            //     var evaluatedUrls = this.evaluate(function(mainURL, selector) {
-            //         var output = [];
-            //         // Grab the current url data, href and link text
-            //         var elementObjects = __utils__.findAll(selector).map(function(element) {
-            //             console.log('map1: ', $(element).text());
-            //             if (!! element.getAttribute('href')) {
-            //                 var title = element.getAttribute('title'),
-            //                     alt = element.getAttribute('alt');
+                // collect nav URLS
+                var evaluatedUrls = this.evaluate(function(mainURL, selector) {
+                    var output = [];
+                    // Grab the current url data, href and link text
+                    var elementObjects = __utils__.findAll(selector).map(function(element) {
+                        console.log('map1: ', $(element).text());
+                        if (!! element.getAttribute('href')) {
+                            var title = element.getAttribute('title'),
+                                alt = element.getAttribute('alt');
 
-            //                 return {
-            //                     url: element.getAttribute('href'),
-            //                     // innerText: element.innerText
-            //                     innerText: title ? title : alt
-            //                 }
-            //             } 
-            //             return null;
-            //         });
+                            return {
+                                url: element.getAttribute('href'),
+                                // innerText: element.innerText
+                                innerText: title ? title : alt
+                            }
+                        } 
+                        return null;
+                    });
 
-            //         for (var i = elementObjects.length - 1; i >= 0; i--) {
-            //             var el = elementObjects[i];
-            //             if (el !== null) {
-            //                 output.push(el);
-            //             }
-            //         }
-            //         return output;
-            //     }, mainURL, selector);
+                    for (var i = elementObjects.length - 1; i >= 0; i--) {
+                        var el = elementObjects[i];
+                        if (el !== null) {
+                            output.push(el);
+                        }
+                    }
+                    return output;
+                }, mainURL, selector);
 
-            //     // loop and append to testDestinations
-            //     evaluatedUrls.forEach(function(elementObj) {
-            //         if (elementObj === null) {
-            //             return;
-            //         }
+                // loop and append to testDestinations
+                evaluatedUrls.forEach(function(elementObj) {
+                    if (elementObj === null) {
+                        return;
+                    }
 
-            //         var url = elementObj.url,
-            //             innerText = elementObj.innerText;
+                    var url = elementObj.url,
+                        innerText = elementObj.innerText;
                     
-            //         if (debugOutput) {
-            //             console.log(url, elementObj);
-            //         };
+                    if (debugOutput) {
+                        console.log(url, elementObj);
+                    };
 
-            //         if (url.length > 0) {
-            //             testDesinations[innerText] = url;
-            //         }
-            //     });
+                    if (url.length > 0) {
+                        testDesinations[innerText] = url;
+                    }
+                });
                 
-            //     if (debugOutput) {
-            //         console.log('testDesinations', JSON.stringify(testDesinations));
-            //     }
-            // });
+                if (debugOutput) {
+                    console.log('testDesinations', JSON.stringify(testDesinations));
+                }
+            });
 
-            // // Send collected nav items to be tested
-            // casper.then(function(){
-            //     suite.collectedLinkCheckSort(mainURL, testDesinations, testProperty);
-            // });
+            // Send collected nav items to be tested
+            casper.then(function(){
+                suite.collectedLinkCheckSort(mainURL, testDesinations, testProperty);
+            });
         });
     };
 
@@ -778,12 +793,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.collectedLinkCheckSort = function(mainURL, destinations, testProperty) {
         var suite = this;
 
-        if (debugOutput) {
-            console.log('-----------------------------');
-            console.log(' Navigation links collected');
-            console.log('-----------------------------');
-        }
-
         for (var navLocation in destinations) {
             if ( destinations[navLocation].indexOf(mainURL) > -1 || destinations[navLocation].indexOf('http://') > -1 || destinations[navLocation].indexOf('https://') > -1 ) {
                 // console.log('          url found');
@@ -873,34 +882,35 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
                         } else {
                             if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                                console.log(colorizer.colorize('-- [NBC] No subnav on the current url.', 'COMMENT'));
+                                console.log(colorizer.colorize('-- [NBC] No on-page subnav on the current url.', 'COMMENT'));
                             } else {
                                 console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
                             }
                         }
 
-                        // Homepage tests                            
+                        // Homepage tests
                         if ( response.url === mainURL + '/') {
-                            suite.testAssertion('.weather-module-map iframe', urlUri, 'homepageWeatherIframe');
-                            suite.testAssertion('iframe.wx-standalone-map', urlUri, 'homepageWeatherIframe');
+                            if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                                suite.testAssertion('.weather-module-map iframe', urlUri, 'homepageWeatherIframe');
+                                suite.testAssertion('iframe.wx-standalone-map', urlUri, 'homepageWeatherIframe');
 
-                            var verifyMapOpen = this.evaluate(function() {
-                                var mapOpen = false,
-                                weatherMapHeight = document.getElementsByClassName('wx-standalone-map')[0].clientHeight;
+                                var verifyMapOpen = this.evaluate(function() {
+                                    var mapOpen = false,
+                                    weatherMapHeight = document.getElementsByClassName('wx-standalone-map')[0].clientHeight;
 
-                                if (weatherMapHeight > 259) {
-                                    mapOpen = true;
+                                    if (weatherMapHeight > 259) {
+                                        mapOpen = true;
+                                    }
+                                    return mapOpen;
+                                });
+
+                                if (verifyMapOpen) {
+                                    console.log(colorizer.colorize('PASS', 'INFO') + ' the weather map is visible and open.');
+                                } else {
+                                    console.log(colorizer.colorize('FAIL homepageWeatherMap didnt loaded correctly, but isn\'t open.', 'ERROR'));
+                                    suite.logRegressionError('wx-standalone-map', urlUri, 'homepageWeatherMap');
                                 }
-                                return mapOpen;
-                            });
-
-                            if (verifyMapOpen) {
-                                console.log(colorizer.colorize('PASS', 'INFO') + ' the weather map is visible and open.');
-                            } else {
-                                console.log(colorizer.colorize('FAIL homepageWeatherMap didnt loaded correctly, but isn\'t open.', 'ERROR'));
-                                suite.logRegressionError('wx-standalone-map', urlUri, 'homepageWeatherMap');
                             }
-
                         }
 
                         // Traffic Page tests
