@@ -10,31 +10,8 @@
 						<a href="/scripts/regressionTest">regressionTest.js</a>
 					</div>
 					<div class="panel-body">
-						<span class="note">Manully run regression test. Tests the following list:</span>
-						
-						<ul class="defaultList">
-							<li>Logo is clickable</li>
-							<li>Weather module appears on HP and map loads</li>
-							<li>Right rail has Spredfast</li>
-							<li>Watch live TVE dropdown appears</li>
-							<li>News page loads along with sub nav</li>
-							<li>Weather page loads along with sub nav</li>
-							<li>Investigations page loads along with sub navs</li>
-							<li>Entertainment page loads along with sub nav</li>
-							<li>Traffic page loads</li>
-							<li>Interactive radar loads map</li>
-							<li>Contact us loads</li>
-							<li>Connect dropdown appears</li>
-							<li>TV listings page loads and functional</li>
-							<li>Traffic page loads with map</li>
-							<li>Check the listing tab to ensure the correct tab appears (Cozi for NBC)</li>
-							<li>Check the listing tab to ensure the correct tab appears (Telexitos for TLM)</li>
-							<li>Subsection/sub nav landing page loads</li>
-							<li>Footer appears on all pages</li>
-							<li>Icons in connect dropdown are clickable and linkout</li>
-						</ul>
-
-						<span class="note">will also load check telexitos and cozi</span>
+						<p class="note">Manully run regression test. Tests are seperated into OTS Market tests and Telexitos/Cozie test.</p>
+						<p><a href="/help">Click here for test cases</a></p>
 					</div>
 				</div>
 			</li>

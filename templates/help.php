@@ -3,6 +3,55 @@
 		<ul>
 			<li>
 				<div class="panel panel-default">
+					<div class="panel-heading">Regression Script Testing</div>
+					<div class="panel-body">
+						<p>Currently the regression script tests the below items.</p>
+						<small>
+							<h4>Market Tests</h4>
+							<ul class="defaultList">
+								<li>Logo is clickable</li>
+								<li>Weather module appears on HP and map loads</li>
+								<li>Right rail has Spredfast</li>
+								<li>Watch live TVE dropdown appears</li>
+								<li>News page loads along with sub nav</li>
+								<li>Weather page loads along with sub nav</li>
+								<li>Investigations page loads along with sub navs</li>
+								<li>Entertainment page loads along with sub nav</li>
+								<li>Traffic page loads</li>
+								<li>Interactive radar loads map</li>
+								<li>Contact us loads</li>
+								<li>Connect dropdown appears</li>
+								<li>TV listings page loads and functional</li>
+								<li>Traffic page loads with map</li>
+								<li>Check the listing tab to ensure the correct tab appears (Cozi for NBC)</li>
+								<li>Check the listing tab to ensure the correct tab appears (Telexitos for TLM)</li>
+								<li>Subsection/sub nav landing page loads</li>
+								<li>Footer appears on all pages</li>
+								<li>Icons in connect dropdown are clickable and linkout</li>
+								<li>[NBC] Check if the weather map is open on hp]</li>
+								<li>Verify TLM nvaigation hover states for sub-menus</li>
+							</ul>
+							<h4>Cozi Tests</h4>
+							<ul class="defaultList">
+								<li>Cozi tv page loads</li>
+								<li>Cozi TV article page loads</li>
+								<li>Cozi Tv - Listings and Channel Finder</li>
+								<li>Get cozi map with pins appears on page load</li>
+								<li>TV listing page loads with different timezones(same for telexitos)</li>
+								<li>PDF sched tab appears on tv listing page</li>
+							</ul>
+							<h4>Telexitos Tests</h4>
+							<ul class="defaultList">
+								<li>Telexitos page loads</li>
+								<li>TV listing page loads with different timezones(same for telexitos)</li>
+								<li>PDF sched tab appears on tv listing page</li>
+							</ul>
+						</small>
+					</div>
+				</div>
+			</li>
+			<li>
+				<div class="panel panel-default">
 					<div class="panel-heading">Cronjobs</div>
 					<div class="panel-body">
 						<p>Currently the master job (spire-run), is set to run every 2 hours everyday.</p>

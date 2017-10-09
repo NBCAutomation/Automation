@@ -10,6 +10,7 @@ http://www.nbcwashington.com
 http://www.nbcsandiego.com
 http://www.necn.com
 http://www.nbcboston.com
+http://www.telemundo20.com
 http://www.telemundo40.com
 http://www.telemundo47.com
 http://www.telemundo51.com
