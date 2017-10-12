@@ -16,7 +16,6 @@
 // Casper 1.1.0-beta3 and Phantom 1.9.8
 //
 casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
-    casper.options.viewportSize = { width: 1280, height: 5000 };
     // casper.options.timeout = 300000;
     casper.options.timeout = 900000;
 
@@ -101,6 +100,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var testInfo = 'Engine: FF/Gecko',
             browser = 'ff';
     }
+
+    // if (true) {
+
+    // } else {
+        casper.options.viewportSize = { width: 1280, height: 5000 };
+    // }
 
 
     if (['local', 'dev', 'prod'].indexOf(envConfig) < 0) {
@@ -472,7 +477,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 try {
                     test.assertVisible(testingEntity, refName + ' is visibile');
                 } catch (e) {
-                    console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
+                    console.log(colorizer.colorize(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport. ', 'ERROR'));
+                    // console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
                     console.log('   -- failure')
                     console.log('   -- ' +  e);
                     suite.logRegressionError(testingEntity, urlUri, refName);
@@ -766,8 +772,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         console.log('day not equal');
                     }
 
-                    console.log('baseDaySelectValue: ' + baseDaySelectValue);
-                    console.log('dayTestSelectValue: ' + dayTestSelectValue);
+                    if (debugOutput) {
+                        console.log('baseDaySelectValue: ' + baseDaySelectValue);
+                        console.log('dayTestSelectValue: ' + dayTestSelectValue);    
+                    }
+                    
                     suite.selectOptionByValue('#daySelect', dayTestSelectValue);
                 });
 
@@ -1041,10 +1050,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                 // Telexitos testing
                 if ( response.url.indexOf('telexitos') > -1 ) {
-                    test.assertVisible('.primary', "main page loaded and displayed.");
+                    // test.testAssertion('.primary', urlUri, "main page loaded and displayed.");
                     suite.testAssertion('.primary', urlUri, 'telexitosMainDiv');
-                    test.assertVisible('.full.top_nav', "header loaded and displayed.");
-                    test.assertVisible('#footer', "footer loaded and displayed.");
+                    suite.testAssertion('.full.top_nav', urlUri, 'header');
+                    suite.testAssertion('#footer', urlUri, 'footer');
 
                     casper.thenOpen('http://www.telexitos.com/guia-tv', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                         console.log('-----------------------------------------------');
