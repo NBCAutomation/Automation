@@ -1120,7 +1120,7 @@ class DbHandler {
 
 
     public function getPayLoadError($testReferenceID, $testResultID) {
-        $output = Spire::spireCache('getPayLoadError_'.$testReferenceID.'_'.$testResultID, 10, function() use ($testReferenceID, $testResultID) {
+        $output = Spire::spireCache('getPayLoadError_'.$testReferenceID.'_'.$testResultID, 10000, function() use ($testReferenceID, $testResultID) {
             $db_con = Spire::getConnection();
 
             $stmt = $db_con->prepare("SELECT * FROM payload_errors WHERE ref_test_id = ".$testReferenceID);

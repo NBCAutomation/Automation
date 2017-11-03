@@ -127,10 +127,10 @@
 		             	</div>';
 					}
 					// Look up failure data and display it
-		             	// $testReferenceID = $fullReportData['ref_test_id'];
-		             	// $testResultID = $fullReportData['id'];
+		             	$testReferenceID = $fullReportData['ref_test_id'];
+		             	$testResultID = $fullReportData['id'];
 		             	
-		             	// Spire::displayPayLoadError($testReferenceID, $testResultID);
+		             	Spire::displayPayLoadError($testReferenceID, $testResultID);
 					echo '</div></div>';
 				} else {
 					// var_dump($reportData);
@@ -143,10 +143,10 @@
 
 					<?php
 						// Look up failure data and display it
-						$testReferenceID = $fullReportData['ref_test_id'];
-						$testResultID = $fullReportData['id'];
+						// $testReferenceID = $fullReportData['ref_test_id'];
+						// $testResultID = $fullReportData['id'];
 						
-						Spire::displayPayLoadError($testReferenceID, $testResultID);
+						// Spire::displayPayLoadError($testReferenceID, $testResultID);
 					?>
 
 				<?php elseif (is_array($obj['testResults'])): ?>
