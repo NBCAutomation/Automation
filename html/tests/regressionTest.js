@@ -101,11 +101,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             browser = 'ff';
     }
 
-    // if (true) {
-
-    // } else {
+    if (casper.cli.get('mobile')) {
+        casper.options.viewportSize = { width: 350, height: 5000 };
+    } else {
         casper.options.viewportSize = { width: 1280, height: 5000 };
-    // }
+    }
 
 
     if (['local', 'dev', 'prod'].indexOf(envConfig) < 0) {
