@@ -216,13 +216,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }   
                     }
 
-                    if (! thirdPartyChecks) {
+                    // if (! thirdPartyChecks) {
                         // Run default NBC/TLM tests
-                        suite.visualTests(testProperty, urlUri, url);
-                    } else {
+                        // suite.visualTests(testProperty, urlUri, url);
+                    // } else {
                         // Skip to Cozi/Telexitos tests ( see thirdPartyPageTests() )
                         suite.thirdPartyPageTests(testProperty, url);
-                    }
+                    // }
 
                     
 
@@ -233,9 +233,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         }).then(function() {
             if (! thirdPartyChecks) {
                 // Test navigation items and pages
-                console.log('-------------');
-                console.log(' Page tests');
-                console.log('-------------');
+                // console.log('-------------');
+                // console.log(' Page tests');
+                // console.log('-------------');
                 suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
             }
         }).then(function() {
@@ -1018,6 +1018,18 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 addtnlDestinations = [
                     'http://www.cozitv.com'
                 ];
+        } else if (testProperty == 'otsTestSuite') {
+            addtnlDestinations = [
+                'https://www.nbcnewyork.com/qa-test-section-only/NATL-NYAutomated-Testing---FullPageGallery-456150923.html',
+                'https://www.nbcnewyork.com/qa-test-section-only/SPONSOREDOTS-Testing-SponsoredContentArticle-456152803.html',
+                'https://www.nbcnewyork.com/qa-test-section-only/NATLOTS-Testing-LeadGalleryArticle-456154113.html'
+            ]
+        } else if (testProperty == 'tlmTestSuite') {
+            addtnlDestinations = [
+                'https://www.telemundo47.com/qa-test-section-only/TLM-Automated-Testing---FullPageGallery-456151643.html',
+                'https://www.telemundo47.com/qa-test-section-only/Sponsored-TLM-Testing-SponsoredContentArticle-456168783.html',
+                'https://www.telemundo47.com/qa-test-section-only/TLM-Testing-LeadGalleryArticle-456171583.html'
+            ]
         }
 
         addtnlDestinations.reverse();
@@ -1026,7 +1038,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             if ( addtnlDestinations[i].indexOf('cozi') > -1 || addtnlDestinations[i].indexOf('telexitos') > -1 ) {
                 var currentNavUrl = addtnlDestinations[i];
             } else {
-                var currentNavUrl = url + addtnlDestinations[i];
+                // var currentNavUrl = url + addtnlDestinations[i];
+                var currentNavUrl = addtnlDestinations[i];
             }
 
             casper.thenOpen(currentNavUrl, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
@@ -1103,6 +1116,62 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     casper.thenOpen('http://www.cozitv.com/get-cozi-tv/', { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                         suite.testAssertion('#bodyContainer', urlUri, 'coziTVAffiliateMap');
+                    });
+                }
+
+                // Full page gallery test
+                if (response.url.indexOf('FullPageGallery') > -1) {
+                    console.log('-----------------------------');
+                    console.log(colorizer.colorize('# Vertical Gallery Display Test', 'PARAMETER'));
+                    console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+
+                    casper.wait(200, function() {
+                        suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
+
+                        maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+
+                        for (var i = maxVertSlideCount; i > 0; i--) {
+                            suite.testAssertion('#slide' + i, urlUri, 'fullPageGallerySlide_' + i);
+                            suite.testAssertion('#slide' + i + ' img', urlUri, 'fullPageGallerySlide_' + i + '--Image');
+                        }
+                    });
+                }
+
+                // Sponsored page test
+                if (response.url.indexOf('SponsoredContentArticle') > -1) {
+                    console.log('-----------------------------');
+                    console.log(colorizer.colorize('# Sponsored Content Test', 'PARAMETER'));
+                    console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+
+                    casper.wait(200, function() {
+                        suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
+                        suite.testAssertion('div.article_elements.sponsored', urlUri, 'SponsoredContentArticleBackground');
+                        suite.testAssertion('.module-civicScience', urlUri, 'civicScienceModule');
+                        suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'taboolaThumbModule');
+                        suite.testAssertion('#taboola-below-article-text-links', urlUri, 'taboolaLinkModule');
+                        suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
+                        // maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+
+                        // for (var i = maxVertSlideCount; i > 0; i--) {
+                            
+                        // }
+                    });
+                }
+
+                // Lead Gallery Article page test
+                if (response.url.indexOf('LeadGalleryArticle') > -1) {
+                    console.log('-----------------------------');
+                    console.log(colorizer.colorize('# Lead Gallery Content Test', 'PARAMETER'));
+                    console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
+
+                    casper.wait(200, function() {
+                        suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
+                        suite.testAssertion('.module-civicScience', urlUri, 'civicScienceModule');
+                        suite.testAssertion('div.leadMediaRegion.gallery', urlUri, 'leadMediaGallery');
+                        suite.testAssertion('.embedded.gallery', urlUri, 'leadMediaGalleryObject');
+                        suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'taboolaThumbModule');
+                        suite.testAssertion('#taboola-below-article-text-links', urlUri, 'taboolaLinkModule');
+                        suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
                     });
                 }
 
