@@ -149,7 +149,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         *******************/
         if (mobileTest) {
             console.log('....switched to mobile url');
-            var url = url + '?akmobile=o';
+            // var url = url + '?akmobile=o';
+            casper.userAgent('Mozilla/5.0 (Linux; Android 7.0; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19');
         }
 
         // casper.start().then(function(response) {
@@ -607,7 +608,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('-------------------------------------------------');
                 // Set collection selector
                 if (mobileTest) {
-                    var selector = '.nav-main a';
+                    var selector = '.nav-container a';
                 } else {
                     var selector = '.navbar-container a';
                 }
