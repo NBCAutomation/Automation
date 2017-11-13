@@ -6,12 +6,6 @@
 // Use: casperjs test [file_name] --url=[site]
 //    optional string params --output=debug to show logged key/val strings
 //    optional string params --output=console will show test results
-
-// Dictionary files:
-// - OTS Created 9/7/16
-
-// - TSG Pending..
-// -http://collaborative-tools-project.blogspot.com/2012/05/getting-csv-data-into-google.html
 //
 // Casper 1.1.0-beta3 and Phantom 1.9.8
 //
@@ -102,6 +96,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     }
 
     if (casper.cli.get('mobile')) {
+        var mobileTest = true;
         casper.options.viewportSize = { width: 350, height: 5000 };
     } else {
         casper.options.viewportSize = { width: 1280, height: 5000 };
@@ -152,6 +147,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         * Start Testing
         *
         *******************/
+        if (mobileTest) {
+            console.log('....switched to mobile url');
+            var url = url + '?akmobile=o';
+        }
 
         // casper.start().then(function(response) {
         casper.start( url ).then(function(response) {
@@ -172,6 +171,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
             }
         }).then(function() {
+            if (mobileTest) {
+                console.log('-------------------------');
+                console.log(' >> Mobile Testing <<');
+                console.log('-------------------------');    
+            }
+
             console.log('-----------------------------------------------');
             console.log(' Run initial page tests');
             console.log('-----------------------------------------------');
@@ -216,13 +221,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         }   
                     }
 
-                    // if (! thirdPartyChecks) {
+                    if (! thirdPartyChecks) {
                         // Run default NBC/TLM tests
-                        // suite.visualTests(testProperty, urlUri, url);
-                    // } else {
+                        suite.visualTests(testProperty, urlUri, url);
+                    } else {
                         // Skip to Cozi/Telexitos tests ( see thirdPartyPageTests() )
                         suite.thirdPartyPageTests(testProperty, url);
-                    // }
+                    }
 
                     
 
@@ -349,41 +354,60 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         if (testProperty == 'otsTestSuite') {
             casper.wait(700, function() {
             // casper.wait(47000, function() {
-                this.waitForSelector("#sfcontentFill",
+                if (mobileTest) {
+                    testWaitElement = '.body-contents';
+                } else {
+                    testWaitElement = '#sfcontentFill';
+                }
+
+                this.waitForSelector(testWaitElement,
                     function pass () {
                         test.comment('loading done.....');
 
-                        test.comment('[ -- clicking logo -- ]');
-                            this.mouse.click('.brand a');
-                        console.log('clicked ok, new location is ' + this.getCurrentUrl());
-
                         test.assertSelectorHasText('body', 'home', "Homepage loaded");
-
                         this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
 
-                        // Setup testing object. testingObject[referenceName] = testingHTMLElement
-                        
-                        test.assertVisible('.weather-module-radar iframe', 'weather-iframe' + ' is visibile');
-                        test.assertExists('.weather-module-radar iframe');
+                        /**************************************
+                        * Define initial page testing objects
+                        **************************************/
+                        if (mobileTest) {
+                            testingObject['siteHeader'] = '.header';
+                            testingObject['headerLogo'] = '.market-logo img';
+                            testingObject['mobileMenuButton'] = '.menu-icon-touch';
+                            testingObject['quickNav'] = '.quick-nav';
+                            testingObject['tveMenuButton'] = '.watch-live-icon';
+                            testingObject['mainFooter'] = '#footer';
 
+                            if(casper.exists('.weather-module')){
+                                testingObject['weatherModule'] = '.weather-module';
+                            }
 
-                        // this.mouse.move('.weather-module-radar iframe');
+                            if(casper.exists('.weather.severe')){
+                                testingObject['weatherSevere'] = '.weather.severe';
+                            }
+                        } else {
+                            test.comment('[ -- clicking logo -- ]');
+                                this.mouse.click('.brand a');
+                            console.log('clicked ok, new location is ' + this.getCurrentUrl());
 
-                        testingObject['siteHeader'] = '.site-header';
-                        testingObject['headerLogo'] = '.brand a img';
-                        testingObject['mainNav'] = '.navbar';
-                        testingObject['tveMenu'] = '.nav-small-section.nav-live-tv';
-                        testingObject['tveSubMenu'] = '.nav-small-section.nav-live-tv a';
-                        testingObject['weatherRadar'] = '.weather-module-radar iframe';
-                        testingObject['spredfastModules'] = '.sfbox';
-                        testingObject['mainFooter'] = '.footer';
+                            test.assertVisible('.weather-module-radar iframe', 'weather-iframe' + ' is visibile');
+                            test.assertExists('.weather-module-radar iframe');
+                            testingObject['siteHeader'] = '.site-header';
+                            testingObject['headerLogo'] = '.brand a img';
+                            testingObject['mainNav'] = '.navbar';
+                            testingObject['tveMenu'] = '.nav-small-section.nav-live-tv';
+                            testingObject['tveSubMenu'] = '.nav-small-section.nav-live-tv a';
+                            testingObject['weatherRadar'] = '.weather-module-radar iframe';
+                            testingObject['spredfastModules'] = '.sfbox';
+                            testingObject['mainFooter'] = '.footer';
 
-                        if(casper.exists('.weather-module')){
-                            testingObject['weatherModule'] = '.weather-module';
-                        // If severe weather module is displayed
-                        } else if(casper.exists('.weather-module-severe')){
-                            testingObject['weatherModuleSevere'] = '.weather-module-severe';
-                            testingObject['weatherAlert'] = '.weather-alert-info';
+                            if(casper.exists('.weather-module')){
+                                testingObject['weatherModule'] = '.weather-module';
+                            // If severe weather module is displayed
+                            } else if(casper.exists('.weather-module-severe')){
+                                testingObject['weatherModuleSevere'] = '.weather-module-severe';
+                                testingObject['weatherAlert'] = '.weather-alert-info';
+                            }
                         }
 
                         for (var testingItem in testingObject) {
@@ -404,7 +428,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     },
                     function fail () {
                         this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
-                        test.fail("Unable to test page elements. Did not load element .sfbox"); 
+                        if (mobileTest) {
+                            test.fail("Unable to test mobile page elements. Did not load element .body-contents");
+                        } else {
+                            test.fail("Unable to test page elements. Did not load element .sfbox");
+                        }
                     },
                     null // timeout limit in milliseconds
                 );
@@ -578,7 +606,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log(' Navigation link collection and page tests');
                 console.log('-------------------------------------------------');
                 // Set collection selector
-                var selector = '.navbar-container a';
+                if (mobileTest) {
+                    var selector = '.nav-main a';
+                } else {
+                    var selector = '.navbar-container a';
+                }
 
                 // collect nav URLS
                 var evaluatedUrls = this.evaluate(function(mainURL, selector) {
@@ -618,7 +650,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         innerText = elementObj.innerText;
                     
                     if (debugOutput) {
-                        console.log(url, elementObj);
+                        // console.log(url, elementObj);
                     };
 
                     if (url.length > 0) {
