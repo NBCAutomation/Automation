@@ -411,21 +411,23 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             }
                         }
 
-                        for (var testingItem in testingObject) {
-                            if (debugOutput) {
-                                console.log('---------------------------');
-                                console.log(' testingObject Properties');
-                                console.log('---------------------------');
-                                console.log('testingItem > ' + testingItem);
-                                console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                        casper.wait(200, function() {
+                            for (var testingItem in testingObject) {
+                                if (debugOutput) {
+                                    console.log('---------------------------');
+                                    console.log(' testingObject Properties');
+                                    console.log('---------------------------');
+                                    console.log('testingItem > ' + testingItem);
+                                    console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                                }
+
+                                var refName = testingItem;
+                                var testingEntity = testingObject[testingItem];
+
+                                // Test the item/classes within the testObject
+                                suite.testAssertion(testingEntity, urlUri, refName);
                             }
-
-                            var refName = testingItem;
-                            var testingEntity = testingObject[testingItem];
-
-                            // Test the item/classes within the testObject
-                            suite.testAssertion(testingEntity, urlUri, refName);
-                        }
+                        });
                     },
                     function fail () {
                         this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
@@ -576,30 +578,32 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             if (debugOutput) {console.log('main url ' + mainURL)};
 
-            // console.log( casper.evaluate(function(){ return document.querySelector('.nav-section:nth-child(' + i + ')').innerText;}) );
-            // Test navigation hover states
-            casper.then(function(){
-                console.log('-------------------------------');
-                console.log(' Testing navigation hovers');
-                console.log('-------------------------------');
-                var numNavItems = parseInt(casper.evaluate(function(){ return document.querySelectorAll('.nav-section').length;}));
+            if (! mobileTest) {
+                // console.log( casper.evaluate(function(){ return document.querySelector('.nav-section:nth-child(' + i + ')').innerText;}) );
+                // Test navigation hover states
+                casper.then(function(){
+                    console.log('-------------------------------');
+                    console.log(' Testing navigation hovers');
+                    console.log('-------------------------------');
+                    var numNavItems = parseInt(casper.evaluate(function(){ return document.querySelectorAll('.nav-section').length;}));
 
-                for (var i = numNavItems; i >= 0; i--) {
-                    var thisRefIndex = i;
+                    for (var i = numNavItems; i >= 0; i--) {
+                        var thisRefIndex = i;
 
-                    if (testProperty == 'otsTestSuite' && thisRefIndex == 6) {
-                        var thisRefIndexLinkName = 'More';
-                    } else {
-                        var thisRefIndexLinkName = casper.evaluate(function(thisRefIndex){ return document.querySelector('.nav-section:nth-child(' + thisRefIndex + ')').innerText;}, thisRefIndex);
+                        if (testProperty == 'otsTestSuite' && thisRefIndex == 6) {
+                            var thisRefIndexLinkName = 'More';
+                        } else {
+                            var thisRefIndexLinkName = casper.evaluate(function(thisRefIndex){ return document.querySelector('.nav-section:nth-child(' + thisRefIndex + ')').innerText;}, thisRefIndex);
+                        }
+                        
+                        if (debugOutput) {console.log(i, thisRefIndexLinkName);}
+
+                        if (thisRefIndexLinkName) {
+                            suite.testHover(thisRefIndex, thisRefIndexLinkName, testProperty);
+                        }
                     }
-                    
-                    if (debugOutput) {console.log(i, thisRefIndexLinkName);}
-
-                    if (thisRefIndexLinkName) {
-                        suite.testHover(thisRefIndex, thisRefIndexLinkName, testProperty);
-                    }
-                }
-            });
+                })
+            }
 
             // Collect all navigation items/links
             casper.then(function(){
@@ -846,14 +850,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             var currentNavTitle = navLocation;
 
             if (debugOutput) {
-                console.log('mainURL ~ ' + mainURL);
-                console.log('navLocation ~ ' + navLocation);
-                console.log('destinations[navLocation] ~ ' + destinations[navLocation]);
-                console.log('testUrl ~ ' + currentNavUrl);
-            }
-
-            if (debugOutput) {
-                console.log(currentNavTitle + ' : ' + currentNavUrl)
+                console.log(currentNavTitle);
+                console.log(' mainURL ~ ' + mainURL);
+                console.log(' navLocation ~ ' + navLocation);
+                console.log(' destinations[navLocation] ~ ' + destinations[navLocation]);
+                console.log(' testUrl ~ ' + currentNavUrl);
+                console.log('--------------');
             }
 
             // Skip section
