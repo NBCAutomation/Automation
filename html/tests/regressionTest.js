@@ -353,14 +353,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         // NBC OTS Testing
         if (testProperty == 'otsTestSuite') {
+            if (mobileTest) {
+                testWaitElement = '.body-contents';
+            } else {
+                testWaitElement = '#sfcontentFill';
+            }
+
             casper.wait(700, function() {
             // casper.wait(47000, function() {
-                if (mobileTest) {
-                    testWaitElement = '.body-contents';
-                } else {
-                    testWaitElement = '#sfcontentFill';
-                }
-
                 this.waitForSelector(testWaitElement,
                     function pass () {
                         test.comment('loading done.....');
@@ -578,28 +578,30 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             // console.log( casper.evaluate(function(){ return document.querySelector('.nav-section:nth-child(' + i + ')').innerText;}) );
             // Test navigation hover states
-            casper.then(function(){
-                console.log('-------------------------------');
-                console.log(' Testing navigation hovers');
-                console.log('-------------------------------');
-                var numNavItems = parseInt(casper.evaluate(function(){ return document.querySelectorAll('.nav-section').length;}));
+            if (! mobileTest) {
+                casper.then(function(){
+                    console.log('-------------------------------');
+                    console.log(' Testing navigation hovers');
+                    console.log('-------------------------------');
+                    var numNavItems = parseInt(casper.evaluate(function(){ return document.querySelectorAll('.nav-section').length;}));
 
-                for (var i = numNavItems; i >= 0; i--) {
-                    var thisRefIndex = i;
+                    for (var i = numNavItems; i >= 0; i--) {
+                        var thisRefIndex = i;
 
-                    if (testProperty == 'otsTestSuite' && thisRefIndex == 6) {
-                        var thisRefIndexLinkName = 'More';
-                    } else {
-                        var thisRefIndexLinkName = casper.evaluate(function(thisRefIndex){ return document.querySelector('.nav-section:nth-child(' + thisRefIndex + ')').innerText;}, thisRefIndex);
+                        if (testProperty == 'otsTestSuite' && thisRefIndex == 6) {
+                            var thisRefIndexLinkName = 'More';
+                        } else {
+                            var thisRefIndexLinkName = casper.evaluate(function(thisRefIndex){ return document.querySelector('.nav-section:nth-child(' + thisRefIndex + ')').innerText;}, thisRefIndex);
+                        }
+                        
+                        if (debugOutput) {console.log(i, thisRefIndexLinkName);}
+
+                        if (thisRefIndexLinkName) {
+                            suite.testHover(thisRefIndex, thisRefIndexLinkName, testProperty);
+                        }
                     }
-                    
-                    if (debugOutput) {console.log(i, thisRefIndexLinkName);}
-
-                    if (thisRefIndexLinkName) {
-                        suite.testHover(thisRefIndex, thisRefIndexLinkName, testProperty);
-                    }
-                }
-            });
+                })
+            }
 
             // Collect all navigation items/links
             casper.then(function(){
@@ -933,32 +935,76 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         // Homepage tests
                         if ( response.url === mainURL + '/') {
                             if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                                suite.testAssertion('.weather-module-map iframe', urlUri, 'homepageWeatherIframe');
-                                suite.testAssertion('iframe.wx-standalone-map', urlUri, 'homepageWeatherIframe');
+                                
+                                //Check if mobile and test accordingly
+                                if (mobileTest) {
+                                    // Check for weather module as well as weather slide in quicknav
+                                    suite.testAssertion('.weather-module', urlUri, 'homepageWeatherModule');
+                                    suite.testAssertion('.nav-slide.weather', urlUri, 'quickNavWeather');
+                                    suite.testAssertion('.nav-slide.weather img', urlUri, 'quickNavWeather-Icon');
+                                    
+                                    // Open main nav and ensure its visibile
+                                    casper.wait(200, function() {
+                                        this.mouse.move('.logo-container');
+                                        this.mouse.click('.logo-container');
 
-                                var verifyMapOpen = this.evaluate(function() {
-                                    var mapOpen = false,
-                                    weatherMapHeight = document.getElementsByClassName('wx-standalone-map')[0].clientHeight;
+                                        suite.testAssertion('.nav-container', urlUri, 'mobileNavVisible');
+                                    });
 
-                                    if (weatherMapHeight > 259) {
-                                        mapOpen = true;
-                                    }
-                                    return mapOpen;
-                                });
+                                    // Close main nav
+                                    this.mouse.move('.logo-container');
+                                    this.mouse.click('.logo-container');
 
-                                if (verifyMapOpen) {
-                                    console.log(colorizer.colorize('PASS', 'INFO') + ' the weather map is visible and open.');
+                                    // Open TVE menu and ensure its visibile
+                                    casper.wait(200, function() {
+                                        this.mouse.move('.watch-live-container');
+                                        this.mouse.click('.watch-live-container');
+
+                                        suite.testAssertion('.watch-live-menu', urlUri, 'TVE-NavVisible');
+                                    });
+
+                                    // Close TVE Menu
+                                    this.mouse.move('.watch-live-container');
+                                    this.mouse.click('.watch-live-container');
+
                                 } else {
-                                    console.log(colorizer.colorize('FAIL homepageWeatherMap didnt loaded correctly, but isn\'t open.', 'ERROR'));
-                                    suite.logRegressionError('wx-standalone-map', urlUri, 'homepageWeatherMap');
+                                    suite.testAssertion('.weather-module-map iframe', urlUri, 'homepageWeatherIframe');
+                                    suite.testAssertion('iframe.wx-standalone-map', urlUri, 'homepageWeatherIframe');
+
+                                    var verifyMapOpen = this.evaluate(function() {
+                                        var mapOpen = false,
+                                        weatherMapHeight = document.getElementsByClassName('wx-standalone-map')[0].clientHeight;
+
+                                        if (weatherMapHeight > 259) {
+                                            mapOpen = true;
+                                        }
+                                        return mapOpen;
+                                    });
+
+                                    if (verifyMapOpen) {
+                                        console.log(colorizer.colorize('PASS', 'INFO') + ' the weather map is visible and open.');
+                                    } else {
+                                        console.log(colorizer.colorize('FAIL homepageWeatherMap didnt loaded correctly, but isn\'t open.', 'ERROR'));
+                                        suite.logRegressionError('wx-standalone-map', urlUri, 'homepageWeatherMap');
+                                    }
                                 }
                             }
                         }
 
                         // Traffic Page tests
                         if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
-                            suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap container');
-                            suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
+                            if (mobileTest) {
+                                suite.testAssertion('#mapContainer', urlUri, 'trafficMapContainer');
+                                suite.testAssertion('.map', urlUri, 'trafficMap');
+
+                                // Check traffic routes tab
+                                this.mouse.move('#trafficTab .routes');
+                                this.mouse.click('#trafficTab .routes');
+                                suite.testAssertion('#trafficIncidents', urlUri, 'traffiRouteAlerts');
+                            } else {
+                                suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap container');
+                                suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
+                            }
                         }
 
                         // Contact & TV Listings page tests
