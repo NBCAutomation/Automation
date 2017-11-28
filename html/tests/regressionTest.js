@@ -447,27 +447,44 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     function pass () {
                         test.comment('loading done.....');
 
-                        test.comment('[ -- clicking logo -- ]');
-                            this.mouse.click('.brand a');
-                        console.log('clicked ok, new location is ' + this.getCurrentUrl());
-                        console.log('...testing pages');
+                        if (mobileTest) {
+                            testingObject['siteHeader'] = '.header';
+                            testingObject['headerLogo'] = '.market-logo img';
+                            testingObject['mobileMenuButton'] = '.menu-icon-touch';
+                            testingObject['quickNav'] = '.quick-nav';
+                            testingObject['tveMenuButton'] = '.watch-live-icon';
+                            testingObject['mainFooter'] = '#footer';
 
-                        test.assertSelectorHasText('body', 'home', "Homepage loaded");
+                            if(casper.exists('.weather-module')){
+                                testingObject['weatherModule'] = '.weather-module';
+                            }
 
-                        this.test.assertNotEquals('body', 'tlmd', 'TLM Body class set');
+                            if(casper.exists('.weather.severe')){
+                                testingObject['weatherSevere'] = '.weather.severe';
+                            }
+                        } else {
+                            test.comment('[ -- clicking logo -- ]');
+                                this.mouse.click('.brand a');
+                            console.log('clicked ok, new location is ' + this.getCurrentUrl());
+                            console.log('...testing pages');
 
-                        testingObject['siteHeader'] = '.site-header';
-                        testingObject['headerLogo'] = '.brand a img';
-                        testingObject['mainNav'] = '.navbar';
-                        testingObject['lowerModules'] = '.lower.left';
-                        testingObject['mainFooter'] = '.page_footer';
+                            test.assertSelectorHasText('body', 'home', "Homepage loaded");
 
-                        if(casper.exists('.weather-module')){
-                            testingObject['weatherModule'] = '.weather-module';
-                        // If severe weather module is displayed
-                        } else if(casper.exists('.weather-module-severe')){
-                            testingObject['weatherModuleSevere'] = '.weather-module-severe';
-                            testingObject['weatherAlert'] = '.weather-alert-info';
+                            this.test.assertNotEquals('body', 'tlmd', 'TLM Body class set');
+
+                            testingObject['siteHeader'] = '.site-header';
+                            testingObject['headerLogo'] = '.brand a img';
+                            testingObject['mainNav'] = '.navbar';
+                            testingObject['lowerModules'] = '.lower.left';
+                            testingObject['mainFooter'] = '.page_footer';
+
+                            if(casper.exists('.weather-module')){
+                                testingObject['weatherModule'] = '.weather-module';
+                            // If severe weather module is displayed
+                            } else if(casper.exists('.weather-module-severe')){
+                                testingObject['weatherModuleSevere'] = '.weather-module-severe';
+                                testingObject['weatherAlert'] = '.weather-alert-info';
+                            }
                         }
 
                         for (var testingItem in testingObject) {
@@ -610,26 +627,33 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('-------------------------------------------------');
                 // Set collection selector
                 if (mobileTest) {
-                    var selector = '.nav-container a';
+                    var selector = '.nav-main a';
                 } else {
                     var selector = '.navbar-container a';
                 }
 
                 // collect nav URLS
-                var evaluatedUrls = this.evaluate(function(mainURL, selector) {
+                var evaluatedUrls = this.evaluate(function(mainURL, selector, mobileTest) {
                     var output = [];
                     // Grab the current url data, href and link text
-                    var elementObjects = __utils__.findAll(selector).map(function(element) {
+                    var elementObjects = __utils__.findAll(selector).map(function(element, mobileTest) {
                         console.log('map1: ', $(element).text());
                         if (!! element.getAttribute('href')) {
                             var title = element.getAttribute('title'),
                                 alt = element.getAttribute('alt');
 
-                            return {
-                                url: element.getAttribute('href'),
-                                // innerText: element.innerText
-                                innerText: title ? title : alt
+                            if (mobileTest) {
+                                return {
+                                    innerText: element.innerText,
+                                    url: element.getAttribute('href')
+                                }
+                            } else {
+                                return {
+                                    innerText: title ? title : alt,
+                                    url: element.getAttribute('href')
+                                }
                             }
+                            
                         } 
                         return null;
                     });
@@ -922,13 +946,15 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
                         // Check if subnav exists on the page
-                        if (casper.exists('.subnav-section-landing')) {
-                            suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
-                        } else {
-                            if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                                console.log(colorizer.colorize('-- [NBC] No on-page subnav on the current url.', 'COMMENT'));
+                        if (! mobileTest) {
+                            if (casper.exists('.subnav-section-landing')) {
+                                suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
                             } else {
-                                console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
+                                if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                                    console.log(colorizer.colorize('-- [NBC] No on-page subnav on the current url.', 'COMMENT'));
+                                } else {
+                                    console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
+                                }
                             }
                         }
 
@@ -994,6 +1020,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         // Traffic Page tests
                         if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
                             if (mobileTest) {
+                                this.mouse.move('#trafficTab .map');
+                                this.mouse.click('#trafficTab .map');
                                 suite.testAssertion('#mapContainer', urlUri, 'trafficMapContainer');
                                 suite.testAssertion('.map', urlUri, 'trafficMap');
 
@@ -1042,14 +1070,35 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             }
                             
                             if (/.com\/contact-us\/?$/.test(response.url)) {
-                                suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
+                                if (mobileTest) {
+                                    suite.testAssertion('.contact_social', urlUri, 'contactPageModule-Social');
+                                    suite.testAssertion('.contact_mobile', urlUri, 'contactPageModule-Mobile');
+                                    suite.testAssertion('.contact_about', urlUri, 'contactPageModule-Contact');
+                                } else {
+                                    suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
+                                }
                             }
                         }
 
                         // Weather page tests
                         if (response.url.indexOf('/weather') > -1) {
                             if (/.com\/weather\/?$/.test(response.url) || response.url.indexOf('/weather/?zipCode=') > -1) {
-                                suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+                                if (mobileTest) {
+                                    casper.wait(200, function() {
+                                        suite.testAssertion('#interactiveRadarMap', urlUri, 'weatherMap');
+                                        suite.testAssertion('#currentConditions', urlUri, 'currentConditionsModule');
+                                        suite.testAssertion('#currentConditions .currentTemp', urlUri, 'currentConditionsModule-Temp');
+                                        suite.testAssertion('#currentConditions .currentConIcon', urlUri, 'currentConditionsModule-WX_Icon');
+                                        suite.testAssertion('#hourly', urlUri, 'weatherHourlyModule');
+                                        suite.testAssertion('#hourly .hrBrdwn', urlUri, 'weatherHourlyModule-forecast');
+                                        suite.testAssertion('.seven-day', urlUri, 'weather7DayForecast');
+                                        suite.testAssertion('#todaysForecast', urlUri, 'weatherTodayForecastModule');
+                                        suite.testAssertion('.radar_mapsLink', urlUri, 'radarMapsLink');
+                                        suite.testAssertion('.ugcLink', urlUri, 'ugcLink');
+                                    });
+                                } else {
+                                    suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+                                }
 
                                 if (casper.exists('#wunderPane')) {
                                     this.mouse.move('#wunderSwitch .PWSV.tab');
@@ -1064,14 +1113,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                         // Investigatesions page tests
                         if (/.com\/investigations\/?$/.test(response.url)) {
-                            suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
-                            suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
+                            if (! mobileTest) {
+                                suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
+                                suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
+                            }
                         }
                         
                         if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                            suite.testAssertion('.footer', urlUri, 'footer');
+                            checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.footer', urlUri, 'footer');
                         } else {
-                            suite.testAssertion('.page_footer', urlUri, 'footer');
+                            checkFooter = (mobileTest) ? suite.testAssertion('#page_footer', urlUri, 'footer') : suite.testAssertion('.page_footer', urlUri, 'footer');
                         }
                     })
                 }
