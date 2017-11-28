@@ -411,21 +411,23 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             }
                         }
 
-                        for (var testingItem in testingObject) {
-                            if (debugOutput) {
-                                console.log('---------------------------');
-                                console.log(' testingObject Properties');
-                                console.log('---------------------------');
-                                console.log('testingItem > ' + testingItem);
-                                console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                        casper.wait(200, function() {
+                            for (var testingItem in testingObject) {
+                                if (debugOutput) {
+                                    console.log('---------------------------');
+                                    console.log(' testingObject Properties');
+                                    console.log('---------------------------');
+                                    console.log('testingItem > ' + testingItem);
+                                    console.log('testingObject[testingItem] > ' + testingObject[testingItem]);
+                                }
+
+                                var refName = testingItem;
+                                var testingEntity = testingObject[testingItem];
+
+                                // Test the item/classes within the testObject
+                                suite.testAssertion(testingEntity, urlUri, refName);
                             }
-
-                            var refName = testingItem;
-                            var testingEntity = testingObject[testingItem];
-
-                            // Test the item/classes within the testObject
-                            suite.testAssertion(testingEntity, urlUri, refName);
-                        }
+                        });
                     },
                     function fail () {
                         this.captureSelector(saveLocation + urlUri + '_failure-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
@@ -872,14 +874,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             var currentNavTitle = navLocation;
 
             if (debugOutput) {
-                console.log('mainURL ~ ' + mainURL);
-                console.log('navLocation ~ ' + navLocation);
-                console.log('destinations[navLocation] ~ ' + destinations[navLocation]);
-                console.log('testUrl ~ ' + currentNavUrl);
-            }
-
-            if (debugOutput) {
-                console.log(currentNavTitle + ' : ' + currentNavUrl)
+                console.log(currentNavTitle);
+                console.log(' mainURL ~ ' + mainURL);
+                console.log(' navLocation ~ ' + navLocation);
+                console.log(' destinations[navLocation] ~ ' + destinations[navLocation]);
+                console.log(' testUrl ~ ' + currentNavUrl);
+                console.log('--------------');
             }
 
             // Skip section
