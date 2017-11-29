@@ -245,6 +245,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
             }
         }).then(function() {
+            // If OTS/TLM site run static page tests
+            if (testProperty == 'otsTestSuite' || testProperty == 'tlmTestSuite') {
+                suite.thirdPartyPageTests(testProperty, url);
+            }
+        }).then(function() {
             // console.log('were here 2');
             console.log('-----------------------------------');
             console.log(' Test completed with ' + setFail + ' failures.');
@@ -899,7 +904,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             } else if (currentNavUrl.indexOf('/privacy') > -1){
                 test.comment('External privacy link, skipping page check. url: ' + currentNavUrl);
 
-            } else if (currentNavUrl.indexOf('mailto:') > -1){
+            } else if (currentNavUrl.indexOf('mailto:') > -1 || currentNavUrl.indexOf('nbc_app') > -1){
                 test.comment('Misc link, skipping page check. url: ' + currentNavUrl);
 
             } else {
@@ -945,6 +950,15 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         console.log(colorizer.colorize('# Link Name/Text > ', 'PARAMETER') +  linkName);
                         console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
+                        // Check for the header/footer
+                        if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                            checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
+                            checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.footer', urlUri, 'footer');
+                        } else {
+                            checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
+                            checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.page_footer', urlUri, 'footer');
+                        }
+
                         // Check if subnav exists on the page
                         if (! mobileTest) {
                             if (casper.exists('.subnav-section-landing')) {
@@ -956,6 +970,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
                                 }
                             }
+                        } else {
+                            suite.testAssertion('.quick-nav', urlUri, 'QuickNav');
                         }
 
                         // Homepage tests
@@ -964,17 +980,22 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 
                                 //Check if mobile and test accordingly
                                 if (mobileTest) {
+                                    if (casper.exists('#appIntercept')) {
+                                        this.mouse.move('#appIntercept .interceptContainer .noThanks');
+                                        this.mouse.click('#appIntercept .interceptContainer .noThanks');
+                                    }
                                     // Check for weather module as well as weather slide in quicknav
-                                    suite.testAssertion('.weather-module', urlUri, 'homepageWeatherModule');
-                                    suite.testAssertion('.nav-slide.weather', urlUri, 'quickNavWeather');
-                                    suite.testAssertion('.nav-slide.weather img', urlUri, 'quickNavWeather-Icon');
+                                    suite.testAssertion('.weather-module', urlUri, 'Homepage Weather Module');
+                                    suite.testAssertion('.nav-slide.weather', urlUri, 'QuickNav Weather Reading');
+                                    suite.testAssertion('.nav-slide.weather img', urlUri, 'QuickNav Weather Icon');
                                     
                                     // Open main nav and ensure its visibile
+                                    this.mouse.move('.logo-container');
+                                    this.mouse.click('.logo-container');
                                     casper.wait(200, function() {
-                                        this.mouse.move('.logo-container');
-                                        this.mouse.click('.logo-container');
-
-                                        suite.testAssertion('.nav-container', urlUri, 'mobileNavVisible');
+                                        // casper.wait(200, function() {
+                                            suite.testAssertion('.nav-container', urlUri, 'Mobile Nav');
+                                        // });
                                     });
 
                                     // Close main nav
@@ -982,11 +1003,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     this.mouse.click('.logo-container');
 
                                     // Open TVE menu and ensure its visibile
-                                    casper.wait(200, function() {
+                                    casper.wait(300, function() {
                                         this.mouse.move('.watch-live-container');
                                         this.mouse.click('.watch-live-container');
-
-                                        suite.testAssertion('.watch-live-menu', urlUri, 'TVE-NavVisible');
+                                        
+                                        casper.wait(200, function() {
+                                            suite.testAssertion('.watch-live-menu', urlUri, 'TVE-NavVisible');
+                                        });
                                     });
 
                                     // Close TVE Menu
@@ -994,8 +1017,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     this.mouse.click('.watch-live-container');
 
                                 } else {
-                                    suite.testAssertion('.weather-module-map iframe', urlUri, 'homepageWeatherIframe');
-                                    suite.testAssertion('iframe.wx-standalone-map', urlUri, 'homepageWeatherIframe');
+                                    suite.testAssertion('.weather-module-map iframe', urlUri, 'homepage weather module');
+                                    suite.testAssertion('iframe.wx-standalone-map', urlUri, 'homepage weather module - map iframe');
 
                                     var verifyMapOpen = this.evaluate(function() {
                                         var mapOpen = false,
@@ -1022,13 +1045,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             if (mobileTest) {
                                 this.mouse.move('#trafficTab .map');
                                 this.mouse.click('#trafficTab .map');
-                                suite.testAssertion('#mapContainer', urlUri, 'trafficMapContainer');
-                                suite.testAssertion('.map', urlUri, 'trafficMap');
+                                suite.testAssertion('.map', urlUri, 'Traffic map');
 
                                 // Check traffic routes tab
                                 this.mouse.move('#trafficTab .routes');
                                 this.mouse.click('#trafficTab .routes');
-                                suite.testAssertion('#trafficIncidents', urlUri, 'traffiRouteAlerts');
+                                suite.testAssertion('#trafficIncidents', urlUri, 'Traffic Route Alerts');
                             } else {
                                 suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap container');
                                 suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
@@ -1088,7 +1110,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                         suite.testAssertion('#interactiveRadarMap', urlUri, 'weatherMap');
                                         suite.testAssertion('#currentConditions', urlUri, 'currentConditionsModule');
                                         suite.testAssertion('#currentConditions .currentTemp', urlUri, 'currentConditionsModule-Temp');
-                                        suite.testAssertion('#currentConditions .currentConIcon', urlUri, 'currentConditionsModule-WX_Icon');
+                                        suite.testAssertion('img#currentConIcon', urlUri, 'currentConditionsModule-WX_Icon');
                                         suite.testAssertion('#hourly', urlUri, 'weatherHourlyModule');
                                         suite.testAssertion('#hourly .hrBrdwn', urlUri, 'weatherHourlyModule-forecast');
                                         suite.testAssertion('.seven-day', urlUri, 'weather7DayForecast');
@@ -1117,12 +1139,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
                                 suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
                             }
-                        }
-                        
-                        if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                            checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.footer', urlUri, 'footer');
-                        } else {
-                            checkFooter = (mobileTest) ? suite.testAssertion('#page_footer', urlUri, 'footer') : suite.testAssertion('.page_footer', urlUri, 'footer');
                         }
                     })
                 }
@@ -1249,6 +1265,27 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     });
                 }
 
+                /*******************************************
+                * OTS / TLM Additional static page testing *
+                *******************************************/
+
+                if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                    checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
+                    checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.footer', urlUri, 'footer');
+                    checkFooter = (mobileTest) ? suite.testAssertion('.socialNetworks', urlUri, 'Content Sharebar') : suite.testAssertion('.socialNetworks-top', urlUri, 'Content Sharebar');
+                } else {
+                    checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
+                    checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.page_footer', urlUri, 'footer');
+                    checkFooter = (mobileTest) ? suite.testAssertion('.socialNetworks', urlUri, 'Content Sharebar') : suite.testAssertion('.socialNetworks-top', urlUri, 'Content Sharebar');
+                }
+
+                checkTaboolaMobule-Thumb = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-thumbnails', urlUri, 'taboolaThumbModule') : suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'taboolaThumbModule');
+                checkTaboolaMobule-Links = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-text-links', urlUri, 'taboolaLinkModule') : suite.testAssertion('#taboola-below-article-text-links', urlUri, 'taboolaLinkModule');
+
+                if(casper.exists('#article-comments')){
+                    suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
+                }
+
                 // Full page gallery test
                 if (response.url.indexOf('FullPageGallery') > -1) {
                     console.log('-----------------------------');
@@ -1256,7 +1293,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
                     casper.wait(200, function() {
-                        suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
+                        if (mobileTest) {
+                            suite.testAssertion('.quick-nav', urlUri, 'QuickNav');
+                            this.mouse.move('#footer');
+                        }
 
                         maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
 
@@ -1274,12 +1314,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
                     casper.wait(200, function() {
-                        suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
+                        // suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
                         suite.testAssertion('div.article_elements.sponsored', urlUri, 'SponsoredContentArticleBackground');
                         suite.testAssertion('.module-civicScience', urlUri, 'civicScienceModule');
-                        suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'taboolaThumbModule');
-                        suite.testAssertion('#taboola-below-article-text-links', urlUri, 'taboolaLinkModule');
-                        suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
+                        
                         // maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
 
                         // for (var i = maxVertSlideCount; i > 0; i--) {
@@ -1298,10 +1336,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
                         suite.testAssertion('.module-civicScience', urlUri, 'civicScienceModule');
                         suite.testAssertion('div.leadMediaRegion.gallery', urlUri, 'leadMediaGallery');
+                        // div.leadMediaThumbnail
                         suite.testAssertion('.embedded.gallery', urlUri, 'leadMediaGalleryObject');
-                        suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'taboolaThumbModule');
-                        suite.testAssertion('#taboola-below-article-text-links', urlUri, 'taboolaLinkModule');
-                        suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
                     });
                 }
 
