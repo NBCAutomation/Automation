@@ -224,7 +224,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     if (! thirdPartyChecks) {
                         // Run default NBC/TLM tests
-                        suite.visualTests(testProperty, urlUri, url);
+                        // suite.visualTests(testProperty, urlUri, url);
                     } else {
                         // Skip to Cozi/Telexitos tests ( see thirdPartyPageTests() )
                         suite.thirdPartyPageTests(testProperty, url);
@@ -242,7 +242,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 // console.log('-------------');
                 // console.log(' Page tests');
                 // console.log('-------------');
-                suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
+                // suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
             }
         }).then(function() {
             // If OTS/TLM site run static page tests
@@ -1148,6 +1148,61 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         }
     };
 
+    regressionSuite.prototype.testVerticalGallery = function(galleryURL) {
+        casper.options.viewportSize = { width: 350, height: 900 };
+
+        casper.thenOpen(galleryURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+            maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+
+            console.log('=============================> ' + maxVertSlideCount);
+
+this.scrollToBottom();
+
+            casper.wait(200, function() {
+                console.log('WAIT COMPELTE CONTINUE');
+                // casper.evaluate(function() {
+                  // Scrolls to the bottom of page
+                  // window.document.body.scrollTop = document.body.scrollHeight;
+
+                // })
+                this.scrollTo(1024, 300);
+                this.scrollTo(0, 0);
+                this.scrollTo(2004, 300);
+                this.scrollTo(0, 0);
+                this.scrollToBottom();
+                
+                casper.wait(400, function() {
+                    this.captureSelector(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
+                })
+            })
+
+        })
+    
+
+        // maxSlideID = '#slide' + maxVertSlideCount;
+        // maxSlideID = '#slide2';
+
+        // this.mouse.move(maxSlideID);
+
+        // this.mouse.move('#galleryTrigger');
+        // this.mouse.click('#galleryTrigger');
+
+        
+
+
+        
+        // casper.waitForSelector('#galleryTrigger', function() {
+
+        //     for (var i = maxVertSlideCount; i > 0; i--) {
+                
+        //         // casper.wait(200, function() {
+        //             suite.testAssertion('#slide' + i, urlUri, 'fullPageGallerySlide_' + i);
+        //             suite.testAssertion('#slide' + i + ' img', urlUri, 'fullPageGallerySlide_' + i + '--Image');
+        //         // })
+        //     } 
+        // })
+    }
+
     regressionSuite.prototype.thirdPartyPageTests = function(testProperty, url) {
 
         var suite = this;
@@ -1266,7 +1321,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 }
 
                 /*******************************************
-                * OTS / TLM Additional static page testing *
+                *
+                * OTS / TLM Additional static page testing 
+                *
                 *******************************************/
 
                 if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
@@ -1279,9 +1336,19 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     checkFooter = (mobileTest) ? suite.testAssertion('.socialNetworks', urlUri, 'Content Sharebar') : suite.testAssertion('.socialNetworks-top', urlUri, 'Content Sharebar');
                 }
 
-                checkTaboolaMobule-Thumb = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-thumbnails', urlUri, 'taboolaThumbModule') : suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'taboolaThumbModule');
-                checkTaboolaMobule-Links = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-text-links', urlUri, 'taboolaLinkModule') : suite.testAssertion('#taboola-below-article-text-links', urlUri, 'taboolaLinkModule');
+                // Check for Taboola module
+                if (casper.exists('#taboola-mobile-below-article-thumbnails')) {
+                    checkTaboolaMobule_Thumb = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-thumbnails', urlUri, 'Taboola Thumb Module') : suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'Taboola Thumb Module');
+                } else {
+                    suite.testAssertion('#taboola-below-gallery-thumbnails', urlUri, 'Taboola Thumb Module');
+                    suite.testAssertion('#taboola-below-gallery-thumbnails-2nd', urlUri, 'Taboola Thumb Module Row 2');
+                }
 
+                if (casper.exists('#taboola-below-article-organic-text-links')) {
+                    checkTaboolaMobule_Links = (mobileTest) ? suite.testAssertion('#taboola-below-article-organic-text-links', urlUri, 'Taboola Link Module') : suite.testAssertion('#taboola-below-article-text-links', urlUri, 'Taboola Link Module');
+                }
+
+                
                 if(casper.exists('#article-comments')){
                     suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
                 }
@@ -1296,14 +1363,41 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         if (mobileTest) {
                             suite.testAssertion('.quick-nav', urlUri, 'QuickNav');
                             this.mouse.move('#footer');
+                            // this.mouse.click('#footer');
                         }
 
-                        maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+                        // maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
 
-                        for (var i = maxVertSlideCount; i > 0; i--) {
-                            suite.testAssertion('#slide' + i, urlUri, 'fullPageGallerySlide_' + i);
-                            suite.testAssertion('#slide' + i + ' img', urlUri, 'fullPageGallerySlide_' + i + '--Image');
-                        }
+                        suite.testVerticalGallery(response.url);
+                        // // maxSlideID = '#slide' + maxVertSlideCount;
+                        // maxSlideID = '#slide2';
+
+                        // // this.mouse.move(maxSlideID);
+
+                        // // this.mouse.move('#galleryTrigger');
+                        // // this.mouse.click('#galleryTrigger');
+
+                        // casper.wait(200, function() {
+                        //     console.log('WAIT COMPELTE CONTINUE');
+                        //     page.evaluate(function() {
+                        //       // Scrolls to the bottom of page
+                        //       window.document.body.scrollTop = document.body.scrollHeight;
+                        //     });
+                        //     // maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+                        // });
+
+
+                        // // casper.waitForSelector(maxSlideID, function() {
+                        // casper.waitForSelector('#galleryTrigger', function() {
+
+                        //     for (var i = maxVertSlideCount; i > 0; i--) {
+                                
+                        //         // casper.wait(200, function() {
+                        //             suite.testAssertion('#slide' + i, urlUri, 'fullPageGallerySlide_' + i);
+                        //             suite.testAssertion('#slide' + i + ' img', urlUri, 'fullPageGallerySlide_' + i + '--Image');
+                        //         // })
+                        //     } 
+                        // })
                     });
                 }
 
@@ -1333,11 +1427,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
                     casper.wait(200, function() {
-                        suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
-                        suite.testAssertion('.module-civicScience', urlUri, 'civicScienceModule');
-                        suite.testAssertion('div.leadMediaRegion.gallery', urlUri, 'leadMediaGallery');
+                        suite.testAssertion('.module-civicScience', urlUri, 'Civic Science module');
+                        suite.testAssertion('div.leadMediaRegion.gallery', urlUri, 'Lead media in gallery');
                         // div.leadMediaThumbnail
-                        suite.testAssertion('.embedded.gallery', urlUri, 'leadMediaGalleryObject');
+                        suite.testAssertion('.embedded.gallery', urlUri, 'Lead media gallery object');
                     });
                 }
 
