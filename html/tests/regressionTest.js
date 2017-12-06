@@ -97,9 +97,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     if (casper.cli.get('mobile')) {
         var mobileTest = true;
-        casper.options.viewportSize = { width: 350, height: 5000 };
+        casper.options.viewportSize = { width: 350, height: 900 };
     } else {
-        casper.options.viewportSize = { width: 1280, height: 5000 };
+        casper.options.viewportSize = { width: 1280, height: 500 };
     }
 
 
@@ -1149,34 +1149,48 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
     regressionSuite.prototype.testVerticalGallery = function(galleryURL) {
-        casper.options.viewportSize = { width: 350, height: 900 };
+        // casper.options.viewportSize = { width: 350, height: 900 };
 
         casper.thenOpen(galleryURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
             maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+            // forceSlides = casper.evaluate(function(){ window.scrollTo(0,document.body.scrollHeight);});
 
             console.log('=============================> ' + maxVertSlideCount);
 
-this.scrollToBottom();
+            this.scrollToBottom();
 
-            casper.wait(200, function() {
+            // casper.evaluate(function(){ window.scrollTo(0,document.body.scrollHeight);});
+            casper.evaluate(function(){ verticalGallery.writeImage();});
+            casper.evaluate(function(){ verticalGallery.writeImage();});
+            casper.evaluate(function(){ verticalGallery.writeImage();});
+            casper.evaluate(function(){ verticalGallery.writeImage();});
+
+            // NumofImages / 2 (writeImage() does 2 at a time), loop x times to load all images
+
+            casper.wait(300, function() {
+                casper.evaluate(function(){ verticalGallery.writeImage();});
+            });
+
+            casper.wait(300, function() {
                 console.log('WAIT COMPELTE CONTINUE');
-                // casper.evaluate(function() {
-                  // Scrolls to the bottom of page
-                  // window.document.body.scrollTop = document.body.scrollHeight;
-
-                // })
-                this.scrollTo(1024, 300);
-                this.scrollTo(0, 0);
-                this.scrollTo(2004, 300);
-                this.scrollTo(0, 0);
-                this.scrollToBottom();
                 
-                casper.wait(400, function() {
-                    this.captureSelector(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg', 'body');
-                })
+                // this.mouse.move('#div#galleryTrigger');
+                // this.mouse.click('#div#galleryTrigger');
+
+
+                // casper.wait(200, function() {
+                    this.capture(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg');
+                    // this.capture(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg', {
+                    //         top: 980,
+                    //         left: 0, 
+                    //         width: 350,
+                    //         height: 950
+                    //     });
+                    this.exit();
+                // })
             })
 
-        })
+        
     
 
         // maxSlideID = '#slide' + maxVertSlideCount;
@@ -1184,8 +1198,7 @@ this.scrollToBottom();
 
         // this.mouse.move(maxSlideID);
 
-        // this.mouse.move('#galleryTrigger');
-        // this.mouse.click('#galleryTrigger');
+        
 
         
 
@@ -1201,6 +1214,7 @@ this.scrollToBottom();
         //         // })
         //     } 
         // })
+        })
     }
 
     regressionSuite.prototype.thirdPartyPageTests = function(testProperty, url) {
