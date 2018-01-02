@@ -1149,6 +1149,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
     regressionSuite.prototype.testVerticalGallery = function(galleryURL) {
+        var suite = this;
         // casper.options.viewportSize = { width: 350, height: 900 };
 
         casper.thenOpen(galleryURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
@@ -1157,63 +1158,98 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             console.log('=============================> ' + maxVertSlideCount);
 
-            this.scrollToBottom();
+            // this.scrollToBottom();
 
             // casper.evaluate(function(){ window.scrollTo(0,document.body.scrollHeight);});
-            casper.evaluate(function(){ verticalGallery.writeImage();});
-            casper.evaluate(function(){ verticalGallery.writeImage();});
-            casper.evaluate(function(){ verticalGallery.writeImage();});
-            casper.evaluate(function(){ verticalGallery.writeImage();});
+            // casper.evaluate(function(){ verticalGallery.writeImage();});
+            // casper.evaluate(function(){ verticalGallery.writeImage();});
+            // casper.evaluate(function(){ verticalGallery.writeImage();});
+            // casper.evaluate(function(){ verticalGallery.writeImage();});
 
             // NumofImages / 2 (writeImage() does 2 at a time), loop x times to load all images
 
-            casper.wait(300, function() {
-                casper.evaluate(function(){ verticalGallery.writeImage();});
-            });
+            // casper.wait(300, function() {
+            //     casper.evaluate(function(){ verticalGallery.writeImage();});
+            // });
 
-            casper.wait(300, function() {
+            
                 console.log('WAIT COMPELTE CONTINUE');
+                casper.evaluate(function(){ verticalGallery.number = 1;});
+                console.log('===== 1');
+                // casper.wait(100, function() {
+                    console.log('===== 2');
+                    // singleInt = 1;
+                    // slideTop = maxVertSlideCount + singleInt;
+                    // console.log('===== ' + slideTop);
+                    // this.exit();
+
+                    for (var i = 1; i <= Math.floor(maxVertSlideCount); i++) {
+                    // for (var i = maxVertSlideCount; i > 0; i--) {
+                        console.log('===== inside loop');
+                        console.log('===== write ' + i);
+
+                        if(casper.exists('#slide' + i)){
+                            suite.testAssertion('#slide' + i, 'sometestingSite__', 'fullPageGallerySlide_' + i);
+                            suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'fullPageGallerySlide_' + i + '--Image');
+                        } else {
+                            console.log('===== DOES NOT exists #slide ' + i);
+                            // var thisRefIndexLinkName = casper.evaluate(function(thisRefIndex){ return document.querySelector('.nav-section:nth-child(' + thisRefIndex + ')').innerText;}, thisRefIndex);
+
+                            console.log('===== Set image and write');
+                            console.log('===== write ' + i);
+
+                            casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
+                            casper.evaluate(function(){ verticalGallery.writeImage();});
+
+                            casper.wait(200, function() {
+
+                                this.capture(saveLocation + urlUri + '_slide__' + i + '__GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg');
+                            //     console.log('===== test new image');
+                            //     suite.testAssertion('#slide' + i, 'sometestingSite__', 'forceWrite---fullPageGallerySlide_' + i);
+                            //     suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'forceWrite---fullPageGallerySlide_' + i + '--Image');
+                            });
+                        }
+                    }
+                    console.log('===== after');
                 
                 // this.mouse.move('#div#galleryTrigger');
                 // this.mouse.click('#div#galleryTrigger');
 
 
                 // casper.wait(200, function() {
-                    this.capture(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg');
+                    // this.capture(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg');
                     // this.capture(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg', {
                     //         top: 980,
                     //         left: 0, 
                     //         width: 350,
                     //         height: 950
                     //     });
-                    this.exit();
+                    // this.exit();
                 // })
-            })
+            // });
 
         
-    
+    console.log('===== done');
 
-        // maxSlideID = '#slide' + maxVertSlideCount;
-        // maxSlideID = '#slide2';
+            // maxSlideID = '#slide' + maxVertSlideCount;
+            // maxSlideID = '#slide2';
 
-        // this.mouse.move(maxSlideID);
-
-        
+            // this.mouse.move(maxSlideID);
 
         
 
+        
+
 
         
-        // casper.waitForSelector('#galleryTrigger', function() {
+            // casper.waitForSelector('#galleryTrigger', function() {
 
-        //     for (var i = maxVertSlideCount; i > 0; i--) {
-                
-        //         // casper.wait(200, function() {
-        //             suite.testAssertion('#slide' + i, urlUri, 'fullPageGallerySlide_' + i);
-        //             suite.testAssertion('#slide' + i + ' img', urlUri, 'fullPageGallerySlide_' + i + '--Image');
-        //         // })
-        //     } 
-        // })
+                // for (var i = maxVertSlideCount; i > 0; i--) {
+                //     suite.testAssertion('#slide' + i, urlUri, 'fullPageGallerySlide_' + i);
+                //     suite.testAssertion('#slide' + i + ' img', urlUri, 'fullPageGallerySlide_' + i + '--Image');
+                // }
+            // })
+            this.exit();
         })
     }
 
