@@ -1157,14 +1157,15 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             console.log('=============================> ' + maxVertSlideCount);
             
-            casper.evaluate(function(){ verticalGallery.number = 2;});
+            // casper.evaluate(function(){ verticalGallery.number = 1;});
 
             for (var i = 1; i <= Math.floor(maxVertSlideCount); i++) {
             // for (var i = maxVertSlideCount; i > 0; i--) {
 
                 if (casper.exists('#slide' + i)){
-                    suite.testAssertion('#slide' + i, 'sometestingSite__', 'fullPageGallerySlide_' + i);
-                    suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'fullPageGallerySlide_' + i + '--Image');
+                    // suite.testAssertion('#slide' + i, 'sometestingSite__', 'fullPageGallerySlide_' + i);
+                    // suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'fullPageGallerySlide_' + i + '--Image');
+                    console.log('    ===== here #slide ' + i);
                 } else {
                     console.log('===== DOES NOT exists #slide ' + i);
 
@@ -1175,27 +1176,18 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     casper.evaluate(function(){ verticalGallery.writeImage();});
 
                     this.mouse.move('#galleryTrigger');
-
-                    // casper.wait(350, function() {
-
-                        this.capture(saveLocation + '_someSiteURL_adsfasdfsadfasdfdsdsf_' + i + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
-
-                    // });
-
-                    // if(casper.exists('#slide' + i)){
-                    //     suite.testAssertion('#slide' + i, 'sometestingSite__', 'forceWrite---fullPageGallerySlide_' + i);
-                    //     suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'forceWrite---fullPageGallerySlide_' + i + '--Image');
-                    // } else {
-                    //     console.log('== Image still doesnt exist');
-                    // }
                 }
+
+                this.mouse.move('#galleryTrigger');
+
+                this.capture(saveLocation + '_someSiteURL_' + i + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
             }
 
             console.log('===== after');
 
-            casper.wait(350, function() {
-                this.capture(saveLocation + '_someSiteURL_' + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
-            });
+            // casper.wait(350, function() {
+            //     this.capture(saveLocation + '_someSiteURL_' + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
+            // });
             
     console.log('===== done');
             this.exit();
