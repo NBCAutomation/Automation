@@ -1154,101 +1154,50 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         casper.thenOpen(galleryURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
             maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
-            // forceSlides = casper.evaluate(function(){ window.scrollTo(0,document.body.scrollHeight);});
 
             console.log('=============================> ' + maxVertSlideCount);
-
-            // this.scrollToBottom();
-
-            // casper.evaluate(function(){ window.scrollTo(0,document.body.scrollHeight);});
-            // casper.evaluate(function(){ verticalGallery.writeImage();});
-            // casper.evaluate(function(){ verticalGallery.writeImage();});
-            // casper.evaluate(function(){ verticalGallery.writeImage();});
-            // casper.evaluate(function(){ verticalGallery.writeImage();});
-
-            // NumofImages / 2 (writeImage() does 2 at a time), loop x times to load all images
-
-            // casper.wait(300, function() {
-            //     casper.evaluate(function(){ verticalGallery.writeImage();});
-            // });
-
             
-                console.log('WAIT COMPELTE CONTINUE');
-                casper.evaluate(function(){ verticalGallery.number = 1;});
-                console.log('===== 1');
-                // casper.wait(100, function() {
-                    console.log('===== 2');
-                    // singleInt = 1;
-                    // slideTop = maxVertSlideCount + singleInt;
-                    // console.log('===== ' + slideTop);
-                    // this.exit();
+            casper.evaluate(function(){ verticalGallery.number = 2;});
 
-                    for (var i = 1; i <= Math.floor(maxVertSlideCount); i++) {
-                    // for (var i = maxVertSlideCount; i > 0; i--) {
-                        console.log('===== inside loop');
-                        console.log('===== write ' + i);
+            for (var i = 1; i <= Math.floor(maxVertSlideCount); i++) {
+            // for (var i = maxVertSlideCount; i > 0; i--) {
 
-                        if(casper.exists('#slide' + i)){
-                            suite.testAssertion('#slide' + i, 'sometestingSite__', 'fullPageGallerySlide_' + i);
-                            suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'fullPageGallerySlide_' + i + '--Image');
-                        } else {
-                            console.log('===== DOES NOT exists #slide ' + i);
-                            // var thisRefIndexLinkName = casper.evaluate(function(thisRefIndex){ return document.querySelector('.nav-section:nth-child(' + thisRefIndex + ')').innerText;}, thisRefIndex);
+                if (casper.exists('#slide' + i)){
+                    suite.testAssertion('#slide' + i, 'sometestingSite__', 'fullPageGallerySlide_' + i);
+                    suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'fullPageGallerySlide_' + i + '--Image');
+                } else {
+                    console.log('===== DOES NOT exists #slide ' + i);
 
-                            console.log('===== Set image and write');
-                            console.log('===== write ' + i);
+                    console.log('===== Set image and write');
+                    console.log('===== write ' + i);
 
-                            casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
-                            casper.evaluate(function(){ verticalGallery.writeImage();});
+                    // casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
+                    casper.evaluate(function(){ verticalGallery.writeImage();});
 
-                            casper.wait(200, function() {
+                    this.mouse.move('#galleryTrigger');
 
-                                this.capture(saveLocation + urlUri + '_slide__' + i + '__GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg');
-                            //     console.log('===== test new image');
-                            //     suite.testAssertion('#slide' + i, 'sometestingSite__', 'forceWrite---fullPageGallerySlide_' + i);
-                            //     suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'forceWrite---fullPageGallerySlide_' + i + '--Image');
-                            });
-                        }
-                    }
-                    console.log('===== after');
-                
-                // this.mouse.move('#div#galleryTrigger');
-                // this.mouse.click('#div#galleryTrigger');
+                    // casper.wait(350, function() {
 
+                        this.capture(saveLocation + '_someSiteURL_adsfasdfsadfasdfdsdsf_' + i + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
 
-                // casper.wait(200, function() {
-                    // this.capture(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg');
-                    // this.capture(saveLocation + urlUri + '_GALLERY-TESTING-screenshot' + timeStamp + '_' + browser + '.jpg', {
-                    //         top: 980,
-                    //         left: 0, 
-                    //         width: 350,
-                    //         height: 950
-                    //     });
-                    // this.exit();
-                // })
-            // });
+                    // });
 
-        
+                    // if(casper.exists('#slide' + i)){
+                    //     suite.testAssertion('#slide' + i, 'sometestingSite__', 'forceWrite---fullPageGallerySlide_' + i);
+                    //     suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'forceWrite---fullPageGallerySlide_' + i + '--Image');
+                    // } else {
+                    //     console.log('== Image still doesnt exist');
+                    // }
+                }
+            }
+
+            console.log('===== after');
+
+            casper.wait(350, function() {
+                this.capture(saveLocation + '_someSiteURL_' + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
+            });
+            
     console.log('===== done');
-
-            // maxSlideID = '#slide' + maxVertSlideCount;
-            // maxSlideID = '#slide2';
-
-            // this.mouse.move(maxSlideID);
-
-        
-
-        
-
-
-        
-            // casper.waitForSelector('#galleryTrigger', function() {
-
-                // for (var i = maxVertSlideCount; i > 0; i--) {
-                //     suite.testAssertion('#slide' + i, urlUri, 'fullPageGallerySlide_' + i);
-                //     suite.testAssertion('#slide' + i + ' img', urlUri, 'fullPageGallerySlide_' + i + '--Image');
-                // }
-            // })
             this.exit();
         })
     }
@@ -1387,16 +1336,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 }
 
                 // Check for Taboola module
-                if (casper.exists('#taboola-mobile-below-article-thumbnails')) {
-                    checkTaboolaMobule_Thumb = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-thumbnails', urlUri, 'Taboola Thumb Module') : suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'Taboola Thumb Module');
-                } else {
-                    suite.testAssertion('#taboola-below-gallery-thumbnails', urlUri, 'Taboola Thumb Module');
-                    suite.testAssertion('#taboola-below-gallery-thumbnails-2nd', urlUri, 'Taboola Thumb Module Row 2');
-                }
+                // if (casper.exists('#taboola-mobile-below-article-thumbnails')) {
+                //     checkTaboolaMobule_Thumb = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-thumbnails', urlUri, 'Taboola Thumb Module') : suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'Taboola Thumb Module');
+                // } else {
+                //     suite.testAssertion('#taboola-below-gallery-thumbnails', urlUri, 'Taboola Thumb Module');
+                //     suite.testAssertion('#taboola-below-gallery-thumbnails-2nd', urlUri, 'Taboola Thumb Module Row 2');
+                // }
 
-                if (casper.exists('#taboola-below-article-organic-text-links')) {
-                    checkTaboolaMobule_Links = (mobileTest) ? suite.testAssertion('#taboola-below-article-organic-text-links', urlUri, 'Taboola Link Module') : suite.testAssertion('#taboola-below-article-text-links', urlUri, 'Taboola Link Module');
-                }
+                // if (casper.exists('#taboola-below-article-organic-text-links')) {
+                //     checkTaboolaMobule_Links = (mobileTest) ? suite.testAssertion('#taboola-below-article-organic-text-links', urlUri, 'Taboola Link Module') : suite.testAssertion('#taboola-below-article-text-links', urlUri, 'Taboola Link Module');
+                // }
 
                 
                 if(casper.exists('#article-comments')){
@@ -1411,8 +1360,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     casper.wait(200, function() {
                         if (mobileTest) {
-                            suite.testAssertion('.quick-nav', urlUri, 'QuickNav');
-                            this.mouse.move('#footer');
+                            // suite.testAssertion('.quick-nav', urlUri, 'QuickNav');
+                            // this.mouse.move('#footer');
                             // this.mouse.click('#footer');
                         }
 
