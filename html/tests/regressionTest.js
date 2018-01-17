@@ -1198,7 +1198,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                         } else {
                             console.log('        >> fail, loop back');
-                            suite.testVerticalGallery(i);
+                            // suite.testVerticalGallery(i);
                         }
                         
                     }
