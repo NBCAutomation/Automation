@@ -1148,39 +1148,70 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         }
     };
 
-    regressionSuite.prototype.testVerticalGallery = function(galleryURL) {
+    // regressionSuite.prototype.testVerticalGallery = function(galleryURL) {
+    regressionSuite.prototype.testVerticalGallery = function(maxVertSlideCountRef) {
         var suite = this;
         // casper.options.viewportSize = { width: 350, height: 900 };
 
-        casper.thenOpen(galleryURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-            maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+        // casper.thenOpen(galleryURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+            // maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+            maxVertSlideCount = maxVertSlideCountRef;
 
-            console.log('=============================> ' + maxVertSlideCount);
+            // console.log('=============================> ' + maxVertSlideCount);
+            // console.log('===========================> ' + Math.floor(maxVertSlideCount));
             
             // casper.evaluate(function(){ verticalGallery.number = 1;});
 
+
             for (var i = 1; i <= Math.floor(maxVertSlideCount); i++) {
             // for (var i = maxVertSlideCount; i > 0; i--) {
+                // casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, '0');
 
                 if (casper.exists('#slide' + i)){
                     // suite.testAssertion('#slide' + i, 'sometestingSite__', 'fullPageGallerySlide_' + i);
                     // suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'fullPageGallerySlide_' + i + '--Image');
                     console.log('    ===== here #slide ' + i);
                 } else {
+                    // casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
                     console.log('===== DOES NOT exists #slide ' + i);
 
                     console.log('===== Set image and write');
                     console.log('===== write ' + i);
 
-                    // casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
+                    casper.mouse.move('#galleryTrigger');
                     casper.evaluate(function(){ verticalGallery.writeImage();});
 
-                    this.mouse.move('#galleryTrigger');
+                    console.log('===== wrote, exists: ');
+
+                    if (casper.exists('#slide' + i)){
+                        console.log('== YES ');
+                    } else {
+                        console.log('= NO retrying ');
+
+                        casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
+                        
+                        casper.mouse.move('#galleryTrigger');
+                        casper.evaluate(function(){ verticalGallery.writeImage();});
+
+                        if (casper.exists('#slide' + i)){
+                            console.log('        >> wrote');
+
+                        } else {
+                            console.log('        >> fail, loop back');
+                            suite.testVerticalGallery(i);
+                        }
+                        
+                    }
+
+                    casper.on("page.error", function(msg, trace) {
+                         casper.echo("Error: " + msg, "ERROR");
+                    });
+                    console.log('-------------------');
                 }
 
-                this.mouse.move('#galleryTrigger');
+                casper.mouse.move('#galleryTrigger');
 
-                this.capture(saveLocation + '_someSiteURL_' + i + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
+                casper.capture(saveLocation + '_someSiteURL_' + i + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
             }
 
             console.log('===== after');
@@ -1191,7 +1222,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             
     console.log('===== done');
             this.exit();
-        })
+        // })
     }
 
     regressionSuite.prototype.thirdPartyPageTests = function(testProperty, url) {
@@ -1357,10 +1388,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             // this.mouse.click('#footer');
                         }
 
-                        // maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
+                        maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
 
-                        suite.testVerticalGallery(response.url);
-                        // // maxSlideID = '#slide' + maxVertSlideCount;
+                        // suite.testVerticalGallery(response.url);
+                        suite.testVerticalGallery(maxVertSlideCount);
+                        // maxSlideID = '#slide' + maxVertSlideCount;
                         // maxSlideID = '#slide2';
 
                         // // this.mouse.move(maxSlideID);
