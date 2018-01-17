@@ -13,6 +13,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     // casper.options.timeout = 300000;
     casper.options.timeout = 900000;
 
+    // only have to call this once..
+    casper.on("page.error", function (msg, trace) {
+         casper.echo("A page error was thrown: " + msg, "INFO");
+    });
+
     // Config vars
     var utils = require('utils'),
         envConfig = casper.cli.get('env'),
@@ -132,14 +137,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         casper.options.onTimeout = function () {
             timeoutDetails['failure'] = 'Script Stopped! Timeout occured, max execution time reached: 300000ms';
             testResultsObject['testResults'] = timeoutDetails;
-                                     
+
             suite.processTestResults(urlUri, testResultsObject, '1', testResultsObject['testID'], 'regressionTest', 'Fail', 'Script timeout');
-            
+
             casper.wait(100, function() {
                 console.log(colorizer.colorize(' > Script Stopped! Timeout occured (max execution time reached: 300000ms) ', 'RED_BAR'));
                 this.exit();
                 test.done();
-            });  
+            });
         };
 
         /*******************
@@ -161,7 +166,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             if ( response.status == 200 || response.status == 302 ) {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
-                
+
                 if (manifestTestRefID) {
                     testResultsObject['testID'] = manifestTestRefID;
                 } else {
@@ -175,7 +180,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             if (mobileTest) {
                 console.log('-------------------------');
                 console.log(' >> Mobile Testing <<');
-                console.log('-------------------------');    
+                console.log('-------------------------');
             }
 
             console.log('-----------------------------------------------');
@@ -219,7 +224,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             console.log('Telexitos...');
                             testProperty = 'telexitosTestSuite';
                             thirdPartyChecks = true;
-                        }   
+                        }
                     }
 
                     if (! thirdPartyChecks) {
@@ -230,7 +235,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         suite.thirdPartyPageTests(testProperty, url);
                     }
 
-                    
+
 
                 } else {
                     casper.test.fail('Page did not load correctly. Response: ' + response.status);
@@ -277,7 +282,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     console.log('   > ' + subFailureItems);
                                 } else {
                                     var grandChildFailures = subFailureItem[subFailureItems];
-                                    
+
                                     for (var innerSubFailureItems in grandChildFailures) {
                                         console.log('     > ' + innerSubFailureItems + ' : ' + grandChildFailures[innerSubFailureItems]);
                                     }
@@ -291,7 +296,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
-            
+
             this.exit();
         });
     };
@@ -314,11 +319,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                         var output = this.getHTML();
                         manifestTestRefID = casper.getElementInfo('body').text;
-                        
+
                         testResultsObject['testID'] = manifestTestRefID;
 
                         if (showOutput) {
-                            console.log(colorizer.colorize('Test ID created: ', 'COMMENT') + manifestTestRefID);   
+                            console.log(colorizer.colorize('Test ID created: ', 'COMMENT') + manifestTestRefID);
                         }
                     } else {
                         throw new Error('Unable to get/store Test ID!');
@@ -548,9 +553,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         var suite = this;
         var entityName = testingEntity.replace('.','_').replace('\/',"_").split(' ').join('_').toLowerCase();
-        
+
         casper.captureSelector(saveLocation + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
-        
+
         var failureScreenshot = configURL + '/test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '_' + browser + '.jpg';
 
         refErrors['failure'] = 'unable to locate "' + refName + '" entitiy: "' + testingEntity + '". Unable to test item visibility correctly.';
@@ -617,7 +622,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         } else {
                             var thisRefIndexLinkName = casper.evaluate(function(thisRefIndex){ return document.querySelector('.nav-section:nth-child(' + thisRefIndex + ')').innerText;}, thisRefIndex);
                         }
-                        
+
                         if (debugOutput) {console.log(i, thisRefIndexLinkName);}
 
                         if (thisRefIndexLinkName) {
@@ -660,8 +665,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     url: element.getAttribute('href')
                                 }
                             }
-                            
-                        } 
+
+                        }
                         return null;
                     });
 
@@ -682,7 +687,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     var url = elementObj.url,
                         innerText = elementObj.innerText;
-                    
+
                     if (debugOutput) {
                         // console.log(url, elementObj);
                     };
@@ -691,7 +696,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         testDesinations[innerText] = url;
                     }
                 });
-                
+
                 if (debugOutput) {
                     console.log('testDesinations', JSON.stringify(testDesinations));
                 }
@@ -816,7 +821,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     casper.wait(500, function() {
                         getSelectCurrentTZVal = parseInt(this.evaluate(function(){ return document.getElementById("timezoneSelect").value;}));
                         if (debugOutput) {console.log('selectCurrentTZVal ' + getSelectCurrentTZVal);}
-                        
+
                         if (getSelectCurrentTZVal != selectCurrentTZVal) {
                             test.comment('.....timezone dropdown changed/working correctly.');
                             if (debugOutput) {casper.captureSelector(saveLocation + urlUri + '_' + '_TVListingsContainerTZ_' + timeStamp + '_' + browser + '.jpg', 'body');}
@@ -840,9 +845,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     if (debugOutput) {
                         console.log('baseDaySelectValue: ' + baseDaySelectValue);
-                        console.log('dayTestSelectValue: ' + dayTestSelectValue);    
+                        console.log('dayTestSelectValue: ' + dayTestSelectValue);
                     }
-                    
+
                     suite.selectOptionByValue('#daySelect', dayTestSelectValue);
                 });
 
@@ -850,7 +855,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     casper.wait(500, function() {
                         getSelectCurrentDayVal = this.evaluate(function(){ return document.getElementById("timezoneSelect").value;});
                         if (debugOutput) {console.log('getSelectCurrentDayVal ' + getSelectCurrentDayVal);}
-                        
+
                         if (getSelectCurrentDayVal != baseDaySelectValue) {
                             test.comment('.....date dropdown changed/working correctly.');
                             if (debugOutput) {casper.captureSelector(saveLocation + urlUri + '_' + '_TVListingsContainerDAY_' + timeStamp + '_' + browser + '.jpg', 'body');}
@@ -922,9 +927,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             casper.thenOpen(linkURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
                 // Grab url info
                 var parser = document.createElement('a');
-                
+
                 parser.href = response.url;
-                
+
                 var newUrl = parser.href,
                     urlPath = parser.pathname,
                     pagePathName = urlPath.replace('/','').split(/[/?#]/)[0],
@@ -940,7 +945,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                console.log('-- Unable to bypass login screen: ' + colorizer.colorize(data, 'FAIL'));
                                casper.captureSelector(saveLocation + urlUri + '_' + 'bypassLogin-testing_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
                             }
-                            
+
                             suite.logRegressionError('bypassLogin', urlUri, '_pageTests');
                         }
                     })
@@ -977,7 +982,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         // Homepage tests
                         if ( response.url === mainURL + '/') {
                             if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                                
+
                                 //Check if mobile and test accordingly
                                 if (mobileTest) {
                                     if (casper.exists('#appIntercept')) {
@@ -988,7 +993,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     suite.testAssertion('.weather-module', urlUri, 'Homepage Weather Module');
                                     suite.testAssertion('.nav-slide.weather', urlUri, 'QuickNav Weather Reading');
                                     suite.testAssertion('.nav-slide.weather img', urlUri, 'QuickNav Weather Icon');
-                                    
+
                                     // Open main nav and ensure its visibile
                                     this.mouse.move('.logo-container');
                                     this.mouse.click('.logo-container');
@@ -1006,7 +1011,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     casper.wait(300, function() {
                                         this.mouse.move('.watch-live-container');
                                         this.mouse.click('.watch-live-container');
-                                        
+
                                         casper.wait(200, function() {
                                             suite.testAssertion('.watch-live-menu', urlUri, 'TVE-NavVisible');
                                         });
@@ -1061,7 +1066,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {
                             if ( response.url.indexOf('tv-listings') > -1 ){
                                 if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/tv-listings\/?$/.test(response.url)) {
-                                    
+
                                     if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
                                         var tvListingsContainerName = 'CoziTVListingsContainer';
                                         var tvListingsTabName = 'CoziTVListingsTab';
@@ -1090,7 +1095,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                     });
                                 }
                             }
-                            
+
                             if (/.com\/contact-us\/?$/.test(response.url)) {
                                 if (mobileTest) {
                                     suite.testAssertion('.contact_social', urlUri, 'contactPageModule-Social');
@@ -1125,7 +1130,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 if (casper.exists('#wunderPane')) {
                                     this.mouse.move('#wunderSwitch .PWSV.tab');
                                     this.mouse.click('#wunderSwitch .PWSV.tab')
-                                    
+
                                     casper.wait(100, function() {
                                         suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
                                     });
@@ -1159,7 +1164,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             // console.log('=============================> ' + maxVertSlideCount);
             // console.log('===========================> ' + Math.floor(maxVertSlideCount));
-            
+
             // casper.evaluate(function(){ verticalGallery.number = 1;});
 
 
@@ -1189,7 +1194,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         console.log('= NO retrying ');
 
                         casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
-                        
+
                         casper.mouse.move('#galleryTrigger');
                         casper.evaluate(function(){ verticalGallery.writeImage();});
 
@@ -1200,12 +1205,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             console.log('        >> fail, loop back');
                             // suite.testVerticalGallery(i);
                         }
-                        
+
                     }
 
-                    casper.on("page.error", function(msg, trace) {
-                         casper.echo("Error: " + msg, "ERROR");
-                    });
                     console.log('-------------------');
                 }
 
@@ -1219,9 +1221,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             // casper.wait(350, function() {
             //     this.capture(saveLocation + '_someSiteURL_' + '_slideFinal__GALLERY-TESTING-screenshot.jpg');
             // });
-            
+
     console.log('===== done');
-            this.exit();
+            console.log('Cleanly exiting..')
+            casper.exit();
         // })
     }
 
@@ -1279,7 +1282,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                 var parser = document.createElement('a');
                 parser.href = response.url;
-                
+
                 var newUrl = parser.href,
                     sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
                     urlUri = sourceString.replace('.','_');
@@ -1330,7 +1333,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         } else {
                             console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
                         }
-                        
+
                         suite.testAssertion('.schedule a', urlUri, 'coziTVListingsPDFButton');
                         suite.testAssertion('#timezoneSelect', urlUri, 'coziTV Timezone Selection');
                         suite.testAssertion('#listings #tvListingContainer', urlUri, 'coziTVListingsContainer');
@@ -1344,7 +1347,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                 /*******************************************
                 *
-                * OTS / TLM Additional static page testing 
+                * OTS / TLM Additional static page testing
                 *
                 *******************************************/
 
@@ -1370,7 +1373,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 //     checkTaboolaMobule_Links = (mobileTest) ? suite.testAssertion('#taboola-below-article-organic-text-links', urlUri, 'Taboola Link Module') : suite.testAssertion('#taboola-below-article-text-links', urlUri, 'Taboola Link Module');
                 // }
 
-                
+
                 if(casper.exists('#article-comments')){
                     suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
                 }
@@ -1414,12 +1417,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         // casper.waitForSelector('#galleryTrigger', function() {
 
                         //     for (var i = maxVertSlideCount; i > 0; i--) {
-                                
+
                         //         // casper.wait(200, function() {
                         //             suite.testAssertion('#slide' + i, urlUri, 'fullPageGallerySlide_' + i);
                         //             suite.testAssertion('#slide' + i + ' img', urlUri, 'fullPageGallerySlide_' + i + '--Image');
                         //         // })
-                        //     } 
+                        //     }
                         // })
                     });
                 }
@@ -1434,11 +1437,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         // suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
                         suite.testAssertion('div.article_elements.sponsored', urlUri, 'SponsoredContentArticleBackground');
                         suite.testAssertion('.module-civicScience', urlUri, 'civicScienceModule');
-                        
+
                         // maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
 
                         // for (var i = maxVertSlideCount; i > 0; i--) {
-                            
+
                         // }
                     });
                 }
@@ -1459,7 +1462,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             })
         };
-        
+
     };
 
     new regressionSuite(casper.cli.get('url'));
