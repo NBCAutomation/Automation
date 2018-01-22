@@ -31,7 +31,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
         setFail = 0,
         testStartTime,
         resourcesTime = {},
-        apiVersion = '6',
+        apiVersion = '10',
         enableJsonValidation = '',
         linkParser = document.createElement('a'),
         listener = function (resource) {
@@ -399,9 +399,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                                 if (initialPass) {
                                     navItemAppTitle = navItemAppTitleNiceName.replace('\/',"_").split(' ').join('_').toLowerCase();
                                 } else {
-                                    navItemAppTitle = parentObjectName.replace('\/',"_").split(' ').join('_').toLowerCase() +
-                                                      '__' +
-                                                      navItemAppTitleNiceName.replace('\/',"_").split(' ').join('_').toLowerCase();
+                                    navItemAppTitle = parentObjectName.replace('\/',"_").split(' ').join('_').toLowerCase() + '__' + navItemAppTitleNiceName.replace('\/',"_").split(' ').join('_').toLowerCase();
                                 }
                             }
 
@@ -433,6 +431,12 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                                 }
                                 // Push data into collection
                                 this.collectionObject[navItemAppTitle] = navItemAppLocationURL;
+                            }
+
+                            if (subItem === 'items') {
+                                if (typeof subObject[subItem] == 'object') {
+                                    apiSuiteInstance.spiderObject(navItemAppTitle, subObject[subItem], false);
+                                }
                             }
 
                             if (typeof __thisItem == 'object') {

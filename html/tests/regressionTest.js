@@ -13,11 +13,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     // casper.options.timeout = 300000;
     casper.options.timeout = 900000;
 
-    // only have to call this once..
-    casper.on("page.error", function (msg, trace) {
-         casper.echo("A page error was thrown: " + msg, "INFO");
-    });
-
     // Config vars
     var utils = require('utils'),
         envConfig = casper.cli.get('env'),
@@ -113,6 +108,13 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             spawn = process.spawn,
             child = spawn("chown", ["-hR", "ec2-user:apache", saveLocation]);
     }
+
+    // only have to call this once..
+    // if (debugOutput) {
+        casper.on("page.error", function (msg, trace) {
+             casper.echo("A page error was thrown: " + msg, "INFO");
+        });
+    // }
 
     /*************************
     *
@@ -229,7 +231,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     if (! thirdPartyChecks) {
                         // Run default NBC/TLM tests
-                        // suite.visualTests(testProperty, urlUri, url);
+                        suite.visualTests(testProperty, urlUri, url);
                     } else {
                         // Skip to Cozi/Telexitos tests ( see thirdPartyPageTests() )
                         suite.thirdPartyPageTests(testProperty, url);
@@ -244,10 +246,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         }).then(function() {
             if (! thirdPartyChecks) {
                 // Test navigation items and pages
-                // console.log('-------------');
-                // console.log(' Page tests');
-                // console.log('-------------');
-                // suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
+                console.log('-------------');
+                console.log(' Page tests');
+                console.log('-------------');
+                suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
             }
         }).then(function() {
             // If OTS/TLM site run static page tests
@@ -639,31 +641,26 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('-------------------------------------------------');
                 // Set collection selector
                 if (mobileTest) {
-                    var selector = '.nav-main a';
+                    var selector = '.nav-container a';
+                    console.log('this selector: ' + selector);
                 } else {
                     var selector = '.navbar-container a';
                 }
+
+                casper.captureSelector(saveLocation + urlUri + '_' + '_mobile-screen-shot-testing_' + browser + '.jpg', 'body');
 
                 // collect nav URLS
                 var evaluatedUrls = this.evaluate(function(mainURL, selector, mobileTest) {
                     var output = [];
                     // Grab the current url data, href and link text
                     var elementObjects = __utils__.findAll(selector).map(function(element, mobileTest) {
-                        console.log('map1: ', $(element).text());
                         if (!! element.getAttribute('href')) {
                             var title = element.getAttribute('title'),
                                 alt = element.getAttribute('alt');
 
-                            if (mobileTest) {
-                                return {
-                                    innerText: element.innerText,
-                                    url: element.getAttribute('href')
-                                }
-                            } else {
-                                return {
-                                    innerText: title ? title : alt,
-                                    url: element.getAttribute('href')
-                                }
+                            return {
+                                url: element.getAttribute('href'),
+                                innerText: element.innerText
                             }
 
                         }
@@ -689,7 +686,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         innerText = elementObj.innerText;
 
                     if (debugOutput) {
-                        // console.log(url, elementObj);
+                        console.log(url, elementObj);
                     };
 
                     if (url.length > 0) {
@@ -697,9 +694,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     }
                 });
 
-                if (debugOutput) {
+                // if (debugOutput) {
                     console.log('testDesinations', JSON.stringify(testDesinations));
-                }
+                    casper.exit();
+                // }
             });
 
             // Send collected nav items to be tested
@@ -883,14 +881,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
             var currentNavTitle = navLocation;
 
-            if (debugOutput) {
+            // if (debugOutput) {
                 console.log(currentNavTitle);
                 console.log(' mainURL ~ ' + mainURL);
                 console.log(' navLocation ~ ' + navLocation);
                 console.log(' destinations[navLocation] ~ ' + destinations[navLocation]);
                 console.log(' testUrl ~ ' + currentNavUrl);
                 console.log('--------------');
-            }
+            // }
 
             // Skip section
             if (currentNavUrl.indexOf('cozitv') > -1 || currentNavUrl.indexOf('telexitos') > -1) {
@@ -914,7 +912,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             } else {
                 // Test the individual page item
-                suite.itemLinkPageTesting(mainURL, currentNavTitle, currentNavUrl);
+                // suite.itemLinkPageTesting(mainURL, currentNavTitle, currentNavUrl);
             }
         }
     };
@@ -1177,7 +1175,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     // suite.testAssertion('#slide' + i + ' img', 'sometestingSite__', 'fullPageGallerySlide_' + i + '--Image');
                     console.log('    ===== here #slide ' + i);
                 } else {
-                    // casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
+                    casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
                     console.log('===== DOES NOT exists #slide ' + i);
 
                     console.log('===== Set image and write');
@@ -1193,7 +1191,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     } else {
                         console.log('= NO retrying ');
 
-                        casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
+                        // casper.evaluate(function(imageRefNumber){ verticalGallery.number = imageRefNumber;}, i);
 
                         casper.mouse.move('#galleryTrigger');
                         casper.evaluate(function(){ verticalGallery.writeImage();});
@@ -1224,7 +1222,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     console.log('===== done');
             console.log('Cleanly exiting..')
-            casper.exit();
+            // casper.exit();
         // })
     }
 
@@ -1394,7 +1392,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
 
                         // suite.testVerticalGallery(response.url);
-                        suite.testVerticalGallery(maxVertSlideCount);
+                        // suite.testVerticalGallery(maxVertSlideCount);
                         // maxSlideID = '#slide' + maxVertSlideCount;
                         // maxSlideID = '#slide2';
 

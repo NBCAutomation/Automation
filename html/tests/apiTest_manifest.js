@@ -88,7 +88,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         }
     };
 
-    var apiVersion = '6';
+    var apiVersion = '10';
 
     if ( ! casper.cli.get('enablevalidation') ) {
         var enableJsonValidation = '&enableJsonValidation=false';

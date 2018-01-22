@@ -35,7 +35,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         setFail = 0,
         testStartTime,
         resourcesTime = {},
-        apiVersion = '6',
+        apiVersion = '10',
         enableJsonValidation = '',
         linkParser = document.createElement('a'),
         listener = function (resource) {
