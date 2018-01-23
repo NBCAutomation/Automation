@@ -32,6 +32,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         testingObject = {},
         testStatus = 'Pass',
         setFail = 0,
+        setPass = 0,
+        setTotal = 0,
         thirdPartyChecks = false,
         testInfo = 'Engine: Chrome/WebKit',
         browser = 'chrome',
@@ -110,17 +112,21 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     }
 
     // only have to call this once..
-    // if (debugOutput) {
+    if (debugOutput) {
         casper.on("page.error", function (msg, trace) {
              casper.echo("A page error was thrown: " + msg, "INFO");
         });
-    // }
+    }
 
     /*************************
     *
     * Begin test suite setup
     *
-    *************************/
+    *************************/        
+        //   pass/(total/100) pass score
+        //   (100/170)164
+        
+
     var regressionSuite = function(url) {
         var suite = this;
 
@@ -258,8 +264,23 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
         }).then(function() {
             // console.log('were here 2');
+            var scoreVal = parseInt(100) / parseInt(setTotal);
+
+            if (scoreVal < 1) {
+                var paddedScore = scoreVal * parseInt(10);
+                var weightedScore = paddedScore * setPass;
+                var passScore = parseInt(weightedScore) / parseInt(10);
+            } else {
+                var passScore = parseInt(scoreVal) * parseInt(setPass);
+            }
+            
             console.log('-----------------------------------');
             console.log(' Test completed with ' + setFail + ' failures.');
+            console.log('-----------------------------------');
+            console.log('| Total: ' + setTotal);
+            console.log('| Failures:  ' + setFail + ' | Passes: ' + setPass + ' |');            
+            console.log('| score: ' + passScore + '%');
+            
             console.log('-----------------------------------');
 
             //Log test results
@@ -377,8 +398,15 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     function pass () {
                         test.comment('loading done.....');
 
-                        test.assertSelectorHasText('body', 'home', "Homepage loaded");
-                        this.test.assertNotEquals('body', 'nbc', 'OTS Body class set');
+                        if (test.assertSelectorHasText('body', 'home', "Homepage loaded")){
+                            setPass++;
+                            setTotal++;
+                        };
+
+                        if (this.test.assertNotEquals('body', 'nbc', 'OTS Body class set')){
+                            setPass++;
+                            setTotal++;
+                        }
 
                         /**************************************
                         * Define initial page testing objects
@@ -391,17 +419,20 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             testingObject['tveMenuButton'] = '.watch-live-icon';
                             testingObject['mainFooter'] = '#footer';
 
-                            if(casper.exists('.weather-module')){
+                            if (casper.exists('.weather-module')){
                                 testingObject['weatherModule'] = '.weather-module';
                             }
 
-                            if(casper.exists('.weather.severe')){
+                            if (casper.exists('.weather.severe')){
                                 testingObject['weatherSevere'] = '.weather.severe';
                             }
                         } else {
                             test.comment('[ -- clicking logo -- ]');
-                                this.mouse.click('.brand a');
-                            console.log('clicked ok, new location is ' + this.getCurrentUrl());
+                            if (this.mouse.click('.brand a')) {
+                                console.log('clicked ok, new location is ' + this.getCurrentUrl());
+                                setPass++;
+                                setTotal++;
+                            }
 
                             test.assertVisible('.weather-module-radar iframe', 'weather-iframe' + ' is visibile');
                             test.assertExists('.weather-module-radar iframe');
@@ -414,10 +445,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             testingObject['spredfastModules'] = '.sfbox';
                             testingObject['mainFooter'] = '.footer';
 
-                            if(casper.exists('.weather-module')){
+                            if (casper.exists('.weather-module')){
                                 testingObject['weatherModule'] = '.weather-module';
                             // If severe weather module is displayed
-                            } else if(casper.exists('.weather-module-severe')){
+                            } else if (casper.exists('.weather-module-severe')){
                                 testingObject['weatherModuleSevere'] = '.weather-module-severe';
                                 testingObject['weatherAlert'] = '.weather-alert-info';
                             }
@@ -469,11 +500,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             testingObject['tveMenuButton'] = '.watch-live-icon';
                             testingObject['mainFooter'] = '#footer';
 
-                            if(casper.exists('.weather-module')){
+                            if (casper.exists('.weather-module')){
                                 testingObject['weatherModule'] = '.weather-module';
                             }
 
-                            if(casper.exists('.weather.severe')){
+                            if (casper.exists('.weather.severe')){
                                 testingObject['weatherSevere'] = '.weather.severe';
                             }
                         } else {
@@ -492,10 +523,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             testingObject['lowerModules'] = '.lower.left';
                             testingObject['mainFooter'] = '.page_footer';
 
-                            if(casper.exists('.weather-module')){
+                            if (casper.exists('.weather-module')){
                                 testingObject['weatherModule'] = '.weather-module';
                             // If severe weather module is displayed
-                            } else if(casper.exists('.weather-module-severe')){
+                            } else if (casper.exists('.weather-module-severe')){
                                 testingObject['weatherModuleSevere'] = '.weather-module-severe';
                                 testingObject['weatherAlert'] = '.weather-alert-info';
                             }
@@ -536,6 +567,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 // console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
                 try {
                     test.assertVisible(testingEntity, refName + ' is visibile');
+                    setPass++;
+                    setTotal++;
                 } catch (e) {
                     console.log(colorizer.colorize(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport. ', 'ERROR'));
                     // console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
@@ -567,6 +600,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         testResultsObject['testResults'] = regressionResults;
         testStatus = 'Fail';
         setFail++;
+        setTotal++;
     };
 
 
@@ -587,9 +621,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     test.comment('Home/Inicio link, skipping no subnav for current nav item.');
                 } else if (refIndex > 1) {
                     suite.testAssertion('.nav-section:nth-child(' + refIndex + ') ' + testSubNavContainerClass, urlUri, refIndexName + '_sub-navigation');
-
-                    // console.log('screenshots');
-                    // casper.captureSelector(saveLocation + '_' + '_menu-hover-screenshot_' + refIndex + '__' + timeStamp + '_' + browser + '.jpg', 'body');
                 }
             });
         });
@@ -647,13 +678,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     var selector = '.navbar-container a';
                 }
 
-                casper.captureSelector(saveLocation + urlUri + '_' + '_mobile-screen-shot-testing_' + browser + '.jpg', 'body');
-
                 // collect nav URLS
-                var evaluatedUrls = this.evaluate(function(mainURL, selector, mobileTest) {
+                var evaluatedUrls = this.evaluate(function(mainURL, selector) {
                     var output = [];
                     // Grab the current url data, href and link text
-                    var elementObjects = __utils__.findAll(selector).map(function(element, mobileTest) {
+                    var elementObjects = __utils__.findAll(selector).map(function(element) {
                         if (!! element.getAttribute('href')) {
                             var title = element.getAttribute('title'),
                                 alt = element.getAttribute('alt');
@@ -694,10 +723,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     }
                 });
 
-                // if (debugOutput) {
+                if (debugOutput) {
                     console.log('testDesinations', JSON.stringify(testDesinations));
-                    casper.exit();
-                // }
+                }
             });
 
             // Send collected nav items to be tested
@@ -881,14 +909,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
             var currentNavTitle = navLocation;
 
-            // if (debugOutput) {
+            if (debugOutput) {
                 console.log(currentNavTitle);
                 console.log(' mainURL ~ ' + mainURL);
                 console.log(' navLocation ~ ' + navLocation);
                 console.log(' destinations[navLocation] ~ ' + destinations[navLocation]);
                 console.log(' testUrl ~ ' + currentNavUrl);
                 console.log('--------------');
-            // }
+            }
 
             // Skip section
             if (currentNavUrl.indexOf('cozitv') > -1 || currentNavUrl.indexOf('telexitos') > -1) {
@@ -912,7 +940,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
             } else {
                 // Test the individual page item
-                // suite.itemLinkPageTesting(mainURL, currentNavTitle, currentNavUrl);
+                suite.itemLinkPageTesting(mainURL, currentNavTitle, currentNavUrl);
             }
         }
     };
@@ -1372,7 +1400,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 // }
 
 
-                if(casper.exists('#article-comments')){
+                if (casper.exists('#article-comments')){
                     suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
                 }
 
