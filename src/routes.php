@@ -571,6 +571,12 @@ $app->group('/scripts', function () {
 
     	$allPostPutVars = $request->getParsedBody();
 
+
+    	if (strpos($_SERVER['SERVER_NAME'], 'spire') !== false) {
+    		$serverEnv = '--env=local';
+    	} else {
+    		$serverEnv = '';
+    	}
     	/********************************************
     	*
     	*   Configure testing vars from POST config
@@ -665,12 +671,6 @@ $app->group('/scripts', function () {
     		$__delCMD = "rm ". $__tmpFile;
     	} else {
     		$__delCMD = '';
-    	}
-
-    	if ($_SERVER['SERVER_NAME'] == 'spire.app') {
-    		$serverEnv = '--env=local';
-    	} else {
-    		$serverEnv = '';
     	}
 
 		if ($__runScript == 'spire-run') {
@@ -1316,6 +1316,7 @@ $app->group('/utils', function () {
     		$station = $utilPostParams['testProperty'];
     		$status = $utilPostParams['testStatus'];
     		$testFailureCount = $utilPostParams['testFailureCount'];
+    		$testScore = $utilPostParams['testScore'];
     		$results = $utilPostParams['testResults'];
     		$info = $utilPostParams['testInfo'];
 
@@ -1325,7 +1326,7 @@ $app->group('/utils', function () {
     			$testLoadtime = '0';
     		}
 
-    		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $testLoadtime, $results, $info);
+    		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $testScore, $testLoadtime, $results, $info);
 
     		if ($processManifestTestResults){
     			$this->logger->info("Manifest test results logged: [testID=>". $testID .",station=>". $station .",loadTime=>". $testLoadtime .",testType=>". $testType .",testStatus=>". $status ."]");

@@ -30,6 +30,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         timeoutDetails = {},
         regressionResults = {},
         testingObject = {},
+        testData = {},
         testStatus = 'Pass',
         setFail = 0,
         setPass = 0,
@@ -64,7 +65,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     manifestTestRefID = casper.cli.get('refID');
 
     if (envConfig === 'local') {
-        var configURL = 'http://spire.app',
+        var configURL = 'http://spire.local',
             saveLocation = '../test_results/screenshots/';
 
     } else if (envConfig === 'dev') {
@@ -273,24 +274,31 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             } else {
                 var passScore = parseInt(scoreVal) * parseInt(setPass);
             }
-            
+
             console.log('-----------------------------------');
             console.log(' Test completed with ' + setFail + ' failures.');
             console.log('-----------------------------------');
             console.log('| Total: ' + setTotal);
             console.log('| Failures:  ' + setFail + ' | Passes: ' + setPass + ' |');            
-            console.log('| score: ' + passScore + '%');
+            console.log('| Score: ' + passScore + '%');
             
             console.log('-----------------------------------');
 
+            testData['totalTests'] = setTotal;
+            testData['totalFailures'] = setFail;
+            testData['totalPasses'] = setPass;
+            testData['testScore'] = passScore;
+            testResultsObject['testData'] = testData;
+
             //Log test results
             if (setFail > 0) {
-                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus);
+                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testData']['testScore'], testResultsObject['testID'], 'regressionTest', testStatus);
 
                 if (debugOutput) {
                     console.log('-----------------------------------------------');
                     console.log('  ' + setFail + ' Failures!');
                     console.log('-----------------------------------------------');
+                    console.log(JSON.stringify(testResultsObject));
 
                     for (var failureItem in testResultsObject) {
                         if (typeof testResultsObject[failureItem] != 'object') {
@@ -315,7 +323,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     }
                 }
             } else {
-                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testID'], 'regressionTest', testStatus, testInfo);
+                suite.processTestResults(urlUri, testResultsObject, setFail, testResultsObject['testData']['testScore'], testResultsObject['testID'], 'regressionTest', testStatus, testInfo);
             }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
@@ -357,13 +365,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     };
 
     // Log results in DB
-    regressionSuite.prototype.processTestResults = function(urlUri, testResultsObject, testFailureCount, testID, testType, testStatus, testInfo) {
+    regressionSuite.prototype.processTestResults = function(urlUri, testResultsObject, testFailureCount, testScore, testID, testType, testStatus, testInfo) {
 
         var processUrl = configURL + '/utils/processRequest';
-
-        if (debugOutput) {
-            console.log(processUrl);
-        }
 
         casper.open(processUrl, {
             method: 'post',
@@ -373,7 +377,8 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 'testType': testType,
                 'testProperty': urlUri,
                 'testStatus': testStatus,
-                'testFailureCount':testFailureCount,
+                'testFailureCount': testFailureCount,
+                'testScore': testScore,
                 'testResults':  JSON.stringify(testResultsObject),
                 'testInfo': testInfo
             }

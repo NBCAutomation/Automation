@@ -22,7 +22,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     var envConfig = casper.cli.get('env');
 
     if (envConfig === 'local') {
-        var configURL = 'http://spire.app';
+        var configURL = 'http://spire.local';
     } else if (envConfig === 'dev') {
         var configURL = 'http://45.55.209.68';
     } else {

@@ -181,7 +181,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
     casper.on('resource.received', receivedListener);
 
     if (envConfig === 'local') {
-        configURL = 'http://spire.app';
+        configURL = 'http://spire.local';
     } else if (envConfig === 'dev') {
         configURL = 'http://45.55.209.68';
     }
