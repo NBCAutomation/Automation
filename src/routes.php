@@ -61,9 +61,7 @@ $app->group('/dashboard', function () use ($app) {
 		$apiNavTestLoadTime = $db->getAverageLoadTime('apiNavTest', 'today');
 		$apiContentTestLoadTime = $db->getAverageLoadTime('apiContentTest', 'today');
 		$apiSectionContentLoadTime = $db->getAverageLoadTime('apiSectionContent', 'today');
-
 		$chartLoadTimeData = $db->getAllAverageLoadTimes();
-
 
 		// Server time
 		$info = getdate();
@@ -93,6 +91,7 @@ $app->group('/dashboard', function () use ($app) {
 			'apiContentTestLoadTime' => $apiContentTestLoadTime,
 			'apiSectionContentLoadTime' => $apiSectionContentLoadTime,
 			'chartLoadTimeData' => $chartLoadTimeData,
+			'recentRegressionScore' => $recentRegressionScore,
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
@@ -399,14 +398,14 @@ $app->group('/reports', function () {
     })->setName('report-subview')->add( new SpireAuth() );
 
     // Report View
-    $this->get('/{view}/{subView}/{page}', function ($request, $response, $args) {
+    $this->get('/{view}/{subView}/{recordNumber}', function ($request, $response, $args) {
     	$db = new DbHandler();
 
     	$permissions = $request->getAttribute('spPermissions');
 
     	$allPostPutVars = $request->getQueryParams();
 
-    	$currentRecord = $db->getTestDataById($args['page'], $allPostPutVars['refID']);
+    	$currentRecord = $db->getTestDataById($allPostPutVars['refID'], $args['recordNumber']);
     	$recordViewType = $currentRecord['test_type'];
     	$currentRecordResults = $currentRecord['results_data'];
 
@@ -429,7 +428,7 @@ $app->group('/reports', function () {
 		    'viewType' => $recordViewType,
 		    'singleView' => true,
 		    'reportClass' => true,
-		    'reportID' => $currentRecord['id'],
+		    'reportID' => $currentRecord['ref_test_id'],
 		    'reportProperty' => $currentRecord['property'],
 		    'reportData' => $currentRecordResults,
 		    'fullReportData' => $currentRecord,
@@ -1324,6 +1323,10 @@ $app->group('/utils', function () {
     			$testLoadtime = $utilPostParams['manifestLoadTime'];	
     		} else {
     			$testLoadtime = '0';
+    		}
+
+    		if (! $testScore = $utilPostParams['testScore']) {
+    			$testScore = '0';
     		}
 
     		$processManifestTestResults = $db->insertTestResults($testID, $testType, $station, $status, $testFailureCount, $testScore, $testLoadtime, $results, $info);

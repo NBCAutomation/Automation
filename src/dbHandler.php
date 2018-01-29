@@ -782,12 +782,13 @@ class DbHandler {
 
 
     /* ------------- Reporting ------------------ */
-    public function getTestDataById($testID, $refID) {
-        $output = Spire::spireCache('getTestDataById_'.$testID.'_refID-'.$refID, 10000, function() use ($refID) {
+    public function getTestDataById($refID, $testID) {
+        var_dump($testID);
+        $output = Spire::spireCache('getTestDataById_'.$testID.'_refID-'.$refID, 10, function() use ($testID) {
             $db_con = Spire::getConnection();
             
-            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE ref_test_id = '".$refID."'");
-            $stmt->execute(array($refID));
+            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE ref_test_id = '".$testID."'");
+            $stmt->execute(array($testID));
 
             $tests = array();
 
@@ -993,13 +994,14 @@ class DbHandler {
     }
 
     public function getAllRegressionTests() {
-        $output = Spire::spireCache('getAllRegressionTests', 10, function() {
+        $output = Spire::spireCache('getAllRegressionTests', 10000, function() {
         // $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
             // echo $testType."<br />".$status."<br />".$range."<br />";
             // exit();
             $db_con = Spire::getConnection();
 
-            $stmt = $db_con->prepare("SELECT * FROM tests WHERE type = 'regressionTest'");
+            // $stmt = $db_con->prepare("SELECT * FROM tests WHERE type = 'regressionTest'");
+            $stmt = $db_con->prepare("SELECT tests.*, test_results.score FROM tests LEFT OUTER JOIN test_results ON tests.id = test_results.ref_test_id  WHERE type = 'regressionTest'");
 
             $testResultsData = array();
 

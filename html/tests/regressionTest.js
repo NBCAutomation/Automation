@@ -26,6 +26,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         manifestTestRefID,
         testPropertyPageTitle,
         testDesinations = {},
+        prevtestDesinations = {},
         testResultsObject = {},
         timeoutDetails = {},
         regressionResults = {},
@@ -169,11 +170,29 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
         // casper.start().then(function(response) {
         casper.start( url ).then(function(response) {
-            // casper.on('remote.message', function(message) {
-            //     this.echo(message);
-            // });
+            if (debugOutput) {
+                console.log('-------------------------');
+                consol.log('  Response Output');
+                console.log('-------------------------');
+                console.log(JSON.stringify(response));
+                console.log('-------------------------');    
+            }
 
-            if ( response.status == 200 || response.status == 302 ) {
+            if (response.url.indexOf('clickability') > -1 || this.getCurrentUrl().indexOf('clickability') > -1) {
+                test.comment('Clickability redirect. Current URL: ' + this.getCurrentUrl());
+                var bypassLoginScreen = suite.bypassLogin(true, function (data) {
+                    if (! data) {
+                        if (showOutput) {
+                           console.log('-- Unable to bypass login screen: ' + colorizer.colorize(data, 'FAIL'));
+                           casper.captureSelector(saveLocation + urlUri + '_' + 'bypassLogin-testing_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
+                        }
+
+                        suite.logRegressionError('bypassLogin', urlUri, '_intialStart');
+                    }
+                })
+            }
+
+        }).then(function() {
                 console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
 
                 if (manifestTestRefID) {
@@ -181,10 +200,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 } else {
                     suite.createTestID(url, 'regressionTest', urlUri);
                 }
-
-            } else {
-                throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
-            }
+            
         }).then(function() {
             if (mobileTest) {
                 console.log('-------------------------');
@@ -243,9 +259,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         // Skip to Cozi/Telexitos tests ( see thirdPartyPageTests() )
                         suite.thirdPartyPageTests(testProperty, url);
                     }
-
-
-
                 } else {
                     casper.test.fail('Page did not load correctly. Response: ' + response.status);
                 }
@@ -567,7 +580,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.testAssertion = function(testingEntity, urlUri, refName) {
         var suite = this;
 
-        casper.wait(100, function() {
+        casper.wait(200, function() {
             if (casper.exists(testingEntity)) {
                 // console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
                 try {
@@ -592,16 +605,17 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var refErrors = {};
 
         var suite = this;
-        var entityName = testingEntity.replace('.','_').replace('\/',"_").split(' ').join('_').toLowerCase();
+        var entityName = testingEntity.replace('#','_').replace('.','_').replace('\/',"_").split(' ').join('_').toLowerCase();
 
         casper.captureSelector(saveLocation + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
 
         var failureScreenshot = configURL + '/test_results/screenshots/' + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '_' + browser + '.jpg';
 
+        refErrors['testingElement'] = refName;
         refErrors['failure'] = 'unable to locate "' + refName + '" entitiy: "' + testingEntity + '". Unable to test item visibility correctly.';
         refErrors['screenshot'] = failureScreenshot;
 
-        regressionResults[refName] = refErrors;
+        regressionResults['Failure ' + setFail] = refErrors;
         testResultsObject['testResults'] = regressionResults;
         testStatus = 'Fail';
         setFail++;
@@ -905,47 +919,56 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var suite = this;
 
         for (var navLocation in destinations) {
-            if ( destinations[navLocation].indexOf(mainURL) > -1 || destinations[navLocation].indexOf('http://') > -1 || destinations[navLocation].indexOf('https://') > -1 ) {
-                // console.log('          url found');
-                var currentNavUrl = destinations[navLocation].replace(/ /g,"");
+            
+            if (prevtestDesinations.hasOwnProperty(navLocation)) {
+                console.log(colorizer.colorize('-- URL prev tested, skipping // ['+ navLocation +']', 'COMMENT'));
             } else {
-                // console.log('         no');
-                var currentNavUrl = mainURL + destinations[navLocation].replace(/ /g,"");
-            }
-            var currentNavTitle = navLocation;
+                prevtestDesinations[navLocation] = destinations[navLocation];
 
-            if (debugOutput) {
-                console.log(currentNavTitle);
-                console.log(' mainURL ~ ' + mainURL);
-                console.log(' navLocation ~ ' + navLocation);
-                console.log(' destinations[navLocation] ~ ' + destinations[navLocation]);
-                console.log(' testUrl ~ ' + currentNavUrl);
-                console.log('--------------');
-            }
+                if ( destinations[navLocation].indexOf(mainURL) > -1 || destinations[navLocation].indexOf('http://') > -1 || destinations[navLocation].indexOf('https://') > -1 ) {
+                    // console.log('          url found');
+                    var currentNavUrl = destinations[navLocation].replace(/ /g,"");
+                } else {
+                    // console.log('         no');
+                    var currentNavUrl = mainURL + destinations[navLocation].replace(/ /g,"");
+                }
+                var currentNavTitle = navLocation;
 
-            // Skip section
-            if (currentNavUrl.indexOf('cozitv') > -1 || currentNavUrl.indexOf('telexitos') > -1) {
-                test.comment('CoziTV or Telexitos link, skipping page check, run regression directly on that property: ' + currentNavUrl);
+                if (debugOutput) {
+                    console.log(currentNavTitle);
+                    console.log(' mainURL ~ ' + mainURL);
+                    console.log(' navLocation ~ ' + navLocation);
+                    console.log(' destinations[navLocation] ~ ' + destinations[navLocation]);
+                    console.log(' testUrl ~ ' + currentNavUrl);
+                    console.log('--------------');
+                }
 
-            } else if (
-                currentNavUrl.indexOf('apple.com') > -1 ||
-                currentNavUrl.indexOf('facebook.com') > -1 ||
-                currentNavUrl.indexOf('twitter.com') > -1 ||
-                currentNavUrl.indexOf('google.com') > -1 ||
-                currentNavUrl.indexOf('instagram.com') > -1 ||
-                currentNavUrl.indexOf('twitter.com') > -1
-            ) {
-                test.comment('Social link, skipping page check. url: ' + currentNavUrl);
+                // Skip section
+                if (currentNavUrl.indexOf('cozitv') > -1 || currentNavUrl.indexOf('telexitos') > -1) {
+                    test.comment('CoziTV or Telexitos link, skipping page check, run regression directly on that property: ' + currentNavUrl);
 
-            } else if (currentNavUrl.indexOf('/privacy') > -1){
-                test.comment('External privacy link, skipping page check. url: ' + currentNavUrl);
+                } else if (
+                    currentNavUrl.indexOf('apple.com') > -1 ||
+                    currentNavUrl.indexOf('facebook.com') > -1 ||
+                    currentNavUrl.indexOf('twitter.com') > -1 ||
+                    currentNavUrl.indexOf('google.com') > -1 ||
+                    currentNavUrl.indexOf('instagram.com') > -1 ||
+                    currentNavUrl.indexOf('twitter.com') > -1 ||
+                    currentNavUrl.indexOf('brassring.com') > -1 ||
+                    currentNavUrl.indexOf('data.nbcstations.com') > -1
+                ) {
+                    test.comment('Social link, skipping page check. url: ' + currentNavUrl);
 
-            } else if (currentNavUrl.indexOf('mailto:') > -1 || currentNavUrl.indexOf('nbc_app') > -1){
-                test.comment('Misc link, skipping page check. url: ' + currentNavUrl);
+                } else if (currentNavUrl.indexOf('/privacy') > -1){
+                    test.comment('External privacy link, skipping page check. url: ' + currentNavUrl);
 
-            } else {
-                // Test the individual page item
-                suite.itemLinkPageTesting(mainURL, currentNavTitle, currentNavUrl);
+                } else if (currentNavUrl.indexOf('mailto:') > -1 || currentNavUrl.indexOf('nbc_app') > -1 || currentNavUrl.indexOf('brassring') > -1 || currentNavUrl.indexOf('nbcstations') > -1){
+                    test.comment('Misc link, skipping page check. url: ' + currentNavUrl);
+
+                } else {
+                    // Test the individual page item
+                    suite.itemLinkPageTesting(mainURL, currentNavTitle, currentNavUrl);
+                }
             }
         }
     };
@@ -1385,25 +1408,24 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
                     checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
                     checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.footer', urlUri, 'footer');
-                    checkFooter = (mobileTest) ? suite.testAssertion('.socialNetworks', urlUri, 'Content Sharebar') : suite.testAssertion('.socialNetworks-top', urlUri, 'Content Sharebar');
-                } else {
-                    checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
-                    checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.page_footer', urlUri, 'footer');
-                    checkFooter = (mobileTest) ? suite.testAssertion('.socialNetworks', urlUri, 'Content Sharebar') : suite.testAssertion('.socialNetworks-top', urlUri, 'Content Sharebar');
+
+                    if (casper.exists('.socialNetworks-top') || casper.exists('.socialNetworks')) {
+                        checkSocialBar = (mobileTest) ? suite.testAssertion('.socialNetworks', urlUri, 'Content Sharebar') : suite.testAssertion('.socialNetworks-top', urlUri, 'Content Sharebar');
+                    }
                 }
 
                 // Check for Taboola module
-                // if (casper.exists('#taboola-mobile-below-article-thumbnails')) {
-                //     checkTaboolaMobule_Thumb = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-thumbnails', urlUri, 'Taboola Thumb Module') : suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'Taboola Thumb Module');
-                // } else {
-                //     suite.testAssertion('#taboola-below-gallery-thumbnails', urlUri, 'Taboola Thumb Module');
-                //     suite.testAssertion('#taboola-below-gallery-thumbnails-2nd', urlUri, 'Taboola Thumb Module Row 2');
-                // }
+                if (casper.exists('#taboola-mobile-below-article-thumbnails') || casper.exists('#taboola-below-article-thumbnails')) {
+                    checkTaboolaMobule_Thumb = (mobileTest) ? suite.testAssertion('#taboola-mobile-below-article-thumbnails', urlUri, 'Taboola Thumb Module') : suite.testAssertion('#taboola-below-article-thumbnails', urlUri, 'Taboola Thumb Module');
+                }
 
-                // if (casper.exists('#taboola-below-article-organic-text-links')) {
-                //     checkTaboolaMobule_Links = (mobileTest) ? suite.testAssertion('#taboola-below-article-organic-text-links', urlUri, 'Taboola Link Module') : suite.testAssertion('#taboola-below-article-text-links', urlUri, 'Taboola Link Module');
-                // }
+                if (casper.exists('#taboola-below-article-organic-text-links') || casper.exists('#taboola-below-article-text-links')) {
+                    checkTaboolaMobule_Links = (mobileTest) ? suite.testAssertion('#taboola-below-article-organic-text-links', urlUri, 'Taboola Link Module') : suite.testAssertion('#taboola-below-article-text-links', urlUri, 'Taboola Link Module');
+                }
 
+                if (casper.exists('.module-civicScience')) {
+                    suite.testAssertion('.module-civicScience', urlUri, 'Civic Science module');
+                }
 
                 if (casper.exists('#article-comments')){
                     suite.testAssertion('#article-comments', urlUri, 'articleCommentArea');
@@ -1415,13 +1437,9 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     console.log(colorizer.colorize('# Vertical Gallery Display Test', 'PARAMETER'));
                     console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
-                    casper.wait(200, function() {
-                        if (mobileTest) {
-                            // suite.testAssertion('.quick-nav', urlUri, 'QuickNav');
-                            // this.mouse.move('#footer');
-                            // this.mouse.click('#footer');
-                        }
+                    suite.testAssertion('#taboola-below-gallery-thumbnails-2nd', urlUri, 'Taboola Thumb Module Row 2');
 
+                    casper.wait(200, function() {
                         maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
 
                         // suite.testVerticalGallery(response.url);
@@ -1466,8 +1484,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     casper.wait(200, function() {
                         // suite.testAssertion('.socialNetworks-top', urlUri, 'contentShareBar');
-                        suite.testAssertion('div.article_elements.sponsored', urlUri, 'SponsoredContentArticleBackground');
-                        suite.testAssertion('.module-civicScience', urlUri, 'civicScienceModule');
+                        // suite.testAssertion('div.article_elements.sponsored', urlUri, 'SponsoredContentArticleBackground');
 
                         // maxVertSlideCount = casper.evaluate(function(){ return document.querySelector('#slide1 > div.slide_count > span.total_number').innerText;});
 
@@ -1484,7 +1501,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
                     casper.wait(200, function() {
-                        suite.testAssertion('.module-civicScience', urlUri, 'Civic Science module');
                         suite.testAssertion('div.leadMediaRegion.gallery', urlUri, 'Lead media in gallery');
                         // div.leadMediaThumbnail
                         suite.testAssertion('.embedded.gallery', urlUri, 'Lead media gallery object');

@@ -26,6 +26,12 @@
 	} else {
 		$thisPropertyName = $reportProperty;
 	}
+
+	if ($reportData) {
+		$obj = json_decode($reportData, true);
+		$reportScoreData = $obj['testData'];
+		$reportFailures = $obj['testResults'];
+	}
 ?>
 	<div class="panel-body api_results">
 	<div class="api_results">
@@ -47,22 +53,28 @@
 								$testReportViewData .= '<div class="panel-heading">'.$viewName.' Reports</div>';
 								$testReportViewData .= '<div class="panel-body api_results">';
 								$testReportViewData .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
-								$testReportViewData .= '<thead><tr width="100%"><th>ID</th><th>Ref ID</th><th>Property</th><th>Created</th></tr></thead>';
+								$testReportViewData .= '<thead><tr width="100%"><th>ID</th><th>Score</th><th>Property</th><th>Created</th></tr></thead>';
 								$testReportViewData .= "<tbody>";
 
 								foreach ($recentRegressionTests[0] as $key => $value) {
 									$l10nDate = new DateTime($value['created']);
 									$l10nDate->setTimeZone($usersTimezone);
 
+									if (!$value['score']) {
+										$testScore = '--';	
+									} else {
+										$testScore = $value['score'];
+									}
+
 									$testReportViewData .= '<tr>';
 									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.$value['id'].'</a></td>';
-									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.$value['test_id'].'</a></td>';
+									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.$testScore.'</a></td>';
 									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
 									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
 									$testReportViewData .= '</tr>';
 								}
 								$testReportViewData .= "</tbody>";
-								$testReportViewData .= "<tfoot><tr><th>ID</th><th>Ref ID</th><th>Property</th><th>Created</th></tr></tfoot>";
+								$testReportViewData .= "<tfoot><tr><th>ID</th><th>Score</th><th>Property</th><th>Created</th></tr></tfoot>";
 								$testReportViewData .= '</table>';
 								$testReportViewData .= '</div></div>';
 								$testReportViewData .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
@@ -81,9 +93,50 @@
 					</div>
 					<div class="panel-body">
 						<p>Test completed: <?php echo $l10nDate->format('n/d/Y, g:i A'); ?></p>
-						<ul>
-							<li><b>Failures:</b> <?php echo $fullReportData['failures']; ?></li>
-						</ul>
+						<div class="col-md-12">
+							<div class="row">
+								<div class="col-md-2">
+									<div class="panel panel-default score">
+										<div class="panel-body">
+											<div class="stat-panel text-center">
+												<div class="stat-panel-number h1 "><?php echo $reportScoreData['testScore']; ?></div>
+												<div class="stat-panel-title text-uppercase">Score</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="panel panel-default passes">
+										<div class="panel-body">
+											<div class="stat-panel text-center">
+												<div class="stat-panel-number h1 "><?php echo $reportScoreData['totalPasses']; ?></div>
+												<div class="stat-panel-title text-uppercase">Passed</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="panel panel-default failrues">
+										<div class="panel-body">
+											<div class="stat-panel text-center">
+												<div class="stat-panel-number h1 "><?php echo $reportScoreData['totalFailures']; ?></div>
+												<div class="stat-panel-title text-uppercase">Failed</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2">
+									<div class="panel panel-default">
+										<div class="panel-body">
+											<div class="stat-panel text-center">
+												<div class="stat-panel-number h1 "><?php echo $reportScoreData['totalTests']; ?></div>
+												<div class="stat-panel-title text-uppercase">Total</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 					<?php
@@ -94,9 +147,7 @@
 								</div>
 								<div class="panel-body">';
 
-							// var_dump(json_decode($reportData));
-							$obj = json_decode($reportData, true);
-							$reportFailures = $obj['testResults'];
+							// var_dump(json_decode($reportFailures));
 
 							foreach ($reportFailures as $reportKey => $reportValue) {
 								echo '<div class="panel panel-default">

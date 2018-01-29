@@ -58,6 +58,11 @@ h1 {
 	background: #FFCCCC;
 }
 
+.panel.panel-default.failrues {
+	color: red;
+}
+
+
 #breadcrumbs {
 	font-style: italic;
 	font-size: 0.9em;

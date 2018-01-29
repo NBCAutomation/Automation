@@ -18,6 +18,8 @@
 		"1process-article": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_content.js\" --url=\"{}\"",
 		"create-dictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_manifest.js\" --url=\"{}\" --task=createDictionary",
 		"stageRegression": "cat stage_sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --url=\"{}\"",
+		"prodRegressionSingle": "shuf -n 1 sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --url=\"{}\"",
+		"stageRegressionSingle": "shuf -n 1 stage_sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --url=\"{}\"",
 		"prodRegression": "./prodRegression.sh",
 		"hourly_manifestCheck": "shuf -n 3 sites.txt | xargs -P3 -I{} casperjs test \"./tests/apiTest_manifest.js\" --url=\"{}\"",
 		"hourly_navCheck": "shuf -n 3 sites.txt | xargs -P3 -I{} casperjs test \"./tests/apiTest_nav.js\" --url=\"{}\"",
