@@ -172,7 +172,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         casper.start( url ).then(function(response) {
             if (debugOutput) {
                 console.log('-------------------------');
-                consol.log('  Response Output');
+                console.log('  Response Output');
                 console.log('-------------------------');
                 console.log(JSON.stringify(response));
                 console.log('-------------------------');    
@@ -929,9 +929,15 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     // console.log('          url found');
                     var currentNavUrl = destinations[navLocation].replace(/ /g,"");
                 } else {
-                    // console.log('         no');
-                    var currentNavUrl = mainURL + destinations[navLocation].replace(/ /g,"");
+                    var baseURL = mainURL.replace('http:','').replace('https:','');
+
+                    if ( destinations[navLocation].indexOf(baseURL) > -1) {
+                        var currentNavUrl = destinations[navLocation].replace(/ /g,"").replace(baseURL, mainURL);
+                    } else {
+                        var currentNavUrl = mainURL + destinations[navLocation].replace(/ /g,"");
+                    }
                 }
+
                 var currentNavTitle = navLocation;
 
                 if (debugOutput) {
@@ -955,6 +961,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     currentNavUrl.indexOf('instagram.com') > -1 ||
                     currentNavUrl.indexOf('twitter.com') > -1 ||
                     currentNavUrl.indexOf('brassring.com') > -1 ||
+                    currentNavUrl.indexOf('telemundo.com') > -1 ||
                     currentNavUrl.indexOf('data.nbcstations.com') > -1
                 ) {
                     test.comment('Social link, skipping page check. url: ' + currentNavUrl);
