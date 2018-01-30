@@ -1,4 +1,4 @@
 #!/bin/bash
 CASPER_PATH="node_modules/.bin";
-cat sites.txt | xargs -P1 -I{} $CASPER_PATH/casperjs test "./tests/regressionTest.js" --url="{}";
-cat sites.txt | xargs -P1 -I{} $CASPER_PATH/casperjs test "./tests/regressionTest.js" --url="{}" --engine=slimerjs
+shuf -n 1 sites.txt | xargs -P1 -I{} casperjs test "./tests/regressionTest.js" --url="{}";
+shuf -n 1 stage_sites.txt | xargs -P1 -I{} casperjs test "./tests/regressionTest.js" --url="{}"
