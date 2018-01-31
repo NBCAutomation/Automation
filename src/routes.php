@@ -231,7 +231,7 @@ $app->group('/reports', function () {
 
 		    default:
 		        // $testTypeName = 'none-existent';
-		    
+
 		}
 
 		if ($pullAllReportData) {
@@ -276,7 +276,6 @@ $app->group('/reports', function () {
 		}
 
 		var_dump($pageTemplate);
-		exit();
 
         return $this->renderer->render($response, $pageTemplate, [
             'title' => 'Reports',
