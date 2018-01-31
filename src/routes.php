@@ -196,41 +196,41 @@ $app->group('/reports', function () {
 
 		    case "main":
 		        $mainView = true;
-		        // $pullAllReportData = false;
+		        $pullAllReportData = false;
 		        break;
 
 		    case "api_article_audits":
 		        $reportsView = true;
-		        // $pullAllReportData = true;
+		        $pullAllReportData = true;
 		        break;
 
 		    case "api_navigation_audits":
 		        $reportsView = true;
-		        // $pullAllReportData = true;
+		        $pullAllReportData = true;
 		        break;
 
 	        case "api_manifest_audits":
 	            $reportsView = true;
-	            // $pullAllReportData = true;
+	            $pullAllReportData = true;
 	            break;
 
             case "regression_tests":
                 $regressionView = true;
-                // $pullAllReportData = true;
+                $pullAllReportData = true;
                 break;
 
             case 'loadtimes':
             	$loadTimesView = true;
-            	// $pullAllReportData = false;
+            	$pullAllReportData = false;
             	break;
 
            	case "search":
            	    $loadtimeSearchView = true;
-           	    // $pullAllReportData = false;
+           	    $pullAllReportData = false;
            	    break;
 
 		    default:
-		        // $testTypeName = 'none-existent';
+		        $testTypeName = 'none-existent';
 		}
 
 		if ($pullAllReportData) {
@@ -275,7 +275,7 @@ $app->group('/reports', function () {
 		}
 
 		var_dump($pageTemplate);
-
+		// exit();
 
         return $this->renderer->render($response, $pageTemplate, [
             'title' => 'Reports',
