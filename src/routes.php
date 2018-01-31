@@ -188,60 +188,65 @@ $app->group('/reports', function () {
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
 
+		echo $args['view'];
+		echo '<br />--';
+		echo $__viewPath;
+
 		switch ($args['view']) {
 
 		    case "main":
 		        $mainView = true;
-		        $pullAllReportData = false;
+		        // $pullAllReportData = false;
 		        break;
 
 		    case "api_article_audits":
 		        $reportsView = true;
-		        $pullAllReportData = true;
+		        // $pullAllReportData = true;
 		        break;
 
 		    case "api_navigation_audits":
 		        $reportsView = true;
-		        $pullAllReportData = true;
+		        // $pullAllReportData = true;
 		        break;
 
 	        case "api_manifest_audits":
 	            $reportsView = true;
-	            $pullAllReportData = true;
+	            // $pullAllReportData = true;
 	            break;
 
             case "regression_tests":
                 $regressionView = true;
-                $pullAllReportData = true;
+                // $pullAllReportData = true;
                 break;
 
             case 'loadtimes':
             	$loadTimesView = true;
-            	$pullAllReportData = false;
+            	// $pullAllReportData = false;
             	break;
 
            	case "search":
            	    $loadtimeSearchView = true;
-           	    $pullAllReportData = false;
+           	    // $pullAllReportData = false;
            	    break;
 
 		    default:
-		        $testTypeName = 'none-existent';
+		        // $testTypeName = 'none-existent';
+		    
 		}
 
 		if ($pullAllReportData) {
-			$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
-			$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
-			$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
+			// $allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
+			// $todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
+			// $todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
 
-			$yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
-			$yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
+			// $yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
+			// $yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
 			
-			$yesterdayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'yesterday');
-			$yesterdayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'yesterday');
+			// $yesterdayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'yesterday');
+			// $yesterdayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'yesterday');
 
-			$todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
-			$todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
+			// $todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
+			// $todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
 			// var_dump($todayTotalErrors);
 			// exit();
 		}
