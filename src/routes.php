@@ -188,10 +188,6 @@ $app->group('/reports', function () {
 		// View path
 		$__viewPath = $args['view']."/".$args['subView'];
 
-		echo $args['view'];
-		echo '<br />--';
-		echo $__viewPath;
-
 		switch ($args['view']) {
 
 		    case "main":
@@ -234,18 +230,18 @@ $app->group('/reports', function () {
 		}
 
 		if ($pullAllReportData) {
-			// $allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
-			// $todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
-			// $todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
+			$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
+			$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
+			$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
 
-			// $yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
-			// $yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
+			$yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
+			$yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
 			
-			// $yesterdayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'yesterday');
-			// $yesterdayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'yesterday');
+			$yesterdayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'yesterday');
+			$yesterdayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'yesterday');
 
-			// $todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
-			// $todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
+			$todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
+			$todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
 			// var_dump($todayTotalErrors);
 			// exit();
 		}
@@ -273,9 +269,6 @@ $app->group('/reports', function () {
 		} else {
 			$pageTemplate = 'reports.php';
 		}
-
-		var_dump($pageTemplate);
-		// exit();
 
         return $this->renderer->render($response, $pageTemplate, [
             'title' => 'Reports',
@@ -322,6 +315,7 @@ $app->group('/reports', function () {
 	        'uAthMessage' => $permissions['uAthMessage']
         ]);
     })->setName('directory-reports-view')->add( new SpireAuth() );
+
 
     // All reports view
     $this->get('/{view}/{subView}', function ($request, $response, $args) {
