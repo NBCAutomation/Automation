@@ -238,14 +238,14 @@ $app->group('/reports', function () {
 			$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
 			$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
 
-			$yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
-			$yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
+			// $yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
+			// $yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
 			
-			$yesterdayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'yesterday');
-			$yesterdayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'yesterday');
+			// $yesterdayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'yesterday');
+			// $yesterdayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'yesterday');
 
-			$todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
-			$todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
+			// $todayTotalWarnings = $db->getTestReportCount($args['view'], 'warning', 'today');
+			// $todayTotalErrors = $db->getTestReportCount($args['view'], 'fail', 'today');
 			// var_dump($todayTotalErrors);
 			// exit();
 		}
