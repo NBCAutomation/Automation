@@ -316,7 +316,6 @@ $app->group('/reports', function () {
         ]);
     })->setName('directory-reports-view')->add( new SpireAuth() );
 
-
     // All reports view
     $this->get('/{view}/{subView}', function ($request, $response, $args) {
     	$db = new DbHandler();
