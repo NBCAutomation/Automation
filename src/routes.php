@@ -234,9 +234,9 @@ $app->group('/reports', function () {
 		}
 
 		if ($pullAllReportData) {
-			$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
-			$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
-			$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
+			// $allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
+			// $todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
+			// $todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
 
 			// $yesterdayReports = $db->getAllTestResultData($args['view'], 'all', 'yesterday');
 			// $yesterdayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'yesterday');
