@@ -230,7 +230,7 @@ $app->group('/reports', function () {
 		}
 
 		if ($pullAllReportData) {
-			$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
+			// $allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
 			$todayReports = $db->getAllTestResultData($args['view'], 'all', 'today');
 			$todayFailureReports = $db->getAllTestResultData($args['view'], 'fail', 'today');
 
