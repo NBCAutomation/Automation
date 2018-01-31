@@ -247,7 +247,6 @@ class Spire {
 			foreach ($data[0] as $key => $value) {
 				$l10nDate = new DateTime($value['created']);
 				$l10nDate->setTimeZone($usersTimezone);
-8
 				$testReportViewData .= '<tr>';
 				$testReportViewData .= '<td><div class="report_status '.strtolower($value['status']).'">'.$value['status'].'</div></td>';
 				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['ref_test_id'].'?refID='.$value['id'].'">'.$value['ref_test_id'].'</a></td>';
