@@ -241,25 +241,24 @@ class Spire {
 			$testReportViewData .= '<div class="panel-heading">'.$viewName.' Reports</div>';
 			$testReportViewData .= '<div class="panel-body api_results">';
 			$testReportViewData .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
-			$testReportViewData .= '<thead><tr width="100%"><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></thead>';
+			$testReportViewData .= '<thead><tr width="100%"><th>Status</th><th>ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></thead>';
 			$testReportViewData .= "<tbody>";
 
 			foreach ($data[0] as $key => $value) {
 				$l10nDate = new DateTime($value['created']);
 				$l10nDate->setTimeZone($usersTimezone);
-
+8
 				$testReportViewData .= '<tr>';
 				$testReportViewData .= '<td><div class="report_status '.strtolower($value['status']).'">'.$value['status'].'</div></td>';
-				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['id'].'</a></td>';
-				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['ref_test_id'].'</a></td>';
-				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
-				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$value['failures'].'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['ref_test_id'].'?refID='.$value['id'].'">'.$value['ref_test_id'].'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['ref_test_id'].'?refID='.$value['id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['ref_test_id'].'?refID='.$value['id'].'">'.$value['failures'].'</a></td>';
 				// $testReportViewData .= $value['created']."</td>";
-				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['id'].'?refID='.$value['ref_test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+				$testReportViewData .= '<td><a href="/reports/'.$urlPath.'/record/'.$value['ref_test_id'].'?refID='.$value['id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
 				$testReportViewData .= '</tr>';
 			}
 			$testReportViewData .= "</tbody>";
-			$testReportViewData .= "<tfoot><tr><th>Status</th><th>ID</th><th>Ref ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></tfoot>";
+			$testReportViewData .= "<tfoot><tr><th>Status</th><th>ID</th><th>Property</th><th>Failures</th><th>Created</th></tr></tfoot>";
 			$testReportViewData .= '</table>';
 			$testReportViewData .= '</div></div>';
 			$testReportViewData .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
