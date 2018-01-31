@@ -270,6 +270,9 @@ $app->group('/reports', function () {
 			$pageTemplate = 'reports.php';
 		}
 
+		var_dump($pageTemplate);
+		exit();
+
         return $this->renderer->render($response, $pageTemplate, [
             'title' => 'Reports',
             'page_name' => 'reports',
