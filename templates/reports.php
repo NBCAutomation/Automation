@@ -166,7 +166,7 @@
 							<div class="tab-content">
 								<div class="tab-pane fade active in" id="errors_tab">
 									<?php if ($todayFailureReports) { 
-											Spire::returnFormattedDataTable($todayFailureReports, $view);
+											Spire::returnFormattedDataTable($todayFailureReports, $view, $fullPath);
 										} else {
 											echo "No error reports currently.";
 										}
@@ -176,7 +176,7 @@
 								<!-- // All reports tab -->
 								<div class="tab-pane" id="all_reports_tab">
 									<?php if ($todayReports) {
-											Spire::returnFormattedDataTable($todayReports, $view);
+											Spire::returnFormattedDataTable($todayReports, $view, $fullPath);
 										} else {
 											echo "No error reports currently.";
 										}
@@ -197,7 +197,7 @@
 								<div class="tab-content">
 									<div class="tab-pane fade active in" id="yesterday_errors_tab">
 										<?php if ($yesterdayFailureReports) { 
-												Spire::returnFormattedDataTable($yesterdayFailureReports, $view);
+												Spire::returnFormattedDataTable($yesterdayFailureReports, $view, $fullPath);
 											} else {
 												echo "No error reports currently.";
 											}
@@ -207,7 +207,7 @@
 									<!-- // All reports tab -->
 									<div class="tab-pane" id="yesterday_all_reports_tab">
 										<?php if ($yesterdayReports) { 
-												Spire::returnFormattedDataTable($yesterdayReports, $view);
+												Spire::returnFormattedDataTable($yesterdayReports, $view, $fullPath);
 											} else {
 												echo "No error reports currently.";
 											}
