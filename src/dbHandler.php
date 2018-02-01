@@ -783,7 +783,7 @@ class DbHandler {
 
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
-        var_dump($testID);
+        // var_dump($testID);
         $output = Spire::spireCache('getTestDataById_'.$testID.'_refID-'.$refID, 10000, function() use ($testID) {
             $db_con = Spire::getConnection();
             
@@ -889,7 +889,8 @@ class DbHandler {
     }
 
     public function getAllTestResultData($testType, $status, $range) {
-        $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
+        // $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
+        $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 10, function() use ($testType, $status, $range) {
             // echo $testType."<br />".$status."<br />".$range."<br />";
             // exit();
             $db_con = Spire::getConnection();

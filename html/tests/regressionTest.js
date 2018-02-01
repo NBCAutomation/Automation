@@ -11,7 +11,7 @@
 //
 casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     // casper.options.timeout = 300000;
-    casper.options.timeout = 900000;
+    casper.options.timeout = 1100000;
 
     // Config vars
     var utils = require('utils'),
@@ -114,11 +114,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     }
 
     // only have to call this once..
-    if (debugOutput) {
+    // if (debugOutput) {
         casper.on("page.error", function (msg, trace) {
              casper.echo("A page error was thrown: " + msg, "INFO");
         });
-    }
+    // }
 
     /*************************
     *
@@ -580,25 +580,27 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.testAssertion = function(testingEntity, urlUri, refName) {
         var suite = this;
 
-        casper.wait(200, function() {
+        casper.waitForSelector(testingEntity, function(){
             if (casper.exists(testingEntity)) {
-                // console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
-                try {
-                    test.assertVisible(testingEntity, refName + ' is visibile');
-                    setPass++;
-                    setTotal++;
-                } catch (e) {
-                    console.log(colorizer.colorize(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport. ', 'ERROR'));
-                    // console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
-                    console.log('   -- failure')
-                    console.log('   -- ' +  e);
-                    suite.logRegressionError(testingEntity, urlUri, refName);
-                }
+                casper.wait(200, function() {
+                    // console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
+                    try {
+                        test.assertVisible(testingEntity, refName + ' is visibile');
+                        setPass++;
+                        setTotal++;
+                    } catch (e) {
+                        console.log(colorizer.colorize(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport. ', 'ERROR'));
+                        // console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
+                        console.log('   -- failure')
+                        console.log('   -- ' +  e);
+                        suite.logRegressionError(testingEntity, urlUri, refName);
+                    }
+                })
             } else {
                 console.log(colorizer.colorize(refName + ' didnt load correctly, and/or wasn\'t located on the site.', 'ERROR'));
                 suite.logRegressionError(testingEntity, urlUri, refName);
             }
-        });
+        })
     };
 
     regressionSuite.prototype.logRegressionError = function(testingEntity, urlUri, refName) {
@@ -962,6 +964,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     currentNavUrl.indexOf('twitter.com') > -1 ||
                     currentNavUrl.indexOf('brassring.com') > -1 ||
                     currentNavUrl.indexOf('telemundo.com') > -1 ||
+                    currentNavUrl.indexOf('nbc.com') > -1 ||
                     currentNavUrl.indexOf('data.nbcstations.com') > -1
                 ) {
                     test.comment('Social link, skipping page check. url: ' + currentNavUrl);
@@ -1118,8 +1121,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                 this.mouse.click('#trafficTab .routes');
                                 suite.testAssertion('#trafficIncidents', urlUri, 'Traffic Route Alerts');
                             } else {
-                                suite.testAssertion('#navteqTrafficOneContainer', urlUri, 'trafficMap container');
-                                suite.testAssertion('.trafficNewLanding', urlUri, 'trafficMap');
+                                if (casper.exists('#trafficContainer')) {
+                                    var trafficContainerID = '#trafficContainer';
+                                    var trafficMapContainer = '.wx-standalone-map';
+                                } else {
+                                    var trafficContainerID = '#navteqTrafficOneContainer';
+                                    var trafficMapContainer = '#map_canvas';
+                                }
+
+                                suite.testAssertion(trafficContainerID, urlUri, 'trafficMap container');
+                                suite.testAssertion(trafficMapContainer, urlUri, 'trafficMap');
                             }
                         }
 
@@ -1513,8 +1524,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                         suite.testAssertion('.embedded.gallery', urlUri, 'Lead media gallery object');
                     });
                 }
-
             })
+casper.page.close();
+            // .then(function() {
+            //     casper.page.close();
+            // })
         };
 
     };
