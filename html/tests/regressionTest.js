@@ -32,6 +32,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         regressionResults = {},
         testingObject = {},
         testData = {},
+        failedTestItems = {},
         testStatus = 'Pass',
         setFail = 0,
         setPass = 0,
@@ -114,11 +115,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     }
 
     // only have to call this once..
-    // if (debugOutput) {
+    if (debugOutput) {
         casper.on("page.error", function (msg, trace) {
              casper.echo("A page error was thrown: " + msg, "INFO");
         });
-    // }
+    }
 
     /*************************
     *
@@ -179,15 +180,14 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
 
             if (response.url.indexOf('clickability') > -1 || this.getCurrentUrl().indexOf('clickability') > -1) {
-                test.comment('Clickability redirect. Current URL: ' + this.getCurrentUrl());
+                console.log('Clickability redirect. Current URL: ' + this.getCurrentUrl());
+                
                 var bypassLoginScreen = suite.bypassLogin(true, function (data) {
                     if (! data) {
                         if (showOutput) {
                            console.log('-- Unable to bypass login screen: ' + colorizer.colorize(data, 'FAIL'));
                            casper.captureSelector(saveLocation + urlUri + '_' + 'bypassLogin-testing_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
                         }
-
-                        suite.logRegressionError('bypassLogin', urlUri, '_intialStart');
                     }
                 })
             }
@@ -294,13 +294,23 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             console.log('| Total: ' + setTotal);
             console.log('| Failures:  ' + setFail + ' | Passes: ' + setPass + ' |');            
             console.log('| Score: ' + passScore + '%');
+            console.log('-----------------------------------');
+            var scriptEndTime = new Date();
+            var scriptRunTime = scriptEndTime - currentTime;
             
+            if (debugOutput) {
+                console.log('scriptRunTime in ms: ' + scriptRunTime);
+            }
+
+            console.log('| Script runtime: ' + suite.millisToMinutesAndSeconds(scriptRunTime));
             console.log('-----------------------------------');
 
             testData['totalTests'] = setTotal;
             testData['totalFailures'] = setFail;
             testData['totalPasses'] = setPass;
             testData['testScore'] = passScore;
+            testData['scriptRunTime'] = scriptRunTime;
+
             testResultsObject['testData'] = testData;
 
             //Log test results
@@ -340,10 +350,16 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
             }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
-
             this.exit();
         });
     };
+
+    // Return test time in min/sec
+    regressionSuite.prototype.millisToMinutesAndSeconds = function(millis) {
+      var minutes = Math.floor(millis / 60000);
+      var seconds = ((millis % 60000) / 1000).toFixed(0);
+      return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+    }
 
     // Create test id in DB
     regressionSuite.prototype.createTestID = function(url, type, stationProperty) {
@@ -580,27 +596,25 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     regressionSuite.prototype.testAssertion = function(testingEntity, urlUri, refName) {
         var suite = this;
 
-        casper.waitForSelector(testingEntity, function(){
-            if (casper.exists(testingEntity)) {
-                casper.wait(200, function() {
-                    // console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
-                    try {
-                        test.assertVisible(testingEntity, refName + ' is visibile');
-                        setPass++;
-                        setTotal++;
-                    } catch (e) {
-                        console.log(colorizer.colorize(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport. ', 'ERROR'));
-                        // console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
-                        console.log('   -- failure')
-                        console.log('   -- ' +  e);
-                        suite.logRegressionError(testingEntity, urlUri, refName);
-                    }
-                })
-            } else {
-                console.log(colorizer.colorize(refName + ' didnt load correctly, and/or wasn\'t located on the site.', 'ERROR'));
-                suite.logRegressionError(testingEntity, urlUri, refName);
-            }
-        })
+        if (casper.exists(testingEntity)) {
+            casper.wait(200, function() {
+                // console.log(colorizer.colorize(' > ' + refName + ' loaded correctly.', 'PARAMETER'));
+                try {
+                    test.assertVisible(testingEntity, refName + ' is visibile');
+                    setPass++;
+                    setTotal++;
+                } catch (e) {
+                    console.log(colorizer.colorize(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport. ', 'ERROR'));
+                    // console.log(' > Failure: ' + refName + ' loaded, but not visible and/or correctly seen in the viewport.');
+                    console.log('   -- failure')
+                    console.log('   -- ' +  e);
+                    suite.logRegressionError(testingEntity, urlUri, refName);
+                }
+            })
+        } else {
+            console.log(colorizer.colorize(refName + ' didnt load correctly, and/or wasn\'t located on the site.', 'ERROR'));
+            suite.logRegressionError(testingEntity, urlUri, refName);
+        }
     };
 
     regressionSuite.prototype.logRegressionError = function(testingEntity, urlUri, refName) {
@@ -758,12 +772,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
     regressionSuite.prototype.bypassLogin = function (bypassLogin, callback) {
         var suite = this,
-        output;
+        output = false;
 
         if (bypassLogin) {
-            console.log('-----------------------------');
-            console.log('/////////////////////////////');
-            console.log(colorizer.colorize('Clickability login page, attempting to login...', 'PARAMETER'));
+            console.log('-------------------------------------------------');
+            console.log('/////////////////////////////////////////////////');
+            console.log(colorizer.colorize(' Clickability login page, attempting to login...', 'PARAMETER'));
 
             casper.waitForSelector("form input[name='j_username']", function() {
                 this.fillSelectors('form#login', {
@@ -772,7 +786,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 }, true);
             });
 
-            // casper.waitWhileSelector('form', function() {
             casper.waitWhileSelector('form',
                 // Adding pass/fail wait to wait for page to redirect to new page.
                 function pass () {
@@ -781,19 +794,20 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 },
                 function fail () {
                     // console.log('FAIL - selector still');
-                    output = false;
-                    casper.captureSelector(saveLocation + '_' + 'bypassLogin-FAIL-testing_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
+                    // casper.captureSelector(saveLocation + '_' + 'bypassLogin-FAIL-testing_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
                 }, 3000);
-            // });
 
             casper.then(function(){
                 if (typeof(callback) === "function") {
                     callback(output);
                 }
-
-                console.log(colorizer.colorize('...login successful, continuing.', 'PARAMETER'));
-                console.log('/////////////////////////////');
-                console.log('-----------------------------');
+                if (output == true) {
+                    console.log(colorizer.colorize(' ...login successful, continuing.', 'PARAMETER'));
+                } else {
+                    console.log(colorizer.colorize(' Unable to attempt login.', 'ERROR'));
+                }
+                console.log('/////////////////////////////////////////////////');
+                console.log('-------------------------------------------------');
             })
         } else {
             throw new Error('bypassLogin: Unable to attempt login;');
@@ -981,248 +995,251 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 }
             }
         }
+        // after for
+        casper.clear();
     };
 
 
     regressionSuite.prototype.itemLinkPageTesting = function(mainURL, linkName, linkURL) {
         var suite = this;
 
-        if (linkURL) {
-            casper.thenOpen(linkURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
-                // Grab url info
-                var parser = document.createElement('a');
+        casper.wait(100, function() {
+            if (linkURL) {
+                casper.thenOpen(linkURL, { method: 'get', headers: { 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function(response) {
+                    // Grab url info
+                    var parser = document.createElement('a');
 
-                parser.href = response.url;
+                    parser.href = response.url;
 
-                var newUrl = parser.href,
-                    urlPath = parser.pathname,
-                    pagePathName = urlPath.replace('/','').split(/[/?#]/)[0],
-                    sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
-                    urlUri = sourceString.replace('.','_');
+                    var newUrl = parser.href,
+                        urlPath = parser.pathname,
+                        pagePathName = urlPath.replace('/','').split(/[/?#]/)[0],
+                        sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0],
+                        urlUri = sourceString.replace('.','_');
 
-                // if forced to login screen, login
-                if (response.url.indexOf('clickability') > -1 || this.getCurrentUrl().indexOf('clickability') > -1) {
-                    test.comment('Clickability redirect. Current URL: ' + this.getCurrentUrl());
-                    var bypassLoginScreen = suite.bypassLogin(true, function (data) {
-                        if (! data) {
-                            if (showOutput) {
-                               console.log('-- Unable to bypass login screen: ' + colorizer.colorize(data, 'FAIL'));
-                               casper.captureSelector(saveLocation + urlUri + '_' + 'bypassLogin-testing_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
-                            }
-
-                            suite.logRegressionError('bypassLogin', urlUri, '_pageTests');
-                        }
-                    })
-                } else {
-                    casper.wait(100, function() {
-                        console.log('-----------------------------');
-                        console.log(colorizer.colorize('# Link Name/Text > ', 'PARAMETER') +  linkName);
-                        console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
-
-                        // Check for the header/footer
-                        if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                            checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
-                            checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.footer', urlUri, 'footer');
-                        } else {
-                            checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
-                            checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.page_footer', urlUri, 'footer');
-                        }
-
-                        // Check if subnav exists on the page
-                        if (! mobileTest) {
-                            if (casper.exists('.subnav-section-landing')) {
-                                suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
-                            } else {
-                                if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                                    console.log(colorizer.colorize('-- [NBC] No on-page subnav on the current url.', 'COMMENT'));
-                                } else {
-                                    console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
+                    // if forced to login screen, login
+                    if (response.url.indexOf('clickability') > -1 || this.getCurrentUrl().indexOf('clickability') > -1) {
+                        test.comment('Clickability redirect. Current URL: ' + this.getCurrentUrl());
+                        var bypassLoginScreen = suite.bypassLogin(true, function (data) {
+                            if (! data) {
+                                if (showOutput) {
+                                   console.log('-- Unable to bypass login screen: ' + colorizer.colorize(data, 'FAIL'));
+                                   casper.captureSelector(saveLocation + urlUri + '_' + 'bypassLogin-testing_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
                                 }
                             }
-                        } else {
-                            suite.testAssertion('.quick-nav', urlUri, 'QuickNav');
-                        }
+                        })
+                    } else {
+                        casper.wait(100, function() {
+                            console.log('-----------------------------');
+                            console.log(colorizer.colorize('# Link Name/Text > ', 'PARAMETER') +  linkName);
+                            console.log(colorizer.colorize('# Current test url > ', 'PARAMETER') +  response.url);
 
-                        // Homepage tests
-                        if ( response.url === mainURL + '/') {
+                            // Check for the header/footer
                             if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                                checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
+                                checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.footer', urlUri, 'footer');
+                            } else {
+                                checkHeader = (mobileTest) ? suite.testAssertion('.header  ', urlUri, 'header') : suite.testAssertion('.site-header', urlUri, 'header');
+                                checkFooter = (mobileTest) ? suite.testAssertion('#footer', urlUri, 'footer') : suite.testAssertion('.page_footer', urlUri, 'footer');
+                            }
 
-                                //Check if mobile and test accordingly
-                                if (mobileTest) {
-                                    if (casper.exists('#appIntercept')) {
-                                        this.mouse.move('#appIntercept .interceptContainer .noThanks');
-                                        this.mouse.click('#appIntercept .interceptContainer .noThanks');
+                            // Check if subnav exists on the page
+                            if (! mobileTest) {
+                                if (casper.exists('.subnav-section-landing')) {
+                                    suite.testAssertion('.subnav-section-landing', urlUri, pagePathName + '_subNav');
+                                } else {
+                                    if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                                        console.log(colorizer.colorize('-- [NBC] No on-page subnav on the current url.', 'COMMENT'));
+                                    } else {
+                                        console.log(colorizer.colorize('-- [TLM] No default style subnav on the current url.', 'COMMENT'));
                                     }
-                                    // Check for weather module as well as weather slide in quicknav
-                                    suite.testAssertion('.weather-module', urlUri, 'Homepage Weather Module');
-                                    suite.testAssertion('.nav-slide.weather', urlUri, 'QuickNav Weather Reading');
-                                    suite.testAssertion('.nav-slide.weather img', urlUri, 'QuickNav Weather Icon');
+                                }
+                            } else {
+                                suite.testAssertion('.quick-nav', urlUri, 'QuickNav');
+                            }
 
-                                    // Open main nav and ensure its visibile
-                                    this.mouse.move('.logo-container');
-                                    this.mouse.click('.logo-container');
-                                    casper.wait(200, function() {
-                                        // casper.wait(200, function() {
-                                            suite.testAssertion('.nav-container', urlUri, 'Mobile Nav');
-                                        // });
-                                    });
+                            // Homepage tests
+                            if ( response.url === mainURL + '/') {
+                                if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
 
-                                    // Close main nav
-                                    this.mouse.move('.logo-container');
-                                    this.mouse.click('.logo-container');
+                                    //Check if mobile and test accordingly
+                                    if (mobileTest) {
+                                        if (casper.exists('#appIntercept')) {
+                                            this.mouse.move('#appIntercept .interceptContainer .noThanks');
+                                            this.mouse.click('#appIntercept .interceptContainer .noThanks');
+                                        }
+                                        // Check for weather module as well as weather slide in quicknav
+                                        suite.testAssertion('.weather-module', urlUri, 'Homepage Weather Module');
+                                        suite.testAssertion('.nav-slide.weather', urlUri, 'QuickNav Weather Reading');
+                                        suite.testAssertion('.nav-slide.weather img', urlUri, 'QuickNav Weather Icon');
 
-                                    // Open TVE menu and ensure its visibile
-                                    casper.wait(300, function() {
+                                        // Open main nav and ensure its visibile
+                                        this.mouse.move('.logo-container');
+                                        this.mouse.click('.logo-container');
+                                        casper.wait(200, function() {
+                                            // casper.wait(200, function() {
+                                                suite.testAssertion('.nav-container', urlUri, 'Mobile Nav');
+                                            // });
+                                        });
+
+                                        // Close main nav
+                                        this.mouse.move('.logo-container');
+                                        this.mouse.click('.logo-container');
+
+                                        // Open TVE menu and ensure its visibile
+                                        casper.wait(300, function() {
+                                            this.mouse.move('.watch-live-container');
+                                            this.mouse.click('.watch-live-container');
+
+                                            casper.wait(200, function() {
+                                                suite.testAssertion('.watch-live-menu', urlUri, 'TVE-NavVisible');
+                                            });
+                                        });
+
+                                        // Close TVE Menu
                                         this.mouse.move('.watch-live-container');
                                         this.mouse.click('.watch-live-container');
 
-                                        casper.wait(200, function() {
-                                            suite.testAssertion('.watch-live-menu', urlUri, 'TVE-NavVisible');
+                                    } else {
+                                        suite.testAssertion('.weather-module-map iframe', urlUri, 'homepage weather module');
+                                        suite.testAssertion('iframe.wx-standalone-map', urlUri, 'homepage weather module - map iframe');
+
+                                        var verifyMapOpen = this.evaluate(function() {
+                                            var mapOpen = false,
+                                            weatherMapHeight = document.getElementsByClassName('wx-standalone-map')[0].clientHeight;
+
+                                            if (weatherMapHeight > 259) {
+                                                mapOpen = true;
+                                            }
+                                            return mapOpen;
                                         });
-                                    });
 
-                                    // Close TVE Menu
-                                    this.mouse.move('.watch-live-container');
-                                    this.mouse.click('.watch-live-container');
-
-                                } else {
-                                    suite.testAssertion('.weather-module-map iframe', urlUri, 'homepage weather module');
-                                    suite.testAssertion('iframe.wx-standalone-map', urlUri, 'homepage weather module - map iframe');
-
-                                    var verifyMapOpen = this.evaluate(function() {
-                                        var mapOpen = false,
-                                        weatherMapHeight = document.getElementsByClassName('wx-standalone-map')[0].clientHeight;
-
-                                        if (weatherMapHeight > 259) {
-                                            mapOpen = true;
+                                        if (verifyMapOpen) {
+                                            console.log(colorizer.colorize('PASS', 'INFO') + ' the weather map is visible and open.');
+                                        } else {
+                                            console.log(colorizer.colorize('FAIL homepageWeatherMap didnt loaded correctly, but isn\'t open.', 'ERROR'));
+                                            suite.logRegressionError('wx-standalone-map', urlUri, 'homepageWeatherMap');
                                         }
-                                        return mapOpen;
-                                    });
-
-                                    if (verifyMapOpen) {
-                                        console.log(colorizer.colorize('PASS', 'INFO') + ' the weather map is visible and open.');
-                                    } else {
-                                        console.log(colorizer.colorize('FAIL homepageWeatherMap didnt loaded correctly, but isn\'t open.', 'ERROR'));
-                                        suite.logRegressionError('wx-standalone-map', urlUri, 'homepageWeatherMap');
                                     }
                                 }
                             }
-                        }
 
-                        // Traffic Page tests
-                        if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
-                            if (mobileTest) {
-                                this.mouse.move('#trafficTab .map');
-                                this.mouse.click('#trafficTab .map');
-                                suite.testAssertion('.map', urlUri, 'Traffic map');
+                            // Traffic Page tests
+                            if ( response.url.indexOf('traffic') > -1 || response.url.indexOf('trafico') > -1 ) {
+                                if (mobileTest) {
+                                    this.mouse.move('#trafficTab .map');
+                                    this.mouse.click('#trafficTab .map');
+                                    suite.testAssertion('.map', urlUri, 'Traffic map');
 
-                                // Check traffic routes tab
-                                this.mouse.move('#trafficTab .routes');
-                                this.mouse.click('#trafficTab .routes');
-                                suite.testAssertion('#trafficIncidents', urlUri, 'Traffic Route Alerts');
-                            } else {
-                                if (casper.exists('#trafficContainer')) {
-                                    var trafficContainerID = '#trafficContainer';
-                                    var trafficMapContainer = '.wx-standalone-map';
+                                    // Check traffic routes tab
+                                    this.mouse.move('#trafficTab .routes');
+                                    this.mouse.click('#trafficTab .routes');
+                                    suite.testAssertion('#trafficIncidents', urlUri, 'Traffic Route Alerts');
                                 } else {
-                                    var trafficContainerID = '#navteqTrafficOneContainer';
-                                    var trafficMapContainer = '#map_canvas';
-                                }
-
-                                suite.testAssertion(trafficContainerID, urlUri, 'trafficMap container');
-                                suite.testAssertion(trafficMapContainer, urlUri, 'trafficMap');
-                            }
-                        }
-
-                        // Contact & TV Listings page tests
-                        if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {
-                            if ( response.url.indexOf('tv-listings') > -1 ){
-                                if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/tv-listings\/?$/.test(response.url)) {
-
-                                    if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
-                                        var tvListingsContainerName = 'CoziTVListingsContainer';
-                                        var tvListingsTabName = 'CoziTVListingsTab';
+                                    if (casper.exists('#trafficContainer')) {
+                                        var trafficContainerID = '#trafficContainer';
+                                        var trafficMapContainer = '.wx-standalone-map';
                                     } else {
-                                        var tvListingsContainerName = 'TelexitosTVListingsContainer';
-                                        var tvListingsTabName = 'TelexitosTVListingsTab';
+                                        var trafficContainerID = '#navteqTrafficOneContainer';
+                                        var trafficMapContainer = '#map_canvas';
                                     }
 
-                                    casper.then(function(){
-                                        suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
-                                    });
+                                    suite.testAssertion(trafficContainerID, urlUri, 'trafficMap container');
+                                    suite.testAssertion(trafficMapContainer, urlUri, 'trafficMap');
+                                }
+                            }
 
-                                    casper.then(function(){
-                                        test.comment('.... testing tab switching')
+                            // Contact & TV Listings page tests
+                            if ( response.url.indexOf('contact-us/') > -1 || response.url.indexOf('conectate/') > -1 ) {
+                                if ( response.url.indexOf('tv-listings') > -1 ){
+                                    if ( response.url.indexOf('tv-listings/?disableHeader=true') > -1  || /.com\/contact-us\/tv-listings\/?$/.test(response.url) || /.com\/conectate\/tv-listings\/?$/.test(response.url)) {
+
+                                        if (response.url.indexOf('nbc') > -1 || response.url.indexOf('necn') > -1) {
+                                            var tvListingsContainerName = 'CoziTVListingsContainer';
+                                            var tvListingsTabName = 'CoziTVListingsTab';
+                                        } else {
+                                            var tvListingsContainerName = 'TelexitosTVListingsContainer';
+                                            var tvListingsTabName = 'TelexitosTVListingsTab';
+                                        }
+
+                                        casper.then(function(){
+                                            suite.testAssertion('#listings #tvListingContainer', urlUri, 'tvListingsContainer');
+                                        });
+
+                                        casper.then(function(){
+                                            test.comment('.... testing tab switching')
+                                            casper.wait(200, function() {
+                                                this.mouse.move('#listings #tabSelect');
+                                                this.mouse.click('#listings #tabSelect li:last-child');
+
+                                                casper.test.assertExists('#listings #tabSelect li:last-child' + "." + 'selected');
+                                            })
+                                        });
+
+                                        casper.then(function(){
+                                            suite.testAssertion('#listings #tabSelect li:last-child', urlUri, tvListingsTabName);
+                                            suite.testAssertion('#listings #tvListingContainer', urlUri, tvListingsContainerName);
+                                        });
+                                    }
+                                }
+
+                                if (/.com\/contact-us\/?$/.test(response.url)) {
+                                    if (mobileTest) {
+                                        suite.testAssertion('.contact_social', urlUri, 'contactPageModule-Social');
+                                        suite.testAssertion('.contact_mobile', urlUri, 'contactPageModule-Mobile');
+                                        suite.testAssertion('.contact_about', urlUri, 'contactPageModule-Contact');
+                                    } else {
+                                        suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
+                                    }
+                                }
+                            }
+
+                            // Weather page tests
+                            if (response.url.indexOf('/weather') > -1) {
+                                if (/.com\/weather\/?$/.test(response.url) || response.url.indexOf('/weather/?zipCode=') > -1) {
+                                    if (mobileTest) {
                                         casper.wait(200, function() {
-                                            this.mouse.move('#listings #tabSelect');
-                                            this.mouse.click('#listings #tabSelect li:last-child');
+                                            suite.testAssertion('#interactiveRadarMap', urlUri, 'weatherMap');
+                                            suite.testAssertion('#currentConditions', urlUri, 'currentConditionsModule');
+                                            suite.testAssertion('#currentConditions .currentTemp', urlUri, 'currentConditionsModule-Temp');
+                                            suite.testAssertion('img#currentConIcon', urlUri, 'currentConditionsModule-WX_Icon');
+                                            suite.testAssertion('#hourly', urlUri, 'weatherHourlyModule');
+                                            suite.testAssertion('#hourly .hrBrdwn', urlUri, 'weatherHourlyModule-forecast');
+                                            suite.testAssertion('.seven-day', urlUri, 'weather7DayForecast');
+                                            suite.testAssertion('#todaysForecast', urlUri, 'weatherTodayForecastModule');
+                                            suite.testAssertion('.radar_mapsLink', urlUri, 'radarMapsLink');
+                                            suite.testAssertion('.ugcLink', urlUri, 'ugcLink');
+                                        });
+                                    } else {
+                                        suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
+                                    }
 
-                                            casper.test.assertExists('#listings #tabSelect li:last-child' + "." + 'selected');
-                                        })
-                                    });
+                                    if (casper.exists('#wunderPane')) {
+                                        this.mouse.move('#wunderSwitch .PWSV.tab');
+                                        this.mouse.click('#wunderSwitch .PWSV.tab')
 
-                                    casper.then(function(){
-                                        suite.testAssertion('#listings #tabSelect li:last-child', urlUri, tvListingsTabName);
-                                        suite.testAssertion('#listings #tvListingContainer', urlUri, tvListingsContainerName);
-                                    });
+                                        casper.wait(100, function() {
+                                            suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
+                                        });
+                                    }
                                 }
                             }
 
-                            if (/.com\/contact-us\/?$/.test(response.url)) {
-                                if (mobileTest) {
-                                    suite.testAssertion('.contact_social', urlUri, 'contactPageModule-Social');
-                                    suite.testAssertion('.contact_mobile', urlUri, 'contactPageModule-Mobile');
-                                    suite.testAssertion('.contact_about', urlUri, 'contactPageModule-Contact');
-                                } else {
-                                    suite.testAssertion('#contact-landing-all', urlUri, 'contactPageModule');
+                            // Investigatesions page tests
+                            if (/.com\/investigations\/?$/.test(response.url)) {
+                                if (! mobileTest) {
+                                    suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
+                                    suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
                                 }
                             }
-                        }
-
-                        // Weather page tests
-                        if (response.url.indexOf('/weather') > -1) {
-                            if (/.com\/weather\/?$/.test(response.url) || response.url.indexOf('/weather/?zipCode=') > -1) {
-                                if (mobileTest) {
-                                    casper.wait(200, function() {
-                                        suite.testAssertion('#interactiveRadarMap', urlUri, 'weatherMap');
-                                        suite.testAssertion('#currentConditions', urlUri, 'currentConditionsModule');
-                                        suite.testAssertion('#currentConditions .currentTemp', urlUri, 'currentConditionsModule-Temp');
-                                        suite.testAssertion('img#currentConIcon', urlUri, 'currentConditionsModule-WX_Icon');
-                                        suite.testAssertion('#hourly', urlUri, 'weatherHourlyModule');
-                                        suite.testAssertion('#hourly .hrBrdwn', urlUri, 'weatherHourlyModule-forecast');
-                                        suite.testAssertion('.seven-day', urlUri, 'weather7DayForecast');
-                                        suite.testAssertion('#todaysForecast', urlUri, 'weatherTodayForecastModule');
-                                        suite.testAssertion('.radar_mapsLink', urlUri, 'radarMapsLink');
-                                        suite.testAssertion('.ugcLink', urlUri, 'ugcLink');
-                                    });
-                                } else {
-                                    suite.testAssertion('#wuContainer', urlUri, 'weatherPageModule');
-                                }
-
-                                if (casper.exists('#wunderPane')) {
-                                    this.mouse.move('#wunderSwitch .PWSV.tab');
-                                    this.mouse.click('#wunderSwitch .PWSV.tab')
-
-                                    casper.wait(100, function() {
-                                        suite.testAssertion('#pwsFieldMap', urlUri, 'PWSWeatherMap');
-                                    });
-                                }
-                            }
-                        }
-
-                        // Investigatesions page tests
-                        if (/.com\/investigations\/?$/.test(response.url)) {
-                            if (! mobileTest) {
-                                suite.testAssertion('#teamHeader', urlUri, 'investigations Header');
-                                suite.testAssertion('#leadBox', urlUri, 'investigations Lead Area');
-                            }
-                        }
-                    })
-                }
-            })
-        } else {
-            console.log('No URL passed into itemLinkPageTesting!');
-        }
+                        })
+                    }
+                })
+                casper.clear();
+            } else {
+                console.log('No URL passed into itemLinkPageTesting!');
+            }
+        })
     };
 
     // regressionSuite.prototype.testVerticalGallery = function(galleryURL) {
@@ -1525,10 +1542,6 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     });
                 }
             })
-casper.page.close();
-            // .then(function() {
-            //     casper.page.close();
-            // })
         };
 
     };
