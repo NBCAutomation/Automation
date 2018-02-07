@@ -136,6 +136,9 @@
 									</div>
 								</div>
 							</div>
+							<?php if ($reportScoreData['scriptRunTime']) { ?>
+								<p>Execution time <i>(m:s)</i>: <?php echo $reportScoreData['scriptRunTime']; ?></p>
+							<?php } ?>
 						</div>
 					</div>
 				</div>
