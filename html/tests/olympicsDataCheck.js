@@ -192,7 +192,7 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
 
     // Send Email Notice
     olympicsTesting.prototype.sendOlympicsAlert = function() {
-        var processUrl = configURL + '/utils/tasks';
+        var processUrl = configURL + '/utils/processRequest';
 
         casper.open(processUrl, {
             method: 'post',
