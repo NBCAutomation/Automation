@@ -34,7 +34,8 @@
 		"prodRegressionLocal": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --env=local --url=\"{}\"",
 		"regressionAlertStart": "casperjs test \"./utils/tasker.js\" --task=send_alert --taskType=regression-notification --taskRef=start --logNote=casperTask",
 		"regressionAlertEnd": "casperjs test \"./utils/tasker.js\" --task=send_alert --taskType=regression-notification --taskRef=end --logNote=casperTask",
-		"sendAlert": "casperjs test \"./utils/tasker.js\" --task=send_alert --taskType=api-notification --taskRef=complete --logNote=casperTask"
+		"sendAlert": "casperjs test \"./utils/tasker.js\" --task=send_alert --taskType=api-notification --taskRef=complete --logNote=casperTask",
+		"olympicsCheck": "casperjs test \"./tests/olympicsDataCheck.js\""
 	},
 	"dependencies": {
 	    "casperjs": "^1.1.4-2",

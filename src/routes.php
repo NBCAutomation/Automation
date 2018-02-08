@@ -1217,6 +1217,10 @@ $app->group('/utils', function () {
 			$getDictionaryData = true;
 		}
 
+		if ($utilReqParams['task'] == 'sendOlympicsAlert'){
+			$sendOlympicsAlert = true;
+		}
+
 		///////////////////////////////////
 
 		if ($createTestID) {
@@ -1279,6 +1283,11 @@ $app->group('/utils', function () {
 			// echo '<pre>';
 			echo($dData[0]);
 			// echo '</pre>';
+		}
+
+		if ($sendOlympicsAlert) {
+			// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
+			Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'TEST', 'TEST: Olympics Alert: WatchNow / MedalCount Loading Failure');
 		}
 
 
