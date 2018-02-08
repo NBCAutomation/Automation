@@ -1462,8 +1462,11 @@ $app->group('/utils', function () {
     	}
 
     	if ($utilReqParams['task'] == 'sendOlympicsAlert'){
+    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+    		$emailContent = 'This is a test';
+    		$emailSubject = 'Olympics Alert: WatchNow / MedalCount Loading Failure';
     		// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
-    		Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'This is a test email', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
+    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
     	}
 		
     });
