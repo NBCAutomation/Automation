@@ -23,6 +23,7 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
         year = currentTime.getFullYear(),
         hours = currentTime.getHours(),
         minutes = currentTime.getMinutes(),
+        failureType,
         sendEmailAlert = false,
         watchNowURL = 'http://olympics.otsops.com/watch-now',
         medalCountURL = 'http://olympics.otsops.com/medal-count',
@@ -150,6 +151,8 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
                 console.log('------------------------------------------');
             } else {
                 console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                failureType = 'loadingError';
+                sendEmailAlert = true;
             }
 
         }).then(function() {
@@ -162,6 +165,8 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
                     console.log('------------------------------------------');
                 } else {
                     console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP response: ' + resp.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
+                    failureType = 'loadingError';
+                    sendEmailAlert = true;
                 }
             });
         }).then(function() {
@@ -172,6 +177,8 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
                 console.log('Parse OK');
             } else {
                 console.log('Parse FAIL');
+                failureType = 'jsonError';
+                sendEmailAlert = true;
             }
 
 
@@ -181,13 +188,14 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
                 console.log('Parse OK');
             } else {
                 console.log('Parse FAIL');
+                failureType = 'jsonError';
+                sendEmailAlert = true;
             }
-            sendEmailAlert = true;
         }).then(function() {
-            if (sendEmailAlert) {
-                suite.sendOlympicsAlert();
+            // if (sendEmailAlert) {
+                suite.sendOlympicsAlert(failureType);
                 console.log('alert sent');
-            }
+            // }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
             this.exit();
@@ -195,13 +203,14 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
     };
 
     // Send Email Notice
-    olympicsTesting.prototype.sendOlympicsAlert = function() {
+    olympicsTesting.prototype.sendOlympicsAlert = function(failureType) {
         var processUrl = configURL + '/utils/processRequest';
 
         casper.open(processUrl, {
             method: 'post',
             data:   {
-                'taskType': 'olympics-alert'
+                'taskType': 'olympics-alert',
+                'failureType': failureType
             }
         });
     };

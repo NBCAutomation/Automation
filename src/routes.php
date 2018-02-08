@@ -1456,12 +1456,16 @@ $app->group('/utils', function () {
     	}
 
     	if ($utilPostParams['taskType'] == 'olympics-alert'){
-    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+    		$emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
     		$sendEmailNotification = true;
-    		$emailSubject = 'Olympics Alert: Feed Loading Failure';
-    		$emailContent = 'This is a test';
-
-    		// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
+    		
+    		if ($utilPostParams['failureType'] == 'loadingError') {
+    			$emailSubject = 'Olympics Alert: Watch Now / Medal Count Feed Loading Failure';
+    			$emailContent = 'WatchNow or MedalCount Loading Failure. Check URL loading, pages not loading with OK 200 Status. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
+    		} else if ($utilPostParams['failureType'] == 'jsonError') {
+    			$emailSubject = 'Olympics Alert: Watch Now / Medal Count JSON Errors';
+    			$emailContent = 'Unable to parse WatchNow or MedalCount feeds. Check feeds for issues. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
+    		}
     	}
 
     	if ($sendEmailNotification) {
