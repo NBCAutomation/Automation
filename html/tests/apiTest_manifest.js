@@ -257,6 +257,19 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             *
             *******************/
             casper.start( url ).then(function(response) {
+                var headerObject = response.headers;
+
+                for (var keys in headerObject) {
+                    if (headerObject[keys].name == 'X-Server-Name') {
+                        if (debugOutput) {
+                            console.log(headerObject[keys].name);
+                            console.log(headerObject[keys].value);
+                        }
+                        testResultsObject['clickXServer'] = headerObject[keys].value;
+                    }
+
+                }
+                
                 if ( response.status == 200 ) {
                     var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
                         if (data) {

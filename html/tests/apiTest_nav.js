@@ -647,6 +647,19 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                 } else {
                     currentTestResults['url'] = url;
                     currentTestResults['httpStatus'] = status;
+
+                    var headerObject = resp.headers;
+
+                    for (var keys in headerObject) {
+                        if (headerObject[keys].name == 'X-Server-Name') {
+                            if (debugOutput) {
+                                console.log(headerObject[keys].name);
+                                console.log(headerObject[keys].value);
+                            }
+                            currentTestResults['clickXServer'] = headerObject[keys].value;
+                        }
+
+                    }
                 }
 
                 // Set current test status & results

@@ -179,6 +179,19 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('-------------------------');    
             }
 
+            var headerObject = response.headers;
+
+            for (var keys in headerObject) {
+                if (headerObject[keys].name == 'X-Server-Name') {
+                    if (debugOutput) {
+                        console.log(headerObject[keys].name);
+                        console.log(headerObject[keys].value);
+                    }
+                    testResultsObject['clickXServer'] = headerObject[keys].value;
+                }
+
+            }
+
             if (response.url.indexOf('clickability') > -1 || this.getCurrentUrl().indexOf('clickability') > -1) {
                 console.log('Clickability redirect. Current URL: ' + this.getCurrentUrl());
                 
