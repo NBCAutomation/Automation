@@ -1287,7 +1287,7 @@ $app->group('/utils', function () {
 
 		if ($sendOlympicsAlert) {
 			// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
-			Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'TEST', 'TEST: Olympics Alert: WatchNow / MedalCount Loading Failure');
+			Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'This is a test email', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
 		}
 
 
