@@ -1455,18 +1455,18 @@ $app->group('/utils', function () {
     		}
     	}
 
+    	if ($utilReqParams['taskType'] == 'sendOlympicsAlert'){
+    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+    		$emailSubject = 'Olympics Alert: Feed Loading Failure';
+    		$emailContent = 'This is a test';
+    		$sendEmailNotification = true;
+    		// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
+    	}
+
     	if ($sendEmailNotification) {
     		$this->logger->info("Alert notification email sent; type: ". $utilPostParams['taskType'] . ", process: " . $utilPostParams['taskRef'] . ", note: " . $utilPostParams['logNote']);
     		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
     		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
-    	}
-
-    	if ($utilReqParams['task'] == 'sendOlympicsAlert'){
-    		$emailRecipient = 'deltrie.allen@nbcuni.com';
-    		$emailContent = 'This is a test';
-    		$emailSubject = 'Olympics Alert: WatchNow / MedalCount Loading Failure';
-    		// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
-    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
     	}
 		
     });
