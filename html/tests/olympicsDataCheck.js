@@ -224,26 +224,5 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
         }
     };
 
-    olympicsTesting.prototype.processTestResults = function(urlUri, testResultsObject, testFailureCount, testScore, testID, testType, testStatus, testInfo) {
-
-        var processUrl = configURL + '/utils/processRequest';
-
-        casper.open(processUrl, {
-            method: 'post',
-            data:   {
-                'task': 'processManifestTestResults',
-                'testID': testID,
-                'testType': testType,
-                'testProperty': urlUri,
-                'testStatus': testStatus,
-                'testFailureCount': testFailureCount,
-                'testScore': testScore,
-                'testResults':  JSON.stringify(testResultsObject),
-                'testInfo': testInfo
-            }
-        });
-    };
-
-
     new olympicsTesting(casper.cli.get('url'));
 });
