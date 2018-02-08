@@ -1217,10 +1217,6 @@ $app->group('/utils', function () {
 			$getDictionaryData = true;
 		}
 
-		if ($utilReqParams['task'] == 'sendOlympicsAlert'){
-			$sendOlympicsAlert = true;
-		}
-
 		///////////////////////////////////
 
 		if ($createTestID) {
@@ -1284,12 +1280,6 @@ $app->group('/utils', function () {
 			echo($dData[0]);
 			// echo '</pre>';
 		}
-
-		if ($sendOlympicsAlert) {
-			// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
-			Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'This is a test email', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
-		}
-
 
 		// Force redirect
 		// return $response->withRedirect('/dashboard/main');
@@ -1469,6 +1459,11 @@ $app->group('/utils', function () {
     		$this->logger->info("Alert notification email sent; type: ". $utilPostParams['taskType'] . ", process: " . $utilPostParams['taskRef'] . ", note: " . $utilPostParams['logNote']);
     		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
     		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
+    	}
+
+    	if ($utilReqParams['task'] == 'sendOlympicsAlert'){
+    		// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
+    		Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'This is a test email', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
     	}
 		
     });
