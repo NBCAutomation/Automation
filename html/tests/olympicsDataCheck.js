@@ -23,6 +23,7 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
         year = currentTime.getFullYear(),
         hours = currentTime.getHours(),
         minutes = currentTime.getMinutes(),
+        sendEmailAlert = false,
         watchNowURL = 'http://olympics.otsops.com/watch-now',
         medalCountURL = 'http://olympics.otsops.com/medal-count',
         watchNowOutput,
@@ -181,9 +182,12 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
             } else {
                 console.log('Parse FAIL');
             }
-
-            suite.sendOlympicsAlert();
-
+            sendEmailAlert = true;
+        }).then(function() {
+            if (sendEmailAlert) {
+                suite.sendOlympicsAlert();
+                console.log('alert sent');
+            }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
             this.exit();
