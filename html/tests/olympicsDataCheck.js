@@ -201,7 +201,7 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
         casper.open(processUrl, {
             method: 'post',
             data:   {
-                'taskType': 'sendOlympicsAlert'
+                'taskType': 'olympics-alert'
             }
         });
     };

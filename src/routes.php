@@ -1455,11 +1455,12 @@ $app->group('/utils', function () {
     		}
     	}
 
-    	if ($utilReqParams['taskType'] == 'sendOlympicsAlert'){
+    	if ($utilPostParams['taskType'] == 'olympics-alert'){
     		$emailRecipient = 'deltrie.allen@nbcuni.com';
+    		$sendEmailNotification = true;
     		$emailSubject = 'Olympics Alert: Feed Loading Failure';
     		$emailContent = 'This is a test';
-    		$sendEmailNotification = true;
+
     		// Spire::sendEmailNotification('NBCOTSOpsTeam@nbcuni.com', 'The WatchNow or MedalCount Loading Failure', 'Olympics Alert: WatchNow / MedalCount Loading Failure');
     	}
 
