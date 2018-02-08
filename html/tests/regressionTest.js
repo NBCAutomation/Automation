@@ -115,11 +115,11 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
     }
 
     // only have to call this once..
-    // if (debugOutput) {
+    if (debugOutput) {
         casper.on("page.error", function (msg, trace) {
              casper.echo("A page error was thrown: " + msg, "INFO");
         });
-    // }
+    }
 
     /*************************
     *
@@ -254,10 +254,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
 
                     if (! thirdPartyChecks) {
                         // Run default NBC/TLM tests
-                        // suite.visualTests(testProperty, urlUri, url);
+                        suite.visualTests(testProperty, urlUri, url);
                     } else {
                         // Skip to Cozi/Telexitos tests ( see thirdPartyPageTests() )
-                        // suite.thirdPartyPageTests(testProperty, url);
+                        suite.thirdPartyPageTests(testProperty, url);
                     }
                 } else {
                     casper.test.fail('Page did not load correctly. Response: ' + response.status);
@@ -269,7 +269,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 console.log('-------------');
                 console.log(' Page tests');
                 console.log('-------------');
-                // suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
+                suite.testHoverAndCollectNavigation(testProperty, url, urlUri);
             }
         }).then(function() {
             // If OTS/TLM site run static page tests
@@ -708,7 +708,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 // Set collection selector
                 if (mobileTest) {
                     var selector = '.nav-container a';
-                    console.log('this selector: ' + selector);
+                    // console.log('this selector: ' + selector);
                 } else {
                     var selector = '.navbar-container a';
                 }
@@ -1435,7 +1435,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                     casper.wait(200, function() {
                         // maxVertSlideCount = casper.evaluate(function(){ return document.getElementsByClassName('slide_count').length;});
                         // suite.testVerticalGallery(response.url);
-                        suite.testVerticalGallery(maxVertSlideCount);
+                        // suite.testVerticalGallery(maxVertSlideCount);
                         // maxSlideID = '#slide' + maxVertSlideCount;
                         // maxSlideID = '#slide2';
 
