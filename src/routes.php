@@ -1464,8 +1464,7 @@ $app->group('/utils', function () {
     	}
 
     	if ($utilPostParams['taskType'] == 'olympics-alert'){
-    		// $emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
-    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+    		$emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
     		$sendEmailNotification = true;
 			$emailSubject = 'Olympics Alert: Watch Now / Medal Count Loading Errors';
 			$emailContent = 'Unable to load or parse WatchNow / MedalCount feeds. Check feeds for issues. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
