@@ -192,10 +192,10 @@ casper.test.begin('OTS SPIRE | Olympics Payload Checks', function suite(test) {
                 sendEmailAlert = true;
             }
         }).then(function() {
-            // if (sendEmailAlert) {
+            if (sendEmailAlert) {
                 suite.sendOlympicsAlert(failureType);
                 console.log('alert sent');
-            // }
+            }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
             this.exit();
