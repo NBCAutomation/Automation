@@ -1291,6 +1291,13 @@ $app->group('/utils', function () {
 		$db = new DbHandler();
 
     	$utilPostParams = $request->getParsedBody();
+    	if ($utilPostParams['failureType'] == 'loadingError') {
+    		$olympLoadingAlert = true;
+    	}
+
+		if ($utilPostParams['failureType'] == 'jsonError') {
+			$olympJSONAlert = true;
+		}
     	
     	// Create Dictionary entries into DB
     	if ($utilPostParams['task'] == 'createDictionary') {
@@ -1458,17 +1465,17 @@ $app->group('/utils', function () {
     	if ($utilPostParams['taskType'] == 'olympics-alert'){
     		// $emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
     		$emailRecipient = 'deltrie.allen@nbcuni.com';
+    		$sendEmailNotification = true;
     		
-    		if ($utilPostParams['failureType'] == 'loadingError') {
+    		if ($olympLoadingAlert) {
     			$emailSubject = 'Olympics Alert: Watch Now / Medal Count Feed Loading Failure';
     			$emailContent = 'WatchNow or MedalCount Loading Failure. Check URL loading, pages not loading with OK 200 Status. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
     		}
 
-    		if ($utilPostParams['failureType'] == 'jsonError') {
+    		if ($olympJSONAlert) {
     			$emailSubject = 'Olympics Alert: Watch Now / Medal Count JSON Errors';
     			$emailContent = 'Unable to parse WatchNow or MedalCount feeds. Check feeds for issues. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
     		}
-    		$sendEmailNotification = true;
     	}
 
     	if ($sendEmailNotification) {
