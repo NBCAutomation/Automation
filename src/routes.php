@@ -1291,6 +1291,7 @@ $app->group('/utils', function () {
 		$db = new DbHandler();
 
     	$utilPostParams = $request->getParsedBody();
+
     	if ($utilPostParams['failureType'] == 'loadingError') {
     		$olympLoadingAlert = true;
     	}
@@ -1466,16 +1467,8 @@ $app->group('/utils', function () {
     		// $emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
     		$emailRecipient = 'deltrie.allen@nbcuni.com';
     		$sendEmailNotification = true;
-    		
-    		if ($olympLoadingAlert) {
-    			$emailSubject = 'Olympics Alert: Watch Now / Medal Count Feed Loading Failure';
-    			$emailContent = 'WatchNow or MedalCount Loading Failure. Check URL loading, pages not loading with OK 200 Status. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
-    		}
-
-    		if ($olympJSONAlert) {
-    			$emailSubject = 'Olympics Alert: Watch Now / Medal Count JSON Errors';
-    			$emailContent = 'Unable to parse WatchNow or MedalCount feeds. Check feeds for issues. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
-    		}
+			$emailSubject = 'Olympics Alert: Watch Now / Medal Count Loading Errors';
+			$emailContent = 'Unable to load or parse WatchNow / MedalCount feeds. Check feeds for issues. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
     	}
 
     	if ($sendEmailNotification) {
