@@ -1152,7 +1152,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                             setFail++;
 
                             subTestResults['endpointContentValidationError_' + endpointName] = 'endpoint: ' + endpointUrl + ' // \n JSON Parsing Error.';
-                            var headerObject = response.headers;
+                            var headerObject = resp.headers;
 
                             for (var keys in headerObject) {
                                 if (headerObject[keys].name == 'X-Server-Name') {
@@ -1160,7 +1160,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                         console.log(headerObject[keys].name);
                                         console.log(headerObject[keys].value);
                                     }
-                                    testResultsObject['clickXServer'] = headerObject[keys].value;
+                                    subTestResults['clickXServer'] = headerObject[keys].value;
                                 }
 
                             }
