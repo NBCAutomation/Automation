@@ -1005,11 +1005,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 } else {
                     // Test the individual page item
                     suite.itemLinkPageTesting(mainURL, currentNavTitle, currentNavUrl);
+                    casper.clearCache();
                 }
             }
         }
         // after for
-        casper.clear();
+        casper.clearCache();
     };
 
 
@@ -1157,8 +1158,10 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                                         var trafficMapContainer = '#map_canvas';
                                     }
 
-                                    suite.testAssertion(trafficContainerID, urlUri, 'trafficMap container');
-                                    suite.testAssertion(trafficMapContainer, urlUri, 'trafficMap');
+                                    casper.then(function(){
+                                        suite.testAssertion(trafficContainerID, urlUri, 'trafficMap container');
+                                        suite.testAssertion(trafficMapContainer, urlUri, 'trafficMap');
+                                    });
                                 }
                             }
 
@@ -1247,8 +1250,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                             }
                         })
                     }
-                })
-                casper.clear();
+                });
             } else {
                 console.log('No URL passed into itemLinkPageTesting!');
             }
