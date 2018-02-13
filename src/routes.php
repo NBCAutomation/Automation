@@ -1423,8 +1423,9 @@ $app->group('/utils', function () {
 				return $boxColor;
 			}
 
-			$emailRecipient = 'deltrie.allen@nbcuni.com';
-			// $emailRecipient = 'LIMQualityAssurance@nbcuni.com';
+			// $emailRecipient = 'deltrie.allen@nbcuni.com';
+			$emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
+			$emailRecipient .= ", eduardo.martinez@nbcuni.com";
 
 			$emailSubject = 'Automation Failures/Warnings';
 
