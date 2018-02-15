@@ -1005,12 +1005,12 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
                 } else {
                     // Test the individual page item
                     suite.itemLinkPageTesting(mainURL, currentNavTitle, currentNavUrl);
-                    casper.clearCache();
+                    casper.clear();
                 }
             }
         }
         // after for
-        casper.clearCache();
+        casper.clear();
     };
 
 
