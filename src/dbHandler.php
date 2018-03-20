@@ -1203,6 +1203,24 @@ class DbHandler {
     }
 
 
+    public function updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("UPDATE stations SET `call_letters` = '".$stationCallLetters."', `brand` = '".$stationBrand."', `shortname` = '".$stationShortname."', `url` = '".$stationURL."', `group` = '".$stationGroup."', `api_version` = '".$stationApiVersion."'  WHERE `id` = '".$stationID."'");
+
+        if ($stmt->execute()) {
+            if($stmt->rowCount() > 0){
+                return TRUE;
+            }
+        } else {
+            return FALSE;
+        }
+
+        $stmt->closeCursor();
+
+    }
+
+
     // Util ** Delete all test data older than 30days
     // Updated to purge * > 60 for full month to month
     public function purgeOldTestResults() {

@@ -957,7 +957,11 @@ $app->group('/admin', function () use ($app) {
 
 	});
 
-	// === Stations Admin ===
+	//=======================
+	//
+	// Stations Admin
+	//
+	//=======================
 	$app->group('/stations', function () use ($app) {
 		$this->get('/main', function ($request, $response, $args) {
 
@@ -1014,16 +1018,15 @@ $app->group('/admin', function () use ($app) {
 			$permissions = $request->getAttribute('spPermissions');
 
 			$__postVars = $request->getParsedBody();
-			// var_dump($__postVars);
-			// exit();
-
-		 	//verifyRequiredParams(array('email', 'password'));
 
 			// // reading post params
-			$user_id = $__postVars['u_id'];
-			$new_password = $__postVars['u_password'];
-			$role = $__postVars['u_role'];
-			$status = $__postVars['u_status'];
+			$stationID = $__postVars['stationID'];
+			$stationApiVersion = $__postVars['stationApiVersion'];
+			$stationURL = $__postVars['stationURL'];
+			$stationShortname = $__postVars['stationShortname'];
+			$stationCallLetters = $__postVars['stationCallLetters'];
+			$stationGroup = $__postVars['stationGroup'];
+			$stationBrand = $__postVars['stationBrand'];
 			$formResponse = array();
 			$uResponse = array();
 			$db = new DbHandler();
@@ -1031,13 +1034,13 @@ $app->group('/admin', function () use ($app) {
 			// $editingUser = $db->getUserById($args['user_id']);
 
 			// Update user information
-			if ( $db->updateUser($user_id, $new_password, $role, $status) ) {
+			if ( $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
 				$formResponse['error'] = false;
-				$formResponse['message'] = 'User information updated';
+				$formResponse['message'] = 'Station information updated';
 
-			} elseif ( ! $db->updateUser($user_id, $new_password, $role, $status) ) {
+			} elseif ( ! $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
 				$formResponse['error'] = true;
-				$formResponse['message'] = 'User information not updated. If page refresh, stahp';
+				$formResponse['message'] = 'Station information did not update correctly.';
 			}
 
 			return $this->renderer->render($response, 'admin.php', [
@@ -1279,6 +1282,34 @@ $app->group('/utils', function () {
 			// echo '<pre>';
 			echo($dData[0]);
 			// echo '</pre>';
+		}
+
+		if ($utilReqParams['task'] == 'clearAndBuildQueryCache') {
+			// Clear cache then rebuild
+			$tmpLocation = BASEPATH .'/tmp/';
+			$cacheClear = Spire::purgeAllCache($tmpLocation);
+
+			// Build additional test result caches
+			$todayManifestTotalFailureReports = $db->getTestReportCount('all', 'all', 'all');
+			$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'all', 'all');
+			$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'all', 'all');
+			$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'all', 'all');
+
+    		// Today report data
+    		// Manifest
+    		$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'fail', 'today');
+    		$todayManifestTotalWarningReports = $db->getTestReportCount('api_manifest_audits', 'warning', 'today');
+
+    		// Nav
+    		$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'fail', 'today');
+    		$todayNavTotalWarningReports = $db->getTestReportCount('api_navigation_audits', 'warning', 'today');
+
+    		// Content
+    		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
+    		$todayContentTotalWarningReports = $db->getTestReportCount('api_article_audits', 'warning', 'today');
+
+    		return $response->withRedirect('/dashboard/main');
+			
 		}
 
 		// Force redirect

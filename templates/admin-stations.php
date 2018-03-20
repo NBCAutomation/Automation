@@ -80,52 +80,43 @@
 									<tr>
 										<td>
 											<div class="form_field">
-												<label class="text">API Version:</label>
-												<select name="u_role" class="form_select">
-													<!--<option value="1">1</option>
-													<option value="2">2</option>
-													<option value="3">3</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>
-													<option value="4">4</option>-->
+												<label class="text form-label">API Version:</label>
+												<select name="stationApiVersion" class="form_select">
 													<?php
-													    for ($i=1; $i<=25; $i++)
-													    {
-													        ?>
-													            <option value="<?php echo $i;?>"><?php echo $i;?></option>
-													        <?php
-													    }
-													?>
+														for ($i = 1; $i <= 25; $i++) {
+															if ($i == $editingStation->api_version) { $selected = 'selected'; } else { $selected = ''; }
+
+												            echo '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
+											        	}
+											        ?>
 												</select>
 												<div class="clear"></div>
 											</div>
 										</td>
 									</tr>
 									<tr>
-										<td><b>URL</b>: <?php echo $editingStation->url; ?></td>
+										<td>
+											<label class="text form-label"><b>URL</b>:</label>
+											<input type="text" name="stationURL" size="30" id="stationURL" class="form-control mb stationURL" value="<?php echo $editingStation->url ?>" />
+										</td>
 									</tr>
 									<tr>
-										<td><b>Shortname</b>: <?php echo $editingStation->shortname; ?></td>
+										<td>
+											<label class="text form-label"><b>Shortname</b>:</label>
+											<input type="text" name="stationShortname" size="30" id="stationShortname" class="form-control mb stationShortname" value="<?php echo $editingStation->shortname ?>" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<label class="text form-label"><b>Call letters</b>:</label>
+											<input type="text" name="stationCallLetters" size="18" id="stationCallLetters" class="form-control mb stationCallLetters" value="<?php echo $editingStation->call_letters; ?>" />
+										</td>
 									</tr>
 									<tr>
 										<td>
 											<div class="form_field">
-												<label class="text">Group:</label>
-												<select name="u_status" class="form_select">
+												<label class="text form-label">Group:</label>
+												<select name="stationGroup" class="form_select">
 													<option value="OTS">OTS</option>
 													<option value="TSG">TSG</option>
 												</select>
@@ -141,9 +132,8 @@
 									<tr>
 										<div class="clear"></div>
 										<div id="input_buttons">
-											<input type="hidden" value="<?php echo $editingUser['id']; ?>" name="u_id" />
-											<input type="hidden" value="<?php echo $editingUser['first_name'] .' '. $editingUser['last_name']; ?>" name="u_name" />
-											<input type="hidden" value="<?php echo $editingUser['email']; ?>" name="u_email" />
+											<input type="hidden" value="<?php echo $editingStation->id; ?>" name="stationID" />
+											<input type="hidden" value="<?php echo $editingStation->brand; ?>" name="stationBrand" />
 											<input type="hidden" value="set" name="method" />
 											<input type="hidden" value="true" name="submitted" />
 											<!--<input type="submit" value="Submit" name="submit" class="submit_button" />-->

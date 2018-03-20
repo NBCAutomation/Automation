@@ -257,3 +257,12 @@ table .fail {
 .panel-title .endpointName {
 	text-transform: capitalize;
 }
+
+input.form-control {
+	width: initial;
+    display: inline-table;
+}
+
+.form-label {
+	min-width: 150px;
+}
