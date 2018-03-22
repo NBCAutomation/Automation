@@ -1152,6 +1152,27 @@ class DbHandler {
 
 
     /* ------------- Stations data lookups ------------------ */
+    public function getStationsGlobalAPIVer() {
+        $output = Spire::spireCache('getStationsGlobalAPIVer', 259200, function() {
+            
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT `setting`, `value` FROM spire_settings WHERE `setting` = 'globalAPIVersion'");
+
+            if ($stmt->execute()) {
+                $settingData = $stmt->fetch();
+
+                $stmt->closeCursor();
+                return $settingData;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
     public function getAllStations() {
         $output = Spire::spireCache('getAllStations', 259200, function() {
             
@@ -1207,6 +1228,23 @@ class DbHandler {
         $db_con = Spire::getConnection();
 
         $stmt = $db_con->prepare("UPDATE stations SET `call_letters` = '".$stationCallLetters."', `brand` = '".$stationBrand."', `shortname` = '".$stationShortname."', `url` = '".$stationURL."', `group` = '".$stationGroup."', `api_version` = '".$stationApiVersion."'  WHERE `id` = '".$stationID."'");
+
+        if ($stmt->execute()) {
+            if($stmt->rowCount() > 0){
+                return TRUE;
+            }
+        } else {
+            return FALSE;
+        }
+
+        $stmt->closeCursor();
+    }
+
+
+    public function updateGlobalAPI($newAPIVersion) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("UPDATE spire_settings, stations SET spire_settings.value = '".$newAPIVersion."', stations.api_version =  '".$newAPIVersion."' WHERE spire_settings.setting = 'globalAPIVersion' AND stations.`api_version` != '".$newAPIVersion."'");
 
         if ($stmt->execute()) {
             if($stmt->rowCount() > 0){

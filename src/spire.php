@@ -183,12 +183,15 @@ class Spire {
 
 	    if($modifedTime + intval($expTime) < time()) {
 	        $data = call_user_func($callback);
+	        $data['refCacheKey'] = $cacheKey;
 
-	        if (strpos($key, 'getStationById') !== false) {
-		        if (array_key_exists(0, $data)){
-		        	$data[0]['refCacheKey'] = $cacheKey;
-		        }
-	        }
+	        // if (strpos($key, 'getStationById') !== false || strpos($key, 'getStationsGlobalAPIVer')) {
+		       //  if (array_key_exists(0, $data)){
+		       //  	$data[0]['refCacheKey'] = $cacheKey;
+		       //  } else {
+		       //  	$data['refCacheKey'] = $cacheKey;
+		       //  }
+	        // }
 
 	        file_put_contents($cacheFile, serialize($data));
 

@@ -968,6 +968,7 @@ $app->group('/admin', function () use ($app) {
 			$permissions = $request->getAttribute('spPermissions');
 
 			$db = new DbHandler();
+			$globalAPIVer = $db->getStationsGlobalAPIVer();
 			$stations = $db->getAllStations();
 
 			return $this->renderer->render($response, 'admin-stations.php', [
@@ -977,6 +978,8 @@ $app->group('/admin', function () use ($app) {
 		        'hideBreadcrumbs' => true,
 		        'stationsView' => true,
 		        'stations' => $stations,
+		        'stationsRefCacheLocation' => $stations['refCacheKey']->scalar,
+		        'globalAPIVer' => $globalAPIVer,
 
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
@@ -985,24 +988,32 @@ $app->group('/admin', function () use ($app) {
 		        'uAthMessage' => $permissions['uAthMessage']
 		    // ]);
 		    ]);
-		})->setName('admin-users')->add( new SpireAuth() );
+		})->setName('admin-stations')->add( new SpireAuth() );
 
 
-		$this->get('/update/{station_id}', function ($request, $response, $args) {
+		$this->get('/update/{page_ref}', function ($request, $response, $args) {
 
 			$permissions = $request->getAttribute('spPermissions');
 			$db = new DbHandler();
-			// $users = $db->getAllUsers();
 
-			$editingStation = $db->getStationById($args['station_id']);
+			if ($args['page_ref'] == 'globalAPIVer') {
+				$globalAPIVer = $db->getStationsGlobalAPIVer();
+				$pageView = 'globalAPIVer';
+				$allStationsRefCacheLocation = $args['ref'];
+			} else {
+				$editingStation = $db->getStationById($args['page_ref']);
+				$pageView = 'stationEditView';
+			}
 
 			return $this->renderer->render($response, 'admin-stations.php', [
 		        'title' => 'Station Settings',
 		        'page_name' => 'admin/stations',
 		        'admin_stationsClass' => true,
 		        'hideBreadcrumbs' => false,
-		        'stationEditView' => true,
-		        'editingStation' => $editingStation[0],
+		        'pageView' => $pageView,
+		        'editingStation' => $editingStation,
+		        'globalAPIVer' => $globalAPIVer,
+		        'allStationsRefCacheLocation' => $allStationsRefCacheLocation,
 
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
@@ -1010,16 +1021,17 @@ $app->group('/admin', function () use ($app) {
 		        'uRole' => $permissions['role'],
 		        'uAthMessage' => $permissions['uAthMessage']
 		    ]);
-		})->setName('admin-users')->add( new SpireAuth() );
+		})->setName('admin-stations-update')->add( new SpireAuth() );
 
 		// == [POST] Update user information ==
-		$this->post('/update/{station_id}', function ($request, $response, $args) {
+		$this->post('/update/{page_ref}', function ($request, $response, $args) {
 
 			$permissions = $request->getAttribute('spPermissions');
 
 			$__postVars = $request->getParsedBody();
 
 			// // reading post params
+			$globalAPIVer = $__postVars['globalAPIVer'];
 			$stationID = $__postVars['stationID'];
 			$stationApiVersion = $__postVars['stationApiVersion'];
 			$stationURL = $__postVars['stationURL'];
@@ -1032,30 +1044,46 @@ $app->group('/admin', function () use ($app) {
 			$db = new DbHandler();
 
 			// Clear current station cache
-			$cacheClear = Spire::purgeAllCache($__postVars['stationRefCache']);
+			$cacheClear = Spire::purgeAllCache($__postVars['refCacheLocation']);
+			$cacheClear = Spire::purgeAllCache($__postVars['refAllStationsCacheLocation']);
 
-			// Update user information
-			if ( $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
+			// Update information
+			if ($__postVars['task'] == 'updateStation') {
+				if ( $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
+					$formResponse['error'] = false;
+					$formResponse['message'] = 'Station information updated';
+
+				} elseif ( ! $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
+					$formResponse['error'] = true;
+					$formResponse['message'] = 'Station information did not update correctly.';
+				}
+
+				$editingStation = $db->getStationById($stationID);
+				$pageView = 'stationEditView';
+
+			} elseif ($__postVars['task'] == 'updateGlobalAPI'){
+				$setGlobalAPI = $db->updateGlobalAPI($globalAPIVer);
 				$formResponse['error'] = false;
-				$formResponse['message'] = 'Station information updated';
+				$formResponse['message'] = 'Global API version updated.';
 
-			} elseif ( ! $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
-				$formResponse['error'] = true;
-				$formResponse['message'] = 'Station information did not update correctly.';
+				$globalAPIVer = $db->getStationsGlobalAPIVer();
+				$stations = $db->getAllStations();
+
+				$pageView = 'globalAPIVer';
 			}
-
-			$editingStation = $db->getStationById($stationID);
 
 			return $this->renderer->render($response, 'admin-stations.php', [
 		        'title' => 'Station Settings',
 		        'page_name' => 'admin/stations',
 		        'admin_stationsClass' => true,
 		        'hideBreadcrumbs' => false,
-		        'stationEditView' => true,
+		        'pageView' => $pageView,
 		        'editingStation' => $editingStation[0],
 		        'editingUser' => $editingUser,
 		        'message_e' => $formResponse['error'],
 		        'messages' => $formResponse["message"],
+		        'stations' => $stations,
+		        'globalAPIVer' => $globalAPIVer,
 
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
@@ -1064,7 +1092,7 @@ $app->group('/admin', function () use ($app) {
 		        'uAthMessage' => $permissions['uAthMessage']
 		    ]);
 
-		})->setName('admin-users')->add( new SpireAuth() );
+		})->setName('admin-stations-update-post')->add( new SpireAuth() );
 
 	});
 
