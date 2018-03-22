@@ -184,6 +184,12 @@ class Spire {
 	    if($modifedTime + intval($expTime) < time()) {
 	        $data = call_user_func($callback);
 
+	        if (strpos($key, 'getStationById') !== false) {
+		        if (array_key_exists(0, $data)){
+		        	$data[0]['refCacheKey'] = $cacheKey;
+		        }
+	        }
+
 	        file_put_contents($cacheFile, serialize($data));
 
 	        // var_dump('miss!');
@@ -202,6 +208,29 @@ class Spire {
 	    }
 
 	    return $data;
+	}
+
+
+	public static function purgeAllCache($target, $canDeleteTarget = false) {
+	    $files = glob( $target . '*', GLOB_MARK );
+
+	    if(is_dir($target)){
+        	foreach($files as $file) {
+    			if(is_file($file)) {
+    				unlink($file);
+    			} elseif(is_dir($file)){
+    				Spire::purgeAllCache($file, true);
+    				rmdir($file);
+    			}
+    		}
+
+    		if ($canDeleteTarget) {
+    			rmdir($target);	
+    		}
+
+	    } elseif(is_file($target)) {
+	        unlink( $target );
+	    }
 	}
 
 	public static function returnFormattedDataTable($data, $view, $ref){
@@ -245,6 +274,8 @@ class Spire {
 			$testReportViewData .= "<tbody>";
 
 			foreach ($data[0] as $key => $value) {
+				var_dump($data[0]);
+				// exit();
 				$l10nDate = new DateTime($value['created']);
 				$l10nDate->setTimeZone($usersTimezone);
 				$testReportViewData .= '<tr>';
@@ -415,28 +446,6 @@ class Spire {
 		}
 
 		return $c;
-	}
-
-	public static function purgeAllCache($target, $canDeleteTarget = false) {
-	    $files = glob( $target . '*', GLOB_MARK );
-	    
-	    if(is_dir($target)){
-        	foreach($files as $file) {
-    			if(is_file($file)) {
-    				unlink($file);
-    			} elseif(is_dir($file)){
-    				Spire::purgeAllCache($file, true);
-    				rmdir($file);
-    			}
-    		}
-
-    		if ($canDeleteTarget) {
-    			rmdir($target);	
-    		}
-
-	    } elseif(is_file($target)) {
-	        unlink( $target );
-	    }
 	}
 
 	public static function sendEmailNotification($email, $alertData, $emailSubject){

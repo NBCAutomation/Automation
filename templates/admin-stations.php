@@ -19,8 +19,8 @@
 			<tbody>
 			<?php
 				foreach ($stations[0] as $stationProperty) {
-					
-				    echo '<tr class="report_row">';
+					if (is_array($stationProperty)) {
+						echo '<tr class="report_row">';
 				    	echo '<td><a href="/admin/stations/update/'.$stationProperty['id'].'?brand='.$stationProperty['shortname'].'"><i class="fa fa-cog" style="font-size:20px;"></i></a></td>';
 					    echo '<td>'.$stationProperty['id'].'</td>';
 					    echo '<td>'.$stationProperty['call_letters'].'</td>';
@@ -29,13 +29,22 @@
 					    echo '<td>'.$stationProperty['url'].'</td>';
 					    echo '<td>'.$stationProperty['group'].'</td>';
 					    echo '<td>'.$stationProperty['api_version'].'</td>';
-	                echo "</tr>";
+	                	echo "</tr>";	
+					}
 				}
 			?>
 			</tbody>
 		</table>
 	
 	<?php } elseif ($stationEditView) { ?>
+	<?php 
+		// echo "<pre>";
+		// var_dump($editingStation->refCacheKey);
+		// $cacheFile = './tmp/' . implode('/', array_slice(str_split($editingStation->refCacheKey, 2), 0, 3));
+		// var_dump($cacheFile);
+		// echo "</pre>";
+	?>
+
 		<div id="station_update_panel" class="panel-body">
 			<h4>Editing: <?php echo $editingStation->brand; ?></h4>
 			<div class="panel panel-default">
@@ -117,8 +126,8 @@
 											<div class="form_field">
 												<label class="text form-label">Group:</label>
 												<select name="stationGroup" class="form_select">
-													<option value="OTS">OTS</option>
-													<option value="TSG">TSG</option>
+													<option value="OTS" <?php if ($editingStation->group == 'OTS') { $selected = 'selected'; } else { $selected = ''; } echo $selected; ?>>OTS</option>
+													<option value="TSG" <?php if ($editingStation->group == 'TSG') { $selected = 'selected'; } else { $selected = ''; } echo $selected; ?>>TSG</option>
 												</select>
 												<div class="clear"></div>
 											</div>
@@ -134,6 +143,7 @@
 										<div id="input_buttons">
 											<input type="hidden" value="<?php echo $editingStation->id; ?>" name="stationID" />
 											<input type="hidden" value="<?php echo $editingStation->brand; ?>" name="stationBrand" />
+											<input type="hidden" value="<?php echo $cacheFile; ?>" name="stationRefCache" />
 											<input type="hidden" value="set" name="method" />
 											<input type="hidden" value="true" name="submitted" />
 											<!--<input type="submit" value="Submit" name="submit" class="submit_button" />-->

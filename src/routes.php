@@ -998,7 +998,7 @@ $app->group('/admin', function () use ($app) {
 
 			return $this->renderer->render($response, 'admin-stations.php', [
 		        'title' => 'Station Settings',
-		        'page_name' => 'admin-stations',
+		        'page_name' => 'admin/stations',
 		        'admin_stationsClass' => true,
 		        'hideBreadcrumbs' => false,
 		        'stationEditView' => true,
@@ -1031,7 +1031,8 @@ $app->group('/admin', function () use ($app) {
 			$uResponse = array();
 			$db = new DbHandler();
 
-			// $editingUser = $db->getUserById($args['user_id']);
+			// Clear current station cache
+			$cacheClear = Spire::purgeAllCache($__postVars['stationRefCache']);
 
 			// Update user information
 			if ( $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
@@ -1043,12 +1044,15 @@ $app->group('/admin', function () use ($app) {
 				$formResponse['message'] = 'Station information did not update correctly.';
 			}
 
-			return $this->renderer->render($response, 'admin.php', [
+			$editingStation = $db->getStationById($stationID);
+
+			return $this->renderer->render($response, 'admin-stations.php', [
 		        'title' => 'Station Settings',
-		        'page_name' => 'admin-stations',
+		        'page_name' => 'admin/stations',
 		        'admin_stationsClass' => true,
 		        'hideBreadcrumbs' => false,
 		        'stationEditView' => true,
+		        'editingStation' => $editingStation[0],
 		        'editingUser' => $editingUser,
 		        'message_e' => $formResponse['error'],
 		        'messages' => $formResponse["message"],
