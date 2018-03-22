@@ -1114,7 +1114,7 @@ class DbHandler {
                 $stmt->closeCursor();
                 return $totalFailures;
             } else {
-                return NULL;
+                return '0';
             }
         });
 

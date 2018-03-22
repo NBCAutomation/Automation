@@ -1,27 +1,26 @@
 <?php
 // Routes
-// Notes:
-// ' // === [section name] === '
+/*
+Notes:
+- Code section name blocks appear as:
+	//=======================
+	//
+	// Stations Admin
+	//
+	//=======================
 
-// === Home ===
+*/
+
+//=======================
+//
+// Home
+//
+//=======================
 $app->get('/', function ($request, $response, $args) {
-
-	// $this->logger->info("Spire homepage '/' route");
 
 	$permissions = $request->getAttribute('spPermissions');
 
     if ($request->getAttribute('spAuth')) {
-    	// return $this->renderer->render($response, 'home.php', [
-    	//     'title' => 'OTS Spire Web App',
-    	//     'page_name' => 'home',
-    	//     'hideBreadcrumbs' => true,
-
-    	//     //Auth Specific
-    	//     'user' => $request->getAttribute('spAuth'),
-	    //     'uAuth' => $permissions['auth'],
-	    //     'uRole' => $permissions['role'],
-	    //     'uAthMessage' => $permissions['uAthMessage']
-    	// ]);
 	    $uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
 		return $response = $response->withRedirect($uri);
     } else {
@@ -32,7 +31,11 @@ $app->get('/', function ($request, $response, $args) {
 })->setName('home')->add( new SpireAuth() );
 
 
-// === Dashboard ===
+//=======================
+//
+// Dashboard
+//
+//=======================
 $app->group('/dashboard', function () use ($app) {
 	$this->get('/main', function ($request, $response, $args) {
 
@@ -49,14 +52,6 @@ $app->group('/dashboard', function () use ($app) {
 		// Content
 		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
 
-	// echo '<style>.ts-sidebar {display: none;}</style>';
-	// 	$man30Day = $db->getFailuresPer30Day('api_manifest_audits');
-	// 	echo "---------------------------<br />";
-	// 	$nav30Day = $db->getFailuresPer30Day('api_navigation_audits');
-	// 	echo "---------------------------<br />";
-	// 	$cont30Day = $db->getFailuresPer30Day('api_article_audits');
-
-		// var_dump($db->getLoadTimes('all', 'yesterday'));
 		$apiManifestTestLoadTime = $db->getAverageLoadTime('apiManifestTest', 'today');
 		$apiNavTestLoadTime = $db->getAverageLoadTime('apiNavTest', 'today');
 		$apiContentTestLoadTime = $db->getAverageLoadTime('apiContentTest', 'today');
@@ -79,19 +74,16 @@ $app->group('/dashboard', function () use ($app) {
 	        'page_name' => 'home',
 	        'dashClass' => true,
 	        'hideBreadcrumbs' => true,
-	        'todayManifestTotalFailureReports' => $todayManifestTotalFailureReports,
-			'todayNavTotalFailureReports' => $todayNavTotalFailureReports,
-			'todayContentTotalFailureReports' => $todayContentTotalFailureReports,
+	        'todayManifestTotalFailureReports' => $todayManifestTotalFailureReports['data'],
+			'todayNavTotalFailureReports' => $todayNavTotalFailureReports['data'],
+			'todayContentTotalFailureReports' => $todayContentTotalFailureReports['data'],
 			'serverTimeStamp' => $current_date,
-			'man30Day' => $man30Day,
-			'nav30Day' => $nav30Day,
-			'cont30Day' => $cont30Day,
-			'apiManifestTestLoadTime' => $apiManifestTestLoadTime,
-			'apiNavTestLoadTime' => $apiNavTestLoadTime,
-			'apiContentTestLoadTime' => $apiContentTestLoadTime,
-			'apiSectionContentLoadTime' => $apiSectionContentLoadTime,
-			'chartLoadTimeData' => $chartLoadTimeData,
-			'recentRegressionScore' => $recentRegressionScore,
+			'apiManifestTestLoadTime' => $apiManifestTestLoadTime['data'],
+			'apiNavTestLoadTime' => $apiNavTestLoadTime['data'],
+			'apiContentTestLoadTime' => $apiContentTestLoadTime['data'],
+			'apiSectionContentLoadTime' => $apiSectionContentLoadTime['data'],
+			'chartLoadTimeData' => $chartLoadTimeData['data'],
+			'recentRegressionScore' => $recentRegressionScore['data'],
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
@@ -176,7 +168,11 @@ $app->group('/dashboard', function () use ($app) {
 });
 
 
-// === Reports ===
+//=======================
+//
+// Reporting
+//
+//=======================
 $app->group('/reports', function () {
 	$this->get('/{view}', function ($request, $response, $args) {
 		$db = new DbHandler();
@@ -285,28 +281,28 @@ $app->group('/reports', function () {
             'reportClass' => true,
             'reportLoadtimeSubNav' => $loadtimeSubnavClass,
     		'allReports' => $allReports,
-    		'todayReports' => $todayReports,
-    		'todayFailureReports' => $todayFailureReports,
-    		'yesterdayReports' => $yesterdayReports,
-    		'yesterdayFailureReports' => $yesterdayFailureReports,
+    		'todayReports' => $todayReports['data'],
+    		'todayFailureReports' => $todayFailureReports['data'],
+    		'yesterdayReports' => $yesterdayReports['data'],
+    		'yesterdayFailureReports' => $yesterdayFailureReports['data'],
     		// 'yesterdayTotalWarningReports' => $yesterdayTotalWarningReports,
-    		'todayTotalErrors' => $todayTotalErrors,
-			'todayTotalWarnings' => $todayTotalWarnings,
-			'yesterdayTotalErrors' => $yesterdayTotalErrors,
-			'yesterdayTotalWarnings' => $yesterdayTotalWarnings,
+    		'todayTotalErrors' => $todayTotalErrors['data'],
+			'todayTotalWarnings' => $todayTotalWarnings['data'],
+			'yesterdayTotalErrors' => $yesterdayTotalErrors['data'],
+			'yesterdayTotalWarnings' => $yesterdayTotalWarnings['data'],
 			'recentRegressionTests' => $recentRegressionTests,
 			'regressionTests' => $regressionTests,
 			// Loadtimes data
 			'loadTimesView' => $loadTimesView,
-			'chartLoadTimeData' => $chartLoadTimeData,
-			'apiManifestAverageLoadTime' => $apiManifestAverageLoadTime,
-			'apiNavAverageLoadTime' => $apiNavAverageLoadTime,
-			'apiContentAverageLoadTime' => $apiContentAverageLoadTime,
-			'apiSectionContentAverageLoadTime' => $apiSectionContentAverageLoadTime,
-			'apiManifestLoadTimes' => $apiManifestLoadTimes,
-			'apiNavLoadTimes' => $apiNavLoadTimes,
-			'apiContentLoadTimes' => $apiContentLoadTimes,
-			'apiSectionContentLoadTimes' => $apiSectionContentLoadTimes,
+			'chartLoadTimeData' => $chartLoadTimeData['data'],
+			'apiManifestAverageLoadTime' => $apiManifestAverageLoadTime['data'],
+			'apiNavAverageLoadTime' => $apiNavAverageLoadTime['data'],
+			'apiContentAverageLoadTime' => $apiContentAverageLoadTime['data'],
+			'apiSectionContentAverageLoadTime' => $apiSectionContentAverageLoadTime['data'],
+			'apiManifestLoadTimes' => $apiManifestLoadTimes['data'],
+			'apiNavLoadTimes' => $apiNavLoadTimes['data'],
+			'apiContentLoadTimes' => $apiContentLoadTimes['data'],
+			'apiSectionContentLoadTimes' => $apiSectionContentLoadTimes['data'],
 
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),
@@ -481,7 +477,7 @@ $app->group('/reports', function () {
 	        'reportClass' => true,
 	        'reportLoadtimeSubNav' => true,
 	        'hideBreadcrumbs' => true,
-	        'loadtimeSearchResults' => $loadtimeSearchResults,
+	        'loadtimeSearchResults' => $loadtimeSearchResults['data'],
 	        'formResponse' => true,
 	        'searchDayRange' => $dayRange,
 			'searchMinResponseTime' => $minResponseTime,
@@ -499,7 +495,11 @@ $app->group('/reports', function () {
 
 });
 
-// Scripting/Testing View
+//============================
+//
+// Script Run & Test/tasking
+//
+//============================
 $app->group('/scripts', function () {
 
 	$this->get('/{view}', function ($request, $response, $args) {
@@ -745,7 +745,11 @@ $app->group('/scripts', function () {
 });
 
 
-// === Help ===
+//=======================
+//
+// Help
+//
+//=======================
 $app->get('/help', function ($request, $response, $args) {
 	$permissions = $request->getAttribute('spPermissions');
 
@@ -764,7 +768,11 @@ $app->get('/help', function ($request, $response, $args) {
 })->setName('help')->add( new SpireAuth() );
 
 
-// === Register ===
+//=======================
+//
+// User Register
+//
+//=======================
 $app->group('/register', function () {
 
 	$this->get('/{view}', function ($request, $response, $args) {
@@ -828,7 +836,11 @@ $app->group('/register', function () {
 	});
 });
 
-// === Admin ===
+//=======================
+//
+// Admin
+//
+//=======================
 $app->group('/admin', function () use ($app) {
 
 	// === Admin Deashboard ===
@@ -852,7 +864,11 @@ $app->group('/admin', function () use ($app) {
 	    ]);
 	})->setName('admin-dashboard')->add( new SpireAuth() );
 
-	// === Users Admin ===
+	//=======================
+	//
+	// Users Admin
+	//
+	//=======================
 	$app->group('/users', function () use ($app) {
 		$this->get('/main', function ($request, $response, $args) {
 
@@ -910,12 +926,7 @@ $app->group('/admin', function () use ($app) {
 			$permissions = $request->getAttribute('spPermissions');
 
 			$__postVars = $request->getParsedBody();
-			// var_dump($__postVars);
-			// exit();
 
-		 //  	verifyRequiredParams(array('email', 'password'));
-
-			// // reading post params
 			$user_id = $__postVars['u_id'];
 			$new_password = $__postVars['u_password'];
 			$role = $__postVars['u_role'];
@@ -1122,7 +1133,11 @@ $app->group('/admin', function () use ($app) {
 });
 
 
-// === Login ===
+//=======================
+//
+// Spire Login
+//
+//=======================
 $app->group('/login', function () use ($app) {
 
 	$this->get('/main', function ($request, $response, $args) {
@@ -1216,14 +1231,22 @@ $app->group('/login', function () use ($app) {
 	});
 });
 
-// === Logout ===
+//=======================
+//
+// Logout
+//
+//=======================
 $app->get('/logout', function ($request, $response, $args) {
 	$_SESSION['spUser'] = NULL;
 	$uri = $request->getUri()->withPath($this->router->pathFor('login-view'));
 	return $response = $response->withRedirect($uri, 403);
 });
 
-// === Utils ===
+//=======================
+//
+// Utils
+//
+//=======================
 $app->group('/utils', function () {
 
 	$this->get('/tasks', function ($request, $response, $args) {
@@ -1496,12 +1519,12 @@ $app->group('/utils', function () {
     		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
     		$emailContent .= '<tr><td colspan="3"><a href="http://54.243.53.242/">Dashbaord</a></td></tr>';
     		$emailContent .= '<tr bgcolor="#ddd"><th>Manifest</th><th>Navigation</th><th>Content</th></tr>';
-    		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="'.setStatusColor($todayManifestTotalFailureReports).'">'.$todayManifestTotalFailureReports.'</td>';
-    		$emailContent .= '<td bgcolor="'.setStatusColor($todayNavTotalFailureReports).'">'.$todayNavTotalFailureReports.'</td>';
-    		$emailContent .= '<td bgcolor="'.setStatusColor($todayContentTotalFailureReports).'">'.$todayContentTotalFailureReports.'</td></tr>';
-    		$emailContent .= '<tr style="color: #000; text-align: center;"><td bgcolor="#ffd000">'.$todayManifestTotalWarningReports.'</td>';
-    		$emailContent .= '<td bgcolor="#ffd000">'.$todayNavTotalWarningReports.'</td>';
-    		$emailContent .= '<td bgcolor="#ffd000">'.$todayContentTotalWarningReports.'</td></tr>';
+    		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="'.setStatusColor($todayManifestTotalFailureReports).'">'.$todayManifestTotalFailureReports['data'].'</td>';
+    		$emailContent .= '<td bgcolor="'.setStatusColor($todayNavTotalFailureReports).'">'.$todayNavTotalFailureReports['data'].'</td>';
+    		$emailContent .= '<td bgcolor="'.setStatusColor($todayContentTotalFailureReports).'">'.$todayContentTotalFailureReports['data'].'</td></tr>';
+    		$emailContent .= '<tr style="color: #000; text-align: center;"><td bgcolor="#ffd000">'.$todayManifestTotalWarningReports['data'].'</td>';
+    		$emailContent .= '<td bgcolor="#ffd000">'.$todayNavTotalWarningReports['data'].'</td>';
+    		$emailContent .= '<td bgcolor="#ffd000">'.$todayContentTotalWarningReports['data'].'</td></tr>';
     		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">view reports</a></td></tr>';
     		$emailContent .= '<tr><td colspan="3"><p>The email will be sent every 4 hours following the cron, and is delayed 20 min to allow for all results to complete processing. </p></td></tr>';
     		$emailContent .= '<tr><td colspan="3"><p>*totals are at current UTC server time: '.$current_date.' </p></td></tr>';

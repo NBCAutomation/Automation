@@ -1,3 +1,7 @@
+<?php 
+	$db = new DbHandler();
+	$globalAPIVer = $db->getStationsGlobalAPIVer();
+?>
 	<div class="panel-heading"><i class="fa fa-cogs" aria-hidden="true"></i> Configure Script</div>
 	<div class="panel-body">
 		<div class="alert alert-dismissible alert-info">
@@ -25,17 +29,6 @@
 			</div>
 			<hr />
 			<?php } ?>
-			<?php if ($view != 'updateDictionaries') { ?>
-			<div class="form-group" style="display: none;">
-				<label class="col-sm-2 control-label">Protocol</label>
-				<div class="col-sm-10">
-					<select class="form-control" name="protocol">
-						<option>Normal (HTTP)</option>
-						<option>Secure (HTTPS)</option>
-					</select>
-				</div>
-			</div>
-			<hr / style="display: none;">
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Enviroment</label>
 				<div class="col-sm-10">
@@ -46,7 +39,24 @@
 				</div>
 			</div>
 			<hr />
-			<?php } else { ?>
+			<?php if($view != 'regressionTest'){ ?>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">API Version</label>
+				<div class="col-sm-10">
+					<select class="form-control" name="protocol">
+					<?php
+						for ($i = 1; $i <= 20; $i++) {
+							if ($i == $globalAPIVer['value']) { $selected = 'selected'; } else { $selected = ''; }
+
+				            echo '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
+			        	}
+			        ?>
+					</select>
+				</div>
+			</div>
+			<hr />
+			<?php } ?>
+			<?php if ($view == 'updateDictionaries') { ?>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Notes/Ticket</label>
 				<div class="col-sm-10">
@@ -64,7 +74,7 @@
 				<div class="col-sm-10">
 					<div class="checkbox">
 						<input id="checkbox1" class="class1" name="brand_test" type="checkbox" value="all">
-						<label for="checkbox1">Default (ALL)</label>
+						<label for="checkbox1">Default (ALL Properties)</label>
 					</div>
 				</div>
 			</div>

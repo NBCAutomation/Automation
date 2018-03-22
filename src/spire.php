@@ -182,7 +182,7 @@ class Spire {
 	    $modifedTime = file_exists($cacheFile) ? filemtime($cacheFile) : 0;
 
 	    if($modifedTime + intval($expTime) < time()) {
-	        $data = call_user_func($callback);
+	        $data['data'] = call_user_func($callback);
 	        $data['refCacheKey'] = $cacheKey;
 
 	        // if (strpos($key, 'getStationById') !== false || strpos($key, 'getStationsGlobalAPIVer')) {
