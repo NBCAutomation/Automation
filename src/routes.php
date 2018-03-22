@@ -290,7 +290,7 @@ $app->group('/reports', function () {
 			'todayTotalWarnings' => $todayTotalWarnings['data'],
 			'yesterdayTotalErrors' => $yesterdayTotalErrors['data'],
 			'yesterdayTotalWarnings' => $yesterdayTotalWarnings['data'],
-			'recentRegressionTests' => $recentRegressionTests,
+			'recentRegressionTests' => $recentRegressionTests['data'],
 			'regressionTests' => $regressionTests,
 			// Loadtimes data
 			'loadTimesView' => $loadTimesView,
@@ -402,8 +402,9 @@ $app->group('/reports', function () {
     	$allPostPutVars = $request->getQueryParams();
 
     	$currentRecord = $db->getTestDataById($allPostPutVars['refID'], $args['recordNumber']);
-    	$recordViewType = $currentRecord['test_type'];
-    	$currentRecordResults = $currentRecord['results_data'];
+    	
+    	$recordViewType = $currentRecord['data']['test_type'];
+    	$currentRecordResults = $currentRecord['data']['results_data'];
 
 		// View path
 		$viewPath = $args['view']."/".$args['subView'];
@@ -424,10 +425,10 @@ $app->group('/reports', function () {
 		    'viewType' => $recordViewType,
 		    'singleView' => true,
 		    'reportClass' => true,
-		    'reportID' => $currentRecord['ref_test_id'],
-		    'reportProperty' => $currentRecord['property'],
+		    'reportID' => $currentRecord['data']['ref_test_id'],
+		    'reportProperty' => $currentRecord['data']['property'],
 		    'reportData' => $currentRecordResults,
-		    'fullReportData' => $currentRecord,
+		    'fullReportData' => $currentRecord['data'],
 
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
@@ -483,7 +484,7 @@ $app->group('/reports', function () {
 			'searchMinResponseTime' => $minResponseTime,
 			'searchTerm' => $searchTerm,
 			'trending' => $trending,
-			'trendingSearchResults' => $trendingSearchResults,
+			'trendingSearchResults' => $trendingSearchResults['data'],
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
@@ -988,9 +989,9 @@ $app->group('/admin', function () use ($app) {
 		        'admin_stationsClass' => true,
 		        'hideBreadcrumbs' => true,
 		        'stationsView' => true,
-		        'stations' => $stations,
+		        'stations' => $stations['data'],
 		        'stationsRefCacheLocation' => $stations['refCacheKey']->scalar,
-		        'globalAPIVer' => $globalAPIVer,
+		        'globalAPIVer' => $globalAPIVer['data'],
 
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),
@@ -1022,8 +1023,8 @@ $app->group('/admin', function () use ($app) {
 		        'admin_stationsClass' => true,
 		        'hideBreadcrumbs' => false,
 		        'pageView' => $pageView,
-		        'editingStation' => $editingStation,
-		        'globalAPIVer' => $globalAPIVer,
+		        'editingStation' => $editingStation['data'],
+		        'globalAPIVer' => $globalAPIVer['data'],
 		        'allStationsRefCacheLocation' => $allStationsRefCacheLocation,
 
 		        //Auth Specific
@@ -1089,12 +1090,11 @@ $app->group('/admin', function () use ($app) {
 		        'admin_stationsClass' => true,
 		        'hideBreadcrumbs' => false,
 		        'pageView' => $pageView,
-		        'editingStation' => $editingStation[0],
-		        'editingUser' => $editingUser,
+		        'editingStation' => $editingStation['data'],
 		        'message_e' => $formResponse['error'],
 		        'messages' => $formResponse["message"],
-		        'stations' => $stations,
-		        'globalAPIVer' => $globalAPIVer,
+		        'stations' => $stations['data'],
+		        'globalAPIVer' => $globalAPIVer['data'],
 
 		        //Auth Specific
 		        'user' => $request->getAttribute('spAuth'),

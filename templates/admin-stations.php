@@ -99,7 +99,7 @@
 			$refCacheKey = $editingStation['refCacheKey'];
 
 			// echo "<pre>";
-			// var_dump($editingStation);
+			// var_dump($currentStation);
 			// var_dump($refCacheKey->scalar);
 			$cacheFile = './tmp/' . implode('/', array_slice(str_split($refCacheKey->scalar, 2), 0, 3));
 			// var_dump($cacheFile);
@@ -107,7 +107,7 @@
 	?>
 
 		<div id="station_update_panel" class="panel-body">
-			<h4>Editing: <?php echo $currentStation->brand; ?></h4>
+			<h4>Editing: <?php echo $currentStation['brand']; ?></h4>
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<div class="table-responsive">
@@ -128,11 +128,11 @@
 							<?php } ?>
 						<?php } ?>
 						<div>
-							<h3><?php echo $currentStation->brand; ?></h3>
-							<a href="/utils/tasks?task=getDictionaryData&property=<?php echo $currentStation->shortname; ?>" target="_blank">View Dictionary Data</a>
+							<h3><?php echo $currentStation['brand']; ?></h3>
+							<a href="/utils/tasks?task=getDictionaryData&property=<?php echo $currentStation['shortname']; ?>" target="_blank">View Dictionary Data</a>
 						</div>
 						<hr />
-						<form action="/admin/stations/update/<?php echo $currentStation->id; ?>" method="post" id="user_main_entry_form" class="mt">
+						<form action="/admin/stations/update/<?php echo $currentStation['id']; ?>" method="post" id="user_main_entry_form" class="mt">
 							<table class="table table-bordered table">
 								<tbody>
 									<tr>
@@ -140,8 +140,8 @@
 											<div class="form_field">
 												<label class="text">Status:</label>
 												<select name="u_status" class="form_select">
-													<option value="1" <?php echo ($currentStation->status === 1 ? 'selected="selected"' : ''); ?>>Active</option>
-													<option value="0" <?php echo ($currentStation->status === 0 ? 'selected="selected"' : ''); ?>>Disabled</option>
+													<option value="1" <?php echo ($currentStation['status'] === 1 ? 'selected="selected"' : ''); ?>>Active</option>
+													<option value="0" <?php echo ($currentStation['status'] === 0 ? 'selected="selected"' : ''); ?>>Disabled</option>
 												</select>
 												<div class="clear"></div>
 											</div>
@@ -154,7 +154,7 @@
 												<select name="stationApiVersion" class="form_select">
 													<?php
 														for ($i = 1; $i <= 25; $i++) {
-															if ($i == $currentStation->api_version) { $selected = 'selected'; } else { $selected = ''; }
+															if ($i == $currentStation['api_version']) { $selected = 'selected'; } else { $selected = ''; }
 
 												            echo '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
 											        	}
@@ -167,19 +167,19 @@
 									<tr>
 										<td>
 											<label class="text form-label"><b>URL</b>:</label>
-											<input type="text" name="stationURL" size="30" id="stationURL" class="form-control mb stationURL" value="<?php echo $currentStation->url ?>" />
+											<input type="text" name="stationURL" size="30" id="stationURL" class="form-control mb stationURL" value="<?php echo $currentStation['url'] ?>" />
 										</td>
 									</tr>
 									<tr>
 										<td>
 											<label class="text form-label"><b>Shortname</b>:</label>
-											<input type="text" name="stationShortname" size="30" id="stationShortname" class="form-control mb stationShortname" value="<?php echo $currentStation->shortname ?>" />
+											<input type="text" name="stationShortname" size="30" id="stationShortname" class="form-control mb stationShortname" value="<?php echo $currentStation['shortname'] ?>" />
 										</td>
 									</tr>
 									<tr>
 										<td>
 											<label class="text form-label"><b>Call letters</b>:</label>
-											<input type="text" name="stationCallLetters" size="18" id="stationCallLetters" class="form-control mb stationCallLetters" value="<?php echo $currentStation->call_letters; ?>" />
+											<input type="text" name="stationCallLetters" size="18" id="stationCallLetters" class="form-control mb stationCallLetters" value="<?php echo $currentStation['call_letters']; ?>" />
 										</td>
 									</tr>
 									<tr>
@@ -187,8 +187,8 @@
 											<div class="form_field">
 												<label class="text form-label">Group:</label>
 												<select name="stationGroup" class="form_select">
-													<option value="OTS" <?php if ($currentStation->group == 'OTS') { $selected = 'selected'; } else { $selected = ''; } echo $selected; ?>>OTS</option>
-													<option value="TSG" <?php if ($currentStation->group == 'TSG') { $selected = 'selected'; } else { $selected = ''; } echo $selected; ?>>TSG</option>
+													<option value="OTS" <?php if ($currentStation['group'] == 'OTS') { $selected = 'selected'; } else { $selected = ''; } echo $selected; ?>>OTS</option>
+													<option value="TSG" <?php if ($currentStation['group'] == 'TSG') { $selected = 'selected'; } else { $selected = ''; } echo $selected; ?>>TSG</option>
 												</select>
 												<div class="clear"></div>
 											</div>
@@ -202,8 +202,8 @@
 									<tr>
 										<div class="clear"></div>
 										<div id="input_buttons">
-											<input type="hidden" value="<?php echo $currentStation->id; ?>" name="stationID" />
-											<input type="hidden" value="<?php echo $currentStation->brand; ?>" name="stationBrand" />
+											<input type="hidden" value="<?php echo $currentStation['id']; ?>" name="stationID" />
+											<input type="hidden" value="<?php echo $currentStation['brand']; ?>" name="stationBrand" />
 											<input type="hidden" value="<?php echo $cacheFile; ?>" name="refCacheLocation" />
 											<input type="hidden" value="updateStation" name="task" />
 											<input type="hidden" value="set" name="method" />

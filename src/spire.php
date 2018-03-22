@@ -277,7 +277,7 @@ class Spire {
 			$testReportViewData .= "<tbody>";
 
 			foreach ($data[0] as $key => $value) {
-				var_dump($data[0]);
+				// var_dump($data[0]);
 				// exit();
 				$l10nDate = new DateTime($value['created']);
 				$l10nDate->setTimeZone($usersTimezone);

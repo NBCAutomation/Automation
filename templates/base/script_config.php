@@ -1,6 +1,7 @@
 <?php 
 	$db = new DbHandler();
 	$globalAPIVer = $db->getStationsGlobalAPIVer();
+	$setAPIVer = $globalAPIVer['data']['value'];
 ?>
 	<div class="panel-heading"><i class="fa fa-cogs" aria-hidden="true"></i> Configure Script</div>
 	<div class="panel-body">
@@ -46,7 +47,7 @@
 					<select class="form-control" name="protocol">
 					<?php
 						for ($i = 1; $i <= 20; $i++) {
-							if ($i == $globalAPIVer['value']) { $selected = 'selected'; } else { $selected = ''; }
+							if ($i == $setAPIVer) { $selected = 'selected'; } else { $selected = ''; }
 
 				            echo '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
 			        	}
