@@ -266,3 +266,12 @@ input.form-control {
 .form-label {
 	min-width: 150px;
 }
+
+.checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] {
+	position: static;
+	margin: 0px;
+}
+
+.checkbox label, .radio label {
+	padding-left: 5px;
+}

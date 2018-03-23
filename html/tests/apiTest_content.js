@@ -26,6 +26,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         envConfig = casper.cli.get('env'),
         configURL = 'http://54.243.53.242',
         testType = casper.cli.get('output'),
+        apiVersion,
+        contentID = casper.cli.get('contentID'),
         debugOutput = false,
         showOutput = false,
         currentTestObject = {},
@@ -34,8 +36,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         manifestTestStatus = 'Pass',
         setFail = 0,
         testStartTime,
+        apiURL,
         resourcesTime = {},
-        apiVersion = '10',
         enableJsonValidation = '',
         linkParser = document.createElement('a'),
         listener = function (resource) {
@@ -80,8 +82,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 throw new Error('A URL is required!');
             }
 
-            this.nav_url = url + '/apps/news-app/navigation/?apiVersion=' + apiVersion + enableJsonValidation;
-            this.stationProperty = /www\.(\S+)\.com/.exec(this.nav_url)[1];
             this.manifestTestRefID = null;
             this.collectionObject = {};
             this.testResultsObject = {};
@@ -91,14 +91,25 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             * Start Testing
             *
             *******************/
-            casper.start().thenOpen(this.nav_url, { method: 'get'}, function (response) {
-            // casper.start(this.nav_url).then(function (response) {
-                if (response.status === 200) {
-                    console.log(colorizer.colorize('Testing started: ', 'COMMENT') + response.url);
-                    apiSuiteInstance.createTestID(response.url, apiSuiteInstance.stationProperty);
+            casper.start().then(function (resp) {
+                if (casper.cli.get('apiVersion')) {
+                    apiSuiteInstance.apiVersion = casper.cli.get('apiVersion');
                 } else {
-                    throw new Error('Page not loaded correctly. Response: ' + response.status).exit();
+                    apiSuiteInstance.getGlobalAPIVer();
                 }
+            }).then(function () {
+                apiSuiteInstance.apiURL = url + '/apps/news-app/navigation/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                apiSuiteInstance.stationProperty = /www\.(\S+)\.com/.exec(apiSuiteInstance.apiURL)[1];
+            }).then(function () {
+                casper.thenOpen(apiSuiteInstance.apiURL, { method: 'get'}, function (resp) {
+                    console.log(resp.url);
+                    if (resp.status === 200) {
+                        console.log(colorizer.colorize('Testing started: ', 'COMMENT') + resp.url);
+                        apiSuiteInstance.createTestID(resp.url, apiSuiteInstance.stationProperty);
+                    } else {
+                        throw new Error('Page not loaded correctly. Response: ' + resp.status).exit();
+                    }
+                })
             }).then(function () {
                 // Display collection object
                 if (debugOutput) {
@@ -115,8 +126,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     }
                 } else {
                     // Manually created collection of test items
-                    apiSuiteInstance.collectionObject['breaking__modules'] = url + '/apps/news-app/breaking/modules/?apiVersion=' + apiVersion + enableJsonValidation;
-                    apiSuiteInstance.collectionObject['just-in__live'] = url + '/apps/news-app/just-in/live/?apiVersion=' + apiVersion + enableJsonValidation;
+                    apiSuiteInstance.collectionObject['breaking__modules'] = url + '/apps/news-app/breaking/modules/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                    apiSuiteInstance.collectionObject['just-in__live'] = url + '/apps/news-app/just-in/live/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
 
                     // Test Collection data
                     apiSuiteInstance.testNavigationData();
@@ -308,6 +319,35 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         }
     };
 
+    // Create test id in DB
+    apiSuite.prototype.getGlobalAPIVer = function (randomVar) {
+        // var apiSuiteInstance = this;
+
+        var dbUrl = configURL + '/utils/tasks?task=getStationsGlobalAPIVer';
+
+        if (dbUrl) {
+            if (debugOutput) {console.log(dbUrl); }
+
+            casper.thenOpen(dbUrl).then(function (resp) {
+                var pageOutput = null;
+
+                if (resp.status === 200) {
+                    if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl); }
+
+                    pageOutput = this.getHTML();                    
+
+                    apiSuiteInstance.apiVersion = casper.getElementInfo('body').text;
+
+                    if (debugOutput) {
+                        console.log('>>>>> API Version: ' + apiSuiteInstance.apiVersion);
+                    }
+                } else {
+                    throw new Error('Unable to get/store Test ID!');
+                }
+            });
+        }
+    };
+
     // Log endpoint time
     apiSuite.prototype.logLoadTime = function (typeName, manifestLoadTime, endPoint, testInfo) {
         var processUrl = configURL + '/utils/processRequest';
@@ -479,9 +519,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                 if (navItemAppTitleNiceName.indexOf('/apps') > -1) {
 
                                     if (navItemAppTitleNiceName.indexOf('?') > -1) {
-                                        navItemAppLocationURL = __baseUrl + navItemAppTitleNiceName + '&apiVersion=' + apiVersion + enableJsonValidation;
+                                        navItemAppLocationURL = __baseUrl + navItemAppTitleNiceName + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
                                     } else {
-                                        navItemAppLocationURL = __baseUrl + navItemAppTitleNiceName + '?apiVersion=' + apiVersion + enableJsonValidation;
+                                        navItemAppLocationURL = __baseUrl + navItemAppTitleNiceName + '?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
                                     }
 
                                     if (debugOutput) {
@@ -561,7 +601,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         }
                     }
                     // http://www.nbclosangeles.com/apps/news-app/content/?contentId=389777331&apiVersion=6
-                    endpointUrl = baseUrl + '/apps/news-app/content/' + location_url + '&apiVersion=' + apiVersion + enableJsonValidation;
+                    endpointUrl = baseUrl + '/apps/news-app/content/' + location_url + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
 
                     if (debugOutput) { console.log('> parsedLocationURL: ' + location_url); }
                 }

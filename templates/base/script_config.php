@@ -40,11 +40,27 @@
 				</div>
 			</div>
 			<hr />
+			<?php if($view == 'apiCheck-article'){ ?>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Content ID</label>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" name="content_id">
+				</div>
+			</div>
+			<hr />
+			<?php } ?>
 			<?php if($view != 'regressionTest'){ ?>
+			<div class="form-group" style="margin-left: 3em;">
+				<div class="checkbox">
+					<label for="checkbox1">Set API Version</label>
+					<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcnewyork">
+					
+				</div>
+			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">API Version</label>
 				<div class="col-sm-10">
-					<select class="form-control" name="protocol">
+					<select class="form-control" name="api_version">
 					<?php
 						for ($i = 1; $i <= 20; $i++) {
 							if ($i == $setAPIVer) { $selected = 'selected'; } else { $selected = ''; }

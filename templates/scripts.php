@@ -55,7 +55,7 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<i class="fa fa-file" aria-hidden="true"></i> 
-						<a href="/scripts/apiCheck-nav">apiCheck-article.js</a>
+						<a href="/scripts/apiCheck-article">apiCheck-article.js</a>
 					</div>
 					<div class="panel-body">
 						<p class="note">Case: Grab the main app navigation urls from the manifest endpoint. Test each link for correct 200 response, if response is not an error, spider each of the content objects within the JSON file and check for errors. </p>

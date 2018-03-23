@@ -564,6 +564,9 @@ $app->group('/scripts', function () {
     	$db = new DbHandler();
     	$permissions = $request->getAttribute('spPermissions');
 
+    	var_dump($request->getParsedBody());
+    	exit();
+
     	// Temp File
     	$__tmpFile = BASEPATH .'/tmp/__tempSites_'. rand() .'.txt';
     	$__data = file_get_contents($__tmpFile);
@@ -595,6 +598,16 @@ $app->group('/scripts', function () {
 	    	// Set output flag
 	    	if($allPostPutVars['output'] == 'console') {
 	    		$__output = ' --output=console';
+	    	}
+
+	    	// Set content ID
+	    	if($allPostPutVars['content_id']) {
+	    		$__contentID = '--contentID='.$allPostPutVars['content_id'];
+	    	}
+
+	    	// Set API Version
+	    	if($allPostPutVars['api_version']) {
+	    		$__apiVersion = '--apiVersion='.$allPostPutVars['api_version'];
 	    	}
 
 	    	// Set testing script
@@ -676,11 +689,13 @@ $app->group('/scripts', function () {
 		if ($__runScript == 'spire-run') {
 		        $__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_manifest.js" --url="{}"'.$__output .' '. $serverEnv;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_manifest.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv;
 		} elseif ($__runScript == 'apiCheck-nav') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_nav.js" --url="{}"'.$__output .' '. $serverEnv;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_nav.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv;
+		} elseif ($__runScript == 'apiCheck-article') {
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_content.js" --url="{}"'.$__output .' '.$__contentID.' '.$__apiVersion.' '.$serverEnv;
 		} elseif ($__runScript == 'regressionTest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output .' '. $serverEnv;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv;
 		} elseif ($__runScript == 'updateDictionaries') {
 			$updateNotesObject = array();
 
@@ -1275,7 +1290,9 @@ $app->group('/utils', function () {
 			$getDictionaryData = true;
 		}
 
-		///////////////////////////////////
+		if ($utilReqParams['task'] == 'getStationsGlobalAPIVer'){
+			$getStationsGlobalAPIVer = true;
+		}
 
 		if ($createTestID) {
 			// Create test ID
@@ -1283,6 +1300,17 @@ $app->group('/utils', function () {
 
 			if ($thisID != NULL) {
 				echo $thisID;
+			} else {
+				echo('che le derp');
+			}
+		}
+
+		if ($getStationsGlobalAPIVer) {
+			// Create test ID
+			$globalAPIVer = $db->getStationsGlobalAPIVer();
+
+			if ($globalAPIVer != NULL) {
+				echo $globalAPIVer['data']['value'];
 			} else {
 				echo('che le derp');
 			}
