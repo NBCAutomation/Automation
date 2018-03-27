@@ -195,6 +195,20 @@
 	        }
 		});
 
+
+		document.getElementById("apiversionSelect").disabled = true;
+
+		$('input[class^="apiversionSet"]').click(function() {
+		    var $thisOption = $(this);
+		    if ($thisOption.is(".apiversionSet")) {
+		        if ($(".apiversionSet:checked").length > 0) {
+		            $("#apiversionSelect").prop({ disabled: false});
+		        } else {
+		        	$("#apiversionSelect").prop({ disabled: true});
+		        }
+		    }
+		});
+
 		var button = $('#submit-data');
 		var orig = [];
 
@@ -216,7 +230,7 @@
 
 		$('form').bind('change keyup', function () {
 
-		    var disable = true;
+	    var disable = true;
 		    $("form :input").each(function () {
 		        var type = $(this).getType();
 		        var id = $(this).attr('id');

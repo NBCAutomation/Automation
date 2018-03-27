@@ -53,14 +53,14 @@
 			<div class="form-group" style="margin-left: 3em;">
 				<div class="checkbox">
 					<label for="checkbox1">Set API Version</label>
-					<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcnewyork">
+					<input id="checkbox1" class="apiversionSet" type="checkbox" name="test_site[]" value="nbcnewyork">
 					
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">API Version</label>
 				<div class="col-sm-10">
-					<select class="form-control" name="api_version">
+					<select class="form-control" id="apiversionSelect" name="api_version">
 					<?php
 						for ($i = 1; $i <= 20; $i++) {
 							if ($i == $setAPIVer) { $selected = 'selected'; } else { $selected = ''; }
@@ -69,6 +69,8 @@
 			        	}
 			        ?>
 					</select>
+					<br />
+					<p class="small">current global API version: <?php echo $setAPIVer; ?></p>
 				</div>
 			</div>
 			<hr />
