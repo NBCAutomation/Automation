@@ -22,6 +22,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     
     // Global Vars
     var logResults = true,
+        contentOnlyTest = false,
         apiSuiteInstance,
         colorizer = require('colorizer').create('Colorizer'),
         envConfig = casper.cli.get('env'),
@@ -83,7 +84,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 throw new Error('A URL is required!');
             }
 
-            this.manifestTestRefID = null;
             this.collectionObject = {};
             this.testResultsObject = {};
 
@@ -112,6 +112,19 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     }
                 })
             }).then(function () {
+                if (contentOnlyTest) {
+                    var contentTestURL = url + '/apps/news-app/content/?contentId=' + contentID + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                    apiSuiteInstance.endpointContentValidation('directContentTest', contentTestURL, apiSuiteInstance.manifestTestRefID);
+                } else {
+                    apiSuiteInstance.collectionNavigationItems(url);
+                }
+            }).then(function () {
+                // Append additional testing endpoints to testing collection object
+                if (! contentOnlyTest) {
+                    apiSuiteInstance.collectionObject['breaking__modules'] = url + '/apps/news-app/breaking/modules/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                    apiSuiteInstance.collectionObject['just-in__live'] = url + '/apps/news-app/just-in/live/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                }
+            }).then(function () {
                 // Display collection object
                 if (debugOutput) {
                     console.log('---------------------');
@@ -126,26 +139,23 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         console.log('>>>>> ' + thisItem + ' : ' + thisItem);
                     }
                 } else {
-                    // Manually created collection of test items
-                    apiSuiteInstance.collectionObject['breaking__modules'] = url + '/apps/news-app/breaking/modules/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
-                    apiSuiteInstance.collectionObject['just-in__live'] = url + '/apps/news-app/just-in/live/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
-
                     // Test Collection data
                     apiSuiteInstance.testNavigationData();
                 }
             }).then(function () {
-                console.log('------------------------------------------');
-                console.log(colorizer.colorize(' ...testing endpoint content items', 'PARAMETER'));
-                console.log('------------------------------------------');
-                if (debugOutput) {
-                    console.log('-----------------------------------------');
-                    console.log(' Start testing content collectionObject   ');
-                    console.log('-----------------------------------------');
+                if (! contentOnlyTest) {
+                    console.log('------------------------------------------');
+                    console.log(colorizer.colorize(' ...testing endpoint content items', 'PARAMETER'));
+                    console.log('------------------------------------------');
+
+                    if (debugOutput) {
+                        console.log('-----------------------------------------');
+                        console.log(' Start testing content collectionObject   ');
+                        console.log('-----------------------------------------');
+                    }
+                    // Test endpoint content
+                    apiSuiteInstance.testEndpointContent(apiSuiteInstance.collectionObject, apiSuiteInstance.manifestTestRefID);
                 }
-                // Test endpoint content
-                apiSuiteInstance.testEndpointContent(apiSuiteInstance.collectionObject);
-
-
             }).then(function () {
                 // Porcess All Test Results Data
                 console.log(colorizer.colorize('Processing test results...', 'COMMENT'));
@@ -269,6 +279,10 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         setDebugEvents();
     }
 
+    if (contentID) {
+        contentOnlyTest = true;
+    }
+
     apiSuite.prototype.processLoadTimes = function () {
         var i = 0,
             keys = Object.keys(resourcesTime),
@@ -298,7 +312,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
         if (!logResults) {
             if (debugOutput) { console.log(colorizer.colorize('TestID: ', 'COMMENT') + 'xx'); }
-            apiSuiteInstance.collectionNavigationItems(url, 'xx');
+            apiSuiteInstance.manifestTestRefID = 'xx';
         } else {
             if (dbUrl) {
                 console.log(dbUrl);
@@ -310,8 +324,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                         pageOutput = this.getHTML();
                         apiSuiteInstance.manifestTestRefID = casper.getElementInfo('body').text;
-
-                        apiSuiteInstance.collectionNavigationItems(url);
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }
@@ -366,7 +378,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             method: 'post',
             data:   {
                 'task': 'logLoadTime',
-                'testID': this.manifestTestRefID,
+                'testID': apiSuiteInstance.manifestTestRefID,
                 'testType': typeName,
                 'manifestLoadTime': manifestLoadTime,
                 'endPoint': endPoint,
@@ -384,14 +396,14 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             console.log(' Payload Error Data  ');
             console.log('------------------------');
             console.log(processUrl);
-            console.log(this.manifestTestRefID, typeName, error, endpoint, payload);
+            console.log(apiSuiteInstance.manifestTestRefID, typeName, error, endpoint, payload);
         }
 
         casper.thenOpen(processUrl, {
             method: 'post',
             data:   {
                 'task': 'logPayloadError',
-                'testID': this.manifestTestRefID,
+                'testID': apiSuiteInstance.manifestTestRefID,
                 'testType': typeName,
                 'error': error,
                 'endpoint': endpoint,
@@ -411,7 +423,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             console.log('------------------------');
             console.log('urlUri => ' + this.stationProperty);
             console.log('testResultsObject => ' + apiSuiteInstance.testResultsObject);
-            console.log('testID => ' + this.manifestTestRefID);
+            console.log('testID => ' + apiSuiteInstance.manifestTestRefID);
             console.log('testFailureCount => ' + testFailureCount);
             console.log('testType => ' + typeName);
             // console.log('manifestLoadTime => ' + manifestLoadTime);
@@ -422,7 +434,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             method: 'post',
             data:   {
                 'task': 'processManifestTestResults',
-                'testID': this.manifestTestRefID,
+                'testID': apiSuiteInstance.manifestTestRefID,
                 'testType': typeName,
                 'testProperty': this.stationProperty,
                 'testStatus': manifestTestStatus,
@@ -876,7 +888,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                 console.log('---------------------------------');
                             }
 
-                            if (jsonParsedOutput.typeName == 'Feature') {
+                            if (jsonParsedOutput.typeName == 'Feature' || jsonParsedOutput.typeName == 'Article') {
                                 if (jsonParsedOutput.feature === true) {
                                     if (jsonParsedOutput.featureName.length <= 0) {
                                         setFail++;
@@ -971,7 +983,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                         articleContentBody = singleArticleInnerItems[__items].contentBody,
                                                         articleLeadMedia = singleArticleInnerItems[__items].leadMedia;
 
-                                                    if (debugOutput) {
+                                                    // if (debugOutput) {
                                                         console.log('-------------------------------');
                                                         console.log(' Content item var declaration   ');
                                                         console.log('-------------------------------');
@@ -999,7 +1011,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                                         console.log('    > articleLiveAppVideoEmbed : ' + articleLiveAppVideoEmbed);
                                                         // console.log('    > articleContentBody : ' + articleContentBody);
                                                         console.log('    > articleLeadMedia : ' + articleLeadMedia);
-                                                    }
+                                                    // }
 
                                                     if (articleTitle === 'false' && articleDisplayDate === 'false') {
                                                         setFail++;
