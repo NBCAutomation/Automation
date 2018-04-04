@@ -101,6 +101,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     apiSuiteInstance.getGlobalAPIVer();
                 }
             }).then(function () {
+                apiSuiteInstance.baseUrl = casper.cli.get('url');
                 apiSuiteInstance.apiURL = url + '/apps/news-app/navigation/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
                 apiSuiteInstance.stationProperty = /www\.(\S+)\.com/.exec(apiSuiteInstance.apiURL)[1];
             }).then(function () {
@@ -491,8 +492,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
     apiSuite.prototype.spiderObject = function (parentObjectName, childManifestObject, initialPass) {
         // var apiSuiteInstance = this;
-        var firstPass = true,
-            __baseUrl = casper.cli.get('url');
+        var firstPass = true;
 
         for (var childItem in childManifestObject) {
             if (typeof childManifestObject[childItem] != 'object') {
@@ -536,9 +536,9 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                 if (navItemAppTitleNiceName.indexOf('/apps') > -1) {
 
                                     if (navItemAppTitleNiceName.indexOf('?') > -1) {
-                                        navItemAppLocationURL = __baseUrl + navItemAppTitleNiceName + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                                        navItemAppLocationURL = apiSuiteInstance.baseUrl + navItemAppTitleNiceName + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
                                     } else {
-                                        navItemAppLocationURL = __baseUrl + navItemAppTitleNiceName + '?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                                        navItemAppLocationURL = apiSuiteInstance.baseUrl + navItemAppTitleNiceName + '?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
                                     }
 
                                     if (debugOutput) {
@@ -571,8 +571,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
     apiSuite.prototype.testNavigationData = function () {
         // var apiSuiteInstance = this;
-        var baseUrl = casper.cli.get('url'),
-            endpointUrl = null,
+        var endpointUrl = null,
             keys = Object.keys(this.collectionObject),
             i = 0,
             thisURL = null,
@@ -618,7 +617,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         }
                     }
                     // http://www.nbclosangeles.com/apps/news-app/content/?contentId=389777331&apiVersion=6
-                    endpointUrl = baseUrl + '/apps/news-app/content/' + location_url + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                    endpointUrl = apiSuiteInstance.baseUrl + '/apps/news-app/content/' + location_url + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
 
                     if (debugOutput) { console.log('> parsedLocationURL: ' + location_url); }
                 }
@@ -724,7 +723,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                     // ...
                                     if (showOutput) {
                                         console.log('-------------------');
-                                        console.log(' JSON Parse Error  ');
+                                        console.log(' JSON Parse Error / cleanedJson ');
                                         console.log('-------------------');
                                         console.log(colorizer.colorize('FAIL: ', 'WARNING') + 'Parse fail possible content error...check endpoint manually!');
                                     }
@@ -833,9 +832,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     };
 
     apiSuite.prototype.endpointContentValidation = function (endpointName, endpointUrl, testID) {
-        // var suite = this;
-        var baseUrl = casper.cli.get('url');
-        // var baseUrl = 'http://www.' + sourceString + '.com';
         if (endpointUrl) {
             casper.thenOpen(endpointUrl, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }, function (resp) {
                 var status = resp.status,
@@ -905,8 +901,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                             var singleArticleInnerItems = singleArticleItemObject[singleArticleItem],
                                                 __subCount = 0;
 
-                                            for (thisItem in singleArticleInnerItems) {
-                                                apiSuiteInstance.singleItemContentValidation(singleArticleInnerItems[thisItem]);
+                                            for (var thisContentItem in singleArticleInnerItems) {
+                                                apiSuiteInstance.singleItemContentValidation(singleArticleInnerItems[thisContentItem]);
                                             }
                                         }
                                     }
@@ -916,12 +912,12 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                             }
                         } catch (e) {
                             if (showOutput) {
-                                console.log('-------------------');
-                                console.log(' JSON Parse Error  ');
-                                console.log('-------------------');
-                                console.log(' endpointName: '  + endpointName);
-                                console.log(' endpointUrl: ' + endpointUrl);
-                                console.log(' ' + colorizer.colorize('JSON Parse Fail: ', 'WARN') + e);
+                                console.log('------------------------------------------------');
+                                console.log(' JSON Parse Error | endpointContentValidation() ');
+                                console.log('------------------------------------------------');
+                                console.log(' failed endpointName: '  + endpointName);
+                                console.log(' failed endpointUrl: ' + endpointUrl);
+                                console.log(' ' + colorizer.colorize('JSON Parse Fail: ', 'WARNING') + e);
 
                                 // console.log('   JSON Object ');
                                 // console.log('  ------------------------------');
@@ -986,7 +982,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             articleContentBody = contentTestObject.contentBody,
             articleLeadMedia = contentTestObject.leadMedia;
 
-        // if (debugOutput) {
+        if (debugOutput) {
             console.log('-------------------------------');
             console.log(' Content item var declaration   ');
             console.log('-------------------------------');
@@ -1014,184 +1010,182 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             console.log('    > articleLiveAppVideoEmbed : ' + articleLiveAppVideoEmbed);
             // console.log('    > articleContentBody : ' + articleContentBody);
             console.log('    > articleLeadMedia : ' + articleLeadMedia);
-        // }
-
-        if (articleContentID.length <= 0 || (typeof articleContentID === 'number') || articleContentID === 'false') {
-            setFail++;
-            subTestResults['articleContentID'] = 'FAIL: contentID invalid and/or missing, currently outputting: ' + articleContentID;
         }
 
-        if (articleTitle.length <= 0 || articleTitle === 'false') {
-            setFail++;
-            subTestResults['articleTitle'] = 'FAIL: articleTitle invalid and/or missing, currently outputting: ' + articleTitle;
-        }
-
-        // if (articleTitle === 'false' && articleDisplayDate === 'false') {
-        //     setFail++;
-            
-        // Check for the Feature flag
-        if (articleFeature === true) {
-            if (articleFeatureName.length <= 0) {
+        if (articleTypeName !== 'FeaturePageHeader') {
+            if (articleContentID.length <= 0 || (typeof articleContentID === 'number') || articleContentID === 'false') {
                 setFail++;
-
-                var __curError = 'Feature flag set to TRUE but featureName empty.';
-
-                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
-                subTestResults['articleFeature'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.';
-                var __curError = '';
-
-            } else if (articleFeatureID.length <= 0) {
-                setFail++;
-
-                var __curError = 'Feature flag set to TRUE but featureId empty.';
-
-                console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
-                subTestResults['articleFeatureID'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.';
-                var __curError = '';
-            }
-        }
-
-        // If gallery collect into gallery object
-        if (articleTypeName == 'Gallery') {
-            var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
-
-            if (debugOutput) {
-                console.log('    ------------------ ');
-                console.log('     Gallery\n');
-                console.log('      >  Gallery items url = ' + galleryContentURL);
-            }
-            if (showOutput) {
-                console.log('------------------------------------------');
-                console.log(' Gallery seen, ID: ' + articleContentID + ', Testing gallery images.');
-                console.log('------------------------------------------');
-            }
-            // Test gallery content
-           apiSuiteInstance.galleryObjectTest(articleContentID, galleryContentURL, testID);
-        }
-
-        if (articleFullsizeImageURL.indexOf('0*false') > -1 || articleFullsizeImageURL == null) {
-            console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + articleFullsizeImageURL + '.', 'ERROR'));
-            subTestResults['fullsizeImageURL'] = 'FAIL: Image url invalid for fullsizeImageURL: ' + articleFullsizeImageURL;
-        }
-
-        if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
-            console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
-            subTestResults['thumbnailImageURL'] = 'FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL;
-        }
-
-        // Check for the Sponsor flag
-        if (articleSponsored === true) {
-            if (articleSponsorName.length <= 0) {
-                setFail++;
-
-                var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
-
-                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
-                subTestResults['articleSponsorName'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.';
-                var __curError = '';
-            } else if (articleSponsorID.length <= 0) {
-                setFail++;
-
-                var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
-
-                console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
-                subTestResults['articleSponsorID'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.';
-                var __curError = '';
-            }
-        }
-
-        // Check for the LiveStream flag
-        if (articleIsLiveStream === true) {
-            if (articleLiveVideoEmbed.length <= 0) {
-                setFail++;
-
-                var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
-
-                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.', 'ERROR'));
-                subTestResults['articleIsLiveStream'] = 'FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.';
-
-                var __curError = '';
-            } else if (articleLiveAppVideoEmbed.length <= 0) {
-                setFail++;
-
-                var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
-
-                console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
-                subTestResults['articleLiveAppVideoEmbed'] = 'FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.';
-                var __curError = '';
-            }
-        }
-
-        if (typeof articleLeadMedia === 'object') {
-            if (debugOutput) {
-                console.log('    ------------------ ');
+                subTestResults['articleContentID'] = 'FAIL: contentID invalid and/or missing, currently outputting: ' + articleContentID;
             }
 
-            if (articleLeadMedia['typeName'] == 'Gallery') {
-                var galleryContentID = articleLeadMedia['contentID'];
-                var galleryContentURL = baseUrl + '/apps/news-app/content/gallery/?contentId=' + galleryContentID;
+            if (articleTitle.length <= 0 || articleTitle === 'false') {
+                setFail++;
+                subTestResults['articleTitle'] = 'FAIL: articleTitle invalid and/or missing, currently outputting: ' + articleTitle;
+            }
+                
+            // Check for the Feature flag
+            if (articleFeature === true) {
+                if (articleFeatureName.length <= 0) {
+                    setFail++;
+
+                    var __curError = 'Feature flag set to TRUE but featureName empty.';
+
+                    console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
+                    subTestResults['articleFeature'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.';
+                    var __curError = '';
+
+                } else if (articleFeatureID.length <= 0) {
+                    setFail++;
+
+                    var __curError = 'Feature flag set to TRUE but featureId empty.';
+
+                    console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
+                    subTestResults['articleFeatureID'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.';
+                    var __curError = '';
+                }
+            }
+
+            // If gallery collect into gallery object
+            if (articleTypeName == 'Gallery') {
+                var galleryContentURL = apiSuiteInstance.baseUrl + '/apps/news-app/content/gallery/?contentId=' + articleContentID;
 
                 if (debugOutput) {
                     console.log('    ------------------ ');
-                    console.log('     Lead Media Gallery\n');
-                    console.log('      >  Gallery items = ' + baseUrl + '/apps/news-app/content/gallery/?contentId=');
-                    console.log('       gallery url to test: ' + galleryContentURL);
+                    console.log('     Gallery\n');
+                    console.log('      >  Gallery items url = ' + galleryContentURL);
                 }
-               apiSuiteInstance.galleryObjectTest(articleContentID, galleryContentURL, testID);
-
-                var urlHealthStatus =apiSuiteInstance.checkURLHealth(galleryContentURL, function (data) {
-                    if (! data) {
-
-                        if (showOutput) {
-                           console.log(' > Lead media: Gallery loaded failed to load correctly: ' + colorizer.colorize(data, 'FAIL'));
-                        }
-                        setFail++;
-                        subTestResults['leadMedia_gallery_urlHealthStatus'] = 'Lead media: Gallery loaded failed to load correctly';
-                    }
-                });
+                if (showOutput) {
+                    console.log('------------------------------------------');
+                    console.log(' Gallery seen, ID: ' + articleContentID + ', Testing gallery images.');
+                    console.log('------------------------------------------');
+                }
+                // Test gallery content
+               apiSuiteInstance.galleryObjectTest(articleContentID, galleryContentURL, apiSuiteInstance.manifestTestRefID);
             }
 
-            if (articleLeadMedia['typeName'] == 'Video Release') {
-                var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ articleLeadMedia['extID'] +'?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
+            if (articleFullsizeImageURL.indexOf('0*false') > -1 || articleFullsizeImageURL == null) {
+                console.log(colorizer.colorize('FAIL: Image url invalid for fullsizeImageURL: ' + articleFullsizeImageURL + '.', 'ERROR'));
+                subTestResults['fullsizeImageURL'] = 'FAIL: Image url invalid for fullsizeImageURL: ' + articleFullsizeImageURL;
+            }
 
+            if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
+                console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
+                subTestResults['thumbnailImageURL'] = 'FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL;
+            }
+
+            // Check for the Sponsor flag
+            if (articleSponsored === true) {
+                if (articleSponsorName.length <= 0) {
+                    setFail++;
+
+                    var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
+
+                    console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
+                    subTestResults['articleSponsorName'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.';
+                    var __curError = '';
+                } else if (articleSponsorID.length <= 0) {
+                    setFail++;
+
+                    var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
+
+                    console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
+                    subTestResults['articleSponsorID'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.';
+                    var __curError = '';
+                }
+            }
+
+            // Check for the LiveStream flag
+            if (articleIsLiveStream === true) {
+                if (articleLiveVideoEmbed.length <= 0) {
+                    setFail++;
+
+                    var __curError = 'Livestream flag set to TRUE but liveVideoEmbed empty.';
+
+                    console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.', 'ERROR'));
+                    subTestResults['articleIsLiveStream'] = 'FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveVideoEmbed empty.';
+
+                    var __curError = '';
+                } else if (articleLiveAppVideoEmbed.length <= 0) {
+                    setFail++;
+
+                    var __curError = 'Livestream flag set to TRUE but liveAppVideoEmbed empty.';
+
+                    console.log(colorizer.colorize('FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.', 'ERROR'));
+                    subTestResults['articleLiveAppVideoEmbed'] = 'FAIL: Livestream flag set to TRUE for ' + articleContentID + ', but liveAppVideoEmbed empty.';
+                    var __curError = '';
+                }
+            }
+
+            if (typeof articleLeadMedia === 'object') {
                 if (debugOutput) {
                     console.log('    ------------------ ');
-                    console.log('     Lead Media Video Release\n');
-                    console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['typeName']);
-                    console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['extID']);
-                    console.log('       video url to test ' + videoURL);
                 }
 
-                var urlHealthStatus =apiSuiteInstance.checkURLHealth(videoURL, function (data) {
-                    if (! data) {
+                if (articleLeadMedia['typeName'] == 'Gallery') {
+                    var galleryContentID = articleLeadMedia['contentID'];
+                    var galleryContentURL = apiSuiteInstance.baseUrl + '/apps/news-app/content/gallery/?contentId=' + galleryContentID;
 
-                        if (showOutput) {
-                            console.log(' > Lead media: Video release file url Failed to load: ' + colorizer.colorize(data, 'FAIL'));
-                        }
-                        setFail++;
-                        subTestResults['leadMedia_video_urlHealthStatus'] = 'Lead media: Video release file url Failed to load';
+                    if (debugOutput) {
+                        console.log('    ------------------ ');
+                        console.log('     Lead Media Gallery\n');
+                        console.log('      >  Gallery items = ' + apiSuiteInstance.baseUrl + '/apps/news-app/content/gallery/?contentId=');
+                        console.log('       gallery url to test: ' + galleryContentURL);
                     }
-                });
+                   apiSuiteInstance.galleryObjectTest(articleContentID, galleryContentURL, apiSuiteInstance.manifestTestRefID);
+
+                    var urlHealthStatus =apiSuiteInstance.checkURLHealth(galleryContentURL, function (data) {
+                        if (! data) {
+
+                            if (showOutput) {
+                               console.log(' > Lead media: Gallery loaded failed to load correctly: ' + colorizer.colorize(data, 'FAIL'));
+                            }
+                            setFail++;
+                            subTestResults['leadMedia_gallery_urlHealthStatus'] = 'Lead media: Gallery loaded failed to load correctly';
+                        }
+                    });
+                }
+
+                if (articleLeadMedia['typeName'] == 'Video Release') {
+                    var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ articleLeadMedia['extID'] +'?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
+
+                    if (debugOutput) {
+                        console.log('    ------------------ ');
+                        console.log('     Lead Media Video Release\n');
+                        console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['typeName']);
+                        console.log('       articleLeadMedia[__indItems]' + articleLeadMedia['extID']);
+                        console.log('       video url to test ' + videoURL);
+                    }
+
+                    var urlHealthStatus =apiSuiteInstance.checkURLHealth(videoURL, function (data) {
+                        if (! data) {
+
+                            if (showOutput) {
+                                console.log(' > Lead media: Video release file url Failed to load: ' + colorizer.colorize(data, 'FAIL'));
+                            }
+                            setFail++;
+                            subTestResults['leadMedia_video_urlHealthStatus'] = 'Lead media: Video release file url Failed to load';
+                        }
+                    });
+                }
+                if (debugOutput) {console.log('  >---------------')};
             }
-            if (debugOutput) {console.log('  >---------------')};
-        }
 
-        if (Object.keys(subTestResults).length > 0){
-            // Add article ID to the results object
-            // endpointTestResults['articleContentID'] = articleContentID;
-            endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
-        }
+            if (Object.keys(subTestResults).length > 0){
+                // Add article ID to the results object
+                // endpointTestResults['articleContentID'] = articleContentID;
+                endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+            }
 
-        if (Object.keys(endpointTestResults).length > 0){
-           apiSuiteInstance.testResultsObject.testResults = endpointTestResults;
+            if (Object.keys(endpointTestResults).length > 0){
+               apiSuiteInstance.testResultsObject.testResults = endpointTestResults;
+            }
+            if (debugOutput) {console.log('  -----------------')};
         }
-        if (debugOutput) {console.log('  -----------------')};
     };
 
     apiSuite.prototype.galleryObjectTest = function (articleContentID, galleryURL, testID) {
         console.log('galleryURL: ', galleryURL);
         // return;
-        var suite = this;
         casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             var status = this.status().currentHTTPStatus;
 
@@ -1213,8 +1207,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         if (parentManifestItem === 'items') {
                             var innerGalleryObjects = jsonParsedOutput[parentManifestItem];
                             for (var thisGalleryObject in innerGalleryObjects){
-                                gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID;
-                                gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
+                                var gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID,
+                                    gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
 
                                 if (debugOutput) {
                                     console.log('gallerySingleImageID > ' + gallerySingleImageID);
@@ -1274,7 +1268,6 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     };
 
     apiSuite.prototype.checkURLHealth = function (url, callback) {
-        var suite = this;
 
         if (url) {
             casper.thenOpen(url).then(function (resp) {
