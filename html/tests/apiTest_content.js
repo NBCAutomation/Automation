@@ -19,9 +19,10 @@ casper.options.timeout = 3600000;
 
 casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     'use strict';
+    
     // Global Vars
     var logResults = true,
-        apiSuiteInstance = null,
+        apiSuiteInstance,
         colorizer = require('colorizer').create('Colorizer'),
         envConfig = casper.cli.get('env'),
         configURL = 'http://54.243.53.242',

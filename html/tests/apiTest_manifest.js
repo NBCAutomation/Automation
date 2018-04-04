@@ -46,322 +46,324 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         var logResults = false;
     }
 
-    var collectionObject = {};
-    var dictionaryObject = {};
-    var testResultsObject = {};
-    var manifestTestRefID;
-    var manifestTestStatus;
-    var setFail = 0;
-    var testStartTime;
-    var manifestLoadTime;
-    var testManifestData = true;
-
-    var resourcesTime = [];
-
-    var listener = function(resource, request) {
-        var date_start = new Date();
-
-        resourcesTime[resource.id] = {
-            'id': resource.id,
-            'start': date_start.getTime(),
-            'end': -1,
-            'time': -1,
-            'status': resource.status
-        }
-
-        if (debugOutput) {
-            this.echo('resourcesTime :: ' + resourcesTime[resource.id]['time']);
-        }
-    };
-
-    var receivedListener = function(resource, request) {
-        var date_end = new Date();
-
-        resourcesTime[resource.id]['end']  = date_end.getTime();
-        resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
-        manifestLoadTime = resourcesTime[resource.id]['time'];
-        
-        if (debugOutput) {
-            /* to debug and compare */
-            this.echo('manifestLoadTime >> ' + manifestLoadTime);
-            this.echo('resource time >> ' + resourcesTime[resource.id]['time']);
-        }
-    };
-
-    var apiVersion = '10';
-
     if ( ! casper.cli.get('enablevalidation') ) {
         var enableJsonValidation = '&enableJsonValidation=false';
     }
-    
-    // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
-    var reqKeys = new Array(
-        "domain",
-        "market-site-key",
-        "launch-image-name",
-        "ugc-partition-id",
-        "video-autoplay",
-        "push-notification-url-key",
-        "push-notification-flag-key",
-        // "comscore-app-name",
-        /*
-        "web-links__facebook__url",
-        "web-links__google-plus__url",
-        "web-links__instagram__url",
-        */
-        "web-links__search__title",
-        "web-links__search__url",
-        "web-links__send-feedback__url",
-        "web-links__settings-privacy-policy__title",
-        "web-links__settings-privacy-policy__url",
-        "web-links__traffic__url",
-        "web-links__tv-listings__title",
-        "web-links__tv-listings__url",
-        "web-links__tve__url",
-        /*
-        "web-links__twitter__url",
-        */
-        "web-links__weather-alerts__url",
-        "web-links__weather-school-closings__url",
-        "advertising__display__network-id",
-        "advertising__display__echo-transition-delay",
-        "echo-transition-delay",
-        "advertising__splash__enabled",
-        "advertising__splash__ad-unit-level2",
-        "advertising__splash__request-timeout",
-        "advertising__splash__display-duration",
-        "advertising__splash__target-width",
-        "advertising__splash__target-height",
-        "advertising__splash__scaling-x",
-        "advertising__splash__scaling-y",
-        "advertising__video__network-id",
-        "advertising__video__direct-sold-target-width",
-        "advertising__video__direct-sold-target-height",
-        "advertising__video__backfill-target-width",
-        "advertising__video__backfill-target-height",
-        "advertising__video__backfill-app-id",
-        "backfill-app-id",
-        "wsi-map-id",
-        // "wsi-market-default-layer",
-        // "app-urls__weather-branding",
-        // "app-urls__iteam-branding",
-        "app-urls__alerts",
-        "app-urls__ugctemplets",
-        "app-urls__breaking",
-        "app-urls__home",
-        "app-urls__home-investigation",
-        "app-urls__facebook-comments-script",
-        "app-urls__navigation",
-        "app-urls__settings-terms-of-use",
-        "app-urls__settings-terms-of-service",
-        "app-urls__settings-closed-captioning-faq",
-        "app-urls__submit-media",
-        "app-urls__trending",
-        "app-urls__weather-forcast-video",
-        "app-urls__weather-forcast-story",
-        "app-urls__weather-maps",
-        "app-base-urls__advertising-display",
-        "app-base-urls__advertising-video",
-        "app-base-urls__home-top-stories",
-        "app-base-urls__content",
-        "app-base-urls__gallery",
-        "app-base-urls__recommended",
-        "app-base-urls__related",
-        // "app-base-urls__weather-conditions-icon",
-        "app-base-urls__weather-forcast",
-        "app-base-urls__weather-wsi-forcast",
-        "app-base-urls__weather-location-lookup",
-        "omniture__report-suite-ids",
-        "omniture__tracking-server",
-        "omniture__app-section-server-name",
-        "omniture__page-view-event",
-        "omniture__link-type",
-        "omniture__station-division",
-        "omniture__station-business-unit",
-        "omniture__station-call-sign",
-        "omniture__station-market",
-        /*
-        "force-update",
-        "update-screen-title",
-        "update-screen-desc",
-        "update-screen-appUrl",
-        "update-screen-appversion",
-        */
-        "advertising__ad-unit-level1",
-        "advertising__fw_ssid",
-        /*
-        "adtest",
-        */
-        "advertising__stage",
-        "advertising__article-interstitial",
-        "advertising__gallery-interstitial",
-        "advertising__default-iab-category-tier1",
-        "advertising__default-iab-category-tier2",
-        "advertising__splash__display-duration",
-        "contact__name",
-        "contact__address-line1",
-        "contact__address-line2",
-        "contact__phone",
-        /*
-        "contact-Info__phone1__contactInfoLabel",
-        "contact-Info__phone1__contactInfoNumber",
-        "contactInfoNumber",
-        "contact-Info__phone2__contactInfoLabel",
-        "contact-Info__phone2__contactInfoNumber",
-        "contact-Info__phone3__contactInfoLabel",
-        "contact-Info__phone3__contactInfoNumber",
-        */
-        "contact__investigation-phone",
-        "contact__investigation-email",
-        "weather__meteorologist-summary-disabled",
-        "weather__market-default-postal-code",
-        "weather__market-default-location-name",
-        // "weather__market-default-dma",
-        "weather__market-default-lat",
-        "weather__market-default-long",
-        "weather__scroll-down-animation-hour",
-        "weather__scroll-down-animation-display-sec",
-        "weather__geo-location-prompt-visit-interval",
-        /*
-        "app-id",
-        */
-        "live-promotion__is-live-promotion",
-        "live-promotion__promotion-type",
-        "live-promotion__url-schema-ios",
-        "live-promotion__app-link-ios",
-        "live-promotion__url-schema-android",
-        "live-promotion__app-link-android"
-    );
 
-    var apiSuite = function(url) {
+    // Global Vars
+    var collectionObject = {},
+        dictionaryObject = {},
+        testResultsObject = {},
+        manifestTestRefID,
+        manifestTestStatus,
+        setFail = 0,
+        testStartTime,
+        manifestLoadTime,
+        testManifestData = true,
+        apiSuiteInstance,
+        resourcesTime = [],
+        apiVersion,
+        listener = function(resource, request) {
+            var date_start = new Date();
 
-        if (!url) {
-            throw new Error('A URL is required!');
-        } else {
-            var suite = this;
+            resourcesTime[resource.id] = {
+                'id': resource.id,
+                'start': date_start.getTime(),
+                'end': -1,
+                'time': -1,
+                'status': resource.status
+            }
 
-            var parser = document.createElement('a');
-            parser.href = url;
+            if (debugOutput) {
+                this.echo('resourcesTime :: ' + resourcesTime[resource.id]['time']);
+            }
+        },
+        receivedListener = function(resource, request) {
+            var date_end = new Date();
 
-            newUrl = parser.href;
-            var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
-            var urlUri = sourceString.replace('.','_');
+            resourcesTime[resource.id]['end']  = date_end.getTime();
+            resourcesTime[resource.id]['time'] = resourcesTime[resource.id]['end'] - resourcesTime[resource.id]['start'];
+            manifestLoadTime = resourcesTime[resource.id]['time'];
+            
+            if (debugOutput) {
+                /* to debug and compare */
+                this.echo('manifestLoadTime >> ' + manifestLoadTime);
+                this.echo('resource time >> ' + resourcesTime[resource.id]['time']);
+            }
+        },
+        // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
+        reqKeys = new Array(
+            "domain",
+            "market-site-key",
+            "launch-image-name",
+            "ugc-partition-id",
+            "video-autoplay",
+            "push-notification-url-key",
+            "push-notification-flag-key",
+            // "comscore-app-name",
+            /*
+            "web-links__facebook__url",
+            "web-links__google-plus__url",
+            "web-links__instagram__url",
+            */
+            "web-links__search__title",
+            "web-links__search__url",
+            "web-links__send-feedback__url",
+            "web-links__settings-privacy-policy__title",
+            "web-links__settings-privacy-policy__url",
+            "web-links__traffic__url",
+            "web-links__tv-listings__title",
+            "web-links__tv-listings__url",
+            "web-links__tve__url",
+            /*
+            "web-links__twitter__url",
+            */
+            "web-links__weather-alerts__url",
+            "web-links__weather-school-closings__url",
+            "advertising__display__network-id",
+            "advertising__display__echo-transition-delay",
+            "echo-transition-delay",
+            "advertising__splash__enabled",
+            "advertising__splash__ad-unit-level2",
+            "advertising__splash__request-timeout",
+            "advertising__splash__display-duration",
+            "advertising__splash__target-width",
+            "advertising__splash__target-height",
+            "advertising__splash__scaling-x",
+            "advertising__splash__scaling-y",
+            "advertising__video__network-id",
+            "advertising__video__direct-sold-target-width",
+            "advertising__video__direct-sold-target-height",
+            "advertising__video__backfill-target-width",
+            "advertising__video__backfill-target-height",
+            "advertising__video__backfill-app-id",
+            "backfill-app-id",
+            "wsi-map-id",
+            // "wsi-market-default-layer",
+            // "app-urls__weather-branding",
+            // "app-urls__iteam-branding",
+            "app-urls__alerts",
+            "app-urls__ugctemplets",
+            "app-urls__breaking",
+            "app-urls__home",
+            "app-urls__home-investigation",
+            "app-urls__facebook-comments-script",
+            "app-urls__navigation",
+            "app-urls__settings-terms-of-use",
+            "app-urls__settings-terms-of-service",
+            "app-urls__settings-closed-captioning-faq",
+            "app-urls__submit-media",
+            "app-urls__trending",
+            "app-urls__weather-forcast-video",
+            "app-urls__weather-forcast-story",
+            "app-urls__weather-maps",
+            "app-base-urls__advertising-display",
+            "app-base-urls__advertising-video",
+            "app-base-urls__home-top-stories",
+            "app-base-urls__content",
+            "app-base-urls__gallery",
+            "app-base-urls__recommended",
+            "app-base-urls__related",
+            // "app-base-urls__weather-conditions-icon",
+            "app-base-urls__weather-forcast",
+            "app-base-urls__weather-wsi-forcast",
+            "app-base-urls__weather-location-lookup",
+            "omniture__report-suite-ids",
+            "omniture__tracking-server",
+            "omniture__app-section-server-name",
+            "omniture__page-view-event",
+            "omniture__link-type",
+            "omniture__station-division",
+            "omniture__station-business-unit",
+            "omniture__station-call-sign",
+            "omniture__station-market",
+            /*
+            "force-update",
+            "update-screen-title",
+            "update-screen-desc",
+            "update-screen-appUrl",
+            "update-screen-appversion",
+            */
+            "advertising__ad-unit-level1",
+            "advertising__fw_ssid",
+            /*
+            "adtest",
+            */
+            "advertising__stage",
+            "advertising__article-interstitial",
+            "advertising__gallery-interstitial",
+            "advertising__default-iab-category-tier1",
+            "advertising__default-iab-category-tier2",
+            "advertising__splash__display-duration",
+            "contact__name",
+            "contact__address-line1",
+            "contact__address-line2",
+            "contact__phone",
+            /*
+            "contact-Info__phone1__contactInfoLabel",
+            "contact-Info__phone1__contactInfoNumber",
+            "contactInfoNumber",
+            "contact-Info__phone2__contactInfoLabel",
+            "contact-Info__phone2__contactInfoNumber",
+            "contact-Info__phone3__contactInfoLabel",
+            "contact-Info__phone3__contactInfoNumber",
+            */
+            "contact__investigation-phone",
+            "contact__investigation-email",
+            "weather__meteorologist-summary-disabled",
+            "weather__market-default-postal-code",
+            "weather__market-default-location-name",
+            // "weather__market-default-dma",
+            "weather__market-default-lat",
+            "weather__market-default-long",
+            "weather__scroll-down-animation-hour",
+            "weather__scroll-down-animation-display-sec",
+            "weather__geo-location-prompt-visit-interval",
+            /*
+            "app-id",
+            */
+            "live-promotion__is-live-promotion",
+            "live-promotion__promotion-type",
+            "live-promotion__url-schema-ios",
+            "live-promotion__app-link-ios",
+            "live-promotion__url-schema-android",
+            "live-promotion__app-link-android"
+        ),
+        apiSuite = function(url) {
 
-            // Add manifest url    
-            url = url + '/apps/news-app/manifest/json/?apiVersion=' + apiVersion + enableJsonValidation;
-            // url = url + '/apps/news-app/manifest/json/';
+            if (!url) {
+                throw new Error('A URL is required!');
+            } else {
 
-            /*******************
-            *
-            * Start Testing
-            *
-            *******************/
-            casper.start( url ).then(function(response) {
-                var headerObject = response.headers;
+                var parser = document.createElement('a');
+                parser.href = url;
 
-                for (var keys in headerObject) {
-                    if (headerObject[keys].name == 'X-Server-Name') {
-                        if (debugOutput) {
-                            console.log(headerObject[keys].name);
-                            console.log(headerObject[keys].value);
-                        }
-                        testResultsObject['clickXServer'] = headerObject[keys].value;
+                newUrl = parser.href;
+                var sourceString = newUrl.replace('http://','').replace('https://','').replace('www.','').replace('.com','').split(/[/?#]/)[0];
+                var urlUri = sourceString.replace('.','_');
+
+                /*******************
+                *
+                * Start Testing
+                *
+                *******************/
+                casper.start().then(function (resp) {
+                    if (casper.cli.get('apiVersion')) {
+                        apiSuiteInstance.apiVersion = casper.cli.get('apiVersion');
+                    } else {
+                        apiSuiteInstance.getGlobalAPIVer();
                     }
+                }).then(function () {
+                    apiSuiteInstance.apiURL = url + '/apps/news-app/manifest/json/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                    apiSuiteInstance.stationProperty = /www\.(\S+)\.com/.exec(apiSuiteInstance.apiURL)[1];
 
-                }
-                
-                if ( response.status == 200 ) {
-                    var urlCurrentLoadTime = suite.getLoadTime(url, function (data) {
-                        if (data) {
-                            if (showOutput) {
-                                console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
+                }).then(function () {
+                    casper.thenOpen(apiSuiteInstance.apiURL, { method: 'get'}, function (resp) {
+                        var headerObject = resp.headers;
+
+                        for (var keys in headerObject) {
+                            if (headerObject[keys].name == 'X-Server-Name') {
+                                if (debugOutput) {
+                                    console.log(headerObject[keys].name);
+                                    console.log(headerObject[keys].value);
+                                }
+                                testResultsObject['clickXServer'] = headerObject[keys].value;
                             }
-                        } else {
-                            console.log('-- no timing returned.');
+
                         }
                         
+                        if ( resp.status == 200 ) {
+                            var urlCurrentLoadTime = apiSuiteInstance.getLoadTime(apiSuiteInstance.apiURL, function (data) {
+                                if (data) {
+                                    if (showOutput) {
+                                        console.log('> LoadTime: ' +  colorizer.colorize(data + ' ms', 'INFO') );
+                                    }
+                                } else {
+                                    console.log('-- no timing returned.');
+                                }
+                                
+                            });
+
+                            if(createDictionary){
+                                console.log(urlUri + ' Dictionary creation/update started.');
+                            } else {
+                                console.log(colorizer.colorize('Testing started: ', 'COMMENT') + apiSuiteInstance.apiURL );
+                            }
+                        } else {
+                            casper.test.fail('Page did not load correctly. Response: ' + resp.status);
+                        }
                     });
-
-                    if(createDictionary){
-                        console.log(urlUri + ' Dictionary creation/update started.');
+                }).then(function () {
+                    if (createDictionary) {
+                        apiSuiteInstance.collectManifestData(apiSuiteInstance.apiURL, type, 'xx');
                     } else {
-                        console.log(colorizer.colorize('Testing started: ', 'COMMENT') + url );
+                        // Create ref test ID and start manifest data collection for testing
+                        apiSuiteInstance.createTestID(apiSuiteInstance.apiURL, type, urlUri);
                     }
-                } else {
-                    casper.test.fail('Page did not load correctly. Response: ' + response.status);
-                }
-            }).then(function () {
-                if (createDictionary) {
-                    suite.collectManifestData(url, type, 'xx');
-                } else {
-                    // Create ref test ID and start manifest data collection for testing
-                    suite.createTestID(url, type, urlUri);
-                }
 
-                // Log test load time. Moved to allow for waiting of testID to get set
-            }).then(function () {
-                suite.logLoadTime(manifestTestRefID, 'apiManifestTest', manifestLoadTime, url);
-            }).then(function () {
-                if(createDictionary){
-                    suite.updateInsertManifestDictionary(urlUri, collectionObject);
+                    // Log test load time. Moved to allow for waiting of testID to get set
+                }).then(function () {
+                    apiSuiteInstance.logLoadTime(manifestTestRefID, 'apiManifestTest', manifestLoadTime, apiSuiteInstance.apiURL);
+                }).then(function () {
+                    if(createDictionary){
+                        apiSuiteInstance.updateInsertManifestDictionary(urlUri, collectionObject);
 
-                    // Display collection object
+                        // Display collection object
+                        if (debugOutput) {
+                            console.log('---------------------');
+                            console.log(' Collection object   ');
+                            console.log('---------------------');
+                            casper.wait(700, function() {
+                                // console.log(collectionObject);
+                                for (var thisCollectionOtem in collectionObject) {
+                                    console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
+                                }
+                            })
+                        } else {
+
+                        }
+                    } else {
+                        if (testManifestData) {
+                            apiSuiteInstance.testManifestData(urlUri, collectionObject, manifestTestRefID);
+                        }
+                    }
+
+                }).then(function () {
                     if (debugOutput) {
                         console.log('---------------------');
-                        console.log(' Collection object   ');
+                        console.log(' Test Results object   ');
                         console.log('---------------------');
-                        casper.wait(700, function() {
-                            // console.log(collectionObject);
-                            for (var thisCollectionOtem in collectionObject) {
-                                console.log('>>>>> ' + thisCollectionOtem + ' : ' + collectionObject[thisCollectionOtem]);
-                            }
-                        })
+                        for (var testResultsItem in testResultsObject) {
+                            console.log('>>>>> ' + testResultsItem + ' : ' + testResultsObject[testResultsItem]);
+                        }
+                    }
+
+                    //Process test results to DB
+                    if (logResults) {
+                        apiSuiteInstance.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiManifestTest', manifestLoadTime, manifestTestStatus);
+                    }
+
+                }).run(function() {
+                    if(createDictionary){
+                        console.log(urlUri + ' Dictionary creation/update ended.');
                     } else {
-
+                        console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
                     }
-                } else {
-                    if (testManifestData) {
-                        suite.testManifestData(urlUri, collectionObject, manifestTestRefID);
-                    }
-                }
 
-            }).then(function () {
-                if (debugOutput) {
-                    console.log('---------------------');
-                    console.log(' Test Results object   ');
-                    console.log('---------------------');
-                    for (var testResultsItem in testResultsObject) {
-                        console.log('>>>>> ' + testResultsItem + ' : ' + testResultsObject[testResultsItem]);
-                    }
-                }
-
-                //Process test results to DB
-                if (logResults) {
-                    suite.processTestResults(urlUri, testResultsObject, manifestTestRefID, setFail, 'apiManifestTest', manifestLoadTime, manifestTestStatus);
-                }
-
-            }).run(function() {
-                if(createDictionary){
-                    console.log(urlUri + ' Dictionary creation/update ended.');
-                } else {
-                    console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
-                }
-
-                this.exit();
-                test.done();
-            });
-        }
-    };
+                    this.exit();
+                    test.done();
+                });
+            }
+        };
 
     // Create test id in DB
     apiSuite.prototype.createTestID = function(url, type, stationProperty) {
-        var suite = this;
 
         // require('utils').dump( current );
         var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-manifest&property=' + stationProperty + '&fileLoc=json_null';
 
         if (!logResults){
-            suite.collectManifestData(url, type, 'xx');
+            apiSuiteInstance.collectManifestData(url, type, 'xx');
         } else {
             if (dbUrl) {
                 casper.thenOpen(dbUrl).then(function(resp) {
@@ -374,7 +376,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                         var output = this.getHTML();
                         manifestTestRefID = casper.getElementInfo('body').text;
 
-                        suite.collectManifestData(url, type, manifestTestRefID);
+                        apiSuiteInstance.collectManifestData(url, type, manifestTestRefID);
                     } else {
                         throw new Error('Unable to get/store Test ID!');
                     }
@@ -383,8 +385,36 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         }
     };
 
+    // Create test id in DB
+    apiSuite.prototype.getGlobalAPIVer = function (randomVar) {
+        // var apiSuiteInstance = this;
+
+        var dbUrl = configURL + '/utils/tasks?task=getStationsGlobalAPIVer';
+
+        if (dbUrl) {
+            if (debugOutput) {console.log(dbUrl); }
+
+            casper.thenOpen(dbUrl).then(function (resp) {
+                var pageOutput = null;
+
+                if (resp.status === 200) {
+                    if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl); }
+
+                    pageOutput = this.getHTML();                    
+
+                    apiSuiteInstance.apiVersion = casper.getElementInfo('body').text;
+
+                    if (debugOutput) {
+                        console.log('>>>>> API Version: ' + apiSuiteInstance.apiVersion);
+                    }
+                } else {
+                    throw new Error('Unable to get/store Test ID!');
+                }
+            });
+        }
+    };
+
     apiSuite.prototype.getLoadTime = function(url, callback) {
-        var suite = this;
 
         if (url) {
             casper.on('resource.requested', listener);
@@ -497,7 +527,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     };
 
     apiSuite.prototype.collectManifestData = function(url, type, testID) {
-        var suite = this;
 
         manifestTestRefID = testID;
 
@@ -529,10 +558,10 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                             var manifestKeyValue = jsonParsedOutput[parentManifestItem];
 
                             // Add key/val to collection object for testing;
-                            suite.buildmanifestCollectionObject(manifestKeyName, manifestKeyValue);
+                            apiSuiteInstance.buildmanifestCollectionObject(manifestKeyName, manifestKeyValue);
                         
                         } else {
-                            suite.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem]);
+                            apiSuiteInstance.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem]);
                         }
                     }
                 } catch (e) {
@@ -550,7 +579,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                     var brokenJSONString = output.replace(/[\n\t\s]+/g, " ");
                     setFail++;
 
-                    suite.logPaylodError(manifestTestRefID, 'apiManifestTest', JSONerror, url, brokenJSONString);
+                    apiSuiteInstance.logPaylodError(manifestTestRefID, 'apiManifestTest', JSONerror, url, brokenJSONString);
 
                     manifestTestStatus = 'Fail';
                     testResultsObject['testStatus'] = 'FullFail';
@@ -566,7 +595,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     };
 
     apiSuite.prototype.spiderObject = function(parentObjectName, childManifestObject) {
-        var suite = this;
 
         // Manifest keys are built as key__ +
         // Ex: parentKeyName__childKeyName__grandChildKeyName__lineageItemKeyName : Value
@@ -581,17 +609,16 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 }
 
                 // Add key/val to collection object for testing if required;
-                suite.buildmanifestCollectionObject(manifestMainObjectName, childManifestObject[childItem]);
+                apiSuiteInstance.buildmanifestCollectionObject(manifestMainObjectName, childManifestObject[childItem]);
 
             } else {
                 var manifestObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
-                suite.spiderObject(manifestObjectName, childManifestObject[childItem]);
+                apiSuiteInstance.spiderObject(manifestObjectName, childManifestObject[childItem]);
             }
         }
     };
 
     apiSuite.prototype.buildmanifestCollectionObject = function(manifestCollectionObjectName, manifestCollectionObjectValue) {
-        var suite = this;
         reqKeys.reverse();
 
         // If manifestCollectionObjectName found in required manifest key array, add it to the collection object for testing
@@ -606,7 +633,6 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     };
 
     apiSuite.prototype.pullManifestDictionaryData = function(station, callback) {
-        var suite = this;
         var dbUrl = configURL + '/utils/tasks?task=getDictionaryData&property=' + station;
 
         if (dbUrl) {
@@ -633,89 +659,88 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
 
     apiSuite.prototype.testManifestData = function(url, manifestCollectionObject, testID) {
-        var suite = this;
-        var errorCount = 0;
-        var testErrors = [];
-        var currentTestObject = {};
-        var currentTestObjectFailures = {};
+        var errorCount = 0,
+            testErrors = [],
+            currentTestObject = {},
+            currentTestObjectFailures = {},
+            dictionaryManifestObject = apiSuiteInstance.pullManifestDictionaryData(url, function (data) {
 
-        var dictionaryManifestObject = suite.pullManifestDictionaryData(url, function (data) {
-            var obj1 = JSON.parse(data);
-            var obj2 = manifestCollectionObject;
+                var obj1 = JSON.parse(data);
+                var obj2 = manifestCollectionObject;
 
-            Object.keys(obj1).forEach( function (key) {
-                console.log(colorizer.colorize('key: ', 'COMMENT') + key );
-                if (showOutput) {
-                    console.log(' -  dict val:  ' + obj1[key]);
-                    console.log(' -  live val:  ' + obj2[key]);
-                }
-
-                try{
-                    test.assertEquals(obj1[key], obj2[key]);
-                } catch (e) {        
-                    // casper.test.error(e);
+                Object.keys(obj1).forEach( function (key) {
+                    console.log(colorizer.colorize('key: ', 'COMMENT') + key );
                     if (showOutput) {
-                        console.log(colorizer.colorize('FAIL:', 'ERROR') + ' [' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
+                        console.log(' -  dict val:  ' + obj1[key]);
+                        console.log(' -  live val:  ' + obj2[key]);
                     }
-                    testErrors.push('[' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
-                    
-                    currentTestObjectFailures['expectedValue'] = obj1[key];
-                    currentTestObjectFailures['liveValue'] = obj2[key];
 
-                    currentTestObject[key] = currentTestObjectFailures;
+                    try{
+                        test.assertEquals(obj1[key], obj2[key]);
+                    } catch (e) {        
+                        // casper.test.error(e);
+                        if (showOutput) {
+                            console.log(colorizer.colorize('FAIL:', 'ERROR') + ' [' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
+                        }
+                        testErrors.push('[' + [key] + '] Value mismatch // ' + obj1[key] + ' !== ' + obj2[key]);
+                        
+                        currentTestObjectFailures['expectedValue'] = obj1[key];
+                        currentTestObjectFailures['liveValue'] = obj2[key];
 
-                    errorCount++
-                }
-                console.log('---------------------------');
-            });
+                        currentTestObject[key] = currentTestObjectFailures;
 
-            if (errorCount > 0) {
-
-                // Add test results to results object; debug below
-                manifestTestStatus = 'Fail';
-                testResultsObject['testResults'] = currentTestObject;
-
-                if (debugOutput) {
+                        errorCount++
+                    }
                     console.log('---------------------------');
-                    console.log(' Test Results Collection');
-                    console.log('---------------------------');
-                    for (var thisTestItem in currentTestObject) {
-                        if (typeof currentTestObject[thisTestItem] != 'object') {
-                            console.log('-' + thisTestItem + ' : ' + currentTestObject[thisTestItem]);
-                        } else {
-                            console.log('  -' + thisTestItem + ' :');
-                            var subValueKeySet = currentTestObject[thisTestItem];
+                });
 
-                            for ( var testValues in subValueKeySet) {
-                                console.log('    -' + testValues + ' : ' + subValueKeySet[testValues]);
+                if (errorCount > 0) {
+
+                    // Add test results to results object; debug below
+                    manifestTestStatus = 'Fail';
+                    testResultsObject['testResults'] = currentTestObject;
+
+                    if (debugOutput) {
+                        console.log('---------------------------');
+                        console.log(' Test Results Collection');
+                        console.log('---------------------------');
+                        for (var thisTestItem in currentTestObject) {
+                            if (typeof currentTestObject[thisTestItem] != 'object') {
+                                console.log('-' + thisTestItem + ' : ' + currentTestObject[thisTestItem]);
+                            } else {
+                                console.log('  -' + thisTestItem + ' :');
+                                var subValueKeySet = currentTestObject[thisTestItem];
+
+                                for ( var testValues in subValueKeySet) {
+                                    console.log('    -' + testValues + ' : ' + subValueKeySet[testValues]);
+                                }
                             }
                         }
                     }
+
+                    // Display error report for current test
+                    testErrors.reverse();
+                    // console.log(currentTestObject);
+
+                    console.log('\n');
+                    console.log('---------------------------');
+                    console.log(' ! ' + errorCount + ' Failures Found !');
+                    console.log('---------------------------');
+
+                    setFail = errorCount;
+
+                    for (var i = testErrors.length - 1; i >= 0; i--) {
+                        console.log(colorizer.colorize('- FAIL: ' + testErrors[i], 'ERROR'));
+                    }
+                    console.log('\n');
+                    casper.test.fail( errorCount + ' errors found.' );
+                } else {
+                    manifestTestStatus = 'Pass';
+                    testResultsObject['testStatus'] = 'Pass';
+                    testResultsObject['testResults'] = 'No data collected, all keys with Pass status.';
                 }
 
-                // Display error report for current test
-                testErrors.reverse();
-                // console.log(currentTestObject);
-
-                console.log('\n');
-                console.log('---------------------------');
-                console.log(' ! ' + errorCount + ' Failures Found !');
-                console.log('---------------------------');
-
-                setFail = errorCount;
-
-                for (var i = testErrors.length - 1; i >= 0; i--) {
-                    console.log(colorizer.colorize('- FAIL: ' + testErrors[i], 'ERROR'));
-                }
-                console.log('\n');
-                casper.test.fail( errorCount + ' errors found.' );
-            } else {
-                manifestTestStatus = 'Pass';
-                testResultsObject['testStatus'] = 'Pass';
-                testResultsObject['testResults'] = 'No data collected, all keys with Pass status.';
-            }
-
-        });  
+            });  
     };
-    new apiSuite(casper.cli.get('url'));
+    apiSuiteInstance = new apiSuite(casper.cli.get('url'));
 });
