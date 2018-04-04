@@ -564,9 +564,6 @@ $app->group('/scripts', function () {
     	$db = new DbHandler();
     	$permissions = $request->getAttribute('spPermissions');
 
-    	var_dump($request->getParsedBody());
-    	exit();
-
     	// Temp File
     	$__tmpFile = BASEPATH .'/tmp/__tempSites_'. rand() .'.txt';
     	$__data = file_get_contents($__tmpFile);
@@ -608,6 +605,11 @@ $app->group('/scripts', function () {
 	    	// Set API Version
 	    	if($allPostPutVars['api_version']) {
 	    		$__apiVersion = '--apiVersion='.$allPostPutVars['api_version'];
+	    	}
+
+	    	// Set JSON Validation
+	    	if($allPostPutVars['json_validation']) {
+	    		$__enablevalidation = '--enablevalidation='.$allPostPutVars['json_validation'];
 	    	}
 
 	    	// Set testing script
@@ -689,13 +691,13 @@ $app->group('/scripts', function () {
 		if ($__runScript == 'spire-run') {
 		        $__runCommand = 'npm run runall';
 		} elseif ($__runScript == 'apiCheck-manifest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_manifest.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_manifest.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv.' '.$__enablevalidation;
 		} elseif ($__runScript == 'apiCheck-nav') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_nav.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_nav.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv.' '.$__enablevalidation;
 		} elseif ($__runScript == 'apiCheck-article') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_content.js" --url="{}"'.$__output .' '.$__contentID.' '.$__apiVersion.' '.$serverEnv;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_content.js" --url="{}"'.$__output .' '.$__contentID.' '.$__apiVersion.' '.$serverEnv.' '.$__enablevalidation;
 		} elseif ($__runScript == 'regressionTest') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv.' '.$__enablevalidation;
 		} elseif ($__runScript == 'updateDictionaries') {
 			$updateNotesObject = array();
 
@@ -1069,10 +1071,18 @@ $app->group('/admin', function () use ($app) {
 			$formResponse = array();
 			$uResponse = array();
 			$db = new DbHandler();
+			$user = $request->getAttribute('spAuth')['email'];
 
 			// Clear current station cache
 			$cacheClear = Spire::purgeAllCache($__postVars['refCacheLocation']);
 			$cacheClear = Spire::purgeAllCache($__postVars['refAllStationsCacheLocation']);
+
+
+			if (strlen($__postVars['update_notes']) > 0) {
+				$updateNotes = $__postVars['update_notes'].'; Updated global API Version to:'. $globalAPIVer;
+			} else {
+				$updateNotes = 'Updated global API Version to: '. $globalAPIVer;
+			}
 
 			// Update information
 			if ($__postVars['task'] == 'updateStation') {
@@ -1089,6 +1099,8 @@ $app->group('/admin', function () use ($app) {
 				$pageView = 'stationEditView';
 
 			} elseif ($__postVars['task'] == 'updateGlobalAPI'){
+				$logTask = $db->logTask('updateGlobalAPI', $user, $updateNotes);
+
 				$setGlobalAPI = $db->updateGlobalAPI($globalAPIVer);
 				$formResponse['error'] = false;
 				$formResponse['message'] = 'Global API version updated.';
@@ -1363,7 +1375,7 @@ $app->group('/utils', function () {
 		if ($getDictionaryData) {
 			$dData = $db->getManifestDictionaryData($stationProperty);
 			// echo '<pre>';
-			echo($dData[0]);
+			echo($dData['data']['dictionary_object']);
 			// echo '</pre>';
 		}
 

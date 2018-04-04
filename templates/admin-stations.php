@@ -80,6 +80,16 @@
 							</select>
 							<div class="clear"></div>
 						</div>
+						<hr />
+						<div class="form_field">
+							<label class="control-label" style="float: left;">Notes/Ticket</label>
+							<div class="col-sm-10">
+								<textarea class="form-control" rows="3" name="update_notes"></textarea>
+								<span class="help-block m-b-none">Enter a brief description or any notes related to this change. Please be sure to reference a ticket if avail.</span>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="clear"></div>
 						<div id="input_buttons">
 							<input type="hidden" value="<?php echo $cacheFile; ?>" name="refCacheLocation" />
 							<input type="hidden" value="<?php echo $stationsCacheFile; ?>" name="refAllStationsCacheLocation" />

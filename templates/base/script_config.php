@@ -53,7 +53,7 @@
 			<div class="form-group" style="margin-left: 3em;">
 				<div class="checkbox">
 					<label for="checkbox1">Set API Version</label>
-					<input id="checkbox1" class="apiversionSet" type="checkbox" name="test_site[]" value="nbcnewyork">
+					<input id="checkbox1" class="apiversionSet" type="checkbox" name="setTestingApiVer" value="true">
 					
 				</div>
 			</div>
@@ -71,6 +71,21 @@
 					</select>
 					<br />
 					<p class="small">current global API version: <?php echo $setAPIVer; ?></p>
+				</div>
+			</div>
+			<hr />
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Enable JSON Validation
+					<br>
+				</label>
+				<div class="col-sm-10">
+					<div class="checkbox checkbox-success">
+						<input id="checkbox1" name="output" type="checkbox" value="json_validation">
+						<label for="checkbox1">Yes (not recommended)</label>
+					</div>
+				</div>
+				<div style="padding: 0 4em;">
+					<p class="help-block">When this is set, the API tries to be "error-proof" by validating JSON before appending to the payload. If something doesn’t validate, it will be removed from the payload, allowing the response to be returned minus any broken items. If it’s set to "No"/false (default), the payload is not verified, thereby exposing any broken content items and/or a malformed payload.</p>
 				</div>
 			</div>
 			<hr />

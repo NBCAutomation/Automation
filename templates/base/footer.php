@@ -196,7 +196,9 @@
 		});
 
 
-		document.getElementById("apiversionSelect").disabled = true;
+		if ($("#apiversionSelect").length > 0) {
+			document.getElementById("apiversionSelect").disabled = true;
+		}
 
 		$('input[class^="apiversionSet"]').click(function() {
 		    var $thisOption = $(this);
