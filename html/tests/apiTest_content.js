@@ -1192,8 +1192,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             if ( status == 200 || status == 301) {
                 var output = this.getPageContent(),
                     jsonParsedOutput = null,
-                    gallerySingleImageID = null,
-                    gallerySingleImageURL = null;
+                    gallerySingleImageID,
+                    gallerySingleImageURL;
 
                 if (debugOutput) {
                     console.log(' > Gallery url: ' + resp.url);
@@ -1202,47 +1202,44 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 var galleryTestingResults = {};
                 try{
                     jsonParsedOutput = JSON.parse(output);
+                    
+                    for (var parentManifestItem in jsonParsedOutput.items) {
+                        var innerGalleryObjects = jsonParsedOutput.items[parentManifestItem];
+                            console.log(JSON.stringify(innerGalleryObjects.imageID));
+                        
+                        
+                            var gallerySingleImageID = innerGalleryObjects.imageID,
+                                gallerySingleImageURL = innerGalleryObjects.url;
 
-                    for (var parentManifestItem in jsonParsedOutput) {
-                        if (parentManifestItem === 'items') {
-                            var innerGalleryObjects = jsonParsedOutput[parentManifestItem];
-                            for (var thisGalleryObject in innerGalleryObjects){
-                                var gallerySingleImageID = innerGalleryObjects[thisGalleryObject].imageID,
-                                    gallerySingleImageURL = innerGalleryObjects[thisGalleryObject].url;
-
-                                if (debugOutput) {
-                                    console.log('gallerySingleImageID > ' + gallerySingleImageID);
-                                    console.log('gallerySingleImageURL > ' + gallerySingleImageURL);
-                                }
-
-                                if (gallerySingleImageURL) {
-                                    // console.log("HIIII: gallerySingleImageURL: ", gallerySingleImageURL);
-                                    casper.thenOpen(gallerySingleImageURL).then(function (galResp) {
-                                        var httpStatus = null;
-
-                                        if (showOutput) {
-                                            console.log(' > Gallery url: ' + galResp.url);
-                                        }
-
-                                        httpStatus = galResp.status;
-
-                                        if ( httpStatus != 200) {
-                                            if (showOutput) {
-                                                console.log('   - Fail: Gallery image failed to load.');
-                                                console.log('   - gallerySingleImageID > ' + gallerySingleImageID);
-                                                console.log('   - gallerySingleImageURL > ' + gallerySingleImageURL);
-                                            }
-                                            galleryTestingResults['galleryImage_' + gallerySingleImageID] = 'Fail: Unable to load gallery image: ' + gallerySingleImageURL;
-                                            setFail++;
-                                        } else {
-                                            if (showOutput) {
-                                                console.log(colorizer.colorize('   - Gallery image ', 'COMMENT') + gallerySingleImageID + colorizer.colorize(' // Status: ' + httpStatus, 'INFO'));
-                                            }
-                                        }
-                                    });
-                                }
+                            if (debugOutput) {
+                                console.log('gallerySingleImageID > ' + gallerySingleImageID);
+                                console.log('gallerySingleImageURL > ' + gallerySingleImageURL);
                             }
-                        }
+
+                            if (gallerySingleImageURL) {
+                                console.log(colorizer.colorize('   - Image ID: ', 'COMMENT') + gallerySingleImageID);
+
+                                casper.thenOpen(gallerySingleImageURL).then(function (galResp) {
+
+                                    if (showOutput) {
+                                        console.log(' > Gallery url: ' + galResp.url);
+                                        console.log(colorizer.colorize('   - Gallery image ', 'COMMENT') + innerGalleryObjects.imageID + colorizer.colorize(' // Status: ' + httpStatus, 'INFO'));
+                                    }
+
+                                    if ( galResp.status != 200) {
+                                        if (showOutput) {
+                                            console.log('   - Fail: Gallery image failed to load.');
+                                            console.log('   - gallerySingleImageURL > ' + galResp.url);
+                                        }
+                                        galleryTestingResults['galleryImage_' + gallerySingleImageID] = 'Fail: Unable to load gallery image: ' + gallerySingleImageURL;
+                                        setFail++;
+                                    } else {
+                                        if (showOutput) {
+                                            // console.log(colorizer.colorize('   - Gallery image ', 'COMMENT') + gallerySingleImageID + colorizer.colorize(' // Status: ' + httpStatus, 'INFO'));
+                                        }
+                                    }
+                                });
+                            }
                     }
                 } catch (e) {
                     if (showOutput) {
