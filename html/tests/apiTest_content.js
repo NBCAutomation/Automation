@@ -163,14 +163,20 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             }).then(function () {
                 // Porcess All Test Results Data
                 console.log(colorizer.colorize('Processing test results...', 'COMMENT'));
+                console.log('------------------------');
+                console.log(' Test Results   ');
+                console.log('------------------------');
+                console.log(' [] Test Status: ' + colorizer.colorize(manifestTestStatus, 'INFO'));
+                console.log('  - ' + setFail + ' Failures!');
 
                 // Process test results
                 if (debugOutput) {
                     console.log('---------------------');
-                    console.log(' Test Results object   ');
+                    console.log(' Results debug object   ');
                     console.log('---------------------');
-                    console.log('Test Status: ' + manifestTestStatus);
-                    console.log('starting for loop..');
+                    console.log(JSON.stringify(apiSuiteInstance.testResultsObject));
+                    console.log('---------------------');
+                    console.log('  starting for loop..');
 
                     var i = 0,
                         i2 = 0,
@@ -1014,7 +1020,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         }
 
         if (articleTypeName !== 'FeaturePageHeader') {
-            if (articleContentID.length <= 0 || (typeof articleContentID === 'number') || articleContentID === 'false') {
+            if (articleContentID.length <= 0 || (typeof articleContentID != 'number') || articleContentID === 'false') {
                 setFail++;
                 subTestResults['articleContentID'] = 'FAIL: contentID invalid and/or missing, currently outputting: ' + articleContentID;
             }
