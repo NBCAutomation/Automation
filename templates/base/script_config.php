@@ -2,6 +2,8 @@
 	$db = new DbHandler();
 	$globalAPIVer = $db->getStationsGlobalAPIVer();
 	$setAPIVer = $globalAPIVer['data']['value'];
+	$getStations = $db->getAllStations();
+	$stations = $getStations['data'];
 ?>
 	<div class="panel-heading"><i class="fa fa-cogs" aria-hidden="true"></i> Configure Script</div>
 	<div class="panel-body">
@@ -44,15 +46,28 @@
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Content ID</label>
 				<div class="col-sm-10">
-					<input type="text" class="form-control" name="content_id">
+					<div class="input-group mb"><span class="input-group-addon"> <input type="checkbox" class="setContentIDToggle"> </span>
+						<input type="text" class="form-control" id="setContentIDInput" 	name="content_id">
+					</div>
 				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Section Path</label>
+				<div class="col-sm-10">
+					<div class="input-group mb"><span class="input-group-addon"> <input type="checkbox" class="setSectionPathToggle"> </span>
+						<input type="text" class="form-control"  id="setSectionPathInput" name="section_path">
+					</div>
+				</div>
+			</div>
+			<div class="alert alert-dismissible alert-info">
+				<p class="help-block"><em>If testing specific content endpoints and/or content payloads, select the checkbox for the desired testable item, then enter the details. Only one option can be selected at a time.</em> If testing path, enter as: /news/local/</p>
 			</div>
 			<hr />
 			<?php } ?>
 			<?php if($view != 'regressionTest'){ ?>
 			<div class="form-group" style="margin-left: 3em;">
 				<div class="checkbox">
-					<label for="checkbox1">Set API Version</label>
+					<label for="checkbox1">Set API Version for test? </label>
 					<input id="checkbox1" class="apiversionSet" type="checkbox" name="setTestingApiVer" value="true">
 					
 				</div>
@@ -70,7 +85,7 @@
 			        ?>
 					</select>
 					<br />
-					<p class="small">current global API version: <?php echo $setAPIVer; ?></p>
+					<p class="small">current global API version: <?php echo $setAPIVer; ?>. <a href="/admin/stations/main">update/change here</a></p>
 				</div>
 			</div>
 			<hr />
@@ -84,9 +99,9 @@
 						<label for="checkbox1">Yes (not recommended)</label>
 					</div>
 				</div>
-				<div style="padding: 0 4em;">
-					<p class="help-block">When this is set, the API tries to be "error-proof" by validating JSON before appending to the payload. If something doesn’t validate, it will be removed from the payload, allowing the response to be returned minus any broken items. If it’s set to "No"/false (default), the payload is not verified, thereby exposing any broken content items and/or a malformed payload.</p>
-				</div>
+			</div>
+			<div class="alert alert-dismissible alert-info">
+				<p class="help-block">When this is set, the API tries to be "error-proof" by validating JSON before appending to the payload. If something doesn’t validate, it will be removed from the payload, allowing the response to be returned minus any broken items. If it’s set to "No"/false (default), the payload is not verified, thereby exposing any broken content items and/or a malformed payload.</p>
 			</div>
 			<hr />
 			<?php } ?>
@@ -100,7 +115,6 @@
 				</div>
 			</div>
 			<?php } ?>
-			<?php // if(! $view == 'regressionTest'){ ?>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Run Suite
 					<br>
@@ -127,140 +141,49 @@
 					</div>
 				</div>
 			</div>
-			<?php // } ?>
 			<div class="form-group">
 				<label class="col-sm-2 control-label">Specific Sites
 					<br>
 				</label>
-				<div class="col-sm-3">
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcnewyork">
-						<label for="checkbox1">NBC New York</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbclosangeles">
-						<label for="checkbox1">NBC Los Angeles</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcchicago">
-						<label for="checkbox1">NBC Chicago</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcbayarea">
-						<label for="checkbox1">NBC Bay Area</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcboston">
-						<label for="checkbox1">NBC Boston</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcdfw">
-						<label for="checkbox1">NBC DFW</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcmiami">
-						<label for="checkbox1">NBC Miami</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcphiladelphia">
-						<label for="checkbox1">NBC Philadelphia</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcconnecticut">
-						<label for="checkbox1">NBC Connecticut</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcwashington">
-						<label for="checkbox1">NBC Washington</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="nbcsandiego">
-						<label for="checkbox1">NBC San Diego</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="necn">
-						<label for="checkbox1">NECN</label>
-					</div>
-				</div>
-				<div class="col-sm-3">
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo20">
-						<label for="checkbox1">Telemundo 20</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo40">
-						<label for="checkbox1">Telemundo 40</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo47">
-						<label for="checkbox1">Telemundo 47</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo51">
-						<label for="checkbox1">Telemundo 51</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo52">
-						<label for="checkbox1">Telemundo 52</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundo62">
-						<label for="checkbox1">Telemundo 62</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundoareadelabahia">
-						<label for="checkbox1">Telemundo Area de la Bahia</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundoarizona">
-						<label for="checkbox1">Telemundo Arizona</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundoboston">
-						<label for="checkbox1">Telemundo Boston</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundochicago">
-						<label for="checkbox1">Telemundo Chicago</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundodallas">
-						<label for="checkbox1">Telemundo Dallas</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundodenver">
-						<label for="checkbox1">Telemundo Denver</label>
-					</div>
-				</div>
-				<div class="col-sm-3">	
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundohouston">
-						<label for="checkbox1">Telemundo Houston</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundolasvegas">
-						<label for="checkbox1">Telemundo Las Vegas</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundosanantonio">
-						<label for="checkbox1">Telemundo San Antonio</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telemundopr">
-						<label for="checkbox1">Telemundo PR</label>
-					</div>
-				<?php if( $view == 'regressionTest'){ ?>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="cozitv">
-						<label for="checkbox1">CoziTV</label>
-					</div>
-					<div class="checkbox">
-						<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telexitos">
-						<label for="checkbox1">Telexitos</label>
-					</div>
-				<?php } ?>
-				</div>
+				<?php
+					$i = 0;
+					$stationOptions = '<div class="col-sm-3">';
+
+					foreach ($stations[0] as $stationProperty) {
+						if (is_array($stationProperty)) {
+							$stationOptions .= '<div class="checkbox">';
+							$stationOptions .= '<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="'.$stationProperty['shortname'].'">';
+						    $stationOptions .= '<label for="checkbox1">'.$stationProperty['brand'].'</label>';
+						    $stationOptions .= '</div>';
+
+							if(($i+1) % 12 == 0) {
+								$stationOptions .= '</div><div class="col-sm-3">';
+							}
+						}
+						$i++;
+					}
+					$stationOptions .= '</div>';
+					echo $stationOptions;
+				?>
 			</div>
+			<?php if( $view == 'regressionTest'){ ?>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Additional Properties
+						<br>
+					</label>
+					<div class="col-sm-3">
+						<div class="checkbox">
+							<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="cozitv">
+							<label for="checkbox1">CoziTV</label>
+						</div>
+						<div class="checkbox">
+							<input id="checkbox1" class="class3" type="checkbox" name="test_site[]" value="telexitos">
+							<label for="checkbox1">Telexitos</label>
+						</div>
+					</div>
+				</div>
+			<?php } ?>
+
 			<div class="form-group">
 				<div class="col-sm-8 col-sm-offset-2">
 					<input type="hidden" name="script" value="<?php echo $view; ?>">

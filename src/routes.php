@@ -602,6 +602,11 @@ $app->group('/scripts', function () {
 	    		$__contentID = '--contentID='.$allPostPutVars['content_id'];
 	    	}
 
+	    	// Set sections path to test
+	    	if($allPostPutVars['section_path']) {
+	    		$__sectionPath = '--sectionPath='.$allPostPutVars['section_path'];
+	    	}
+
 	    	// Set API Version
 	    	if($allPostPutVars['api_version']) {
 	    		$__apiVersion = '--apiVersion='.$allPostPutVars['api_version'];
@@ -695,7 +700,7 @@ $app->group('/scripts', function () {
 		} elseif ($__runScript == 'apiCheck-nav') {
 		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_nav.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv.' '.$__enablevalidation;
 		} elseif ($__runScript == 'apiCheck-article') {
-		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_content.js" --url="{}"'.$__output .' '.$__contentID.' '.$__apiVersion.' '.$serverEnv.' '.$__enablevalidation;
+		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/apiTest_content.js" --url="{}"'.$__output .' '.$__contentID.' '.$__sectionPath.' '.$__apiVersion.' '.$serverEnv.' '.$__enablevalidation;
 		} elseif ($__runScript == 'regressionTest') {
 		        $__runCommand = 'cat "' . $__tmpFile .'" | xargs -P1 -I{} casperjs test "'. BASEPATH .'/tests/regressionTest.js" --url="{}"'.$__output .' '.$__apiVersion.' '.$serverEnv.' '.$__enablevalidation;
 		} elseif ($__runScript == 'updateDictionaries') {

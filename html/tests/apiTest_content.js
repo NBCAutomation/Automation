@@ -23,6 +23,8 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     // Global Vars
     var logResults = true,
         contentOnlyTest = false,
+        sectionContentTesting = false,
+        fullContentTesting = true,
         apiSuiteInstance,
         colorizer = require('colorizer').create('Colorizer'),
         envConfig = casper.cli.get('env'),
@@ -30,6 +32,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         testType = casper.cli.get('output'),
         apiVersion,
         contentID = casper.cli.get('contentID'),
+        sectionPath = casper.cli.get('sectionPath'),
         debugOutput = false,
         showOutput = false,
         currentTestObject = {},
@@ -96,39 +99,47 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             *
             *******************/
             casper.start().then(function (resp) {
+                console.log('----------------');
+                console.log(' Starting Test  ');
+                console.log('----------------');
+
+                // Get API Version
                 if (casper.cli.get('apiVersion')) {
                     apiSuiteInstance.apiVersion = casper.cli.get('apiVersion');
                 } else {
                     apiSuiteInstance.getGlobalAPIVer();
                 }
             }).then(function () {
+
+                // Set main endpoint url(s)
                 apiSuiteInstance.baseUrl = casper.cli.get('url');
                 apiSuiteInstance.apiURL = url + '/apps/news-app/navigation/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
                 apiSuiteInstance.stationProperty = /www\.(\S+)\.com/.exec(apiSuiteInstance.apiURL)[1];
             }).then(function () {
-                casper.thenOpen(apiSuiteInstance.apiURL, { method: 'get'}, function (resp) {
-                    console.log(resp.url);
-                    if (resp.status === 200) {
-                        console.log(colorizer.colorize('Testing started: ', 'COMMENT') + resp.url);
-                        apiSuiteInstance.createTestID(resp.url, apiSuiteInstance.stationProperty);
-                    } else {
-                        throw new Error('Page not loaded correctly. Response: ' + resp.status).exit();
-                    }
-                })
+
+                // Create test ref ID 
+                apiSuiteInstance.createTestID(apiSuiteInstance.apiURL, apiSuiteInstance.stationProperty);
             }).then(function () {
+                
+                // Set tests to run
                 if (contentOnlyTest) {
                     var contentTestURL = url + '/apps/news-app/content/?contentId=' + contentID + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
-                    apiSuiteInstance.endpointContentValidation('directContentTest', contentTestURL, apiSuiteInstance.manifestTestRefID);
+                    apiSuiteInstance.endpointContentValidation('singleContentTest', contentTestURL, apiSuiteInstance.manifestTestRefID);
+                } else if (sectionContentTesting) {
+                    var contentTestURL = url + '/apps/news-app/?location=' + sectionPath + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                    apiSuiteInstance.endpointContentValidation('sectionContentTest', contentTestURL, apiSuiteInstance.manifestTestRefID);
                 } else {
                     apiSuiteInstance.collectionNavigationItems(apiSuiteInstance.apiURL);
                 }
             }).then(function () {
+
                 // Append additional testing endpoints to testing collection object
-                if (! contentOnlyTest) {
+                if (fullContentTesting) {
                     apiSuiteInstance.collectionObject['breaking__modules'] = url + '/apps/news-app/breaking/modules/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
                     apiSuiteInstance.collectionObject['just-in__live'] = url + '/apps/news-app/just-in/live/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
                 }
             }).then(function () {
+                
                 // Display collection object
                 if (debugOutput) {
                     console.log('---------------------');
@@ -291,6 +302,12 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
     if (contentID) {
         contentOnlyTest = true;
+        fullContentTesting = false;
+    }
+
+    if (sectionPath) {
+        sectionContentTesting = true;
+        fullContentTesting = false;
     }
 
     apiSuite.prototype.processLoadTimes = function () {
@@ -492,7 +509,13 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     if (showOutput) {console.log(e); }
                 }
             } else {
-                console.log(colorizer.colorize('Unable to open the manifest endpoint. ', 'ERROR'));
+                console.log(colorizer.colorize('Unable to open the provided endpoint/url. ', 'ERROR'));
+                console.log('  > URL: ' + resp.url);
+
+                currentTestObject['mainEndpointURL'] = 'Unable to open the provided endpoint/url: (' + resp.url + ')';
+                testResultsObject.testResults = currentTestObject;
+                manifestTestStatus = 'Fail';
+                setFail++;
             }
         });
     };
@@ -506,12 +529,16 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                 if ( childItem == 'dateGenerated') {
                     // Print metadata object
-                    console.log(childItem + ' : ' + childManifestObject[childItem]);
-                    console.log('----------------');
+                    if (debugOutput) {
+                        console.log(childItem + ' : ' + childManifestObject[childItem]);
+                        console.log('----------------');
+                    }
                 }
 
                 var manifestMainObjectName = parentObjectName.toLowerCase() + '__' + childItem.toLowerCase();
-                console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
+                if (debugOutput) {
+                    console.log(colorizer.colorize(manifestMainObjectName, 'INFO') + ' : ' + childManifestObject[childItem]);
+                }
 
             } else {
                 var subObject = childManifestObject[childItem];

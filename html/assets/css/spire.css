@@ -258,10 +258,10 @@ table .fail {
 	text-transform: capitalize;
 }
 
-input.form-control {
+/*input.form-control {
 	width: initial;
     display: inline-table;
-}
+}*/
 
 .form-label {
 	min-width: 150px;

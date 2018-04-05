@@ -195,7 +195,6 @@
 	        }
 		});
 
-
 		if ($("#apiversionSelect").length > 0) {
 			document.getElementById("apiversionSelect").disabled = true;
 		}
@@ -207,6 +206,42 @@
 		            $("#apiversionSelect").prop({ disabled: false});
 		        } else {
 		        	$("#apiversionSelect").prop({ disabled: true});
+		        }
+		    }
+		});
+
+		if ($("#setContentIDInput").length > 0) {
+			document.getElementById("setContentIDInput").disabled = true;
+		}
+
+		if ($("#setSectionPathInput").length > 0) {		
+			document.getElementById("setSectionPathInput").disabled = true;
+		}
+
+		$('input[class^="setContentIDToggle"]').click(function() {
+		    var $setIDToggle = $(this);
+		    if ($setIDToggle.is(".setContentIDToggle")) {
+		        if ($(".setContentIDToggle:checked").length > 0) {
+		            $("#setContentIDInput").prop({disabled: false});
+		            $(".setSectionPathToggle").prop({disabled: true});
+		        } else {
+		        	$("#setContentIDInput").val('');
+		        	$(".setSectionPathToggle").prop({disabled: false});
+		        	$("#setContentIDInput").prop({disabled: true});
+		        }
+		    }
+		});
+
+		$('input[class^="setSectionPathToggle"]').click(function() {
+		    var $setIDToggle = $(this);
+		    if ($setIDToggle.is(".setSectionPathToggle")) {
+		        if ($(".setSectionPathToggle:checked").length > 0) {
+		            $("#setSectionPathInput").prop({disabled: false});
+		            $(".setContentIDToggle").prop({disabled: true});
+		        } else {
+		        	$("#setSectionPathInput").val('');
+		        	$(".setContentIDToggle").prop({disabled: false});
+		        	$("#setSectionPathInput").prop({disabled: true});
 		        }
 		    }
 		});
