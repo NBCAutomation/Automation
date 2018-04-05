@@ -37,6 +37,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         subTestResults = {},
         manifestTestStatus = 'Pass',
         setFail = 0,
+        galleryCount = 0,
         testStartTime,
         apiURL,
         resourcesTime = {},
@@ -1133,7 +1134,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     }
                    apiSuiteInstance.galleryObjectTest(articleContentID, galleryContentURL, apiSuiteInstance.manifestTestRefID);
 
-                    var urlHealthStatus =apiSuiteInstance.checkURLHealth(galleryContentURL, function (data) {
+                    var urlHealthStatus = apiSuiteInstance.checkURLHealth(galleryContentURL, function (data) {
                         if (! data) {
 
                             if (showOutput) {
@@ -1156,7 +1157,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         console.log('       video url to test ' + videoURL);
                     }
 
-                    var urlHealthStatus =apiSuiteInstance.checkURLHealth(videoURL, function (data) {
+                    var urlHealthStatus = apiSuiteInstance.checkURLHealth(videoURL, function (data) {
                         if (! data) {
 
                             if (showOutput) {
@@ -1188,25 +1189,24 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
         // return;
         casper.thenOpen(galleryURL,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             var status = this.status().currentHTTPStatus;
+                galleryCount = 1;            
 
             if ( status == 200 || status == 301) {
                 var output = this.getPageContent(),
                     jsonParsedOutput = null,
                     gallerySingleImageID,
-                    gallerySingleImageURL;
+                    gallerySingleImageURL,
+                    galleryTestingResults = {};
 
                 if (debugOutput) {
                     console.log(' > Gallery url: ' + resp.url);
                 }
 
-                var galleryTestingResults = {};
                 try{
                     jsonParsedOutput = JSON.parse(output);
                     
                     for (var parentManifestItem in jsonParsedOutput.items) {
-                        var innerGalleryObjects = jsonParsedOutput.items[parentManifestItem];
-                            console.log(JSON.stringify(innerGalleryObjects.imageID));
-                        
+                        var innerGalleryObjects = jsonParsedOutput.items[parentManifestItem];                        
                         
                             var gallerySingleImageID = innerGalleryObjects.imageID,
                                 gallerySingleImageURL = innerGalleryObjects.url;
@@ -1217,27 +1217,22 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                             }
 
                             if (gallerySingleImageURL) {
-                                console.log(colorizer.colorize('   - Image ID: ', 'COMMENT') + gallerySingleImageID);
-
                                 casper.thenOpen(gallerySingleImageURL).then(function (galResp) {
+                                    if (showOutput) {
+                                        console.log(' > Gallery Image: ' + galResp.url);
+                                    }
+
+                                    if(test.assertHttpStatus(200)){
+                                        if (debugOutput) { console.log(galleryCount); }
+                                    } else {
+                                        galleryTestingResults['galleryImage_' + galleryCount] = 'Fail: Unable to load gallery image: ' + gallerySingleImageURL;
+                                        setFail++;
+                                    }
 
                                     if (showOutput) {
-                                        console.log(' > Gallery url: ' + galResp.url);
-                                        console.log(colorizer.colorize('   - Gallery image ', 'COMMENT') + innerGalleryObjects.imageID + colorizer.colorize(' // Status: ' + httpStatus, 'INFO'));
+                                        console.log('--------------------------------------');
                                     }
-
-                                    if ( galResp.status != 200) {
-                                        if (showOutput) {
-                                            console.log('   - Fail: Gallery image failed to load.');
-                                            console.log('   - gallerySingleImageURL > ' + galResp.url);
-                                        }
-                                        galleryTestingResults['galleryImage_' + gallerySingleImageID] = 'Fail: Unable to load gallery image: ' + gallerySingleImageURL;
-                                        setFail++;
-                                    } else {
-                                        if (showOutput) {
-                                            // console.log(colorizer.colorize('   - Gallery image ', 'COMMENT') + gallerySingleImageID + colorizer.colorize(' // Status: ' + httpStatus, 'INFO'));
-                                        }
-                                    }
+                                    galleryCount++;
                                 });
                             }
                     }
@@ -1267,7 +1262,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     apiSuite.prototype.checkURLHealth = function (url, callback) {
 
         if (url) {
-            casper.thenOpen(url).then(function (resp) {
+            casper.thenOpen(url, {method: 'get'}).then(function (resp) {
                 var status = this.status().currentHTTPStatus,
                     output = false;
 
