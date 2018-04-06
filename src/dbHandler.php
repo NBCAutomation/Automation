@@ -1224,10 +1224,10 @@ class DbHandler {
     }
 
 
-    public function updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) {
+    public function updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand, $stationStatus) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("UPDATE stations SET `call_letters` = '".$stationCallLetters."', `brand` = '".$stationBrand."', `shortname` = '".$stationShortname."', `url` = '".$stationURL."', `group` = '".$stationGroup."', `api_version` = '".$stationApiVersion."'  WHERE `id` = '".$stationID."'");
+        $stmt = $db_con->prepare("UPDATE stations SET `call_letters` = '".$stationCallLetters."', `brand` = '".$stationBrand."', `shortname` = '".$stationShortname."', `url` = '".$stationURL."', `group` = '".$stationGroup."', `api_version` = '".$stationApiVersion."', `status` = '".$stationStatus."'  WHERE `id` = '".$stationID."'");
 
         if ($stmt->execute()) {
             if($stmt->rowCount() > 0){

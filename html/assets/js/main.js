@@ -42,7 +42,7 @@
 
 	$('#stations-table').DataTable({
 		"scrollX": true,
-		"order": [[ 2, "desc" ]],
+		"order": [[ 1, "asc" ]],
 		"iDisplayLength": 100
 	});
 

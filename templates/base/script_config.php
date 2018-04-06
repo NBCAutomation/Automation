@@ -90,9 +90,7 @@
 			</div>
 			<hr />
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Enable JSON Validation
-					<br>
-				</label>
+				<label class="col-sm-2 control-label">Enable JSON Validation</label>
 				<div class="col-sm-10">
 					<div class="checkbox checkbox-success">
 						<input id="checkbox1" name="output" type="checkbox" value="json_validation">

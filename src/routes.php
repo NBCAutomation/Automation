@@ -1073,6 +1073,7 @@ $app->group('/admin', function () use ($app) {
 			$stationCallLetters = $__postVars['stationCallLetters'];
 			$stationGroup = $__postVars['stationGroup'];
 			$stationBrand = $__postVars['stationBrand'];
+			$stationStatus = $__postVars['stationStatus'];
 			$formResponse = array();
 			$uResponse = array();
 			$db = new DbHandler();
@@ -1091,11 +1092,11 @@ $app->group('/admin', function () use ($app) {
 
 			// Update information
 			if ($__postVars['task'] == 'updateStation') {
-				if ( $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
+				if ( $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand, $stationStatus) ) {
 					$formResponse['error'] = false;
 					$formResponse['message'] = 'Station information updated';
 
-				} elseif ( ! $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand) ) {
+				} elseif ( ! $db->updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand, $stationStatus) ) {
 					$formResponse['error'] = true;
 					$formResponse['message'] = 'Station information did not update correctly.';
 				}
