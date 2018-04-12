@@ -55,6 +55,37 @@
 				</div>
 			</div>
 		</div>
+		<?php if ($messages){
+			?>
+			<?php if ( $message_e == true ){ ?>
+				<div class="alert alert-dismissible alert-danger">
+					<button type="button" class="close" data-dismiss="alert"><i class="fa fa-remove"></i></button>
+					<h4>Warning!</h4>
+					<p><?php echo $messages; ?>.</p>
+				</div>
+			<?php } else { ?>
+				<div class="alert alert-dismissible alert-success">
+					<button type="button" class="close" data-dismiss="alert"><i class="fa fa-remove"></i></button>
+					<h4>Success!</h4>
+					<p><?php echo $messages; ?></p>
+				</div>
+			<?php } ?>
+		<?php } ?>
+		<?php if ($recentAlerts['data']['sendable'] > 0): ?>
+			<div class="apiNotificationError">
+				<form action="/dashboard/clear-alert" method="post" id="notification-alert-form" class="mt">
+					<input type="hidden" value="<?php echo $recentAlerts['data']['id']; ?>" name="alertID" />
+					<input type="hidden" value="clearNotification" name="task" />
+					<input type="hidden" value="<?php echo $recentAlerts['refCacheKey']; ?>" name="refCacheLocation" />
+					<input type="hidden" value="set" name="method" />
+					<input type="hidden" value="true" name="submitted" />
+					<button id="clear-notification"  class="btn btn-primary btn-block" type="submit" value="Submit" name="submit"><i class="fa fa-bell-slash" style="font-size:20px;" alt="Disable"></i> Mute email notification</button>
+
+					<br/>
+					<p class="text-muted small">* Mute email notification for recent alert. Will re-enable on additional/new errors. </p>
+				</form>
+			</div>
+		<?php endif ?>
 		<hr />
 		<div class="panel panel-default">
 			<div class="panel-heading"><i class="fa fa-clock-o"></i> Average loadtimes today</div>

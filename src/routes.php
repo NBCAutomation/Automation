@@ -41,22 +41,10 @@ $app->group('/dashboard', function () use ($app) {
 
 		$db = new DbHandler();
 		$permissions = $request->getAttribute('spPermissions');
+		$dashboardData = Spire::buildQueryCache();
 
-		// Today report data
-		// Manifest
-		$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'fail', 'today');
+		$recentAlerts = $db->getRecentActiveNotificationAlerts();
 
-		// Nav
-		$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'fail', 'today');
-
-		// Content
-		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
-
-		$apiManifestTestLoadTime = $db->getAverageLoadTime('apiManifestTest', 'today');
-		$apiNavTestLoadTime = $db->getAverageLoadTime('apiNavTest', 'today');
-		$apiContentTestLoadTime = $db->getAverageLoadTime('apiContentTest', 'today');
-		$apiSectionContentLoadTime = $db->getAverageLoadTime('apiSectionContent', 'today');
-		$chartLoadTimeData = $db->getAllAverageLoadTimes();
 
 		// Server time
 		$info = getdate();
@@ -74,16 +62,17 @@ $app->group('/dashboard', function () use ($app) {
 	        'page_name' => 'home',
 	        'dashClass' => true,
 	        'hideBreadcrumbs' => true,
-	        'todayManifestTotalFailureReports' => $todayManifestTotalFailureReports['data'],
-			'todayNavTotalFailureReports' => $todayNavTotalFailureReports['data'],
-			'todayContentTotalFailureReports' => $todayContentTotalFailureReports['data'],
+	        'todayManifestTotalFailureReports' => $dashboardData['todayManifestTotalFailureReports'],
+			'todayNavTotalFailureReports' => $dashboardData['todayNavTotalFailureReports'],
+			'todayContentTotalFailureReports' => $dashboardData['todayContentTotalFailureReports'],
 			'serverTimeStamp' => $current_date,
-			'apiManifestTestLoadTime' => $apiManifestTestLoadTime['data'],
-			'apiNavTestLoadTime' => $apiNavTestLoadTime['data'],
-			'apiContentTestLoadTime' => $apiContentTestLoadTime['data'],
-			'apiSectionContentLoadTime' => $apiSectionContentLoadTime['data'],
-			'chartLoadTimeData' => $chartLoadTimeData['data'],
+			'apiManifestTestLoadTime' => $dashboardData['apiManifestTestLoadTime'],
+			'apiNavTestLoadTime' => $dashboardData['apiNavTestLoadTime'],
+			'apiContentTestLoadTime' => $dashboardData['apiContentTestLoadTime'],
+			'apiSectionContentLoadTime' => $dashboardData['apiSectionContentLoadTime'],
+			'chartLoadTimeData' => $dashboardData['chartLoadTimeData'],
 			'recentRegressionScore' => $recentRegressionScore['data'],
+			'recentAlerts' => $recentAlerts,
 
 	        //Auth Specific
 	        'user' => $request->getAttribute('spAuth'),
@@ -118,53 +107,113 @@ $app->group('/dashboard', function () use ($app) {
 	// Account update
 
 	$this->post('/{view}', function ($request, $response, $args) {
+		$db = new DbHandler();
+
+		$permissions = $request->getAttribute('spPermissions');
+		$user = $request->getAttribute('spAuth')['email'];
 
 		$__postVars = $request->getParsedBody();
 
-	  	verifyRequiredParams(array('email', 'password'));
-
-		// reading post params
-		$email = $__postVars['email'];
-		$uid = $__postVars['uid'];
-		$password = $__postVars['password'];
-		$new_password = $__postVars['new_password'];
-
-		$formResponse = array();
-		$uResponse = array();
-		$db = new DbHandler();
-
-		// check for correct email and password
-		if ($db->checkLogin($email, $password)) {
-			// get the user by email
-			$user = $db->getUserByEmail($email);
-
-			if ($user != NULL) {
-
-				$pwUpdate = $db->updateUserPassword($uid, $new_password);
-
-				$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
-				return $response = $response->withRedirect($uri, 403);
-			} else {
-				// unknown error occurred
-				$uResponse['error'] = true;
-				$uResponse['message'] = "An error occurred. Please try again";
-			}
-		} else {
-			// user credentials are wrong
-			$formResponse['error'] = true;
-			$formResponse['message'] = 'Login failed. Incorrect credentials';
-
-			return $this->renderer->render($response, 'login.php', [
-			    'title' => 'Login',
-			    'page_name' => 'login',
-			    'view' => $args['view'],
-			    'viewPath' => $args['view'],
-			    'mainView' => true,
-			    'hideBreadcrumbs' => true,
-			    'messages' => $formResponse["message"]
-			]);
+		if ($__postVars['task'] == 'updateUser') {
+			$updateUserInfo = true;
 		}
-	});
+
+		if ($__postVars['task'] == 'clearNotification') {
+			$clearNotification = true;
+		}
+
+
+		if ($updateUserInfo) {
+		  	verifyRequiredParams(array('email', 'password'));
+
+			// reading post params
+			$email = $__postVars['email'];
+			$uid = $__postVars['uid'];
+			$password = $__postVars['password'];
+			$new_password = $__postVars['new_password'];
+
+			$formResponse = array();
+			$uResponse = array();
+
+			// check for correct email and password
+			if ($db->checkLogin($email, $password)) {
+				// get the user by email
+				$user = $db->getUserByEmail($email);
+
+				if ($user != NULL) {
+
+					$pwUpdate = $db->updateUserPassword($uid, $new_password);
+
+					$uri = $request->getUri()->withPath($this->router->pathFor('dashboard'));
+					return $response = $response->withRedirect($uri, 403);
+				} else {
+					// unknown error occurred
+					$uResponse['error'] = true;
+					$uResponse['message'] = "An error occurred. Please try again";
+				}
+			} else {
+				// user credentials are wrong
+				$formResponse['error'] = true;
+				$formResponse['message'] = 'Login failed. Incorrect credentials';
+
+				return $this->renderer->render($response, 'login.php', [
+				    'title' => 'Login',
+				    'page_name' => 'login',
+				    'view' => $args['view'],
+				    'viewPath' => $args['view'],
+				    'mainView' => true,
+				    'hideBreadcrumbs' => true,
+				    'messages' => $formResponse["message"]
+				]);
+			}	
+		}
+
+		// Disable email notification
+		if ($clearNotification) {
+
+			$clearEmailNotification = $db->updateRecentNotificationAlert($__postVars['alertID']);
+
+			$cacheFile = './tmp/' . implode('/', array_slice(str_split($__postVars['refCacheLocation'], 2), 0, 3));
+			$cacheClear = Spire::purgeAllCache($cacheFile);
+			$dashboardData = Spire::buildQueryCache();
+
+			$logTask = $db->logTask('disableEmailNotification', $user, 'Disabled email notification.');
+
+			if ( $clearEmailNotification ) {
+				$formResponse['error'] = false;
+				$formResponse['message'] = "Email notification temporarily stopped until new/additional errors";
+
+			} else {
+				$formResponse['error'] = true;
+				$formResponse['message'] = "Email notification didn't disbale properly, try again.";
+			}
+
+			return $this->renderer->render($response, 'home.php', [
+		        'title' => 'Dashboard',
+		        'page_name' => 'home',
+		        'dashClass' => true,
+		        'hideBreadcrumbs' => true,
+		        'todayManifestTotalFailureReports' => $dashboardData['todayManifestTotalFailureReports'],
+				'todayNavTotalFailureReports' => $dashboardData['todayNavTotalFailureReports'],
+				'todayContentTotalFailureReports' => $dashboardData['todayContentTotalFailureReports'],
+				'serverTimeStamp' => $current_date,
+				'apiManifestTestLoadTime' => $dashboardData['apiManifestTestLoadTime'],
+				'apiNavTestLoadTime' => $dashboardData['apiNavTestLoadTime'],
+				'apiContentTestLoadTime' => $dashboardData['apiContentTestLoadTime'],
+				'apiSectionContentLoadTime' => $dashboardData['apiSectionContentLoadTime'],
+				'chartLoadTimeData' => $dashboardData['chartLoadTimeData'],
+				'recentRegressionScore' => $dashboardData['recentRegressionScore'],
+				'message_e' => $formResponse['error'],
+				'messages' => $formResponse["message"],
+
+		        //Auth Specific
+		        'user' => $request->getAttribute('spAuth'),
+		        'uAuth' => $permissions['auth'],
+		        'uRole' => $permissions['role'],
+		        'uAthMessage' => $permissions['uAthMessage']
+		    ]);
+		}
+	})->setName('dashboard')->add( new SpireAuth() );
 });
 
 
@@ -767,7 +816,6 @@ $app->group('/scripts', function () {
     })->setName('scripts-run')->add( new SpireAuth() );
 });
 
-
 //=======================
 //
 // Help
@@ -1312,6 +1360,12 @@ $app->group('/utils', function () {
 			$getStationsGlobalAPIVer = true;
 		}
 
+		if ($utilReqParams['task'] == 'sendAlert'){
+			$spireNotifications = true;
+			$notificationType = $utilReqParams['notificationType'];
+		}
+
+
 		if ($createTestID) {
 			// Create test ID
 			$thisID = $db->createTestID($randTestID, $stationProperty, $testType, $testResultsFile);
@@ -1387,31 +1441,111 @@ $app->group('/utils', function () {
 
 		if ($utilReqParams['task'] == 'clearAndBuildQueryCache') {
 			// Clear cache then rebuild
-			$tmpLocation = BASEPATH .'/tmp/';
-			$cacheClear = Spire::purgeAllCache($tmpLocation);
-
-			// Build additional test result caches
-			$todayManifestTotalFailureReports = $db->getTestReportCount('all', 'all', 'all');
-			$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'all', 'all');
-			$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'all', 'all');
-			$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'all', 'all');
-
-    		// Today report data
-    		// Manifest
-    		$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'fail', 'today');
-    		$todayManifestTotalWarningReports = $db->getTestReportCount('api_manifest_audits', 'warning', 'today');
-
-    		// Nav
-    		$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'fail', 'today');
-    		$todayNavTotalWarningReports = $db->getTestReportCount('api_navigation_audits', 'warning', 'today');
-
-    		// Content
-    		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
-    		$todayContentTotalWarningReports = $db->getTestReportCount('api_article_audits', 'warning', 'today');
+			Spire::buildQueryCache(true);
 
     		return $response->withRedirect('/dashboard/main');
 			
 		}
+
+		if ($spireNotifications) {
+
+	    	if ($notificationType == 'api-notification') {
+	    		$db = new DbHandler();
+
+	    		$current_date = date("F j, Y \a\t g:ia");
+
+				$notificationTotals = Spire::buildQueryCache();
+				$notificationErrors = array_sum($notificationTotals);
+
+				$recentNotifications = $db->getRecentNotificationAlerts();
+
+				if ($recentNotifications['data']['error_count'] < 1 && $notificationErrors >= 1) {
+					$sendEmailNotification = true;
+					echo "sendable alert 0";
+					$randID = rand(0, 9999);
+					$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, '');	
+				} else {
+					if ( $notificationErrors >= 1 ) {
+						if ($notificationErrors > $recentNotifications['data']['error_count']) {
+							$sendEmailNotification = true;
+							echo "sendable alert 1";
+							$randID = rand(0, 9999);
+							$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, '');
+						} else {
+							if ($notificationErrors == $recentNotifications['data']['error_count'] && $recentNotifications['data']['sendable'] > 0) {
+								$sendEmailNotification = true;
+								echo "sendable alert 2";
+								$randID = rand(0, 9999);
+								$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, '');
+							} else {
+								$sendEmailNotification = false;
+								$logTask = $db->logTask('sendEmailNotification', 'SpireBot', 'API Errors, notification not sent, current errors already reviewed, seen. Alert ref: ' . $recentNotifications['data']['id']);
+							}
+						}
+					}
+				}
+
+				function setStatusColor($errorCount) {
+					if ( $errorCount > 0) {
+						$boxColor = "#cc0000";
+					} else {
+						$boxColor = "#93c54b";
+					}
+					return $boxColor;
+				}
+
+				// $emailRecipient = 'deltrie.allen@nbcuni.com';
+				$emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
+				$emailRecipient .= ", eduardo.martinez@nbcuni.com";
+
+				$emailSubject = 'Automation Failures/Warnings';
+
+	    		$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
+	    		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
+	    		$emailContent .= '<tr><td colspan="3"><a href="http://54.243.53.242/">Dashbaord</a></td></tr>';
+	    		$emailContent .= '<tr bgcolor="#ddd"><th>Manifest</th><th>Navigation</th><th>Content</th></tr>';
+	    		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="'.setStatusColor($notificationTotals['todayManifestTotalFailureReports']).'">'.$notificationTotals['todayManifestTotalFailureReports'].'</td>';
+	    		$emailContent .= '<td bgcolor="'.setStatusColor($notificationTotals['todayNavTotalFailureReports']).'">'.$notificationTotals['todayNavTotalFailureReports'].'</td>';
+	    		$emailContent .= '<td bgcolor="'.setStatusColor($notificationTotals['todayContentTotalFailureReports']).'">'.$notificationTotals['todayContentTotalFailureReports'].'</td></tr>';
+	    		$emailContent .= '<tr style="color: #000; text-align: center;"><td bgcolor="#ffd000">'.$notificationTotals['todayManifestTotalWarningReports'].'</td>';
+	    		$emailContent .= '<td bgcolor="#ffd000">'.$notificationTotals['todayNavTotalWarningReports'].'</td>';
+	    		$emailContent .= '<td bgcolor="#ffd000">'.$notificationTotals['todayContentTotalWarningReports'].'</td></tr>';
+	    		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">view reports</a></td></tr>';
+	    		$emailContent .= '<tr><td colspan="3"></td></tr>';
+	    		$emailContent .= '</table>';
+	    	}
+
+	    	if ($notificationType == 'regression-notification') {
+	    		$db = new DbHandler();
+
+	    		$todayRegressionCronFailures = $db->getTestReportCount('regression_tests', 'fail', 'today');
+	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+	    		// $emailContent = 'LIMQualityAssurance@nbcuni.com';
+	    		$sendEmailNotification = true;
+	    		$emailSubject = 'Automation Regression '.$utilPostParams['taskRef'];
+	    		$emailContent .= 'Regression cron process: '.$utilPostParams['taskRef'].'ed';
+
+	    		if ($utilPostParams['regression-alert'] == 'end') {
+	    			$emailContent .= '<br /> Process completed. Total Errors: '. $todayRegressionCronFailures;
+	    			$emailContent .= '<br /> - <a href="http://54.243.53.242/reports/regression_tests">view reports</a>';
+	    		}
+	    	}
+
+	    	if ($notificationType == 'olympics-alert'){
+	    		$emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
+	    		$sendEmailNotification = true;
+				$emailSubject = 'Olympics Alert: Watch Now / Medal Count Loading Errors';
+				$emailContent = 'Unable to load or parse WatchNow / MedalCount feeds. Check feeds for issues. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
+	    	}
+
+	    	if ($sendEmailNotification) {
+	    		$this->logger->info("Alert notification email sent; type: ". $utilPostParams['taskType'] . ", process: " . $utilPostParams['taskRef'] . ", note: " . $utilPostParams['logNote']);
+	    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
+	    		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
+	    	}
+
+	    	echo $emailContent;
+	    }
 
 		// Force redirect
 		// return $response->withRedirect('/dashboard/main');
@@ -1502,113 +1636,6 @@ $app->group('/utils', function () {
     			$this->logger->info("Loadtime logged: [testID=>". $testID .",endPoint=>". $endPoint .",loadTime=>". $manifestLoadTime .",testType=>". $testType ."]");
     		}
     	}
-
-
-    	if ($utilPostParams['taskType'] == 'api-notification') {
-    		$db = new DbHandler();
-
-    		$info = getdate();
-    		$date = $info['mday'];
-    		$month = $info['mon'];
-    		$year = $info['year'];
-    		$hour = $info['hours'];
-    		$min = $info['minutes'];
-    		$sec = $info['seconds'];
-
-    		$current_date = "$month/$date//$year @ $hour:$min:$sec";
-
-			// Build additional test result caches
-			// Task will be hit every 20 min after the 4hr cron, pre-building db caches after job runs
-			$todayManifestTotalFailureReports = $db->getTestReportCount('all', 'all', 'all');
-			$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'all', 'all');
-			$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'all', 'all');
-			$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'all', 'all');
-
-    		// Today report data
-    		// Manifest
-    		$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'fail', 'today');
-    		$todayManifestTotalWarningReports = $db->getTestReportCount('api_manifest_audits', 'warning', 'today');
-
-    		// Nav
-    		$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'fail', 'today');
-    		$todayNavTotalWarningReports = $db->getTestReportCount('api_navigation_audits', 'warning', 'today');
-
-    		// Content
-    		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
-    		$todayContentTotalWarningReports = $db->getTestReportCount('api_article_audits', 'warning', 'today');
-
-
-    		// echo ($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
-    		$dashErrorTotals = array($todayManifestTotalFailureReports, $todayNavTotalFailureReports, $todayContentTotalFailureReports);
-
-			if ( array_sum($dashErrorTotals) > 1 ) {
-				$sendEmailNotification = true;
-				$sendEmailNotificationType = 'Automation failures';
-			}
-
-			function setStatusColor($errorCount) {
-				if ( $errorCount > 0) {
-					$boxColor = "#cc0000";
-				} else {
-					$boxColor = "#93c54b";
-				}
-				return $boxColor;
-			}
-
-			// $emailRecipient = 'deltrie.allen@nbcuni.com';
-			$emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
-			$emailRecipient .= ", eduardo.martinez@nbcuni.com";
-
-			$emailSubject = 'Automation Failures/Warnings';
-
-    		$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
-    		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
-    		$emailContent .= '<tr><td colspan="3"><a href="http://54.243.53.242/">Dashbaord</a></td></tr>';
-    		$emailContent .= '<tr bgcolor="#ddd"><th>Manifest</th><th>Navigation</th><th>Content</th></tr>';
-    		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="'.setStatusColor($todayManifestTotalFailureReports).'">'.$todayManifestTotalFailureReports['data'].'</td>';
-    		$emailContent .= '<td bgcolor="'.setStatusColor($todayNavTotalFailureReports).'">'.$todayNavTotalFailureReports['data'].'</td>';
-    		$emailContent .= '<td bgcolor="'.setStatusColor($todayContentTotalFailureReports).'">'.$todayContentTotalFailureReports['data'].'</td></tr>';
-    		$emailContent .= '<tr style="color: #000; text-align: center;"><td bgcolor="#ffd000">'.$todayManifestTotalWarningReports['data'].'</td>';
-    		$emailContent .= '<td bgcolor="#ffd000">'.$todayNavTotalWarningReports['data'].'</td>';
-    		$emailContent .= '<td bgcolor="#ffd000">'.$todayContentTotalWarningReports['data'].'</td></tr>';
-    		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">view reports</a></td></tr>';
-    		$emailContent .= '<tr><td colspan="3"><p>The email will be sent every 4 hours following the cron, and is delayed 20 min to allow for all results to complete processing. </p></td></tr>';
-    		$emailContent .= '<tr><td colspan="3"><p>*totals are at current UTC server time: '.$current_date.' </p></td></tr>';
-    		$emailContent .= '</table>';
-
-    		// echo $emailContent;
-
-    	}
-
-    	if ($utilPostParams['taskType'] == 'regression-notification') {
-    		$db = new DbHandler();
-
-    		$todayRegressionCronFailures = $db->getTestReportCount('regression_tests', 'fail', 'today');
-    		$emailRecipient = 'deltrie.allen@nbcuni.com';
-    		// $emailContent = 'LIMQualityAssurance@nbcuni.com';
-    		$sendEmailNotification = true;
-    		$emailSubject = 'Automation Regression '.$utilPostParams['taskRef'];
-    		$emailContent .= 'Regression cron process: '.$utilPostParams['taskRef'].'ed';
-
-    		if ($utilPostParams['regression-alert'] == 'end') {
-    			$emailContent .= '<br /> Process completed. Total Errors: '. $todayRegressionCronFailures;
-    			$emailContent .= '<br /> - <a href="http://54.243.53.242/reports/regression_tests">view reports</a>';
-    		}
-    	}
-
-    	if ($utilPostParams['taskType'] == 'olympics-alert'){
-    		$emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
-    		$sendEmailNotification = true;
-			$emailSubject = 'Olympics Alert: Watch Now / Medal Count Loading Errors';
-			$emailContent = 'Unable to load or parse WatchNow / MedalCount feeds. Check feeds for issues. <br /><a href="http://olympics.otsops.com/watch-now">Watch Now</a><br /><a href="http://olympics.otsops.com/medal-count">Medal Count</a>';
-    	}
-
-    	if ($sendEmailNotification) {
-    		$this->logger->info("Alert notification email sent; type: ". $utilPostParams['taskType'] . ", process: " . $utilPostParams['taskRef'] . ", note: " . $utilPostParams['logNote']);
-    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
-    		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
-    	}
-		
     });
 
 

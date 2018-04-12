@@ -52,6 +52,7 @@
 												<input type="hidden" value="<?php echo $user['id']; ?>" name="uid" />
 												<input type="hidden" value="<?php echo $user['name']; ?>" name="name" />
 												<input type="hidden" value="<?php echo $user['email']; ?>" name="email" />
+												<input type="hidden" value="updateUser" name="task" />
 												<input type="hidden" value="set" name="method" />
 												<input type="hidden" value="true" name="submitted" />
 												<!--<input type="submit" value="Submit" name="submit" class="submit_button" />-->

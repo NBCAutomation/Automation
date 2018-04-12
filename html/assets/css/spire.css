@@ -275,3 +275,8 @@ table .fail {
 .checkbox label, .radio label {
 	padding-left: 5px;
 }
+
+.apiNotificationError button {
+	border: solid 1px red;
+	background: #d9534f;
+}

@@ -63,10 +63,9 @@
 					</ul>
 				</li>
 				<li <?php if ($scriptClass) { echo 'class="open"'; } ?>><a href="/scripts/main"><i class="fa fa-bolt"></i> Scripts</a></li>
-				<li><a href="#"><i class="fa fa-bell"></i> Alerts</a></li>
 				<li <?php if ($helpClass) { echo 'class="open"'; } ?>><a href="/help"><i class="fa fa-book"></i> Help</a></li>
 			</ul>
-			<?php if ($uAuth) { ?>
+			<?php if ($uAuth && $uRole < 3) { ?>
 			<ul class="ts-sidebar-menu">
 				<li class="ts-label">Admin Menu</li>
 				<li <?php if ($admin_dashClass) { echo 'class="open"'; } ?>><a href="/admin/main"><i class="fa fa-desktop"></i> Dashboard</a></li>

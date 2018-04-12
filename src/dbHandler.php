@@ -1258,7 +1258,6 @@ class DbHandler {
 
     }
 
-
     // Util ** Delete all test data older than 30days
     // Updated to purge * > 60 for full month to month
     public function purgeOldTestResults() {
@@ -1311,6 +1310,115 @@ class DbHandler {
         }
 
         $stmt->close();
+    }
+
+
+    public function logNotificationAlert($refID, $errorCount, $sendable, $info) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO alerts(ref_id, error_count, sendable, info ) VALUES(?, ?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($refID, $errorCount, $sendable, $info));
+
+        if ($stmtStatus) {
+            // task row created
+            $rowID = $db_con->lastInsertId();
+
+            if ($rowID != NULL) {
+                // task created successfully
+                return $rowID;
+            } else {
+                // task failed to create
+                return NULL;
+            }
+        } else {
+            // task failed to create
+            return NULL;
+        }
+
+        $stmt->close();
+    }
+
+
+    public function getAllNotificationAlerts() {
+        // $output = Spire::spireCache('getAllNotificationAlerts', 604800000, function() {
+        $output = Spire::spireCache('getAllNotificationAlerts', 10, function() {
+            
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM alerts ORDER BY id DESC");
+
+            if ($stmt->execute()) {
+                $notification = $stmt->fetchAll();
+
+                $stmt->closeCursor();
+                return $notification;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
+    public function getRecentActiveNotificationAlerts() {
+        // $output = Spire::spireCache('getAllNotificationAlerts', 604800000, function() {
+        $output = Spire::spireCache('getAllNotificationAlerts', 3600, function() {
+            
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM alerts ORDER BY id DESC LIMIT 1");
+
+            if ($stmt->execute()) {
+                $notification = $stmt->fetch();
+
+                $stmt->closeCursor();
+                return $notification;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
+    public function getRecentNotificationAlerts() {
+        // $output = Spire::spireCache('getAllNotificationAlerts', 604800000, function() {
+        $output = Spire::spireCache('getAllNotificationAlerts', 3600, function() {
+            
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM alerts WHERE created >= DATE_SUB(NOW(), INTERVAL 2 HOUR) ORDER BY id DESC LIMIT 1");
+
+            if ($stmt->execute()) {
+                $notifications = $stmt->fetch();
+
+                $stmt->closeCursor();
+                return $notifications;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
+    public function updateRecentNotificationAlert($alertID) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("UPDATE alerts SET `sendable` = '0'  WHERE `id` = '".$alertID."'");
+
+        if ($stmt->execute()) {
+            if($stmt->rowCount() > 0){
+                return TRUE;
+            }
+        } else {
+            return FALSE;
+        }
+
+        $stmt->closeCursor();
     }
 
 }

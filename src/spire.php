@@ -441,6 +441,62 @@ class Spire {
 		}
 	}
 
+	public static function buildQueryCache($resetCache){
+		if ($resetCache) {
+			$tmpLocation = BASEPATH .'/tmp/';
+			$cacheClear = Spire::purgeAllCache($tmpLocation);	
+		}
+
+		$db = new DbHandler();
+		// Build additional test result caches
+		$todayManifestTotalFailureReports = $db->getTestReportCount('all', 'all', 'all');
+		$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'all', 'all');
+		$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'all', 'all');
+		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'all', 'all');
+
+		// Today report data
+		// Manifest
+		$todayManifestTotalFailureReports = $db->getTestReportCount('api_manifest_audits', 'fail', 'today');
+		$todayManifestTotalWarningReports = $db->getTestReportCount('api_manifest_audits', 'warning', 'today');
+
+		// Nav
+		$todayNavTotalFailureReports = $db->getTestReportCount('api_navigation_audits', 'fail', 'today');
+		$todayNavTotalWarningReports = $db->getTestReportCount('api_navigation_audits', 'warning', 'today');
+
+		// Content
+		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
+		$todayContentTotalWarningReports = $db->getTestReportCount('api_article_audits', 'warning', 'today');
+
+		// Loadtime data
+		$apiManifestTestLoadTime = $db->getAverageLoadTime('apiManifestTest', 'today');
+		$apiNavTestLoadTime = $db->getAverageLoadTime('apiNavTest', 'today');
+		$apiContentTestLoadTime = $db->getAverageLoadTime('apiContentTest', 'today');
+		$apiSectionContentLoadTime = $db->getAverageLoadTime('apiSectionContent', 'today');
+		$chartLoadTimeData = $db->getAllAverageLoadTimes();
+
+		$resultsArray = array();
+
+		$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
+		$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
+		$resultsArray['todayNavTotalFailureReports'] = $todayNavTotalFailureReports['data'];
+		$resultsArray['todayContentTotalFailureReports'] = $todayContentTotalFailureReports['data'];
+		$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
+		$resultsArray['todayManifestTotalWarningReports'] = $todayManifestTotalWarningReports['data'];
+		$resultsArray['todayNavTotalFailureReports'] = $todayNavTotalFailureReports['data'];
+		$resultsArray['todayNavTotalWarningReports'] = $todayNavTotalWarningReports['data'];
+		$resultsArray['todayContentTotalFailureReports'] = $todayContentTotalFailureReports['data'];
+		$resultsArray['todayContentTotalWarningReports'] = $todayContentTotalWarningReports['data'];
+		$resultsArray['apiManifestTestLoadTime'] = $apiManifestTestLoadTime['data'];
+		$resultsArray['apiNavTestLoadTime'] = $apiNavTestLoadTime['data'];
+		$resultsArray['apiContentTestLoadTime'] = $apiContentTestLoadTime['data'];
+		$resultsArray['apiSectionContentLoadTime'] = $apiSectionContentLoadTime['data'];
+		$resultsArray['chartLoadTimeData'] = $chartLoadTimeData['data'];
+
+
+		return $resultsArray;
+	}	
+
+
 	public static function countDataResults($data, $view){
 		$c = 0;
 		foreach ($data as $key => $value) {
