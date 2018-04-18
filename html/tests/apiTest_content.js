@@ -710,7 +710,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                         try {
                             output = JSON.parse(output);
 
-                            if( output instanceof Object ) {
+                            if ( output instanceof Object ) {
                                 var validated = true;
                              }
                         } catch (e) {
@@ -734,7 +734,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                                 try {
                                     JSONTestOutput = JSON.parse(cleanedJson);
 
-                                    if( JSONTestOutput instanceof Object ) {
+                                    if ( JSONTestOutput instanceof Object ) {
                                         if (showOutput) {console.log('> Re-Eval test: ' + colorizer.colorize('PASSED', 'INFO') )};
                                     } else {
                                         if (showOutput) {
@@ -1239,35 +1239,34 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                     jsonParsedOutput = JSON.parse(output);
                     
                     for (var parentManifestItem in jsonParsedOutput.items) {
-                        var innerGalleryObjects = jsonParsedOutput.items[parentManifestItem];                        
-                        
-                            var gallerySingleImageID = innerGalleryObjects.imageID,
-                                gallerySingleImageURL = innerGalleryObjects.url;
+                        var innerGalleryObjects = jsonParsedOutput.items[parentManifestItem],
+                            gallerySingleImageID = innerGalleryObjects.imageID,
+                            gallerySingleImageURL = innerGalleryObjects.url;
 
-                            if (debugOutput) {
-                                console.log('gallerySingleImageID > ' + gallerySingleImageID);
-                                console.log('gallerySingleImageURL > ' + gallerySingleImageURL);
-                            }
+                        if (debugOutput) {
+                            console.log('gallerySingleImageID > ' + gallerySingleImageID);
+                            console.log('gallerySingleImageURL > ' + gallerySingleImageURL);
+                        }
 
-                            if (gallerySingleImageURL) {
-                                casper.thenOpen(gallerySingleImageURL).then(function (galResp) {
-                                    if (showOutput) {
-                                        console.log(' > Gallery Image: ' + galResp.url);
-                                    }
+                        if (gallerySingleImageURL) {
+                            casper.thenOpen(gallerySingleImageURL).then(function (galResp) {
+                                if (showOutput) {
+                                    console.log(' > Gallery Image: ' + galResp.url);
+                                }
 
-                                    if(test.assertHttpStatus(200)){
-                                        if (debugOutput) { console.log(galleryCount); }
-                                    } else {
-                                        galleryTestingResults['galleryImage_' + galleryCount] = 'Fail: Unable to load gallery image: ' + gallerySingleImageURL;
-                                        setFail++;
-                                    }
+                                if (test.assertHttpStatus(200)){
+                                    if (debugOutput) { console.log(galleryCount); }
+                                } else {
+                                    galleryTestingResults['galleryImage_' + galleryCount] = 'Fail: Unable to load gallery image: ' + gallerySingleImageURL;
+                                    setFail++;
+                                }
 
-                                    if (showOutput) {
-                                        console.log('--------------------------------------');
-                                    }
-                                    galleryCount++;
-                                });
-                            }
+                                if (showOutput) {
+                                    console.log('--------------------------------------');
+                                }
+                                galleryCount++;
+                            });
+                        }
                     }
                 } catch (e) {
                     if (showOutput) {

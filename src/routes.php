@@ -1455,8 +1455,8 @@ $app->group('/utils', function () {
 	    		$current_date = date("F j, Y \a\t g:ia");
 
 				$notificationTotals = Spire::buildQueryCache();
-				$notificationErrors = array_sum($notificationTotals);
-
+				$errorTotals = array($notificationTotals['todayManifestTotalFailureReports'], $notificationTotals['todayNavTotalFailureReports'], $notificationTotals['todayContentTotalFailureReports']);
+				$notificationErrors = array_sum($errorTotals);
 				$recentNotifications = $db->getRecentNotificationAlerts();
 
 				if ($recentNotifications['data']['error_count'] < 1 && $notificationErrors >= 1) {
@@ -1502,7 +1502,6 @@ $app->group('/utils', function () {
 
 	    		$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
 	    		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
-	    		$emailContent .= '<tr><td colspan="3"><a href="http://54.243.53.242/">Dashbaord</a></td></tr>';
 	    		$emailContent .= '<tr bgcolor="#ddd"><th>Manifest</th><th>Navigation</th><th>Content</th></tr>';
 	    		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="'.setStatusColor($notificationTotals['todayManifestTotalFailureReports']).'">'.$notificationTotals['todayManifestTotalFailureReports'].'</td>';
 	    		$emailContent .= '<td bgcolor="'.setStatusColor($notificationTotals['todayNavTotalFailureReports']).'">'.$notificationTotals['todayNavTotalFailureReports'].'</td>';
@@ -1512,6 +1511,7 @@ $app->group('/utils', function () {
 	    		$emailContent .= '<td bgcolor="#ffd000">'.$notificationTotals['todayContentTotalWarningReports'].'</td></tr>';
 	    		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">view reports</a></td></tr>';
 	    		$emailContent .= '<tr><td colspan="3"></td></tr>';
+	    		$emailContent .= '<tr><td colspan="3">Visit <a href="http://54.243.53.242/">Dashbaord</a> to disable email alert.</td></tr>';
 	    		$emailContent .= '</table>';
 	    	}
 
@@ -1543,12 +1543,9 @@ $app->group('/utils', function () {
 	    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
 	    		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
 	    	}
-
-	    	echo $emailContent;
+	    	// Force redirect
+			return $response->withRedirect('/dashboard/main');
 	    }
-
-		// Force redirect
-		// return $response->withRedirect('/dashboard/main');
     });
 
 	// Manage test POST requests
