@@ -1341,7 +1341,6 @@ $app->group('/utils', function () {
 		$stationProperty = $utilReqParams['property'];
 
 		$testType = $utilReqParams['testscript'];
-		$testResultsFile = $utilReqParams['fileLoc'];
 
 		// Set task to run
 		if ($utilReqParams['task'] == 'generate'){
@@ -1386,50 +1385,6 @@ $app->group('/utils', function () {
 			} else {
 				echo('che le derp');
 			}
-		}
-
-		if ($uploadResultsFile) {
-			// Updload results file
-
-			echo "...importing csv to db<br />";
-
-			// Check test type -- Needs refactoring
-			if ($utilReqParams['testType'] == 'apiNav') {
-				// $db->navigationAuditInsert($testResultsFile);
-				// $thisupload = $db->navigationAuditInsert($testResultsFile);
-
-				if ($db->navigationAuditInsert($testResultsFile)) {
-					echo 'inserted';
-					$this->logger->info("Nav Test results imported - ". $testResultsFile );
-				} else {
-					echo 'DB nav import failed';
-					$this->logger->info("ERROR: DB nav import failed");
-					Spire::sendEmailNotification('deltrie.allen@nbcuni.com', 'ERROR: DB nav import failed', 'Spire DB Import Error.');
-				}
-			}
-
-			if ($utilReqParams['testType'] == 'apiArticle') {
-				if ($db->articleAuditInsert($testResultsFile)) {
-					echo 'Article test results imported';
-					$this->logger->info("Article test results imported - ". $testResultsFile );
-				} else {
-					echo 'DB article import failed';
-					$this->logger->info("ERROR: DB article import failed");
-					Spire::sendEmailNotification('deltrie.allen@nbcuni.com', 'ERROR: DB article import failed', 'Spire DB Import Error.');
-				}
-			}
-
-			if ($utilReqParams['testType'] == 'apiManifest') {
-				if ($db->manifestAuditInsert($testResultsFile)) {
-					echo 'inserted';
-					$this->logger->info("Manifest test results imported - ". $testResultsFile );
-				} else {
-					echo 'DB manifest import failed';
-					$this->logger->info("ERROR: DB manifest import failed");
-					Spire::sendEmailNotification('deltrie.allen@nbcuni.com', 'ERROR: DB manifest import failed', 'Spire DB Import Error.');
-				}
-			}
-
 		}
 
 		if ($getDictionaryData) {
@@ -1548,36 +1503,7 @@ $app->group('/utils', function () {
 	    }
 
 	    if ($utilReqParams['task'] == 'testingOutput'){
-	    	// $station = 'nbcdfw';
-	    	// $sectionContentPayload = '{"242280381":{"article_1":{"contentID":480254903,"title":"Ex-Gove. Chris Christie Spends $85K on Official Portrait","updatedMessage":"Updated 10:26 AM EDT"},"article_2":{"contentID":480142413,"title":"Prosecutors to Announce Possible Charges in Prince\'s Death","updatedMessage":"Updated 8:46 AM EDT"},"article_3":{"contentID":480261703,"title":"Stranger Who Broke Into Girl\'s Bedroom Is Arrested: NYPD","updatedMessage":"Updated 11:25 AM EDT"},"article_4":{"contentID":374653171,"title":"Your Complete Guide to the 2018 Tribeca Festival","updatedMessage":"Updated 7:22 AM EDT, Wednesday, April 18, 2018"},"article_5":{"contentID":480209793,"title":"NYC \'Poop Train\' Flushed Out of Alabama Town","updatedMessage":"Updated 1:29 AM EDT, Thursday, April 19, 2018"}},"242281781":{"article_1":{"contentID":480231943,"title":"Men Arrested at Starbucks Say They Feared for Their Lives","updatedMessage":"Updated 11:08 AM EDT"},"article_2":{"contentID":480245503,"title":"Trump\'s Lawyer Cohen Drops Libel Suits Over Steele Dossier","updatedMessage":"Updated 11:24 AM EDT"},"article_3":{"contentID":480254913,"title":"Power Largely Restored Across Puerto Rico After Blackout","updatedMessage":"Updated 10:26 AM EDT"},"article_4":{"contentID":480255073,"title":"Americans Filling Far Fewer Opioid Prescriptions: New Data","updatedMessage":"Updated 11:44 AM EDT"},"article_5":{"contentID":480250853,"title":"Bill Cosby\'s Defense Team Loses Another Bid for Mistrial","updatedMessage":"Updated 11:26 AM EDT"}},"242282091":{"article_1":{"contentID":471667234,"title":"Look From Above: New Photos of Disneyland\'s Star Wars Land and More","updatedMessage":"Updated 10:15 PM EDT, Monday, Jan. 29, 2018"},"article_2":{"contentID":480263173,"title":"Doctor Who Treated Prince Pays $30K to Settle Violation","updatedMessage":"Updated 11:39 AM EDT"},"article_3":{"contentID":480168873,"title":"\'Black Panther\' Actor Chadwick Boseman to Give Howard University Commencement Address","updatedMessage":"Updated 11:29 AM EDT"},"article_4":{"contentID":480257933,"title":"James Defends Reporter Asking About Death of Erin Popovich","updatedMessage":"Updated 11:16 AM EDT"},"article_5":{"contentID":250339161,"title":"Late at Night on NBC","updatedMessage":"Updated 3:13 PM EDT, Monday, Aug. 15, 2016"}},"242407991":{"article_1":{"contentID":480231353,"title":"Don\'t Eat the Lettuce: E. Coli Outbreak Booms to 53 Cases","updatedMessage":"Updated 11:45 AM EDT"},"article_2":{"contentID":480259253,"title":"Bad Gas at New Jersey Station Disables Dozen Cars: Police","updatedMessage":"Updated 11:02 AM EDT"},"article_3":{"contentID":480153843,"title":"These Are the 30 Best Bang-for-Your-Buck Colleges in America","updatedMessage":"Updated 8:00 AM EDT"},"article_4":{"contentID":480194453,"title":"Uproar After NJ Gym Calls Police on Black Member, Guest","updatedMessage":"Updated 1:35 AM EDT, Thursday, April 19, 2018"},"article_5":{"contentID":480196473,"title":"Bowie-Branded MetroCards Have New Yorkers Lining the Subway","updatedMessage":"Updated 2:36 AM EDT, Thursday, April 19, 2018"}},"285405131":{"article_1":{"contentID":480226013,"title":"Man Nabbed in Horrifying NYC Attempted Rape of Girl","updatedMessage":"Updated 6:36 AM EDT"},"article_2":{"contentID":480190813,"title":"Airman Surprises Mom at Long Island Elementary School","updatedMessage":"Updated 4:58 AM EDT"},"article_3":{"contentID":480170793,"title":"Family Wants Charges Pressed Against Stop & Shop Staff","updatedMessage":"Updated 8:55 PM EDT, Wednesday, April 18, 2018"},"article_4":{"contentID":480185413,"title":"Cash Giveaway by Rapper Causes Campaign Controversy","updatedMessage":"Updated 1:41 AM EDT, Thursday, April 19, 2018"},"article_5":{"contentID":480136953,"title":"Passenger Describes Pulling Woman Back Into Damaged Plane","updatedMessage":"Updated 3:06 PM EDT, Wednesday, April 18, 2018"}},"289800091":{"article_1":{"contentID":253170161,"title":"Interactive Radar","updatedMessage":"Updated 1:59 PM EDT, Monday, June 1, 2015"},"article_2":{"contentID":480262713,"title":"Forecast for Thursday, April 19","updatedMessage":"Updated 11:42 AM EDT"},"article_3":{"contentID":330099781,"title":"Weather Alerts FAQ","updatedMessage":"Updated 12:49 PM EDT, Wednesday, Aug. 9, 2017"},"article_4":{"contentID":405036715,"title":"StormTracker 4: The Most Powerful Radar in the Tri-State","updatedMessage":"Updated 7:25 AM EDT, Thursday, March 22, 2018"},"article_5":{"contentID":380830781,"title":"What to Expect: Hourly, 7-Day Forecasts","updatedMessage":"Updated 12:24 PM EDT, Wednesday, May 25, 2016"}},"295603151":{"article_1":{"contentID":480176193,"title":"Shredded Engine Was Due for Inspection in December: Airline","updatedMessage":"Updated 12:11 AM EDT, Thursday, April 19, 2018"},"article_2":{"contentID":480054113,"title":"Facebook Sought to Influence NY Bill on Face Scan Data","updatedMessage":"Updated 6:59 PM EDT, Tuesday, April 17, 2018"},"article_3":{"contentID":480036693,"title":"Facebook Sought to Influence NY Bill on Facial Scan Data","updatedMessage":"Updated 7:18 PM EDT, Tuesday, April 17, 2018"},"article_4":{"contentID":479921993,"title":"Boxes, Bags of Cremated Human Remains Found in NYC Basement","updatedMessage":"Updated 8:10 AM EDT, Tuesday, April 17, 2018"},"article_5":{"contentID":453328333,"title":"State of Addiction","updatedMessage":"Updated 2:08 PM EDT, Friday, Dec. 8, 2017"}},"311210521":{"article_1":{"contentID":479800923,"title":"Nearly 207M Eggs Recalled Over Possible Salmonella Outbreak","updatedMessage":"Updated 11:13 PM EDT, Tuesday, April 17, 2018"},"article_2":{"contentID":479508553,"title":"67 Tons of Salisbury Steaks Recalled Over Bone Fragments","updatedMessage":"Updated 9:28 AM EDT, Thursday, April 12, 2018"},"article_3":{"contentID":478991853,"title":"Ford Recalls Trucks, SUVs for Transmission Shifter Problem","updatedMessage":"Updated 1:13 PM EDT, Friday, April 6, 2018"},"article_4":{"contentID":478676923,"title":"FDA Issues Mandatory Recall of Some Kratom Products","updatedMessage":"Updated 3:05 PM EDT, Tuesday, April 3, 2018"},"article_5":{"contentID":478565243,"title":"Stella Artois Recalls Some Bottles Over Glass Particle Fears","updatedMessage":"Updated 6:25 AM EDT, Tuesday, April 3, 2018"}},"368047151":{"article_1":{"contentID":480171673,"title":"NJ Man\'s Rollercoaster Canceling Six Flags Season Pass","updatedMessage":"Updated 8:54 PM EDT, Wednesday, April 18, 2018"},"article_2":{"contentID":480045533,"title":"NY Man Waits Months for Refund on Broken TV","updatedMessage":"Updated 6:01 PM EDT, Tuesday, April 17, 2018"},"article_3":{"contentID":479920713,"title":"Man Waits Months for Green Pass","updatedMessage":"Updated 6:06 PM EDT, Monday, April 16, 2018"},"article_4":{"contentID":479725573,"title":"Better Get Baquero Saves More than $4M for Consumers","updatedMessage":"Updated 10:16 PM EDT, Friday, April 13, 2018"},"article_5":{"contentID":368084571,"title":"Submit Tips or Story Ideas to Better Get Baquero","updatedMessage":"Updated 1:34 PM EDT, Friday, Nov. 18, 2016"}},"416142813":{}}';
-	    	// $refTestID = 1;
-	    	// $thisContentObject = $db->getRecentContentObject($station);
-	    	// $recentCotnentPayload = $thisContentObject['data']['payload'];
 	    	
-	    	
-	    	// echo "<pre>";
-	    	// var_dump($thisContentObject);
-	    	// // echo $thisContentObject['data']['payload'];
-	    	// echo "</pre>";
-
-
-	    	// if ($recentCotnentPayload) {
-	    	// 	$payloadID = $thisContentObject['data']['id'];
-	    	// 	$refTestID = $thisContentObject['data']['ref_test_id'];
-
-	    	// 	if ($recentCotnentPayload == $sectionContentPayload) {
-	    	// 		echo "matches";
-	    	// 		$db->logContentCheck($refTestID, $payloadID, $station, 1);
-	    	// 	} else {
-	    	// 		echo "NO";
-	    			
-	    	// 		$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-	    	// 		$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-	    	// 	}
-	    	// } else {
-	    	// 	$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-	    	// 	$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-	    	// }
 	    }
     });
 

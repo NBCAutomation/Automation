@@ -3,9 +3,6 @@ ini_set('display_errors',1);
 error_reporting(E_ALL);
 
 class DbHandler {
-
-    // private $conn;
-
     function __construct() {
         require_once dirname(__FILE__) . '/spire.php';
     }
@@ -30,10 +27,6 @@ class DbHandler {
             // Generating API key
             $api_key = $this->generateApiKey();
 
-            // var_dump($first_name, $last_name, $email, $password);
-            // exit();
-
-            // insert query
             $stmt = $db_con->prepare("INSERT INTO users(first_name, last_name, email, password_hash, api_key, status, role) values(?, ?, ?, ?, ?, 1, 4)");
             $stmt->bind_param("sssss", $first_name, $last_name, $email, $password_hash, $api_key);
 
@@ -193,7 +186,6 @@ class DbHandler {
      * Fetching user id by api key
      * @param String $api_key user api key
      */
-
     public function getUserRole($api_key) {
         $db_con = Spire::getConnection();
         $stmt = $db_con->prepare("SELECT role FROM users WHERE api_key = ?");
@@ -212,11 +204,9 @@ class DbHandler {
         }
     }
 
-
     public function getAllUsers() {
         $db_con = Spire::getConnection();
 
-        // $stmt = $db_con->prepare("SELECT id, first_name, last_name, email, api_key, status, role FROM users");
         $stmt = $db_con->prepare("SELECT `users`.`id`, `users`.`first_name`, `users`.`last_name`, `users`.`email`, `users`.`api_key`, `user_roles`.`role_name`, `users`.`status` FROM `users` INNER JOIN `user_roles` ON `users`.`role` = `user_roles`.`role`");
         $stmt->execute();
 
@@ -237,7 +227,6 @@ class DbHandler {
             return NULL;
         }
     }
-
 
     public function getUserById($userID) {
         $db_con = Spire::getConnection();
@@ -367,56 +356,6 @@ class DbHandler {
         $stmt->close();
     }
 
-
-    /**
-     * Insert Test Results
-     */
-    public function navigationAuditInsert($resultsFile) {
-        $db_con = Spire::getConnection();
-
-        // print_r($resultsFile);
-        $uploadQuery = "LOAD DATA INFILE '".$resultsFile."' INTO TABLE nav_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, link_name, link_url, status_code, status, info)";
-
-        // var_dump($db_con->query($uploadQuery));
-
-        if ( !($stmt = $db_con->query($uploadQuery)) ) {
-            // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
-    public function articleAuditInsert($resultsFile) {
-        $db_con = Spire::getConnection();
-
-        // print_r($resultsFile);
-        $uploadQuery = "LOAD DATA INFILE '".$resultsFile."' INTO TABLE article_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, endpoint, content_id, content_title, content_error, status)";
-
-        if ( !($stmt = $db_con->query($uploadQuery)) ) {
-            // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
-    // Will be replaced by 
-    public function manifestAuditInsert($resultsFile) {
-        $db_con = Spire::getConnection();
-
-        // print_r($resultsFile);
-        $uploadQuery = "LOAD DATA INFILE '".$resultsFile."' INTO TABLE manifest_tests FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' IGNORE 1 LINES (test_id, apiVersion, expected_key, expected_value, live_key, live_value, status, info)";
-
-        // if ( !($stmt = $db_con->query($uploadQuery)) ) {
-        if ( !($stmt = $db_con->query($uploadQuery)) ) {
-            // echo "\nQuery execute failed: ERRNO: (" . $db_con->errno . ") " . $db_con->error;
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
     /**
      * Insert test results; New formatted table for JSON test results.
      */
@@ -438,7 +377,6 @@ class DbHandler {
 
         $stmt->closeCursor();
     }
-
 
     /**
      * Insert or update manifest dictionary data
@@ -505,7 +443,6 @@ class DbHandler {
                 return NULL;
             }
         });
-
         return $output;
     }
 
@@ -525,10 +462,8 @@ class DbHandler {
                 return TRUE;
             }
         }
-
         $stmt->closeCursor();
     }
-
 
     public function logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $testInfo) {
         $db_con = Spire::getConnection();
@@ -545,7 +480,6 @@ class DbHandler {
                 return TRUE;
             }
         }
-
         $stmt->closeCursor();
     }
 
@@ -623,7 +557,6 @@ class DbHandler {
                 return NULL;
             }
         });
-
         return $output;
     }
 
@@ -691,7 +624,6 @@ class DbHandler {
                 return NULL;
             }
         });
-
         return $output;
     }
 
@@ -699,9 +631,6 @@ class DbHandler {
         $output = Spire::spireCache('getAllAverageLoadTimes', 10000, function() {
 
             $db_con = Spire::getConnection();
-
-            // $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS dataPointName, Date(created) AS dayDate, Hour(created) AS hourInterval FROM loadtimes GROUP BY test_type, DAY(created), HOUR(created)");
-            // $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS loadTimeFrom, Date(created) AS date FROM loadtimes GROUP BY test_type, DAY(created)");
 
             $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS loadTimeFrom, Date(created) AS date FROM loadtimes WHERE Month(created) = Month(CURRENT_TIMESTAMP()) GROUP BY test_type, DAY(created)");
 
@@ -718,25 +647,18 @@ class DbHandler {
                 $storedLoadTimes[] = $loadTimeArray;
 
                 $stmt->closeCursor();
-                return $storedLoadTimes;
-                
+                return $storedLoadTimes;   
             } else {
                 return NULL;
             }
-
-
         });
-
         return $output;
     }
-
 
     public function getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm) {
         $output = Spire::spireCache('getHighLoadTimesOverTime_'.$dayRange.'_'.$minResponseTime.'_', 10, function() use ($dayRange, $minResponseTime, $searchTerm) {
 
             $db_con = Spire::getConnection();
-
-            // $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime, test_type AS dataPointName, Date(created) AS dayDate, Hour(created) AS hourInterval FROM loadtimes GROUP BY test_type, DAY(created), HOUR(created)");
             
             if (! $dayRange) {
                 $dayRange = '7';
@@ -772,13 +694,9 @@ class DbHandler {
             } else {
                 return NULL;
             }
-
-
         });
-
         return $output;
     }
-
 
     public function storeScrapedContent($refTestID, $station, $sectionContentPayload) {
         $db_con = Spire::getConnection();
@@ -805,14 +723,12 @@ class DbHandler {
         $stmt->close();
     }
 
-
     public function getRecentContentObject($station) {
         $output = Spire::spireCache('getRecentContentObject_'.$station, 270, function() use ($station) {
             
             $db_con = Spire::getConnection();
 
             $stmt = $db_con->prepare("SELECT * FROM content_payloads WHERE station = '". $station ."' ORDER BY id DESC LIMIT 1");
-            //$stmt = $db_con->prepare("SELECT * FROM content_payloads WHERE station = '. $station .' AND created >= DATE_SUB(NOW(), INTERVAL 5 MINUTE) ORDER BY id DESC LIMIT 1");
 
             if ($stmt->execute()) {
                 $contentPayload = $stmt->fetch();
@@ -887,79 +803,7 @@ class DbHandler {
         return $output;
     }
 
-    public function getFailuresPer30Day($testResultsTable) {
-        $output = Spire::spireCache('getFailuresPer30Day_'.$testResultsTable, 10, function() use ($testResultsTable) {
-            
-            $db_con = Spire::getConnection();
-
-            switch ($testResultsTable) {
-                
-                case "api_manifest_audits":
-                    $testTableName = 'manifest_tests';
-                    break;
-
-                case "apiCheck-manifest":
-                    $testTableName = 'manifest_tests';
-                    break;
-
-                case "api_navigation_audits":
-                    $testTableName = 'nav_tests';
-                    break;
-
-                case "apiCheck-nav":
-                    $testTableName = 'nav_tests';
-                    break;
-
-                case "api_article_audits":
-                    $testTableName = 'article_tests';
-                    break;
-
-                case "apiCheck-article":
-                    $testTableName = 'article_tests';
-                    break;
-
-                default:
-                    $testTableName = 'none-existent';
-            }
-
-            //$stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE DATE(created) = CURDATE() AND status = 'Fail'");
-            $stmt = $db_con->prepare("SELECT Year(`created`) AS 'Year', Month(`created`) AS 'Month', Day(`created`) AS 'Day', COUNT(*) AS 'Total' FROM ".$testTableName." WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)");
-            $failureCounts = array();
-
-            $months = array(1 => 'Jan.', 2 => 'Feb.', 3 => 'Mar.', 4 => 'Apr.', 5 => 'May', 6 => 'Jun.', 7 => 'Jul.', 8 => 'Aug.', 9 => 'Sep.', 10 => 'Oct.', 11 => 'Nov.', 12 => 'Dec.');
-
-            if ($stmt->execute()) {
-                $errorReports = $stmt->fetchAll();
-
-                foreach ($errorReports as $key => $val) {
-                    echo 'Day > '. $val['Day'].'<br />';
-                    echo 'Month > '. $val['Month'].'<br />';
-                    echo 'Year > '. $val['Year'].'<br />';
-                    echo 'Total > '. $val['Total'].'<br />';
-                    echo '<br />';
-
-                    foreach ($months as $num => $name) {
-                        $monthName = date('F', mktime(0, 0, 0, $num, 10));
-                        if ($num == $val['Month']) {
-                            $failureCounts[$monthName."Value"] = $val['Total'];
-                        } else {
-                            $failureCounts[$monthName."Value"] = "0";
-                        }
-                    }
-                }
-
-                $stmt->closeCursor();
-                // var_dump($failureCounts);
-                $monthFailureCounts = implode(",",$failureCounts);
-                return $monthFailureCounts;
-            } else {
-                return NULL;
-            }
-        });
-
-        return $output;
-
-    }
+    
 
     public function getAllTestResultData($testType, $status, $range) {
         // $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
@@ -1490,11 +1334,4 @@ class DbHandler {
     }
 
 }
-// DB
-// SELECT Year(`created`), Month(`created`), Day(`created`), COUNT(*) FROM article_tests WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)
-
-// SELECT Year(`created`) AS 'Year', Month(`created`) AS 'Month', Day(`created`) AS 'Day', COUNT(*) AS 'Total' FROM manifest_tests WHERE `created` <= NOW() AND status = 'Fail' GROUP BY Year(`created`), Month(`created`), Day(`created`)
-
-// Total past 30 days
-// SELECT Year(`created`), Month(`created`), Day(`created`), COUNT(*) FROM article_tests WHERE `created` <= NOW() AND status = 'Fail'
 ?>
