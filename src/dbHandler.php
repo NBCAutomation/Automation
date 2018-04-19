@@ -549,7 +549,6 @@ class DbHandler {
         $stmt->closeCursor();
     }
 
-
     public function getLoadTimes($testType, $dataRange) {
         $output = Spire::spireCache('getLoadTimes_'.$testType.'_'.$dataRange, 10000, function() use ($testType, $range) {
             $db_con = Spire::getConnection();
@@ -778,6 +777,80 @@ class DbHandler {
         });
 
         return $output;
+    }
+
+
+    public function storeScrapedContent($refTestID, $station, $sectionContentPayload) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO content_payloads(ref_test_id, station, payload) VALUES(?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($refTestID, $station, $sectionContentPayload));
+
+        if ($stmtStatus) {
+            // task row created
+            $rowID = $db_con->lastInsertId();
+
+            if ($rowID != NULL) {
+                // task created successfully
+                return $rowID;
+            } else {
+                // task failed to create
+                return NULL;
+            }
+        } else {
+            // task failed to create
+            return NULL;
+        }
+
+        $stmt->close();
+    }
+
+
+    public function getRecentContentObject($station) {
+        $output = Spire::spireCache('getRecentContentObject_'.$station, 270, function() use ($station) {
+            
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM content_payloads WHERE station = '". $station ."' ORDER BY id DESC LIMIT 1");
+            //$stmt = $db_con->prepare("SELECT * FROM content_payloads WHERE station = '. $station .' AND created >= DATE_SUB(NOW(), INTERVAL 5 MINUTE) ORDER BY id DESC LIMIT 1");
+
+            if ($stmt->execute()) {
+                $contentPayload = $stmt->fetch();
+
+                $stmt->closeCursor();
+                return $contentPayload;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
+    public function logContentCheck($refTestID, $payloadID, $station, $stale) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO stale_content_check(ref_test_id, payload_id, station, stale) VALUES(?, ?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($refTestID, $payloadID, $station, $stale));
+
+        if ($stmtStatus) {
+            // task row created
+            $rowID = $db_con->lastInsertId();
+
+            if ($rowID != NULL) {
+                // task created successfully
+                return $rowID;
+            } else {
+                // task failed to create
+                return NULL;
+            }
+        } else {
+            // task failed to create
+            return NULL;
+        }
+
+        $stmt->close();
     }
 
 
@@ -1121,7 +1194,6 @@ class DbHandler {
         return $output;
     }
 
-
     public function getPayLoadError($testReferenceID, $testResultID) {
         $output = Spire::spireCache('getPayLoadError_'.$testReferenceID.'_'.$testResultID, 10000, function() use ($testReferenceID, $testResultID) {
             $db_con = Spire::getConnection();
@@ -1148,8 +1220,6 @@ class DbHandler {
 
         return $output;
     }
-
-
 
     /* ------------- Stations data lookups ------------------ */
     public function getStationsGlobalAPIVer() {
@@ -1222,7 +1292,6 @@ class DbHandler {
 
         return $output;
     }
-
 
     public function updateStationData($stationID, $stationApiVersion, $stationURL, $stationShortname, $stationCallLetters, $stationGroup, $stationBrand, $stationStatus) {
         $db_con = Spire::getConnection();
@@ -1311,7 +1380,6 @@ class DbHandler {
 
         $stmt->close();
     }
-
 
     public function logNotificationAlert($refID, $errorCount, $sendable, $info) {
         $db_con = Spire::getConnection();
