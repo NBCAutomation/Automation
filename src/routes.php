@@ -270,6 +270,11 @@ $app->group('/reports', function () {
            	    $pullAllReportData = false;
            	    break;
 
+       	    case "stale_content_check":
+       	        $staleContentView = true;
+       	        $pullStaleContentData = true;
+       	        break;
+
 		    default:
 		        $testTypeName = 'none-existent';
 		}
@@ -311,6 +316,9 @@ $app->group('/reports', function () {
 			// $recentRegressionTests = $db->getAllTestResultData($args['view'], 'all', 'all');
 			$recentRegressionTests = $db->getAllRegressionTests();
 			$pageTemplate = 'reports-regression.php';
+		} else if ($pullStaleContentData) {
+			$pageTemplate = 'reports-stale-content.php';
+			$staleContentData = $db->getStaleContentChecks();
 		} else {
 			$pageTemplate = 'reports.php';
 		}
@@ -329,6 +337,8 @@ $app->group('/reports', function () {
             'fileView' => $fileView,
             'reportClass' => true,
             'reportLoadtimeSubNav' => $loadtimeSubnavClass,
+            'reportStaleContentSubNav' => $staleContentView,
+            'staleContentData' => $staleContentData,
     		'allReports' => $allReports,
     		'todayReports' => $todayReports['data'],
     		'todayFailureReports' => $todayFailureReports['data'],
@@ -1503,7 +1513,37 @@ $app->group('/utils', function () {
 	    }
 
 	    if ($utilReqParams['task'] == 'testingOutput'){
-	    	
+    // 		$refTestID = $utilPostParams['testID'];
+    // 		$station = 'nbcnewyork';
+    // 		$status = 'Pass';
+    // 		$testFailureCount = $utilPostParams['testFailureCount'];
+    // 		$sectionContentPayload = $utilPostParams['contentObject'];
+    // 		$results = $utilPostParams['testResults'];
+
+    // 		if ($status == 'Pass') {
+				// $thisContentObject = $db->getRecentContentObject($station);
+				// $recentCotnentPayload = $thisContentObject['data']['payload'];
+				// $payloadID = $thisContentObject['data']['id'];
+
+				// if ($recentCotnentPayload) {
+				// 	$payloadID = $thisContentObject['data']['id'];
+				// 	$refTestID = $thisContentObject['data']['ref_test_id'];
+
+				// 	echo Spire::dateDiff("now", $thisContentObject['data']['created']);
+
+				// 	if ($recentCotnentPayload == $sectionContentPayload) {
+				// 		echo "matches";
+				// 		$db->logContentCheck($refTestID, $payloadID, $station, 1);
+				// 	} else {
+				// 		echo "NO";
+				// 		$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
+				// 		$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+				// 	}
+				// } else {
+				// 	$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
+				// 	$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+				// }
+    // 		}
 	    }
     });
 
@@ -1607,21 +1647,23 @@ $app->group('/utils', function () {
 				$recentCotnentPayload = $thisContentObject['data']['payload'];
 				$payloadID = $thisContentObject['data']['id'];
 
+				$udpateTimeDiff = Spire::dateDiff("now", $thisContentObject['data']['created']);
+
 				if ($recentCotnentPayload) {
 					$payloadID = $thisContentObject['data']['id'];
 					$refTestID = $thisContentObject['data']['ref_test_id'];
 
 					if ($recentCotnentPayload == $sectionContentPayload) {
 						// echo "matches";
-						$db->logContentCheck($refTestID, $payloadID, $station, 1);
+						$db->logContentCheck($refTestID, $payloadID, $station, 1, 0);
 					} else {
 						// echo "NO";						
 						$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-						$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+						$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0, $udpateTimeDiff);
 					}
 				} else {
 					$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-					$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+					$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0, $udpateTimeDiff);
 				}
     		}
     	}

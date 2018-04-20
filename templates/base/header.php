@@ -60,6 +60,12 @@
 								<li><a href="/reports/loadtimes/loadtime-search">Search</a></li>
 							</ul>
 						</li>
+						<li <?php if ($reportStaleContentSubNav) { echo 'class="open"'; } ?>><a href="#">Stale Content Checks</a>
+							<ul>
+								<li><a href="/reports/stale_content_check">Overview</a></li>
+								<!-- <li><a href="/reports/stale_content_check/search">Search</a></li> -->
+							</ul>
+						</li>
 					</ul>
 				</li>
 				<li <?php if ($scriptClass) { echo 'class="open"'; } ?>><a href="/scripts/main"><i class="fa fa-bolt"></i> Scripts</a></li>

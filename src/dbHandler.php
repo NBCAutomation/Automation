@@ -744,11 +744,11 @@ class DbHandler {
         return $output;
     }
 
-    public function logContentCheck($refTestID, $payloadID, $station, $stale) {
+    public function logContentCheck($refTestID, $payloadID, $station, $stale, $updateDiff) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("INSERT INTO stale_content_check(ref_test_id, payload_id, station, stale) VALUES(?, ?, ?, ?)");
-        $stmtStatus = $stmt->execute(array($refTestID, $payloadID, $station, $stale));
+        $stmt = $db_con->prepare("INSERT INTO stale_content_check(ref_test_id, payload_id, station, stale, time_diff) VALUES(?, ?, ?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($refTestID, $payloadID, $station, $stale, $updateDiff));
 
         if ($stmtStatus) {
             // task row created
@@ -767,6 +767,27 @@ class DbHandler {
         }
 
         $stmt->close();
+    }
+
+    public function getStaleContentChecks() {
+        $output = Spire::spireCache('getStaleContentChecks', 2700, function() use ($station) {
+            
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM stale_content_check ORDER BY id DESC");
+
+            if ($stmt->execute()) {
+                $contentData = $stmt->fetchAll();
+
+                $stmt->closeCursor();
+                return $contentData;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
     }
 
 
