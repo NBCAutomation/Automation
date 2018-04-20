@@ -1,12 +1,15 @@
 http://www.telemundo20.com
+http://www.telemundo31.com
 http://www.telemundo40.com
 http://www.telemundo47.com
+http://www.telemundo48elpaso.com
+http://www.telemundo49.com
 http://www.telemundo51.com
 http://www.telemundo52.com
 http://www.telemundo62.com
 http://www.telemundoareadelabahia.com
 http://www.telemundoarizona.com
-http://www.telemundoboston.com
+http://www.telemundonuevainglaterra.com
 http://www.telemundochicago.com
 http://www.telemundodallas.com
 http://www.telemundodenver.com
@@ -14,3 +17,4 @@ http://www.telemundohouston.com
 http://www.telemundolasvegas.com
 http://www.telemundosanantonio.com
 http://www.telemundopr.com
+http://www.telemundowashingtondc.com
