@@ -770,7 +770,7 @@ class DbHandler {
     }
 
     public function getStaleContentChecks() {
-        $output = Spire::spireCache('getStaleContentChecks', 2700, function() use ($station) {
+        $output = Spire::spireCache('getStaleContentChecks', 300, function() use ($station) {
             
             $db_con = Spire::getConnection();
 

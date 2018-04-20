@@ -1693,11 +1693,19 @@ $app->group('/utils', function () {
     $this->get('/purge-cache', function ($request, $response) {
     	$allPostPutVars = $request->getQueryParams();
 
-		$tmpLocation = BASEPATH .'/tmp/';
+    	if ($allPostPutVars['ref']) {
+    		$tmpLocation = './tmp/' . implode('/', array_slice(str_split($allPostPutVars['ref'], 2), 0, 3));
+    	} else {
+    		$tmpLocation = BASEPATH .'/tmp/';
+    	}
 		
 		$cacheClear = Spire::purgeAllCache($tmpLocation);
 
-		return $response->withRedirect('/dashboard/main');
+		if ($allPostPutVars['reloc']) {
+			return $response->withRedirect('/'.urldecode($allPostPutVars['reloc']));
+		} else {
+			return $response->withRedirect('/dashboard/main');
+		}
     });
 
     // Purge old tests // Date(X) > 30 Days & send an email once a week
