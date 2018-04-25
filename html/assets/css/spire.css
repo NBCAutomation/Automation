@@ -280,3 +280,8 @@ table .fail {
 	border: solid 1px red;
 	background: #d9534f;
 }
+
+.pagination {
+	margin: 0px;
+    float: right;
+}

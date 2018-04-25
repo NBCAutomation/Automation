@@ -318,7 +318,8 @@ $app->group('/reports', function () {
 			$pageTemplate = 'reports-regression.php';
 		} else if ($pullStaleContentData) {
 			$pageTemplate = 'reports-stale-content.php';
-			$staleContentData = $db->getStaleContentChecks();
+			// $staleContentData = $db->getStaleContentChecks();
+			$staleContentData = $db->getPagedStaleContentChecks();
 		} else {
 			$pageTemplate = 'reports.php';
 		}
@@ -1513,6 +1514,10 @@ $app->group('/utils', function () {
 	    }
 
 	    if ($utilReqParams['task'] == 'testingOutput'){
+	    	// $db = new DbHandler();
+
+	    	// $pageContent = $db->getPaggedStaleContentChecks();
+	    	// echo $pageContent['data'];
     // 		$refTestID = $utilPostParams['testID'];
     // 		$station = 'nbcnewyork';
     // 		$status = 'Pass';

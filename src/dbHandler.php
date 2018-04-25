@@ -791,6 +791,104 @@ class DbHandler {
     }
 
 
+    public function getPagedStaleContentChecks() {
+        $output = Spire::spireCache('getPaggedStaleContentChecks', 300, function() {
+            $db_con = Spire::getConnection();
+            // Find out how many items are in the table
+            $total = $db_con->query('SELECT COUNT(*) FROM stale_content_check')->fetchColumn();
+
+            // How many items to list per page
+            $limit = 50;
+
+            // How many pages will there be
+            $pages = ceil($total / $limit);
+
+            // What page are we currently on?
+            $page = min($pages, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT, array(
+                'options' => array(
+                    'default'   => 1,
+                    'min_range' => 1
+                ),
+            )));
+
+            // Calculate the offset for the query
+            $offset = ($page - 1)  * $limit;
+
+            // Some information to display to the user
+            $start = $offset + 1;
+            $end = min(($offset + $limit), $total);
+
+            // The "back" link
+            $prevlink = ($page > 1) ? '<li class="paginate_button "><a href="?page=1" title="First page">&laquo;</a></li><li><a href="?page=' . ($page - 1) . '" title="Previous page">' . ($page - 1) . '</a></li>' : '<li class="paginate_button previous disabled" id="zctb_previous"><a href="#" aria-controls="zctb" data-dt-idx="0" tabindex="0">&laquo;</a></li>';
+
+            $currentlink = '<li class="paginate_button active"><a href="#">'. $page. '</a></li>';
+
+            // The "forward" link
+            $nextlink = ($page < $pages) ? '<li class="paginate_button"><a href="?page=' . ($page + 1) . '" title="Next page">' . ($page + 1) . '</a></li>
+                                            <li><a href="?page=' . $pages . '" title="Last page">&raquo;</a></li>'
+                                            :
+                                            '<li class="paginate_button next disabled" id="zctb_next"><a href="#" aria-controls="zctb" data-dt-idx="7" tabindex="0">&raquo;</a></li>';
+
+            // Prepare the paged query
+            $stmt = $db_con->prepare('SELECT * FROM stale_content_check ORDER BY id DESC LIMIT '. $limit .' OFFSET '. $offset);
+            $stmt->execute();
+
+            // Do we have any results?
+            if ($stmt->rowCount() > 0) {
+                $contentData = $stmt->fetchAll();
+                
+                $pageOutput .= '<table id="stale-content" class="table table-bordered table-striped" cellspacing="0" width="100%">';
+                $pageOutput .= '<thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Ref ID</th>
+                                        <th>Station</th>
+                                        <th>Stale</th>
+                                        <th>Update Diff</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>';
+
+                foreach( $contentData as $contentCheck ){                    
+                    $pageOutput .= '<tr>';
+                    $pageOutput .= '<td>'. $contentCheck['id'] .
+                                    '</td><td>'. $contentCheck['ref_test_id'] .
+                                    '</td><td>'. $contentCheck['station'] .
+                                    '</td><td>'. ($contentCheck['stale'] < 1 ? 'Update' : 'Stale') .
+                                    '</td><td>'. ($contentCheck['time_diff'] < 1 ? '--' : $contentCheck['time_diff']) .
+                                    '</td><td>'. $contentCheck['created'] .'</td>';
+                    $pageOutput .= '</tr>';
+                }
+
+                $pageOutput .= '</table>';
+
+                // Display the paging information
+                $pageOutput .= '<div class="row">';
+                $pageOutput .= '<div class="col-sm-5">
+                                    <div class="dataTables_info" id="zctb_info" role="status" aria-live="polite">
+                                        Showing '. $start. ' to '. $end. ' of '. $total. ' results
+                                    </div>
+                                </div>
+                                <div class="col-sm-7">
+                                    <div class="dataTables_paginate paging_simple_numbers" id="zctb_paginate">
+                                        <ul class="pagination">'. $prevlink .''. $currentlink .''. $nextlink. '</ul>
+                                    </div>
+                                </div>';
+                $pageOutput .= '</div>';
+
+            } else {
+                $pageOutput .= '<p>No results could be displayed.</p>';
+            }
+            $stmt->closeCursor();
+            return $pageOutput;
+        });
+
+        return $output;
+    }
+
+
+
+
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
         // var_dump($testID);
