@@ -791,14 +791,32 @@ class DbHandler {
     }
 
 
-    public function getPagedStaleContentChecks() {
-        $output = Spire::spireCache('getPaggedStaleContentChecks', 300, function() {
+    public function getPagedStaleContentChecks($dayRange, $searchTerm, $stale) {
+        $output = Spire::spireCache('getPaggedStaleContentChecks', 0, function() use($dateRange, $searchTerm, $stale) {
             $db_con = Spire::getConnection();
-            // Find out how many items are in the table
-            $total = $db_con->query('SELECT COUNT(*) FROM stale_content_check')->fetchColumn();
 
-            // How many items to list per page
-            $limit = 50;
+            if (! $dayRange) {
+                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-7';
+            } else {
+                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
+            }
+
+            if ($stale) {
+                $staleClause = "AND stale < 2";
+            } else {
+                $staleClause = "AND stale < 1";
+            }
+
+            if ($searchTerm) {
+                $searchClause .= " AND station LIKE '%".$searchTerm."%'";
+            }
+
+            $total = $db_con->query("SELECT COUNT(*) FROM stale_content_check ".$dayRange." ".$staleClause." ".$searchClause)->fetchColumn();
+            $stmt = $db_con->prepare("SELECT COUNT(*) FROM stale_content_check ".$dayRange." ".$staleClause." ".$searchClause);
+            // var_dump($stmt);
+            // exit();
+
+            $limit = 100;
 
             // How many pages will there be
             $pages = ceil($total / $limit);
@@ -830,12 +848,25 @@ class DbHandler {
                                             '<li class="paginate_button next disabled" id="zctb_next"><a href="#" aria-controls="zctb" data-dt-idx="7" tabindex="0">&raquo;</a></li>';
 
             // Prepare the paged query
-            $stmt = $db_con->prepare('SELECT * FROM stale_content_check ORDER BY id DESC LIMIT '. $limit .' OFFSET '. $offset);
+            $stmt = $db_con->prepare('SELECT * FROM stale_content_check  '.$dayRange.' '.$staleClause.' '.$searchClause.' ORDER BY id DESC LIMIT '. $limit .' OFFSET '. $offset);
             $stmt->execute();
 
             // Do we have any results?
             if ($stmt->rowCount() > 0) {
                 $contentData = $stmt->fetchAll();
+
+                // $results = array(
+                //     "draw" => 1,
+                //     "recordsTotal" => count($contentData),
+                //     "recordsFiltered" => count($contentData),
+                //     "data" => $contentData
+                // );
+
+                // $jsonTest = json_encode($results);
+
+                // return $jsonTest;
+                // var_dump($jsonTest);
+                // exit();
                 
                 $pageOutput .= '<table id="stale-content" class="table table-bordered table-striped" cellspacing="0" width="100%">';
                 $pageOutput .= '<thead>
