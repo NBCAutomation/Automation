@@ -9,7 +9,7 @@
 
 	if ($trending) {
 		// var_dump($trendingSearchResults[0]);
-		// $loadtimeSearchResults = $trendingSearchResults[0];
+		// $searchResults = $trendingSearchResults[0];
 
 		$endpointTrendArray = array();
 		$loadtimesSubArray = array();
@@ -36,7 +36,7 @@
 		$downloadFile = $endpointTrendArray;
 		$downloadDataType = 'trending';
 	} else {
-		$downloadFile = $loadtimeSearchResults;
+		$downloadFile = $searchResults;
 		$downloadDataType = 'default';
 	}
 ?>
@@ -125,7 +125,7 @@
 					</form>
 					<?php
 						if (! $trending) {
-							Spire::formatLoadTimeSearchResultsTable($loadtimeSearchResults);
+							Spire::formatLoadTimeSearchResultsTable($searchResults);
 						} else {
 					?>
 						<div class="panel panel-default">

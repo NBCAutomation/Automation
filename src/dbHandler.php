@@ -865,10 +865,20 @@ class DbHandler {
                 // $jsonTest = json_encode($results);
 
                 // return $jsonTest;
+                // $results = array(
+                //     "draw" => 1,
+                //     "recordsTotal" => count($contentData),
+                //     "recordsFiltered" => count($contentData),
+                //     "data" => $contentData
+                // );
+
+                // $jsonTest = json_encode($results);
+
+                // return $jsonTest;
                 // var_dump($jsonTest);
                 // exit();
                 
-                $pageOutput .= '<table id="stale-content" class="table table-bordered table-striped" cellspacing="0" width="100%">';
+                $pageOutput .= '<table id="stale-content-table" class="table table-bordered table-striped" cellspacing="0" width="100%">';
                 $pageOutput .= '<thead>
                                     <tr>
                                         <th>ID</th>

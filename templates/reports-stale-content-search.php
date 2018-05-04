@@ -7,6 +7,7 @@
 	date_default_timezone_set('UTC');
 	$usersTimezone = new DateTimeZone('America/New_York');
 	$contentChecks = $staleContentData['data'];
+	var_dump($contentChecks);
 ?>
 	<div class="panel-body api_results">
 		<div class="panel panel-default">
@@ -76,30 +77,6 @@
 				}
 				
 			?>
-			<table id="stale-table" class="table table-bordered table-striped" cellspacing="0" width="100%">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Ref ID</th>
-						<th>Paylo ID</th>
-						<th>Station</th>
-						<th>Stale</th>
-						<th>Update Diff</th>
-						<th>Created</th>
-					</tr>
-				</thead>
-				<tfoot>
-					<tr>
-						<th>ID</th>
-						<th>Ref ID</th>
-						<th>Paylo ID</th>
-						<th>Station</th>
-						<th>Stale</th>
-						<th>Update Diff</th>
-						<th>Created</th>
-					</tr>
-				</tfoot>
-			</table>
 		</div>
 	</div>
 <?php include_once 'base/footer.php' ?>

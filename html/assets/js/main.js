@@ -58,11 +58,6 @@
 		"iDisplayLength": 50
 	});
 
-	$('#stale-content-table').DataTable({
-		"order": [[ 1, "desc" ]],
-		"iDisplayLength": 50
-	});
-
 
 
 

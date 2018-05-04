@@ -285,3 +285,13 @@ table .fail {
 	margin: 0px;
     float: right;
 }
+
+#report_stations li {
+	display: inline-grid;
+	margin: 0.2em;
+	border: solid 1px #777;
+	padding: 0.5em;
+	text-align: center;
+	word-wrap: break-word;
+	width: 250px;
+}

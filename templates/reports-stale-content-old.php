@@ -9,7 +9,7 @@
 	$contentChecks = $staleContentData['data'];
 ?>
 	<div class="panel-body api_results">
-		<div class="panel panel-default">
+		<div class="panel panel-default" style="display: none; height: 0px;">
 			<div class="panel-heading" role="tab" id="headingOne">
 				<a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
 					<i class="fa fa-bars" aria-hidden="true"></i> &nbsp;Search form
@@ -102,4 +102,34 @@
 			</table>
 		</div>
 	</div>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			// var resultsObject = <?php echo $staleContentData['data']; ?>;
+			$('#stale-table').DataTable({
+				"processing": true,
+		        "serverSide": true,
+		        "ajax":"/utils/staleoutput",
+				// "data": resultsObject,
+				"iDisplayLength": 100
+			});
+			// var table = jQuery('#stale-tablew').dataTable({
+			// 	"bProcessing": true,
+			// 	"sAjaxSource": "/utils/staleoutput",
+			// 	"bPaginate":true,
+			// 	"sPaginationType":"full_numbers",
+			// 	"iDisplayLength": 5,
+			// 	"bLengthChange":false,
+			// 	"bFilter": false,
+			// 	"aoColumns": [
+			// 		{ mData: 'id' } ,
+			// 		{ mData: 'ref_id' },
+			// 		{ mData: 'payload_id' },
+			// 		{ mData: 'station' }
+			// 		{ mData: 'stale' }
+			// 		{ mData: 'time_diff' }
+			// 		{ mData: 'created' }
+			// 	]
+			// });
+		});
+	</script>
 <?php include_once 'base/footer.php' ?>

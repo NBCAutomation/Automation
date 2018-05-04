@@ -265,11 +265,6 @@ $app->group('/reports', function () {
             	$pullAllReportData = false;
             	break;
 
-           	case "search":
-           	    $loadtimeSearchView = true;
-           	    $pullAllReportData = false;
-           	    break;
-
        	    case "stale_content_check":
        	        $staleContentView = true;
        	        $pullStaleContentData = true;
@@ -319,7 +314,8 @@ $app->group('/reports', function () {
 		} else if ($pullStaleContentData) {
 			$pageTemplate = 'reports-stale-content.php';
 			// $staleContentData = $db->getStaleContentChecks();
-			$staleContentData = $db->getPagedStaleContentChecks();
+			// $staleContentData = $db->getPagedStaleContentChecks();
+			$stations = $db->getAllStations();
 		} else {
 			$pageTemplate = 'reports.php';
 		}
@@ -336,6 +332,7 @@ $app->group('/reports', function () {
             'regressionView' => $regressionView,
             'loadtimeSearchView' => $loadtimeSearchView,
             'fileView' => $fileView,
+            'stations' => $stations['data'],
             'reportClass' => true,
             'reportLoadtimeSubNav' => $loadtimeSubnavClass,
             'reportStaleContentSubNav' => $staleContentView,
@@ -404,7 +401,12 @@ $app->group('/reports', function () {
                 $pullAllReportData = true;
                 break;
 
-           	case "loadtime-search":
+            case "loadtime-search":
+                $loadtimeSearchView = true;
+                $pullAllReportData = false;
+                break;
+
+           	case "stalecontent-search":
            	    $loadtimeSearchView = true;
            	    $pullAllReportData = false;
            	    break;
@@ -428,7 +430,9 @@ $app->group('/reports', function () {
 		if ($args['subView'] == 'loadtime-search') {
 			$pageTemplate = 'reports-loadtimes-search.php';
 			$loadtimeSubnavClass = true;
-		
+		} else if ($args['subView'] == 'stalecontent-search') {
+			$pageTemplate = 'reports-stale-content-search.php';
+			$staleContentView = true;
 		} else {
 			$pageTemplate = 'reports.php';
 			$loadtimeSubnavClass = false;
@@ -441,8 +445,9 @@ $app->group('/reports', function () {
 		    'viewPath' => $args['view'],
 		    'fullPath' => $viewPath,
 		    'allView' => true,
-		    'reportClass' => $loadtimeSubnavClass,
+		    'reportClass' => true,
 		    'reportLoadtimeSubNav' => $loadtimeSubnavClass,
+		    'reportStaleContentSubNav' => $staleContentView,
 		    'allReports' => $allReports,
 
 		    //Auth Specific
@@ -507,6 +512,7 @@ $app->group('/reports', function () {
       	$dayRange = $__postVars['range'];
       	$minResponseTime = $__postVars['mintime'];
       	$searchTerm = $__postVars['term'];
+      	$staleFilter = $__postVars['stale'];
       	
       	// var_dump($dayRange, $minResponseTime, $searchTerm);
 
@@ -523,22 +529,29 @@ $app->group('/reports', function () {
 			exit();
       	}
 
-      	if ($__postVars['queryLoadtimes'] == true) {
-      		$loadtimeSearchResults = $db->getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm);
+      	if ($__postVars['queryLoadtimes']) {
+      		$searchResults = $db->getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm);
+      		$pageTemplate = 'reports-loadtimes-search.php';
       	}
 
       	if ($__postVars['trending']) {
       		$trending = true;
       		$trendingSearchResults = $db->getHighLoadTimesOverTime($dayRange, $minResponseTime, $searchTerm);
+      		$pageTemplate = 'reports-loadtimes-search.php';
       	}
 
-      	return $this->renderer->render($response, 'reports-loadtimes-search.php', [
+      	if ($__postVars['queryStaleContent']) {
+      		$searchResults = $db->getPagedStaleContentChecks($dayRange, $searchTerm, $stale);
+      		$pageTemplate = 'reports-stale-content-search.php';
+      	}
+
+      	return $this->renderer->render($response, $pageTemplate, [
 	        'title' => 'Loadtime Search',
 	        'page_name' => 'loadtime-search',
 	        'reportClass' => true,
 	        'reportLoadtimeSubNav' => true,
 	        'hideBreadcrumbs' => true,
-	        'loadtimeSearchResults' => $loadtimeSearchResults['data'],
+	        'searchResults' => $searchResults['data'],
 	        'formResponse' => true,
 	        'searchDayRange' => $dayRange,
 			'searchMinResponseTime' => $minResponseTime,
@@ -1514,43 +1527,94 @@ $app->group('/utils', function () {
 	    }
 
 	    if ($utilReqParams['task'] == 'testingOutput'){
-	    	// $db = new DbHandler();
+	    	$db = new DbHandler();
 
-	    	// $pageContent = $db->getPaggedStaleContentChecks();
+	    	// $pageContent = $db->getPagedStaleContentChecks();
+	    	// // var_dump($pageContent);
+	    	// // print_r($pageContent['data']);
+	     //    return $this->renderer->render($response, 'reports-stale-content-search.php', [
+	     //        'title' => 'Reports',
+	     //        'page_name' => 'reports',
+	     //        'view' => $args['view'],
+	     //        'viewPath' => $args['view'],
+	     //        'mainView' => $mainView,
+	     //        'reportsView' => $reportsView,
+	     //        'singleView' => $singleView,
+	     //        'overView' => $overView,
+	     //        'reportClass' => true,
+	     //        'reportLoadtimeSubNav' => $loadtimeSubnavClass,
+	     //        'reportStaleContentSubNav' => $staleContentView,
+	     //        'staleContentData' => $pageContent,
+
+	    	// 	//Auth Specific
+	    	// 	'user' => $request->getAttribute('spAuth'),
+		    //     'uAuth' => $permissions['auth'],
+		    //     'uRole' => $permissions['role'],
+		    //     'uAthMessage' => $permissions['uAthMessage']
+	     //    ]);
 	    	// echo $pageContent['data'];
-    // 		$refTestID = $utilPostParams['testID'];
-    // 		$station = 'nbcnewyork';
-    // 		$status = 'Pass';
-    // 		$testFailureCount = $utilPostParams['testFailureCount'];
-    // 		$sectionContentPayload = $utilPostParams['contentObject'];
-    // 		$results = $utilPostParams['testResults'];
+    		$refTestID = $utilPostParams['testID'];
+    		$station = 'nbcnewyork';
+    		$status = 'Pass';
+    		$testFailureCount = $utilPostParams['testFailureCount'];
+    		$sectionContentPayload = $utilPostParams['contentObject'];
+    		$results = $utilPostParams['testResults'];
 
-    // 		if ($status == 'Pass') {
-				// $thisContentObject = $db->getRecentContentObject($station);
-				// $recentCotnentPayload = $thisContentObject['data']['payload'];
-				// $payloadID = $thisContentObject['data']['id'];
+    		if ($status == 'Pass') {
+				$thisContentObject = $db->getRecentContentObject($station);
+				$recentCotnentPayload = $thisContentObject['data']['payload'];
+				$payloadID = $thisContentObject['data']['id'];
 
-				// if ($recentCotnentPayload) {
-				// 	$payloadID = $thisContentObject['data']['id'];
-				// 	$refTestID = $thisContentObject['data']['ref_test_id'];
+				if ($recentCotnentPayload) {
+					$payloadID = $thisContentObject['data']['id'];
+					$refTestID = $thisContentObject['data']['ref_test_id'];
 
-				// 	echo Spire::dateDiff("now", $thisContentObject['data']['created']);
+					echo Spire::dateDiff("now", $thisContentObject['data']['created']);
 
-				// 	if ($recentCotnentPayload == $sectionContentPayload) {
-				// 		echo "matches";
-				// 		$db->logContentCheck($refTestID, $payloadID, $station, 1);
-				// 	} else {
-				// 		echo "NO";
-				// 		$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-				// 		$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-				// 	}
-				// } else {
-				// 	$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-				// 	$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-				// }
-    // 		}
+					if ($recentCotnentPayload == $sectionContentPayload) {
+						echo "matches";
+						$db->logContentCheck($refTestID, $payloadID, $station, 1);
+					} else {
+						echo "NO";
+						$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
+						$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+					}
+				} else {
+					$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
+					$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+				}
+    		}
 	    }
     });
+
+    $this->get('/staleoutput', function ($request, $response, $args) {
+
+    	$db = new DbHandler();
+
+    	$pageContent = $db->getPagedStaleContentChecks();
+    	// var_dump($pageContent);
+    	// print_r($pageContent['data']);
+        return $this->renderer->render($response, 'reports-stale-content-search.php', [
+            'title' => 'Reports',
+            'page_name' => 'reports',
+            'view' => $args['view'],
+            'viewPath' => $args['view'],
+            'mainView' => $mainView,
+            'reportsView' => $reportsView,
+            'singleView' => $singleView,
+            'overView' => $overView,
+            'reportClass' => true,
+            'reportLoadtimeSubNav' => $loadtimeSubnavClass,
+            'reportStaleContentSubNav' => $staleContentView,
+            'staleContentData' => $pageContent,
+
+    		//Auth Specific
+    		'user' => $request->getAttribute('spAuth'),
+	        'uAuth' => $permissions['auth'],
+	        'uRole' => $permissions['role'],
+	        'uAthMessage' => $permissions['uAthMessage']
+        ]);
+    })->setName('stale-output')->add( new SpireAuth() );
 
 	// Manage test POST requests
     // $this->post('/manage_dictionary', function ($request, $response, $args) {
