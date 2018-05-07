@@ -7,7 +7,8 @@
 	date_default_timezone_set('UTC');
 	$usersTimezone = new DateTimeZone('America/New_York');
 	$contentChecks = $staleContentData['data'];
-	var_dump($contentChecks);
+
+	// var_dump($_SESSION);
 ?>
 	<div class="panel-body api_results">
 		<div class="panel panel-default">
@@ -18,7 +19,7 @@
 			</div>
 			<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 				<div class="panel-body">
-					<form method="post" class="form-horizontal">
+					<form method="get" class="form-horizontal">
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Search Range</label>
 							<div class="col-sm-10">
@@ -44,7 +45,7 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">Include stale checks</label>
 							<div class="col-sm-10">
-								<input id="checkbox1" type="checkbox" name="trending" value="true"><span class="help-block m-b-none">Include checks where no update occurred. </span>
+								<input id="checkbox1" type="checkbox" name="stale" value="1"><span class="help-block m-b-none">Include checks where no update occurred. </span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -64,18 +65,13 @@
 			</div>
 		</div>
 		<div class="panel-body">
-			<p>
-				<a href="/utils/purge-cache?ref=<?php echo $staleContentData['refCacheKey'] ?>&reloc=reports%2Fstale_content_check">
-					Refresh <i class="fa fa-refresh" style="font-size:20px;"></i>
-				</a>
-			</p>
 			<?php
 				if ($searchResults) {
+					echo '<h4>Search Results:</h4>';
+					echo '<p><i>&nbsp; Last <b>'.$dayRange.'</b> days, station > <b>'.$searchTerm.'</b>. Stale included <b>'.($staleFilter['stale'] < 1 ? 'No' : 'Yes').'</b></i></p>';
+					echo '<div class="hr-dashed"></div>';
 					echo $searchResults;
-				} else {
-					echo $staleContentData['data'];
 				}
-				
 			?>
 		</div>
 	</div>

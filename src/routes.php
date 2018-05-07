@@ -313,8 +313,6 @@ $app->group('/reports', function () {
 			$pageTemplate = 'reports-regression.php';
 		} else if ($pullStaleContentData) {
 			$pageTemplate = 'reports-stale-content.php';
-			// $staleContentData = $db->getStaleContentChecks();
-			// $staleContentData = $db->getPagedStaleContentChecks();
 			$stations = $db->getAllStations();
 		} else {
 			$pageTemplate = 'reports.php';
@@ -373,9 +371,12 @@ $app->group('/reports', function () {
     // All reports view
     $this->get('/{view}/{subView}', function ($request, $response, $args) {
     	$db = new DbHandler();
+    	$allPostPutVars = $request->getQueryParams();
+    	$permissions = $request->getAttribute('spPermissions');
+    	// View path
+		$viewPath = $args['view']."/".$args['subView'];
 
 		switch ($args['view']) {
-
 		    case "main":
 		        $mainView = true;
 		        $pullAllReportData = false;
@@ -414,25 +415,30 @@ $app->group('/reports', function () {
 		    default:
 		        $testTypeName = 'none-existent';
 		}
-
-    	$permissions = $request->getAttribute('spPermissions');
-
-    	$allPostPutVars = $request->getQueryParams();
     	
     	if ($pullAllReportData) {
     		$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
     	}
 
-		// View path
-		$viewPath = $args['view']."/".$args['subView'];
-
 		// Report View
 		if ($args['subView'] == 'loadtime-search') {
 			$pageTemplate = 'reports-loadtimes-search.php';
 			$loadtimeSubnavClass = true;
+
 		} else if ($args['subView'] == 'stalecontent-search') {
 			$pageTemplate = 'reports-stale-content-search.php';
 			$staleContentView = true;
+
+			$dayRange = $allPostPutVars['range'];
+			$searchTerm = $allPostPutVars['term'];
+			$staleFilter = $allPostPutVars['stale'];
+			$queryStaleContent = $allPostPutVars['queryStaleContent'];
+			$pageQueryRef = $args['subView'].'?range='.$dayRange.'&term='.$searchTerm.'&queryStaleContent=true&view=staleContent&';
+
+			if ($queryStaleContent) {
+				$searchResults = $db->getPagedStaleContentChecks($dayRange, $searchTerm, $staleFilter, $pageQueryRef);
+			}
+			 
 		} else {
 			$pageTemplate = 'reports.php';
 			$loadtimeSubnavClass = false;
@@ -449,6 +455,10 @@ $app->group('/reports', function () {
 		    'reportLoadtimeSubNav' => $loadtimeSubnavClass,
 		    'reportStaleContentSubNav' => $staleContentView,
 		    'allReports' => $allReports,
+		    'searchResults' => $searchResults['data'],
+		    'dayRange' => $dayRange,
+		    'searchTerm' => $searchTerm,
+		    'staleFilter' => $staleFilter,
 
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
@@ -540,18 +550,13 @@ $app->group('/reports', function () {
       		$pageTemplate = 'reports-loadtimes-search.php';
       	}
 
-      	if ($__postVars['queryStaleContent']) {
-      		$searchResults = $db->getPagedStaleContentChecks($dayRange, $searchTerm, $stale);
-      		$pageTemplate = 'reports-stale-content-search.php';
-      	}
-
       	return $this->renderer->render($response, $pageTemplate, [
 	        'title' => 'Loadtime Search',
 	        'page_name' => 'loadtime-search',
 	        'reportClass' => true,
 	        'reportLoadtimeSubNav' => true,
 	        'hideBreadcrumbs' => true,
-	        'searchResults' => $searchResults['data'],
+	        'searchResults' => $_SESSION['searchResults'],
 	        'formResponse' => true,
 	        'searchDayRange' => $dayRange,
 			'searchMinResponseTime' => $minResponseTime,
@@ -1553,35 +1558,46 @@ $app->group('/utils', function () {
 		    //     'uAthMessage' => $permissions['uAthMessage']
 	     //    ]);
 	    	// echo $pageContent['data'];
+	    	
     		$refTestID = $utilPostParams['testID'];
-    		$station = 'nbcnewyork';
+    		$station = 'nbcdfw';
     		$status = 'Pass';
     		$testFailureCount = $utilPostParams['testFailureCount'];
     		$sectionContentPayload = $utilPostParams['contentObject'];
     		$results = $utilPostParams['testResults'];
 
+
+
     		if ($status == 'Pass') {
 				$thisContentObject = $db->getRecentContentObject($station);
+				// var_dump($thisContentObject);
 				$recentCotnentPayload = $thisContentObject['data']['payload'];
 				$payloadID = $thisContentObject['data']['id'];
 
 				if ($recentCotnentPayload) {
-					$payloadID = $thisContentObject['data']['id'];
-					$refTestID = $thisContentObject['data']['ref_test_id'];
+					// $payloadID = $thisContentObject['data']['id'];
+					// $refTestID = $thisContentObject['data']['ref_test_id'];
 
-					echo Spire::dateDiff("now", $thisContentObject['data']['created']);
+					// // echo Spire::dateDiff("now", $thisContentObject['data']['created']);
+					
+					// $to_time = strtotime("now");
+					// $from_time = strtotime($thisContentObject['data']['created']);
+					// echo 'MINUTES:: '.round(abs($to_time - $from_time) / 60). " minute";
+					// $updateMinutes = round(abs($to_time - $from_time) / 60,2);
+					
+					// exit();
 
-					if ($recentCotnentPayload == $sectionContentPayload) {
-						echo "matches";
-						$db->logContentCheck($refTestID, $payloadID, $station, 1);
-					} else {
-						echo "NO";
-						$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-						$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-					}
+					// if ($recentCotnentPayload == $sectionContentPayload) {
+					// 	echo "matches";
+					// 	$db->logContentCheck($refTestID, $payloadID, $station, 1);
+					// } else {
+					// 	echo "NO";
+					// 	$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
+					// 	$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+					// }
 				} else {
-					$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-					$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+					// $storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
+					// $db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
 				}
     		}
 	    }
@@ -1717,6 +1733,10 @@ $app->group('/utils', function () {
 				$payloadID = $thisContentObject['data']['id'];
 
 				$udpateTimeDiff = Spire::dateDiff("now", $thisContentObject['data']['created']);
+			
+				$to_time = strtotime("now");
+				$from_time = strtotime($thisContentObject['data']['created']);
+				$updateTimeDiffMin = round(abs($to_time - $from_time) / 60);
 
 				if ($recentCotnentPayload) {
 					$payloadID = $thisContentObject['data']['id'];
@@ -1728,11 +1748,11 @@ $app->group('/utils', function () {
 					} else {
 						// echo "NO";						
 						$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-						$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0, $udpateTimeDiff);
+						$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0, $udpateTimeDiff, $updateTimeDiffMin);
 					}
 				} else {
 					$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-					$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0, $udpateTimeDiff);
+					$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0, $udpateTimeDiff, $updateTimeDiffMin);
 				}
     		}
     	}

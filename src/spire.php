@@ -441,8 +441,8 @@ class Spire {
 		}
 	}
 
-	public static function buildQueryCache($resetCache){
-		if ($resetCache) {
+	public static function buildQueryCache($resetCurrentCache = false){
+		if ($resetCurrentCache) {
 			$tmpLocation = BASEPATH .'/tmp/';
 			$cacheClear = Spire::purgeAllCache($tmpLocation);	
 		}
@@ -494,19 +494,7 @@ class Spire {
 
 
 		return $resultsArray;
-	}	
-
-
-	public static function countDataResults($data, $view){
-		$c = 0;
-		foreach ($data as $key => $value) {
-			// echo "key: ".$key." // val: ".$value."\n\n";
-			$c++;
-		}
-
-		return $c;
 	}
-
 
 	// Time format is UNIX timestamp or
 	// PHP strtotime compatible strings

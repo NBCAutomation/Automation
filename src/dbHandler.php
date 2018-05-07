@@ -744,11 +744,11 @@ class DbHandler {
         return $output;
     }
 
-    public function logContentCheck($refTestID, $payloadID, $station, $stale, $updateDiff) {
+    public function logContentCheck($refTestID, $payloadID, $station, $stale, $updateDiff, $updateDiffMin) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("INSERT INTO stale_content_check(ref_test_id, payload_id, station, stale, time_diff) VALUES(?, ?, ?, ?, ?)");
-        $stmtStatus = $stmt->execute(array($refTestID, $payloadID, $station, $stale, $updateDiff));
+        $stmt = $db_con->prepare("INSERT INTO stale_content_check(ref_test_id, payload_id, station, stale, time_diff, min_diff) VALUES(?, ?, ?, ?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($refTestID, $payloadID, $station, $stale, $updateDiff, $updateDiffMin));
 
         if ($stmtStatus) {
             // task row created
@@ -769,12 +769,24 @@ class DbHandler {
         $stmt->close();
     }
 
-    public function getStaleContentChecks() {
-        $output = Spire::spireCache('getStaleContentChecks', 300, function() use ($station) {
+    public function getStaleContentChecks($dayRange, $searchTerm, $stale) {
+        $output = Spire::spireCache('getStaleContentChecks_'.$dayRange.'_'.$searchTerm.'_'.$stale, 0, function() use ($dayRange, $searchTerm, $stale) {
             
             $db_con = Spire::getConnection();
 
-            $stmt = $db_con->prepare("SELECT * FROM stale_content_check ORDER BY id DESC");
+            if (! $dayRange) {
+                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-7';
+            } else {
+                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
+            }
+
+            if ($stale > 0) {
+                $staleClause = "AND stale < 2";
+            } else {
+                $staleClause = "AND stale < 1";
+            }
+
+            $stmt = $db_con->prepare("SELECT * FROM stale_content_check ".$dayRange." ".$staleClause." ".$searchClause);
 
             if ($stmt->execute()) {
                 $contentData = $stmt->fetchAll();
@@ -791,8 +803,8 @@ class DbHandler {
     }
 
 
-    public function getPagedStaleContentChecks($dayRange, $searchTerm, $stale) {
-        $output = Spire::spireCache('getPaggedStaleContentChecks', 0, function() use($dateRange, $searchTerm, $stale) {
+    public function getPagedStaleContentChecks($dayRange, $searchTerm, $stale, $ref) {
+        $output = Spire::spireCache('getPaggedStaleContentChecks_'.$dayRange.'_'.$searchTerm.'_'.$stale, 0, function() use($dateRange, $searchTerm, $stale, $ref) {
             $db_con = Spire::getConnection();
 
             if (! $dayRange) {
@@ -801,7 +813,7 @@ class DbHandler {
                 $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
             }
 
-            if ($stale) {
+            if ($stale > 0) {
                 $staleClause = "AND stale < 2";
             } else {
                 $staleClause = "AND stale < 1";
@@ -809,6 +821,12 @@ class DbHandler {
 
             if ($searchTerm) {
                 $searchClause .= " AND station LIKE '%".$searchTerm."%'";
+            }
+
+            if ($ref) {
+                $append = $ref;
+            } else {
+                $append = '?';
             }
 
             $total = $db_con->query("SELECT COUNT(*) FROM stale_content_check ".$dayRange." ".$staleClause." ".$searchClause)->fetchColumn();
@@ -837,13 +855,13 @@ class DbHandler {
             $end = min(($offset + $limit), $total);
 
             // The "back" link
-            $prevlink = ($page > 1) ? '<li class="paginate_button "><a href="?page=1" title="First page">&laquo;</a></li><li><a href="?page=' . ($page - 1) . '" title="Previous page">' . ($page - 1) . '</a></li>' : '<li class="paginate_button previous disabled" id="zctb_previous"><a href="#" aria-controls="zctb" data-dt-idx="0" tabindex="0">&laquo;</a></li>';
+            $prevlink = ($page > 1) ? '<li class="paginate_button "><a href="'.$append.'page=1" title="First page">&laquo;</a></li><li><a href="'.$append.'page=' . ($page - 1) . '" title="Previous page">' . ($page - 1) . '</a></li>' : '<li class="paginate_button previous disabled" id="zctb_previous"><a href="#" aria-controls="zctb" data-dt-idx="0" tabindex="0">&laquo;</a></li>';
 
             $currentlink = '<li class="paginate_button active"><a href="#">'. $page. '</a></li>';
 
             // The "forward" link
-            $nextlink = ($page < $pages) ? '<li class="paginate_button"><a href="?page=' . ($page + 1) . '" title="Next page">' . ($page + 1) . '</a></li>
-                                            <li><a href="?page=' . $pages . '" title="Last page">&raquo;</a></li>'
+            $nextlink = ($page < $pages) ? '<li class="paginate_button"><a href="'.$append.'page=' . ($page + 1) . '" title="Next page">' . ($page + 1) . '</a></li>
+                                            <li><a href="'.$append.'page=' . $pages . '" title="Last page">&raquo;</a></li>'
                                             :
                                             '<li class="paginate_button next disabled" id="zctb_next"><a href="#" aria-controls="zctb" data-dt-idx="7" tabindex="0">&raquo;</a></li>';
 
