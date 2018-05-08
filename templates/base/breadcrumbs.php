@@ -26,7 +26,7 @@
 			$breadcrumbPath .= '<li>record '.$reportID.'</li>';
 		}
 
-		if ($view == 'all') {
+		if ($view) {
 			$breadcrumbPath .= '<li>'.$view.'</li>';
 		}
 	}

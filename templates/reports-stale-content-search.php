@@ -43,9 +43,25 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label class="col-sm-2 control-label">Update time in minutes (time > xMin)</label>
+							<div class="col-sm-10">
+								<select class="form-control" name="updateTime">
+									<option value="0">Default ( * >= 5 	min)</option>
+									<?php
+									    for ($i = 5; $i <= 60; $i += 5)
+									    {
+									        ?>
+									            <option value="<?php echo $i;?>"><?php echo $i;?></option>
+									        <?php
+									    }
+									?>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="col-sm-2 control-label">Include stale checks</label>
 							<div class="col-sm-10">
-								<input id="checkbox1" type="checkbox" name="stale" value="1"><span class="help-block m-b-none">Include checks where no update occurred. </span>
+								<input id="checkbox1" type="checkbox" name="stale" value="true"><span class="help-block m-b-none">Include checks where no update occurred. </span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -68,7 +84,7 @@
 			<?php
 				if ($searchResults) {
 					echo '<h4>Search Results:</h4>';
-					echo '<p><i>&nbsp; Last <b>'.$dayRange.'</b> days, station > <b>'.$searchTerm.'</b>. Stale included <b>'.($staleFilter['stale'] < 1 ? 'No' : 'Yes').'</b></i></p>';
+					echo '<p><i>&nbsp; Last <b>'.$dayRange.'</b> days, station = <b>'.$searchTerm.'</b>, update time >= <b>'.$updateTime.'</b> min, stale checks included <b>'.($staleFilter['stale'] < 1 ? 'No' : 'Yes').'</b></i></p>';
 					echo '<div class="hr-dashed"></div>';
 					echo $searchResults;
 				}

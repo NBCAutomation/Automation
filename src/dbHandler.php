@@ -803,8 +803,8 @@ class DbHandler {
     }
 
 
-    public function getPagedStaleContentChecks($dayRange, $searchTerm, $stale, $ref) {
-        $output = Spire::spireCache('getPaggedStaleContentChecks_'.$dayRange.'_'.$searchTerm.'_'.$stale, 0, function() use($dateRange, $searchTerm, $stale, $ref) {
+    public function getPagedStaleContentChecks($dayRange, $searchTerm, $updateTime, $includeStale, $ref) {
+        $output = Spire::spireCache('getPaggedStaleContentChecks_'.$dayRange.'_'.$searchTerm.'_'.$includeStale, 0, function() use($dateRange, $searchTerm, $updateTime, $includeStale, $ref) {
             $db_con = Spire::getConnection();
 
             if (! $dayRange) {
@@ -813,7 +813,11 @@ class DbHandler {
                 $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
             }
 
-            if ($stale > 0) {
+            if ($updateTime) {
+                $searchTimeClause = 'AND min_diff >= '.$updateTime;
+            }
+
+            if ($includeStale === 'true') {
                 $staleClause = "AND stale < 2";
             } else {
                 $staleClause = "AND stale < 1";
@@ -829,8 +833,8 @@ class DbHandler {
                 $append = '?';
             }
 
-            $total = $db_con->query("SELECT COUNT(*) FROM stale_content_check ".$dayRange." ".$staleClause." ".$searchClause)->fetchColumn();
-            $stmt = $db_con->prepare("SELECT COUNT(*) FROM stale_content_check ".$dayRange." ".$staleClause." ".$searchClause);
+            $total = $db_con->query('SELECT COUNT(*) FROM stale_content_check '.$dayRange.' '.$staleClause.' '.$searchClause.' '.$searchTimeClause)->fetchColumn();
+            $stmt = $db_con->prepare('SELECT COUNT(*) FROM stale_content_check '.$dayRange.' '.$staleClause.' '.$searchClause.' '.$searchTimeClause);
             // var_dump($stmt);
             // exit();
 
@@ -866,7 +870,7 @@ class DbHandler {
                                             '<li class="paginate_button next disabled" id="zctb_next"><a href="#" aria-controls="zctb" data-dt-idx="7" tabindex="0">&raquo;</a></li>';
 
             // Prepare the paged query
-            $stmt = $db_con->prepare('SELECT * FROM stale_content_check  '.$dayRange.' '.$staleClause.' '.$searchClause.' ORDER BY id DESC LIMIT '. $limit .' OFFSET '. $offset);
+            $stmt = $db_con->prepare('SELECT * FROM stale_content_check  '.$dayRange.' '.$staleClause.' '.$searchClause.' '.$searchTimeClause.' ORDER BY id DESC LIMIT '. $limit .' OFFSET '. $offset);
             $stmt->execute();
 
             // Do we have any results?

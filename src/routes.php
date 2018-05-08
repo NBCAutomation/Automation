@@ -416,6 +416,9 @@ $app->group('/reports', function () {
 		        $testTypeName = 'none-existent';
 		}
     	
+		$breadcrumbPageName = 'all';
+		$pageName = 'All Reports';
+
     	if ($pullAllReportData) {
     		$allReports = $db->getAllTestResultData($args['view'], 'all', 'all');
     	}
@@ -424,19 +427,30 @@ $app->group('/reports', function () {
 		if ($args['subView'] == 'loadtime-search') {
 			$pageTemplate = 'reports-loadtimes-search.php';
 			$loadtimeSubnavClass = true;
+			$breadcrumbPageName = 'search';
+			$pageName = 'API Loadtime Search';
 
 		} else if ($args['subView'] == 'stalecontent-search') {
 			$pageTemplate = 'reports-stale-content-search.php';
 			$staleContentView = true;
+			$breadcrumbPageName = 'search';
+			$pageName = 'Stale Content Report Search';
 
 			$dayRange = $allPostPutVars['range'];
 			$searchTerm = $allPostPutVars['term'];
-			$staleFilter = $allPostPutVars['stale'];
+			$updateTime = $allPostPutVars['updateTime'];
 			$queryStaleContent = $allPostPutVars['queryStaleContent'];
-			$pageQueryRef = $args['subView'].'?range='.$dayRange.'&term='.$searchTerm.'&queryStaleContent=true&view=staleContent&';
 
 			if ($queryStaleContent) {
-				$searchResults = $db->getPagedStaleContentChecks($dayRange, $searchTerm, $staleFilter, $pageQueryRef);
+				if (! $allPostPutVars['stale']) {
+					$staleFilter = 'false';
+				} else {
+					$staleFilter = $allPostPutVars['stale'];
+				}
+
+				$pageQueryRef = $args['subView'].'?range='.$dayRange.'&term='.$searchTerm.'&updateTime='.$updateTime.'&stale='.$staleFilter.'&queryStaleContent='.$queryStaleContent.'&view=staleContent&';
+
+				$searchResults = $db->getPagedStaleContentChecks($dayRange, $searchTerm, $updateTime, $staleFilter, $pageQueryRef);
 			}
 			 
 		} else {
@@ -445,9 +459,9 @@ $app->group('/reports', function () {
 		}
 
         return $this->renderer->render($response, $pageTemplate, [
-		    'title' => ' All Reports',
+		    'title' => $pageName,
 		    'page_name' => 'reports',
-		    'view' => 'all',
+		    'view' => $breadcrumbPageName,
 		    'viewPath' => $args['view'],
 		    'fullPath' => $viewPath,
 		    'allView' => true,
@@ -459,6 +473,7 @@ $app->group('/reports', function () {
 		    'dayRange' => $dayRange,
 		    'searchTerm' => $searchTerm,
 		    'staleFilter' => $staleFilter,
+		    'updateTime' => $updateTime,
 
 		    //Auth Specific
 		    'user' => $request->getAttribute('spAuth'),
