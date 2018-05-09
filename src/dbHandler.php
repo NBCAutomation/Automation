@@ -955,10 +955,14 @@ class DbHandler {
             
             $db_con = Spire::getConnection();
 
+            if ($searchTerm) {
+                $searchClause .= " WHERE station LIKE '%".$searchTerm."%'";
+            }
+
             if (! $dayRange) {
-                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-7';
+                $dayRange = 'AND DATE(`created`) >= CURDATE()-7';
             } else {
-                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
+                $dayRange = 'AND DATE(`created`) >= CURDATE()-'.$dayRange;
             }
 
             if ($includeStale === 'true') {
@@ -967,11 +971,7 @@ class DbHandler {
                 $staleClause = "AND stale < 1";
             }
 
-            if ($searchTerm) {
-                $searchClause .= " AND station LIKE '%".$searchTerm."%'";
-            }
-
-            $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$dayRange.' AND stale < 1 '.$searchClause);
+            $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$searchClause.' AND stale < 1 '.$dayRange);
 
             if ($stmt->execute()) {
                 $staleContentAverage = $stmt->fetch();
@@ -982,40 +982,6 @@ class DbHandler {
 
         return $output;
     }
-
-    public function getStaleContentHighest($dayRange, $searchTerm) {
-        $output = Spire::spireCache('getStaleContentHighest_'.$dayRange.'_'.$searchTerm, 0, function() use($dateRange, $searchTerm) {
-            
-            $db_con = Spire::getConnection();
-
-            if (! $dayRange) {
-                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-7';
-            } else {
-                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
-            }
-
-            if ($includeStale === 'true') {
-                $staleClause = "AND stale < 2";
-            } else {
-                $staleClause = "AND stale < 1";
-            }
-
-            if ($searchTerm) {
-                $searchClause .= " AND station LIKE '%".$searchTerm."%'";
-            }
-
-            $stmt = $db_con->prepare('SELECT MAX(min_diff) AS maxTime, created FROM stale_content_check '.$dayRange.' AND stale < 1 '.$searchClause);
-
-            if ($stmt->execute()) {
-                $staleContentAverage = $stmt->fetch();
-                $stmt->closeCursor();
-                return $staleContentAverage;
-            }
-        });
-
-        return $output;
-    }
-
 
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
