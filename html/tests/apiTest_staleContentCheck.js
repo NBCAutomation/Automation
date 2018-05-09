@@ -110,7 +110,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
 
                 // Set main endpoint url(s)
                 apiSuiteInstance.baseUrl = casper.cli.get('url');
-                apiSuiteInstance.apiURL = url + '/apps/news-app/navigation/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+                apiSuiteInstance.apiURL = url + '/apps/news-app/navigation/?apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation + '&os=ios';
                 apiSuiteInstance.stationProperty = /www\.(\S+)\.com/.exec(apiSuiteInstance.apiURL)[1];
             }).then(function () {
 
