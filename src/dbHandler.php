@@ -870,7 +870,7 @@ class DbHandler {
                                             '<li class="paginate_button next disabled" id="zctb_next"><a href="#" aria-controls="zctb" data-dt-idx="7" tabindex="0">&raquo;</a></li>';
 
             // Prepare the paged query
-            $stmt = $db_con->prepare('SELECT * FROM stale_content_check  '.$dayRange.' '.$staleClause.' '.$searchClause.' '.$searchTimeClause.' ORDER BY id DESC LIMIT '. $limit .' OFFSET '. $offset);
+            $stmt = $db_con->prepare('SELECT * FROM stale_content_check '.$dayRange.' '.$staleClause.' '.$searchClause.' '.$searchTimeClause.' ORDER BY id DESC LIMIT '. $limit .' OFFSET '. $offset);
             $stmt->execute();
 
             // Do we have any results?
@@ -950,6 +950,71 @@ class DbHandler {
     }
 
 
+    public function getStaleContentAverages($dayRange, $searchTerm) {
+        $output = Spire::spireCache('getStaleContentAverage_'.$dayRange.'_'.$searchTerm, 0, function() use($dateRange, $searchTerm) {
+            
+            $db_con = Spire::getConnection();
+
+            if (! $dayRange) {
+                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-7';
+            } else {
+                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
+            }
+
+            if ($includeStale === 'true') {
+                $staleClause = "AND stale < 2";
+            } else {
+                $staleClause = "AND stale < 1";
+            }
+
+            if ($searchTerm) {
+                $searchClause .= " AND station LIKE '%".$searchTerm."%'";
+            }
+
+            $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$dayRange.' AND stale < 1 '.$searchClause);
+
+            if ($stmt->execute()) {
+                $staleContentAverage = $stmt->fetch();
+                $stmt->closeCursor();
+                return $staleContentAverage;
+            }
+        });
+
+        return $output;
+    }
+
+    public function getStaleContentHighest($dayRange, $searchTerm) {
+        $output = Spire::spireCache('getStaleContentHighest_'.$dayRange.'_'.$searchTerm, 0, function() use($dateRange, $searchTerm) {
+            
+            $db_con = Spire::getConnection();
+
+            if (! $dayRange) {
+                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-7';
+            } else {
+                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
+            }
+
+            if ($includeStale === 'true') {
+                $staleClause = "AND stale < 2";
+            } else {
+                $staleClause = "AND stale < 1";
+            }
+
+            if ($searchTerm) {
+                $searchClause .= " AND station LIKE '%".$searchTerm."%'";
+            }
+
+            $stmt = $db_con->prepare('SELECT MAX(min_diff) AS maxTime, created FROM stale_content_check '.$dayRange.' AND stale < 1 '.$searchClause);
+
+            if ($stmt->execute()) {
+                $staleContentAverage = $stmt->fetch();
+                $stmt->closeCursor();
+                return $staleContentAverage;
+            }
+        });
+
+        return $output;
+    }
 
 
     /* ------------- Reporting ------------------ */

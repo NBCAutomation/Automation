@@ -227,6 +227,9 @@ $app->group('/reports', function () {
 		$db = new DbHandler();
 
 		$permissions = $request->getAttribute('spPermissions');
+		$pageName = 'Reports';
+		$breadcrumbPageName = $args['view'];
+		$allPostPutVars = $request->getQueryParams();
 
 		$testDir = 'test_results/'.$args['view'];
 
@@ -306,22 +309,33 @@ $app->group('/reports', function () {
 			$apiNavLoadTimes = $db->getLoadTimes('apiNavTest', 'today');
 			$apiContentLoadTimes = $db->getLoadTimes('apiContentTest', 'today');
 			$apiSectionContentLoadTimes = $db->getLoadTimes('apiSectionContent', 'today');
+
 		} else if ($regressionView) {
 			// $regressionResults = $db->getAllRegressionTestData();
 			// $recentRegressionTests = $db->getAllTestResultData($args['view'], 'all', 'all');
 			$recentRegressionTests = $db->getAllRegressionTests();
 			$pageTemplate = 'reports-regression.php';
+
 		} else if ($pullStaleContentData) {
+			$pageName = 'Stale Content Overview';
 			$pageTemplate = 'reports-stale-content.php';
 			$stations = $db->getAllStations();
+			$breadcrumbPageName = 'overview';
+
+			$queryStaleContentAverage = $allPostPutVars['queryStaleContentAverage'];
+			
+			if ($queryStaleContentAverage) {
+				$staleQueryRange = $allPostPutVars['range'];
+			}
+
 		} else {
 			$pageTemplate = 'reports.php';
 		}
 
         return $this->renderer->render($response, $pageTemplate, [
-            'title' => 'Reports',
+            'title' => $pageName,
             'page_name' => 'reports',
-            'view' => $args['view'],
+            'view' => $breadcrumbPageName,
             'viewPath' => $args['view'],
             'mainView' => $mainView,
             'reportsView' => $reportsView,
@@ -358,6 +372,7 @@ $app->group('/reports', function () {
 			'apiNavLoadTimes' => $apiNavLoadTimes['data'],
 			'apiContentLoadTimes' => $apiContentLoadTimes['data'],
 			'apiSectionContentLoadTimes' => $apiSectionContentLoadTimes['data'],
+			'dayRange' => $staleQueryRange,
 
     		//Auth Specific
     		'user' => $request->getAttribute('spAuth'),
@@ -1618,34 +1633,12 @@ $app->group('/utils', function () {
 	    }
     });
 
-    $this->get('/staleoutput', function ($request, $response, $args) {
+	$this->get('/staleAverageOutput', function ($request, $response, $args) {
+		$db = new DbHandler();
+		$stations = $db->getAllStations();
 
-    	$db = new DbHandler();
-
-    	$pageContent = $db->getPagedStaleContentChecks();
-    	// var_dump($pageContent);
-    	// print_r($pageContent['data']);
-        return $this->renderer->render($response, 'reports-stale-content-search.php', [
-            'title' => 'Reports',
-            'page_name' => 'reports',
-            'view' => $args['view'],
-            'viewPath' => $args['view'],
-            'mainView' => $mainView,
-            'reportsView' => $reportsView,
-            'singleView' => $singleView,
-            'overView' => $overView,
-            'reportClass' => true,
-            'reportLoadtimeSubNav' => $loadtimeSubnavClass,
-            'reportStaleContentSubNav' => $staleContentView,
-            'staleContentData' => $pageContent,
-
-    		//Auth Specific
-    		'user' => $request->getAttribute('spAuth'),
-	        'uAuth' => $permissions['auth'],
-	        'uRole' => $permissions['role'],
-	        'uAthMessage' => $permissions['uAthMessage']
-        ]);
-    })->setName('stale-output')->add( new SpireAuth() );
+		echo json_encode($stations['data'][0]);
+    });
 
 	// Manage test POST requests
     // $this->post('/manage_dictionary', function ($request, $response, $args) {
