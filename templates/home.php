@@ -71,7 +71,12 @@
 				</div>
 			<?php } ?>
 		<?php } ?>
-		<?php if ($recentAlerts['data']['sendable'] > 0): ?>
+		<?php
+			if (strlen($recentAlerts['data']['info']) > 0 && $recentAlerts['data']['sendable'] == 0) {
+				echo '<div class="alert alert-dismissible alert-info"><p class="text-muted small">'.$recentAlerts['data']['info'].'</p></div>';
+			}
+		
+		if ($recentAlerts['data']['sendable'] > 0): ?>
 			<div class="apiNotificationError">
 				<form action="/dashboard/clear-alert" method="post" id="notification-alert-form" class="mt">
 					<input type="hidden" value="<?php echo $recentAlerts['data']['id']; ?>" name="alertID" />

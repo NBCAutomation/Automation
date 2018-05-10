@@ -45,7 +45,6 @@ $app->group('/dashboard', function () use ($app) {
 
 		$recentAlerts = $db->getRecentActiveNotificationAlerts();
 
-
 		// Server time
 		$info = getdate();
 		$date = $info['mday'];
@@ -170,8 +169,7 @@ $app->group('/dashboard', function () use ($app) {
 
 		// Disable email notification
 		if ($clearNotification) {
-
-			$clearEmailNotification = $db->updateRecentNotificationAlert($__postVars['alertID']);
+			$clearEmailNotification = $db->updateRecentNotificationAlert($__postVars['alertID'], $user.' - Disabled alert email notifications. ('.date('Y-m-d G:i:s').')');
 
 			$cacheFile = './tmp/' . implode('/', array_slice(str_split($__postVars['refCacheLocation'], 2), 0, 3));
 			$cacheClear = Spire::purgeAllCache($cacheFile);
@@ -1508,9 +1506,9 @@ $app->group('/utils', function () {
 					return $boxColor;
 				}
 
-				// $emailRecipient = 'deltrie.allen@nbcuni.com';
-				$emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
-				$emailRecipient .= ", eduardo.martinez@nbcuni.com";
+				$emailRecipient = 'deltrie.allen@nbcuni.com';
+				// $emailRecipient = 'NBCOTSOpsTeam@nbcuni.com';
+				// $emailRecipient .= ", eduardo.martinez@nbcuni.com";
 
 				$emailSubject = 'Automation Failures/Warnings';
 
@@ -1555,10 +1553,10 @@ $app->group('/utils', function () {
 	    	if ($sendEmailNotification) {
 	    		$this->logger->info("Alert notification email sent; type: ". $utilPostParams['taskType'] . ", process: " . $utilPostParams['taskRef'] . ", note: " . $utilPostParams['logNote']);
 	    		Spire::sendEmailNotification($emailRecipient, $emailContent, $emailSubject);
-	    		// echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
+	    		echo($emailRecipient."<br />".$emailContent."<br />".$emailSubject);
 	    	}
 	    	// Force redirect
-			return $response->withRedirect('/dashboard/main');
+			// return $response->withRedirect('/dashboard/main');
 	    }
 
 	    if ($utilReqParams['task'] == 'testingOutput'){
