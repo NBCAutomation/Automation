@@ -959,10 +959,10 @@ class DbHandler {
                 $searchClause .= " WHERE station LIKE '%".$searchTerm."%'";
             }
 
-            if (! $dayRange) {
-                $dayRange = 'AND DATE(`created`) >= CURDATE()-7';
+            if ($dayRange) {
+                $daySearchRange = 'AND DATE(`created`) >= CURDATE()-'.$dayRange;
             } else {
-                $dayRange = 'AND DATE(`created`) >= CURDATE()-'.$dayRange;
+                $daySearchRange = 'AND DATE(`created`) >= CURDATE()-7';
             }
 
             if ($includeStale === 'true') {
@@ -971,10 +971,12 @@ class DbHandler {
                 $staleClause = "AND stale < 1";
             }
 
-            $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$searchClause.' AND stale < 1 '.$dayRange);
-
+            $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$searchClause.' AND stale < 1 '.$daySearchRange);
+            
             if ($stmt->execute()) {
                 $staleContentAverage = $stmt->fetch();
+                // var_dump($staleContentAverage);
+// exit();
                 $stmt->closeCursor();
                 return $staleContentAverage;
             }
@@ -1530,10 +1532,10 @@ class DbHandler {
         return $output;
     }
 
-    public function updateRecentNotificationAlert($alertID) {
+    public function updateRecentNotificationAlert($alertID, $alertInfo) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("UPDATE alerts SET `sendable` = '0'  WHERE `id` = '".$alertID."'");
+        $stmt = $db_con->prepare("UPDATE alerts SET `sendable` = '0', `info` = '".$alertInfo."'  WHERE `id` = '".$alertID."'");
 
         if ($stmt->execute()) {
             if($stmt->rowCount() > 0){
