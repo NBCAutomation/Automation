@@ -13,7 +13,7 @@ casper.test.begin('OTS SPIRE | Utils Task Runner', function suite() {
 		var suite = this;
 
 			if (envConfig === 'local') {
-			    var configURL = 'http://spire.app';
+			    var configURL = 'http://spire.local';
 			} else if (envConfig === 'dev') {
 			    var configURL = 'http://45.55.209.68';
 			} else {
@@ -34,8 +34,8 @@ casper.test.begin('OTS SPIRE | Utils Task Runner', function suite() {
 					console.log(utilsURL);
 				}
 
-				if (taskType == 'api-notification') {
-					var taskURL = utilsURL + '?task=' + task + '&notificationType=' + taskType;
+				if (taskType == 'api-notification' || taskType == 'apiTestNotification') {
+					var taskURL = utilsURL + '?task=' + task + '&notificationType=' + taskType + '&taskRef=' + taskRef;
 					
 					if (debugOutput) {
 						console.log('taskURL: ' + taskURL);
@@ -45,9 +45,13 @@ casper.test.begin('OTS SPIRE | Utils Task Runner', function suite() {
 				        var status = this.status().currentHTTPStatus;
 
 				        if ( status == 200) {
+				        	console.log(resp.status);
 				            console.log('alert sent');
+				            console.log('taskURL: ' + taskURL);
 				        } else {
 				            console.log('not sent');
+				            console.log(resp.status);
+				            console.log('taskURL: ' + taskURL);
 				        }
 				    })
 				} else {

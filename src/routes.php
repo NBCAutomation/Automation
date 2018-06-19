@@ -1419,6 +1419,7 @@ $app->group('/utils', function () {
 		if ($utilReqParams['task'] == 'sendAlert'){
 			$spireNotifications = true;
 			$notificationType = $utilReqParams['notificationType'];
+			$taskRef = $utilReqParams['taskRef'];
 		}
 
 
@@ -1461,12 +1462,13 @@ $app->group('/utils', function () {
 
 		if ($spireNotifications) {
 
-	    	if ($notificationType == 'api-notification') {
+	    	if ($notificationType == 'api-notification') {	    			
+	    		
 	    		$db = new DbHandler();
 
 	    		$current_date = date("F j, Y \a\t g:ia");
 
-				$notificationTotals = Spire::buildQueryCache();
+				$notificationTotals = Spire::buildQueryCache(true);
 				$errorTotals = array($notificationTotals['todayManifestTotalFailureReports'], $notificationTotals['todayNavTotalFailureReports'], $notificationTotals['todayContentTotalFailureReports']);
 				$notificationErrors = array_sum($errorTotals);
 				$recentNotifications = $db->getRecentNotificationAlerts();
@@ -1526,6 +1528,13 @@ $app->group('/utils', function () {
 	    		$emailContent .= '<tr><td colspan="3">Visit <a href="http://54.243.53.242/">Dashbaord</a> to disable email alert.</td></tr>';
 	    		$emailContent .= '</table>';
 	    	}
+
+			if ($taskRef == 'APITestingComplete') {
+	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+	    		$sendEmailNotification = true;
+				$emailSubject = 'SPIRE: API Testing Complete';
+				$emailContent = 'API Testing has completed';
+			}
 
 	    	if ($notificationType == 'regression-notification') {
 	    		$db = new DbHandler();
@@ -1750,7 +1759,7 @@ $app->group('/utils', function () {
 
 					if ($recentCotnentPayload == $sectionContentPayload) {
 						// echo "matches";
-						$db->logContentCheck($refTestID, $payloadID, $station, 1, 0);
+						$db->logContentCheck($refTestID, $payloadID, $station, 1, 0, 0);
 					} else {
 						// echo "NO";						
 						$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);

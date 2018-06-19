@@ -99,7 +99,9 @@
 		// echo '<pre>';
 		// natsort($cleanedTimeDataLabels);
 		// var_dump($cleanedTimeDataLabels);
-		// echo $manifestLinePoints;
+		// echo $manifestLinePoints.'<br />';
+		// echo $navLinePoints.'<br />';
+		// echo $manifestLinePoints.'<br />';
 		// echo '</pre>';
 
 	?>
