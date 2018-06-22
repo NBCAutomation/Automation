@@ -743,21 +743,25 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                                 console.log(colorizer.colorize(' endpointUrl: ', 'PARAMETER') + endpointUrl);
                                 console.log('---------------------------------');
                             }
+// console.log(JSON.stringify(sectionContent.items));
+// console.log(JSON.stringify(sectionContent.sections));
+							if (sectionContent.items) {
+								apiSuiteInstance.singleItemContentValidation(sectionContent.items);
+							} else if (sectionContent.sections) {
+								var numSectionContentSections = sectionContent.sections.length;
 
-console.log('sectionContent.sections.length :' + sectionContent.sections.length);
+								if (numSectionContentSections > 1) {
+									for (var i = 0; i < numSectionContentSections; i++) {
+	                                	var sectionContentModules = sectionContent.sections[i].items;
 
-							var numSectionContentSections = sectionContent.sections.length;
-
-							if (numSectionContentSections > 1) {
-								for (var i = 0; i < numSectionContentSections; i++) {
-                                	var sectionContentModules = sectionContent.sections[i].items;
-
-	                                apiSuiteInstance.singleItemContentValidation(sectionContentModules);
+		                                apiSuiteInstance.singleItemContentValidation(sectionContentModules);
+									}
+								} else {
+									var sectionContentModules = sectionContent.sections[0].items;
+									apiSuiteInstance.singleItemContentValidation(sectionContentModules);
 								}
-							} else {
-								var sectionContentModules = sectionContent.sections[0].items;
-								apiSuiteInstance.singleItemContentValidation(sectionContentModules);
 							}
+// console.log('sectionContent.sections.length :' + sectionContent.sections.length);
 
                         } catch (e) {
                             if (showOutput) {
