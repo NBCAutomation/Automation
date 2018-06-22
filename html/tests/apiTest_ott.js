@@ -674,11 +674,11 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 	                	manifestParamURL = manifestParamValue;
 	                }
 
-	                console.log('/*/*/ manifestParamURL ' + manifestParamURL);
+	                // console.log('/*/*/ manifestParamURL ' + manifestParamURL);
 
 	                if (debugOutput) {
 	                    console.log('> ------- manifestParamValue ' + manifestParamValue);
-	                    console.log('runValidateEndpoint ' + runValidateEndpoint);
+	                    console.log('manifestParamURL ' + manifestParamURL);
 	                }
 
 	                if (runValidateEndpoint) {
@@ -744,38 +744,21 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                                 console.log('---------------------------------');
                             }
 
-// console.log(JSON.stringify(sectionContent.sections[0].items));
-// console.log(JSON.stringify(sectionContent.items));
+console.log('sectionContent.sections.length :' + sectionContent.sections.length);
 
-                            if (sectionContent.sections[0].items) {
-                                var sectionContentModules = sectionContent.sections[0].items;
+							var numSectionContentSections = sectionContent.sections.length;
 
-                                for (var innerContentItem in sectionContentModules) {
+							if (numSectionContentSections > 1) {
+								for (var i = 0; i < numSectionContentSections; i++) {
+                                	var sectionContentModules = sectionContent.sections[i].items;
 
-                                    console.log('== '+ innerContentItem);
-                                    console.log('== '+ sectionContentModules[innerContentItem]);
-                                    console.log('== '+ sectionContentModules[innerContentItem].id);
-                                    // console.log('*/*/*/*/**//*/**/*/*/*/*/*/*/*/');
-                                    var singleArticleItemObject = sectionContentModules[innerContentItem];
+	                                apiSuiteInstance.singleItemContentValidation(sectionContentModules);
+								}
+							} else {
+								var sectionContentModules = sectionContent.sections[0].items;
+								apiSuiteInstance.singleItemContentValidation(sectionContentModules);
+							}
 
-                                    // apiSuiteInstance.singleItemContentValidation(singleArticleItemObject);
-
-                                    // for (var singleArticleItem in singleArticleItemObject) {
-
-                                    //     if (singleArticleItem === 'items' && typeof singleArticleItemObject[singleArticleItem] === 'object') {
-
-                                    //         var singleArticleInnerItems = singleArticleItemObject[singleArticleItem],
-                                    //             __subCount = 0;
-
-                                    //         for (var thisContentItem in singleArticleInnerItems) {
-                                    //             apiSuiteInstance.singleItemContentValidation(singleArticleInnerItems[thisContentItem]);
-                                    //         }
-                                    //     }
-                                    // }
-                                }
-                            } else {
-                                // apiSuiteInstance.singleItemContentValidation(sectionContent);
-                            }
                         } catch (e) {
                             if (showOutput) {
                                 console.log('------------------------------------------------');
@@ -828,7 +811,58 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
     };
 
     apiSuite.prototype.singleItemContentValidation = function (contentTestObject) {
-    	
+        for (var innerContentItem in contentTestObject) {
+
+            // console.log('== '+ innerContentItem);
+            // console.log('== '+ contentTestObject[innerContentItem]);
+            // console.log('== '+ contentTestObject[innerContentItem].id);
+            // console.log('*/*/*/*/**//*/**/*/*/*/*/*/*/*/');
+            var singleArticleItemObject = contentTestObject[innerContentItem];
+            // console.log(singleArticleItemObject);
+            if (typeof singleArticleItemObject === 'object') {
+            	var articleSummary = singleArticleItemObject.summary,
+            	    articleSensitiveContentCategory = singleArticleItemObject.sensitiveContentCategory,
+            	    articleThumbnailImageURL = singleArticleItemObject.thumbnail,
+            	    articleHeadlineLink = singleArticleItemObject.headlineLink,
+            	    articlePreroll = singleArticleItemObject.preroll,
+            	    articleTypeName = singleArticleItemObject.typeName,
+            	    articleLength = singleArticleItemObject.length,
+            	    articleVideoId = singleArticleItemObject.videoId,
+            	    articlePID = singleArticleItemObject.pid,
+            	    articleSponsored = singleArticleItemObject.sponsored,
+            	    articleTitle = singleArticleItemObject.title,
+            	    articleDisplayTimestamp = singleArticleItemObject.displayTimestamp,
+            	    articleSensitiveContent = singleArticleItemObject.sensitiveContent,
+            	    articleModifiedDate = singleArticleItemObject.modifiedDate,
+            	    articleContentID = singleArticleItemObject.id,
+            	    articleHeadline = singleArticleItemObject.headline,
+            	    articleHeadlineApp = singleArticleItemObject.headlineApp;
+
+            	// if (debugOutput) {
+            	    console.log('      -------------------------------');
+            	    console.log('       Content item var declaration   ');
+            	    console.log('      -------------------------------');
+            	    // console.log('      > articleSummary : ' + singleArticleItemObject.summary);
+            	    // console.log('      > articleSensitiveContentCategory : ' + singleArticleItemObject.sensitiveContentCategory);
+            	    // console.log('      > articleThumbnailImageURL : ' + singleArticleItemObject.thumbnail);
+            	    // console.log('      > articleHeadlineLink : ' + singleArticleItemObject.headlineLink);
+            	    // console.log('      > articlePreroll : ' + singleArticleItemObject.preroll);
+            	    // console.log('      > articleTypeName : ' + singleArticleItemObject.typeName);
+            	    // console.log('      > articleLength : ' + singleArticleItemObject.length);
+            	    // console.log('      > articleVideoId : ' + singleArticleItemObject.videoId);
+            	    // console.log('      > articlePID : ' + singleArticleItemObject.pid);
+            	    // console.log('      > articleSponsored : ' + singleArticleItemObject.sponsored);
+            	    console.log('      > articleTitle : ' + singleArticleItemObject.title);
+            	    // console.log('      > articleDisplayTimestamp : ' + singleArticleItemObject.displayTimestamp);
+            	    // console.log('      > articleSensitiveContent : ' + singleArticleItemObject.sensitiveContent);
+            	    // console.log('      > articleModifiedDate : ' + singleArticleItemObject.modifiedDate);
+            	    console.log('      > articleContentID : ' + singleArticleItemObject.id);
+            	    // console.log('      > articleHeadline : ' + singleArticleItemObject.headline);
+            	    // console.log('      > articleHeadlineApp : ' + singleArticleItemObject.headlineApp);
+            	// }
+
+			}
+        }
     };
 
 
