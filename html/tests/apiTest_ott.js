@@ -36,6 +36,7 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
         loadTimesCollectionObject = {},
         subTestResults = {},
         manifestTestStatus = 'Pass',
+        noticeColor = 'INFO',
         setFail = 0,
         testStartTime,
         apiURL,
@@ -113,9 +114,18 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                 // Set tests to run
                 apiSuiteInstance.collectionNavigationItems(apiSuiteInstance.apiURL);
             }).then(function () {
-                
-                // Display collection object
+
+                // Test Collection data
+                apiSuiteInstance.validateJson('mainOTTManifestURL', apiSuiteInstance.apiURL);
+            }).then(function () {
+                console.log('------------------------------------------');
+                console.log(colorizer.colorize(' ...testing endpoint content items', 'PARAMETER'));
+                console.log('------------------------------------------');
+
                 if (debugOutput) {
+                    console.log('-----------------------------------------');
+                    console.log(' Start testing content collectionObject   ');
+                    console.log('-----------------------------------------');
                     console.log('---------------------');
                     console.log(' Collection object   ');
                     console.log('---------------------');
@@ -127,29 +137,20 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                         thisItem = apiSuiteInstance.collectionObject[keys[i]];
                         console.log('>>>>> ' + keys[i] + ' : ' + thisItem);
                     }
-                } else {
-                    // Test Collection data
-                    apiSuiteInstance.validateJson('mainOTTManifestURL', apiSuiteInstance.apiURL);
-                }
-            }).then(function () {
-                console.log('------------------------------------------');
-                console.log(colorizer.colorize(' ...testing endpoint content items', 'PARAMETER'));
-                console.log('------------------------------------------');
-
-                if (debugOutput) {
-                    console.log('-----------------------------------------');
-                    console.log(' Start testing content collectionObject   ');
-                    console.log('-----------------------------------------');
                 }
                 // Test endpoint content
                 apiSuiteInstance.testEndpointContent(apiSuiteInstance.collectionObject, apiSuiteInstance.manifestTestRefID);
             }).then(function () {
                 // Porcess All Test Results Data
+                if (setFail > 0) {
+                	manifestTestStatus = 'Fail';
+                	noticeColor = 'WARNING';
+				}
                 console.log(colorizer.colorize('Processing test results...', 'COMMENT'));
                 console.log('------------------------');
                 console.log(' Test Results   ');
                 console.log('------------------------');
-                console.log(' [] Test Status: ' + colorizer.colorize(manifestTestStatus, 'INFO'));
+                console.log(' [] Test Status: ' + colorizer.colorize(manifestTestStatus, noticeColor));
                 console.log('  - ' + setFail + ' Failures!');
 
                 // Process test results
@@ -517,7 +518,7 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
         var currentTestStatus = "Pass";
 
         if (url) {
-            casper.open(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
+            casper.thenOpen(url,{ method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
                 // test.comment(' > validateJson() url open');
 
                 if (debugOutput) { require('utils').dump(resp); }
@@ -554,7 +555,7 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                             // console.log(JSON.stringify(output));
 
                             if ( output instanceof Object ) {
-                                var validated = true;
+                                validated = true;
                              }
                         } catch (e) {
                             // ...
@@ -654,8 +655,19 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
         for (var thisCollectionItem in collectionObject) {
             var manifestParam = thisCollectionItem,
                 manifestParamValue = collectionObject[thisCollectionItem];
+                if (debugOutput) {
+                    console.log('---------------------------------');
+                    console.log(colorizer.colorize(' manifestParam : ', 'PARAMETER')  + manifestParam);
+                    console.log(colorizer.colorize(' manifestParamValue: ', 'PARAMETER') + manifestParamValue);
+                    console.log('---------------------------------');
+                }
 
             if (manifestParamValue.length > 0) {
+            	if ( manifestParamValue.indexOf('$') > -1 ) {
+            		setFail++;
+            		subTestResults['mainOTTManifestURL'] = 'FAIL: Unset variable surficing on payload: ' + manifestParam + ' : ' + manifestParamValue;
+            	}
+
 	            if ( manifestParamValue.indexOf('http') > -1 || manifestParamValue.indexOf('/api/1/ott') > -1) {
 	                var runValidateEndpoint = true,
 	                	manifestParamURL;
@@ -666,20 +678,16 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 	                	manifestParamURL = manifestParamValue;
 	                }
 
-	                // console.log('/*/*/ manifestParamURL ' + manifestParamURL);
-
 	                if (debugOutput) {
 	                    console.log('> ------- manifestParamValue ' + manifestParamValue);
 	                    console.log('manifestParamURL ' + manifestParamURL);
 	                }
 
 	                if (runValidateEndpoint) {
-	                	// if (debugOutput) {
-	                	    console.log('---------------------------------');
-	                	    console.log(colorizer.colorize(' manifestParam : ', 'PARAMETER')  + manifestParam);
-	                	    console.log(colorizer.colorize(' manifestParamURL: ', 'PARAMETER') + manifestParamURL);
-	                	    console.log('---------------------------------');
-	                	// }
+	                	// Validate JSON
+	                	if ( manifestParamValue.indexOf('/api/1/ott') > -1 ) {
+	                		apiSuiteInstance.validateJson(manifestParam, manifestParamURL);
+	                	}
 
 	                    apiSuiteInstance.endpointContentValidation(manifestParam, manifestParamURL, testID);
 	                }
@@ -734,10 +742,6 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                         try{
                             sectionContent = JSON.parse(output);
                             // Main endpoint data module item
-
-                            
-// console.log(JSON.stringify(sectionContent.items));
-// console.log(JSON.stringify(sectionContent.sections));
 							if (sectionContent.items) {
 								apiSuiteInstance.singleItemContentValidation(sectionContent.items);
 							} else if (sectionContent.sections) {
@@ -753,7 +757,6 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 											console.log('  > path: ' + sectionContent.sections[i].siteSection);
 											console.log('------------------------------');
 										}
-
 	                                	var sectionContentModules = sectionContent.sections[i].items;
 
 		                                apiSuiteInstance.singleItemContentValidation(sectionContentModules);
@@ -763,8 +766,6 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 									apiSuiteInstance.singleItemContentValidation(sectionContentModules);
 								}
 							}
-// console.log('sectionContent.sections.length :' + sectionContent.sections.length);
-
                         } catch (e) {
                             if (showOutput) {
                                 console.log('------------------------------------------------');
@@ -773,11 +774,6 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                                 console.log(' failed endpointName: '  + endpointName);
                                 console.log(' failed endpointUrl: ' + endpointUrl);
                                 console.log(' ' + colorizer.colorize('JSON Parse Fail: ', 'WARNING') + e);
-
-                                // console.log('   JSON Object ');
-                                // console.log('  ------------------------------');
-                                // console.log( JSON.stringify(output));
-                                // console.log('  ------------------------------');
                             };
                             setFail++;
 
@@ -804,27 +800,14 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                             apiSuiteInstance.logPayloadError('apiOTTTest', JSONerror, endpointUrl, brokenJSONString);
                         }
                     }
-                } else {
-
                 }
             });
-        } else {
-        	// Test non url items here
-        	/*
-========================== >
-        	*/
         }
     };
 
     apiSuite.prototype.singleItemContentValidation = function (contentTestObject) {
         for (var innerContentItem in contentTestObject) {
-
-            // console.log('== '+ innerContentItem);
-            // console.log('== '+ contentTestObject[innerContentItem]);
-            // console.log('== '+ contentTestObject[innerContentItem].id);
-            // console.log('*/*/*/*/**//*/**/*/*/*/*/*/*/*/');
             var singleArticleItemObject = contentTestObject[innerContentItem];
-            // console.log(singleArticleItemObject);
             if (typeof singleArticleItemObject === 'object') {
             	var articleSummary = singleArticleItemObject.summary,
             	    articleSensitiveContentCategory = singleArticleItemObject.sensitiveContentCategory,
@@ -877,6 +860,7 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
             	if (articleTitle.length <= 0 || articleTitle === 'false') {
             	    setFail++;
             	    subTestResults['articleTitle'] = 'FAIL: articleTitle invalid and/or missing, currently outputting: ' + articleTitle;
+            	    console.log(colorizer.colorize('FAIL: articleTitle invalid and/or missing, currently outputting: ' + articleTitle, 'ERROR'));
             	}
             	    
             	// Check for the Feature flag
