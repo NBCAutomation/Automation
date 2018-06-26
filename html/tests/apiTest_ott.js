@@ -47,7 +47,7 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
         linkParser = document.createElement('a'),
         listener = function (resource) {
             linkParser.href = resource.url;
-            if (/^\/apps\/news-app/.exec(linkParser.pathname) === null) {
+            if (/^\/api\/1\/ott/.exec(linkParser.pathname) === null) {
                 // not an api call, skip it.
                 return;
             }
@@ -284,10 +284,8 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 
             typeName = 'apiOTTTest';
 
-            if (thisResource.url.indexOf('/apps/news-app/navigation') > -1) {
-                typeName = 'apiNavTest';
-            } else if (thisResource.url.indexOf('/apps/news-app/?location') > -1) {
-                typeName = 'apiSectionContent';
+            if (thisResource.url.indexOf('/api/1/ott') > -1) {
+                typeName = 'apiOTTTest';
             }
 
             this.logLoadTime(typeName, thisResource.time, thisResource.url, null);
@@ -626,7 +624,6 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 
                                     }
 
-
                                     currentTestStatus = 'Fail';
                                     manifestTestStatus = 'Fail';
                                     setFail++;
@@ -637,6 +634,19 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                 } else {
                     currentTestResults['url'] = url;
                     currentTestResults['httpStatus'] = status;
+
+                    var headerObject = resp.headers;
+
+                    for (var keys in headerObject) {
+                        if (headerObject[keys].name == 'X-Server-Name') {
+                            if (debugOutput) {
+                                console.log(headerObject[keys].name);
+                                console.log(headerObject[keys].value);
+                            }
+                            currentTestResults['clickXServer'] = headerObject[keys].value;
+                        }
+
+                    }
                 }
 
                 // Set current test status & results
