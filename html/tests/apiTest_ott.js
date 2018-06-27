@@ -742,10 +742,14 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                         resp.url.indexOf('submit-your-photos') > -1 ||
                         resp.url.indexOf('submit-your-photos-videos') > -1 ||
                         resp.url.indexOf('submit-media') > -1 ||
-                        resp.url.indexOf('CazaTormentas') > -1
+                        resp.url.indexOf('CazaTormentas') > -1 ||
+                        resp.url.indexOf('ott%2Fweather') > -1 ||
+                        resp.url.indexOf('.png') > -1 ||
+                        resp.url.indexOf('.jpg') > -1
                     ) {
-                        if (showOutput) {
-                            console.log('> ' + endpointUrl + ' : ' + resp.url + colorizer.colorize(' // // Status: ' + status, 'INFO') );
+                        if (debugOutput) {
+                            console.log(colorizer.colorize(' ...skipping endpoint testing for url:', 'PARAMETER'));
+                            console.log('   > ' + endpointName + ' : ' + resp.url + colorizer.colorize(' // Status: ' + status, 'INFO') );
                             console.log('-----------------');
                         }
                     } else {
@@ -753,7 +757,8 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                             sectionContent = JSON.parse(output);
                             // Main endpoint data module item
 							if (sectionContent.items) {
-								apiSuiteInstance.singleItemContentValidation(sectionContent.items);
+                                // Test content items
+                                apiSuiteInstance.singleItemContentValidation(sectionContent.items);
 							} else if (sectionContent.sections) {
 								var numSectionContentSections = sectionContent.sections.length;
 
@@ -767,13 +772,20 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 											console.log('  > path: ' + sectionContent.sections[i].siteSection);
 											console.log('------------------------------');
 										}
-	                                	var sectionContentModules = sectionContent.sections[i].items;
 
-		                                apiSuiteInstance.singleItemContentValidation(sectionContentModules);
+                                        if (typeof sectionContent.sections[i] === 'object') {
+                                            var sectionContentModules = sectionContent.sections[i].items;
+
+                                            // Test content items
+                                            apiSuiteInstance.singleItemContentValidation(sectionContentModules);
+                                        }
 									}
 								} else {
-									var sectionContentModules = sectionContent.sections[0].items;
-									apiSuiteInstance.singleItemContentValidation(sectionContentModules);
+                                    if (sectionContent.sections.length > 0) {
+                                        var sectionContentModules = sectionContent.sections[0].items;
+                                        // Test content items
+                                        apiSuiteInstance.singleItemContentValidation(sectionContentModules);
+                                    }
 								}
 							}
                         } catch (e) {
@@ -895,26 +907,28 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
             	    }
             	}
 
-            	if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
-            	    console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
-            	    subTestResults['thumbnailImageURL'] = 'FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL;
-            	} else {
-            		// Test fetching image
-            		var urlHealthStatus = apiSuiteInstance.checkURLHealth(articleThumbnailImageURL, function (data) {
-            		    if (! data) {
+                if (articleThumbnailImageURL.length > 1) {
+                	if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
+                	    console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
+                	    subTestResults['thumbnailImageURL'] = 'FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL;
+                	} else {
+                		// Test fetching image
+                		var urlHealthStatus = apiSuiteInstance.checkURLHealth(articleThumbnailImageURL, function (data) {
+                		    if (! data) {
 
-            		        if (showOutput) {
-            		            console.log(colorizer.colorize('FAIL: Thumbnail image not fetchable, returned status code of: ' + resp.status + '.', 'ERROR'));
-            		        }
-            		        subTestResults['articleThumbnailImageURL'] = 'FAIL: Thumbnail image not fetchable, returned status code of: ' + resp.status;
-            				setFail++
-            		    } else {
-            		    	if (showOutput) {
-            		    		// console.log('> Thumbnail url: ' + colorizer.colorize(' // ' + data, 'INFO') );
-            		    	}
-            		    }
-            		});
-            	}
+                		        if (showOutput) {
+                		            console.log(colorizer.colorize('FAIL: Thumbnail image not fetchable, returned status code of: ' + resp.status + '.', 'ERROR'));
+                		        }
+                		        subTestResults['articleThumbnailImageURL'] = 'FAIL: Thumbnail image not fetchable, returned status code of: ' + resp.status;
+                				setFail++
+                		    } else {
+                		    	if (showOutput) {
+                		    		// console.log('> Thumbnail url: ' + colorizer.colorize(' // ' + data, 'INFO') );
+                		    	}
+                		    }
+                		});
+                	}
+                }
 
             	// Check for the Sponsor flag
             	if (articleSponsored === true) {
