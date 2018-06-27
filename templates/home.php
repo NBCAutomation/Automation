@@ -50,6 +50,17 @@
 								<a href="/reports/api_article_audits" class="block-anchor panel-footer text-center">See Reports &nbsp; <i class="fa fa-arrow-right"></i></a>
 							</div>
 						</div>
+						<div class="col-xs-6 col-sm-3">
+							<div class="panel panel-default">
+								<div class="panel-body text-light <?php if ( $todayOTTTotalFailureReports > 0 ){ echo 'bk-danger'; } else { echo 'bk-success'; } ?>">
+									<div class="stat-panel text-center">
+										<div class="stat-panel-number h2"><?php echo $todayOTTTotalFailureReports; ?></div>
+										<div class="stat-panel-title text-uppercase">OTT errors</div>
+									</div>
+								</div>
+								<a href="/reports/ott_tests" class="block-anchor panel-footer text-center">See Reports &nbsp; <i class="fa fa-arrow-right"></i></a>
+							</div>
+						</div>
 					</div>
 					<p class="text-muted small">* Note: totals are at current UTC server time: <?php echo $serverTimeStamp; ?> </p>
 				</div>
@@ -98,7 +109,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="row">
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default">
 									<div class="panel-body loadTime_manifest text-light">
 										<div class="stat-panel text-center">
@@ -108,7 +119,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default">
 									<div class="panel-body loadTime_navigation text-light">
 										<div class="stat-panel text-center">
@@ -118,7 +129,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default">
 									<div class="panel-body loadTime_section text-light">
 										<div class="stat-panel text-center">
@@ -128,12 +139,22 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default">
 									<div class="panel-body loadTime_content text-light">
 										<div class="stat-panel text-center">
 											<div class="stat-panel-number h4 "><?php echo round($apiContentTestLoadTime); ?> ms</div>
 											<div class="stat-panel-title text-uppercase">Content</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-2">
+								<div class="panel panel-default">
+									<div class="panel-body loadTime_ott text-light">
+										<div class="stat-panel text-center">
+											<div class="stat-panel-number h4 "><?php echo round($apiOTTTestLoadTime); ?> ms</div>
+											<div class="stat-panel-title text-uppercase">OTT</div>
 										</div>
 									</div>
 								</div>
@@ -162,6 +183,7 @@
 						<li class="navigation"><div></div>Navigation</li>
 						<li class="section"><div></div>Section</li>
 						<li class="content"><div></div>Content</li>
+						<li class="ott"><div></div>OTT</li>
 					</ul>
 				</div>
 			</div>

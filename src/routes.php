@@ -64,10 +64,12 @@ $app->group('/dashboard', function () use ($app) {
 	        'todayManifestTotalFailureReports' => $dashboardData['todayManifestTotalFailureReports'],
 			'todayNavTotalFailureReports' => $dashboardData['todayNavTotalFailureReports'],
 			'todayContentTotalFailureReports' => $dashboardData['todayContentTotalFailureReports'],
+			'todayOTTTotalFailureReports' => $dashboardData['todayOTTTotalFailureReports'],
 			'serverTimeStamp' => $current_date,
 			'apiManifestTestLoadTime' => $dashboardData['apiManifestTestLoadTime'],
 			'apiNavTestLoadTime' => $dashboardData['apiNavTestLoadTime'],
 			'apiContentTestLoadTime' => $dashboardData['apiContentTestLoadTime'],
+			'apiOTTTestLoadTime' => $dashboardData['apiOTTLoadTime'],
 			'apiSectionContentLoadTime' => $dashboardData['apiSectionContentLoadTime'],
 			'chartLoadTimeData' => $dashboardData['chartLoadTimeData'],
 			'recentRegressionScore' => $recentRegressionScore['data'],
@@ -198,6 +200,7 @@ $app->group('/dashboard', function () use ($app) {
 				'apiManifestTestLoadTime' => $dashboardData['apiManifestTestLoadTime'],
 				'apiNavTestLoadTime' => $dashboardData['apiNavTestLoadTime'],
 				'apiContentTestLoadTime' => $dashboardData['apiContentTestLoadTime'],
+				'apiOTTTestLoadTime' => $dashboardData['apiOTTLoadTime'],
 				'apiSectionContentLoadTime' => $dashboardData['apiSectionContentLoadTime'],
 				'chartLoadTimeData' => $dashboardData['chartLoadTimeData'],
 				'recentRegressionScore' => $dashboardData['recentRegressionScore'],
@@ -261,6 +264,11 @@ $app->group('/reports', function () {
                 $pullAllReportData = true;
                 break;
 
+            case "ott_tests":
+                $reportsView = true;
+                $pullAllReportData = true;
+                break;
+
             case 'loadtimes':
             	$loadTimesView = true;
             	$pullAllReportData = false;
@@ -301,11 +309,12 @@ $app->group('/reports', function () {
 			$apiManifestAverageLoadTime = $db->getAverageLoadTime('apiManifestTest', 'today');
 			$apiNavAverageLoadTime = $db->getAverageLoadTime('apiNavTest', 'today');
 			$apiContentAverageLoadTime = $db->getAverageLoadTime('apiContentTest', 'today');
+			$apiOTTAverageLoadTime = $db->getAverageLoadTime('apiOTTTest', 'today');
 			$apiSectionContentAverageLoadTime = $db->getAverageLoadTime('apiSectionContent', 'today');
 
 			$apiManifestLoadTimes = $db->getLoadTimes('apiManifestTest', 'today');
 			$apiNavLoadTimes = $db->getLoadTimes('apiNavTest', 'today');
-			$apiContentLoadTimes = $db->getLoadTimes('apiContentTest', 'today');
+			$apiOTTLoadTimes = $db->getLoadTimes('apiOTTTest', 'today');
 			$apiSectionContentLoadTimes = $db->getLoadTimes('apiSectionContent', 'today');
 
 		} else if ($regressionView) {
@@ -340,6 +349,7 @@ $app->group('/reports', function () {
             'singleView' => $singleView,
             'overView' => $overView,
             'regressionView' => $regressionView,
+            'ottReportView' => $ottReportView,
             'loadtimeSearchView' => $loadtimeSearchView,
             'fileView' => $fileView,
             'stations' => $stations['data'],
@@ -365,9 +375,11 @@ $app->group('/reports', function () {
 			'apiManifestAverageLoadTime' => $apiManifestAverageLoadTime['data'],
 			'apiNavAverageLoadTime' => $apiNavAverageLoadTime['data'],
 			'apiContentAverageLoadTime' => $apiContentAverageLoadTime['data'],
+			'apiOTTAverageLoadTime' => $apiOTTAverageLoadTime['data'],
 			'apiSectionContentAverageLoadTime' => $apiSectionContentAverageLoadTime['data'],
 			'apiManifestLoadTimes' => $apiManifestLoadTimes['data'],
 			'apiNavLoadTimes' => $apiNavLoadTimes['data'],
+			'apiOTTLoadTimes' => $apiOTTLoadTimes['data'],
 			'apiContentLoadTimes' => $apiContentLoadTimes['data'],
 			'apiSectionContentLoadTimes' => $apiSectionContentLoadTimes['data'],
 			'dayRange' => $staleQueryRange,

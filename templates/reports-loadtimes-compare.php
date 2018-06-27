@@ -26,6 +26,7 @@
 						<li class="navigation"><div></div>Navigation</li>
 						<li class="section"><div></div>Section</li>
 						<li class="content"><div></div>Content</li>
+						<li class="ott"><div></div>OTT</li>
 					</ul>
 				</div>
 			</div>
@@ -39,7 +40,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="row">
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default">
 									<div class="panel-body loadTime_manifest text-light">
 										<div class="stat-panel text-center">
@@ -49,7 +50,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default">
 									<div class="panel-body loadTime_navigation text-light">
 										<div class="stat-panel text-center">
@@ -59,7 +60,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default">
 									<div class="panel-body loadTime_section text-light">
 										<div class="stat-panel text-center">
@@ -69,7 +70,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="panel panel-default">
 									<div class="panel-body loadTime_content text-light">
 										<div class="stat-panel text-center">
@@ -79,6 +80,15 @@
 									</div>
 								</div>
 							</div>
+							<div class="col-md-2">
+								<div class="panel panel-default">
+									<div class="panel-body loadTime_ott text-light">
+										<div class="stat-panel text-center">
+											<div class="stat-panel-number h4 "><?php echo round($apiOTTAverageLoadTime); ?> ms</div>
+											<div class="stat-panel-title text-uppercase">OTT</div>
+										</div>
+									</div>
+								</div>
 						</div>
 					</div>
 				</div>

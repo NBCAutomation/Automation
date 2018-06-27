@@ -48,6 +48,9 @@
 		$contentDataPointArray = array();
 		$contentDataPointArrayData = array();
 
+		$ottDataPointArray = array();
+		$ottDataPointArrayData = array();
+
 
 		foreach ($allLoadTimeData as $thisReportKey => $thisReportData) {
 			$loadTimeLabelArrayData['type'] = $thisReportData['loadTimeFrom'];
@@ -75,6 +78,11 @@
 				$contentDataPointArray['loadtime'] = $thisReportData['averageLoadTime'];
 				$contentDataPointArrayData[$thisReportKey] = ($contentDataPointArray);
 			}
+
+			if (strstr($thisReportData['loadTimeFrom'], 'OTTTest')) {
+				$ottDataPointArray['loadtime'] = $thisReportData['averageLoadTime'];
+				$ottDataPointArrayData[$thisReportKey] = ($ottDataPointArray);
+			}
 		}
 
 		natsort($dateLabels);
@@ -84,6 +92,7 @@
 		$navPointData = array_column($navDataPointArrayData, 'loadtime');
 		$sectionPointData = array_column($sectionDataPointArrayData, 'loadtime');
 		$contentPointData = array_column($contentDataPointArrayData, 'loadtime');
+		$ottPointData = array_column($ottDataPointArrayData, 'loadtime');
 
 
 		$loadTimeDataLabels = '"' . implode('","', $dateLabels).'"';
@@ -95,6 +104,7 @@
 		$navLinePoints = (implode(",", $navPointData));
 		$sectionLinePoints = (implode(",", $sectionPointData));
 		$contentLinePoints = (implode(",", $contentPointData));
+		$ottLinePoints = (implode(",", $ottPointData));
 
 		// echo '<pre>';
 		// natsort($cleanedTimeDataLabels);
@@ -152,6 +162,16 @@
 		            pointHighlightFill: "#fff",
 		            pointHighlightStroke: "rgba(151,187,205,1)",
 		            data: [<?php echo $contentLinePoints; ?>]
+		        },
+		        {
+		            label: "OTT API Loadtimes",
+		            fillColor: "rgba(252,252,252,0)",
+		            strokeColor: "rgba(138,43,226,1)",
+		            pointColor: "rgba(138,43,226,1)",
+		            pointStrokeColor: "#fff",
+		            pointHighlightFill: "#fff",
+		            pointHighlightStroke: "rgba(151,187,205,1)",
+		            data: [<?php echo $ottLinePoints; ?>]
 		        }
 		    ]
 		}

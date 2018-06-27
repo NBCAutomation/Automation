@@ -26,6 +26,7 @@
 						<li class="navigation"><div></div>Navigation</li>
 						<li class="section"><div></div>Section</li>
 						<li class="content"><div></div>Content</li>
+						<li class="ott"><div></div>OTT</li>
 					</ul>
 				</div>
 			</div>
@@ -75,6 +76,16 @@
 										<div class="stat-panel text-center">
 											<div class="stat-panel-number h4 "><?php echo round($apiContentAverageLoadTime); ?> ms</div>
 											<div class="stat-panel-title text-uppercase">Content</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="panel panel-default">
+									<div class="panel-body loadTime_ott text-light">
+										<div class="stat-panel text-center">
+											<div class="stat-panel-number h4 "><?php echo round($apiOTTAverageLoadTime); ?> ms</div>
+											<div class="stat-panel-title text-uppercase">OTT</div>
 										</div>
 									</div>
 								</div>

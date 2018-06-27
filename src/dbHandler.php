@@ -504,6 +504,10 @@ class DbHandler {
                     $testTypeName = "WHERE `test_type` = 'apiSectionContent'";
                     break;
 
+                case "apiOTTTest":
+                    $testTypeName = "WHERE `test_type` = 'apiOTTTest'";
+                    break;
+
                 default:
                     $testTypeName = '';
             }
@@ -582,6 +586,14 @@ class DbHandler {
                     $testTypeName = "WHERE `test_type` = 'apiSectionContent'";
                     break;
 
+                case "apiOTTTest":
+                    $testTypeName = "WHERE `test_type` = 'apiOTTTest'";
+                    break;
+
+                case "ottTests":
+                    $testTypeName = "WHERE `test_type` = 'apiOTTTest'";
+                    break;
+
                 default:
                     $testTypeName = '';
             }
@@ -611,7 +623,6 @@ class DbHandler {
                 default:
                     $dataRange = 'AND created >= DATE_SUB(NOW(), INTERVAL 1 HOUR)';
             }
-
 
             $stmt = $db_con->prepare("SELECT AVG(loadtime) AS averageLoadTime FROM loadtimes ". $testTypeName ."  ".$dataRange);
 
@@ -1048,6 +1059,11 @@ class DbHandler {
                     $testTableName = 'regression_tests';
                     break;
 
+                case "ott_tests":
+                    $testTypeName = 'apiOTTTest';
+                    $testTableName = 'test_results';
+                    break;
+
                 default:
                     $testTypeName = 'none-existent';
                     $testTableName = 'null';
@@ -1178,6 +1194,10 @@ class DbHandler {
 
                 case "regression_tests":
                     $testTypeName = 'regressionTest';
+                    break;
+
+                case "ott_tests":
+                    $testTypeName = 'apiOTTTest';
                     break;
 
                 default:

@@ -189,7 +189,7 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 #legendDiv {
 	padding: 0.5em;
 	margin: 0px auto;
-	width: 30em;
+	width: 40em;
 }
 
 #legendDiv li {
@@ -224,6 +224,11 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 .loadTime_content,
 #legendDiv li.content div {
 	background: rgba(100,181,205,1);
+}
+
+.loadTime_ott,
+#legendDiv li.ott div {
+	background: rgba(138,43,226,1);
 }
 
 #app_log {

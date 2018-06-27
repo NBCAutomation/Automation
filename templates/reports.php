@@ -111,6 +111,7 @@
 											</div>
 										</div>
 									</div>
+									<?php if($view != 'ott_tests'): ?>
 									<div class="col-md-3">
 										<div class="panel panel-default">
 											<div class="panel-body bk-warning-alt text-light">
@@ -121,6 +122,7 @@
 											</div>
 										</div>
 									</div>
+									<?php endif; ?>
 									<div class="col-md-3">
 										<div class="panel panel-default">
 											<div class="panel-body bk-primary text-light">
@@ -131,6 +133,7 @@
 											</div>
 										</div>
 									</div>
+									<?php if($view != 'ott_tests'): ?>
 									<div class="col-md-3">
 										<div class="panel panel-default">
 											<div class="panel-body bk-info text-light">
@@ -141,6 +144,7 @@
 											</div>
 										</div>
 									</div>
+								<?php endif; ?>
 								</div>
 							</div>
 						</div>

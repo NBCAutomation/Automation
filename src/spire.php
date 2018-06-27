@@ -467,30 +467,41 @@ class Spire {
 		$todayContentTotalFailureReports = $db->getTestReportCount('api_article_audits', 'fail', 'today');
 		$todayContentTotalWarningReports = $db->getTestReportCount('api_article_audits', 'warning', 'today');
 
+		// OTT
+		$todayOTTTotalFailureReports = $db->getTestReportCount('ott_tests', 'fail', 'today');
+		$todayOTTTotalWarningReports = $db->getTestReportCount('ott_tests', 'warning', 'today');
+
 		// Loadtime data
 		$apiManifestTestLoadTime = $db->getAverageLoadTime('apiManifestTest', 'today');
 		$apiNavTestLoadTime = $db->getAverageLoadTime('apiNavTest', 'today');
 		$apiContentTestLoadTime = $db->getAverageLoadTime('apiContentTest', 'today');
 		$apiSectionContentLoadTime = $db->getAverageLoadTime('apiSectionContent', 'today');
+		$apiOTTLoadTime = $db->getAverageLoadTime('ottTests', 'today');
 		$chartLoadTimeData = $db->getAllAverageLoadTimes();
 
-		$resultsArray = array();
 
-		$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
-		$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
-		$resultsArray['todayNavTotalFailureReports'] = $todayNavTotalFailureReports['data'];
-		$resultsArray['todayContentTotalFailureReports'] = $todayContentTotalFailureReports['data'];
-		$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
-		$resultsArray['todayManifestTotalWarningReports'] = $todayManifestTotalWarningReports['data'];
-		$resultsArray['todayNavTotalFailureReports'] = $todayNavTotalFailureReports['data'];
-		$resultsArray['todayNavTotalWarningReports'] = $todayNavTotalWarningReports['data'];
-		$resultsArray['todayContentTotalFailureReports'] = $todayContentTotalFailureReports['data'];
-		$resultsArray['todayContentTotalWarningReports'] = $todayContentTotalWarningReports['data'];
-		$resultsArray['apiManifestTestLoadTime'] = $apiManifestTestLoadTime['data'];
-		$resultsArray['apiNavTestLoadTime'] = $apiNavTestLoadTime['data'];
-		$resultsArray['apiContentTestLoadTime'] = $apiContentTestLoadTime['data'];
-		$resultsArray['apiSectionContentLoadTime'] = $apiSectionContentLoadTime['data'];
-		$resultsArray['chartLoadTimeData'] = $chartLoadTimeData['data'];
+		$resultsArray = array();
+			$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
+			$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
+
+			$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
+			$resultsArray['todayManifestTotalWarningReports'] = $todayManifestTotalWarningReports['data'];
+
+			$resultsArray['todayNavTotalFailureReports'] = $todayNavTotalFailureReports['data'];
+			$resultsArray['todayNavTotalWarningReports'] = $todayNavTotalWarningReports['data'];
+			
+			$resultsArray['todayContentTotalFailureReports'] = $todayContentTotalFailureReports['data'];
+			$resultsArray['todayContentTotalWarningReports'] = $todayContentTotalWarningReports['data'];
+
+			$resultsArray['todayOTTTotalFailureReports'] = $todayOTTTotalFailureReports['data'];
+			$resultsArray['todayOTTTotalWarningReports'] = $todayOTTTotalWarningReports['data'];
+
+			$resultsArray['apiManifestTestLoadTime'] = $apiManifestTestLoadTime['data'];
+			$resultsArray['apiNavTestLoadTime'] = $apiNavTestLoadTime['data'];
+			$resultsArray['apiContentTestLoadTime'] = $apiContentTestLoadTime['data'];
+			$resultsArray['apiSectionContentLoadTime'] = $apiSectionContentLoadTime['data'];
+			$resultsArray['apiOTTLoadTime'] = $apiOTTLoadTime['data'];
+			$resultsArray['chartLoadTimeData'] = $chartLoadTimeData['data'];
 
 
 		return $resultsArray;
