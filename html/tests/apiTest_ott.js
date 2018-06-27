@@ -941,9 +941,16 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
             	    if (debugOutput) {
             	        console.log('    ------------------ ');
             	    }
-            	    
-        	        var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ articleVideoId +'?manifest=m3u&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
-        	        
+            	    if (! isNaN(articleVideoId)) {
+                        // Check if Video ID is numeric only, if so faillback to PID
+                        if (debugOutput) {
+                            console.log('no ' + articleVideoId);
+                        }
+                        var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ articlePID +'?manifest=m3u&mbr=true&assetTypes=LegacyRelease&sdk=PDK%205.8.7&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
+                    } else {
+                        var videoURL = 'https://link.theplatform.com/s/Yh1nAC/'+ articleVideoId +'?manifest=m3u&mbr=true&assetTypes=LegacyRelease&sdk=PDK%205.8.7&formats=m3u,mpeg4,webm,ogg&format=SMIL&embedded=true&tracking=true';
+                    }
+                    
         	        if (debugOutput) {
         	            console.log('    ------------------ ');
         	            console.log('     Lead Media Video Release\n');
@@ -954,15 +961,17 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 
         	        var urlHealthStatus = apiSuiteInstance.checkURLHealth(videoURL, function (data) {
         	            if (! data) {
-
-        	                if (showOutput) {
+        	                if (debugOutput) {
         	                    console.log(' > Lead media: Video release file url Failed to load: ' + colorizer.colorize(data, 'FAIL'));
+                                console.log('  - URL: ' + videoURL);
+                                // console.log('data >> ' + JSON.stringify(data));
         	                }
         	                setFail++;
-        	                subTestResults['leadMedia_video_urlHealthStatus'] = 'Lead media: Video release file url Failed to load';
+        	                subTestResults['leadMedia_video_urlHealthStatus'] = 'Lead media: Video release file url Failed to load; videoURL: ' + videoURL;
         	            } else {
         	            	if (showOutput) {
         	            		// console.log('> MPX video url: ' + colorizer.colorize(' // ' + data, 'INFO') );
+                                // console.log('  - URL: ' + videoURL);
         	            	}
         	            }
         	        });
@@ -984,18 +993,18 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
         }
     };
 
-
     apiSuite.prototype.checkURLHealth = function (url, callback) {
-
         if (url) {
             casper.thenOpen(url, {method: 'get'}).then(function (resp) {
-                var status = this.status().currentHTTPStatus,
+                // var status = this.status().currentHTTPStatus
+                var status = resp.status,
                     output = false;
 
-                if ( status == 200) {
+                if ( status === 200) {
                     output = 'Pass';
                 } else {
                     output = false;
+                    // output = resp;
                 }
 
                 if (typeof(callback) === "function") {
