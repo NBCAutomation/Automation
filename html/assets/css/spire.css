@@ -229,7 +229,7 @@ table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td
 .loadTime_ott,
 #legendDiv li.ott div {
 	background: rgba(138,43,226,1);
-}
+} 
 
 #app_log {
     counter-reset: rowNumber;
