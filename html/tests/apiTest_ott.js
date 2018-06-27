@@ -76,11 +76,11 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
             resourcesTime[resource.id].end  = date_end.getTime();
             resourcesTime[resource.id].time = resourcesTime[resource.id].end - resourcesTime[resource.id].start;
 
-            if (debugOutput) {
+            // if (debugOutput) {
                 /* to debug and compare */
                 this.echo('manifestLoadTime >> ' + resourcesTime[resource.id].time);
                 this.echo('resource time >> ' + resourcesTime[resource.id].time);
-            }
+            // }
         },
         apiSuite = function (url) {
             if (!url) {

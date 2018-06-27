@@ -17,6 +17,7 @@
 		"5concurrent-article": "cat sites.txt | xargs -P5 -I{} casperjs test \"./tests/apiTest_content.js\" --url=\"{}\"",
 		"1process-article": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_content.js\" --url=\"{}\"",
 		"ott_manifestCheck": "cat sites.txt | xargs -P3 -I{} casperjs test \"./tests/apiTest_ott.js\" --url=\"{}\"",
+		"ott_manifestCheck-local": "cat sites.txt | xargs -P3 -I{} casperjs test \"./tests/apiTest_ott.js\" --url=\"{}\" --env=local",
 		"create-dictionaries": "cat sites.txt | xargs -P1 -I{} casperjs test \"./tests/apiTest_manifest.js\" --url=\"{}\" --task=createDictionary",
 		"stageRegression": "cat stage_sites.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --url=\"{}\"",
 		"prodRegressionSingleOTS": "shuf -n 1 sites-nbc.txt | xargs -P1 -I{} casperjs test \"./tests/regressionTest.js\" --url=\"{}\"",
