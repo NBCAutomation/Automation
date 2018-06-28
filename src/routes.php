@@ -1527,26 +1527,30 @@ $app->group('/utils', function () {
 				$emailSubject = 'Automation Failures/Warnings';
 
 	    		$emailContent .= '<table align="center" width="500" cellpadding="10" style="text-align: center; border: 1px solid;">';
-	    		$emailContent .= '<tr><th colspan="3">Automation Error/Warnings</th></tr>';
-	    		$emailContent .= '<tr bgcolor="#ddd"><th>Manifest</th><th>Navigation</th><th>Content</th></tr>';
+	    		$emailContent .= '<tr><th colspan="4">Automation Error/Warnings</th></tr>';
+	    		$emailContent .= '<tr bgcolor="#ddd"><th>Manifest</th><th>Navigation</th><th>Content</th><th>OTT</th></tr>';
 	    		$emailContent .= '<tr style="color: #fff; text-align: center;"><td bgcolor="'.setStatusColor($notificationTotals['todayManifestTotalFailureReports']).'">'.$notificationTotals['todayManifestTotalFailureReports'].'</td>';
 	    		$emailContent .= '<td bgcolor="'.setStatusColor($notificationTotals['todayNavTotalFailureReports']).'">'.$notificationTotals['todayNavTotalFailureReports'].'</td>';
-	    		$emailContent .= '<td bgcolor="'.setStatusColor($notificationTotals['todayContentTotalFailureReports']).'">'.$notificationTotals['todayContentTotalFailureReports'].'</td></tr>';
+	    		$emailContent .= '<td bgcolor="'.setStatusColor($notificationTotals['todayContentTotalFailureReports']).'">'.$notificationTotals['todayContentTotalFailureReports'].'</td>';
+
+	    		$emailContent .= '<td bgcolor="'.setStatusColor($notificationTotals['todayOTTTotalFailureReports']).'">'.$notificationTotals['todayOTTTotalFailureReports'].'</td></tr>';
+
 	    		$emailContent .= '<tr style="color: #000; text-align: center;"><td bgcolor="#ffd000">'.$notificationTotals['todayManifestTotalWarningReports'].'</td>';
 	    		$emailContent .= '<td bgcolor="#ffd000">'.$notificationTotals['todayNavTotalWarningReports'].'</td>';
-	    		$emailContent .= '<td bgcolor="#ffd000">'.$notificationTotals['todayContentTotalWarningReports'].'</td></tr>';
-	    		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">view reports</a></td></tr>';
-	    		$emailContent .= '<tr><td colspan="3"></td></tr>';
-	    		$emailContent .= '<tr><td colspan="3">Visit <a href="http://54.243.53.242/">Dashbaord</a> to disable email alert.</td></tr>';
+	    		$emailContent .= '<td bgcolor="#ffd000">'.$notificationTotals['todayContentTotalWarningReports'].'</td>';
+	    		$emailContent .= '<td bgcolor="#ffd000">---</td></tr>';
+	    		$emailContent .= '<tr bgcolor="#ddd"><td><a href="http://54.243.53.242/reports/api_manifest_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_navigation_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/api_article_audits">view reports</a></td><td><a href="http://54.243.53.242/reports/ott_tests">view reports</a></td></tr>';
+	    		$emailContent .= '<tr><td colspan="4"></td></tr>';
+	    		$emailContent .= '<tr><td colspan="4">Visit <a href="http://54.243.53.242/">Dashbaord</a> to disable email alert.</td></tr>';
 	    		$emailContent .= '</table>';
 	    	}
 
-			if ($taskRef == 'APITestingComplete') {
-	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
-	    		$sendEmailNotification = true;
-				$emailSubject = 'SPIRE: API Testing Complete';
-				$emailContent = 'API Testing has completed';
-			}
+			// if ($taskRef == 'APITestingComplete') {
+	  //   		$emailRecipient = 'deltrie.allen@nbcuni.com';
+	  //   		$sendEmailNotification = true;
+			// 	$emailSubject = 'SPIRE: API Testing Complete';
+			// 	$emailContent = 'API Testing has completed';
+			// }
 
 	    	if ($notificationType == 'regression-notification') {
 	    		$db = new DbHandler();
