@@ -55,7 +55,9 @@
 			<table id="stations-table" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 				<thead>
 					<tr>
-						<?php echo $tableHeaders; ?>
+						<?php 
+							echo $dayRange;
+							echo $tableHeaders; ?>
 					</tr>
 				</thead>
 				<tfoot>

@@ -51,11 +51,14 @@
 		$ottDataPointArray = array();
 		$ottDataPointArrayData = array();
 
+// var_dump(cal_days_in_month(CAL_GREGORIAN, 6, 2018));
 
 		foreach ($allLoadTimeData as $thisReportKey => $thisReportData) {
 			$loadTimeLabelArrayData['type'] = $thisReportData['loadTimeFrom'];
 			$loadTimeLabelArrayData['loadtime'] = $thisReportData['averageLoadTime'];
 			$loadTimeLabelArrayData['date'] = Date('n/d/Y', strtotime($thisReportData['date']));
+
+			echo $loadTimeLabelArrayData['date'].'<br />';
 			
 			$loadTimeLabelArray[$thisReportKey] = $loadTimeLabelArrayData;
 			

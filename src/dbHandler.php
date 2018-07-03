@@ -786,9 +786,9 @@ class DbHandler {
             $db_con = Spire::getConnection();
 
             if (! $dayRange) {
-                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-7';
+                $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND 7';
             } else {
-                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
+                $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND '.$dayRange;
             }
 
             if ($stale > 0) {
@@ -819,9 +819,9 @@ class DbHandler {
             $db_con = Spire::getConnection();
 
             if (! $dayRange) {
-                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-7';
+                $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND 7';
             } else {
-                $dayRange = 'WHERE DATE(`created`) >= CURDATE()-'.$dayRange;
+                $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND '.$dayRange;
             }
 
             if ($updateTime) {
@@ -971,9 +971,9 @@ class DbHandler {
             }
 
             if ($dayRange) {
-                $daySearchRange = 'AND DATE(`created`) >= CURDATE()-'.$dayRange;
+                $daySearchRange = 'AND datediff(current_date,date(`created`)) BETWEEN  0 AND '.$dayRange;
             } else {
-                $daySearchRange = 'AND DATE(`created`) >= CURDATE()-7';
+                $daySearchRange = 'AND datediff(current_date,date(`created`)) BETWEEN  0 AND 7';
             }
 
             if ($includeStale === 'true') {
@@ -983,7 +983,7 @@ class DbHandler {
             }
 
             $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$searchClause.' AND stale < 1 '.$daySearchRange);
-            
+            var_dump($stmt,'<br /><br />');
             if ($stmt->execute()) {
                 $staleContentAverage = $stmt->fetch();
                 // var_dump($staleContentAverage);
