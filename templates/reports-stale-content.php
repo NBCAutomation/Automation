@@ -14,7 +14,7 @@
 	if ($dayRange) {
 		$dayRange = $dayRange;
 	} else {
-		$dayRange = 7;
+		// $dayRange = 7;
 	}
 ?>
 	<div class="panel-body api_results">
@@ -55,8 +55,7 @@
 			<table id="stations-table" class="display table table-striped table-bordered table-hover" cellspacing="0" width="100%">
 				<thead>
 					<tr>
-						<?php 
-							echo $dayRange;
+						<?php
 							echo $tableHeaders; ?>
 					</tr>
 				</thead>
@@ -77,7 +76,7 @@
 						    echo '<td>'.$stationProperty['brand'].'</td>';
 						    echo '<td>'.$stationProperty['shortname'].'</td>';
 						    echo '<td>'.round($stationUpdateAverages['data']['averageTime']).'</td>';
-						    echo '<td><b>'.round($stationUpdateAverages['data']['maxTime']).'</b> - <span style="color: #616161; font-style: italic; font-size: 0.9em;">'.date("F j, Y g:i a", strtotime($stationUpdateAverages['data']['created'])).'</span></td>';
+						    echo '<td><b>'.round($stationUpdateAverages['data']['maxTime']).'</td>';
 		                	echo "</tr>";
 						}
 					}

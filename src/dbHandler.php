@@ -962,7 +962,7 @@ class DbHandler {
 
 
     public function getStaleContentAverages($dayRange, $searchTerm) {
-        $output = Spire::spireCache('getStaleContentAverage_'.$dayRange.'_'.$searchTerm, 0, function() use($dateRange, $searchTerm) {
+        $output = Spire::spireCache('getStaleContentAverage_'.$dayRange.'_'.$searchTerm, 0, function() use($dayRange, $searchTerm) {
             
             $db_con = Spire::getConnection();
 
@@ -983,6 +983,12 @@ class DbHandler {
             }
 
             $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$searchClause.' AND stale < 1 '.$daySearchRange);
+            
+// SELECT * FROM stale_content_check WHERE min_diff=(SELECT MAX(min_diff) from stale_content_check WHERE stale < 1 AND datediff(current_date,date(`created`)) BETWEEN  0 AND 30) AND station LIKE 'nbcnewyork' ORDER BY created DESC LIMIT 1; SELECT AVG(min_diff) AS averageTime WHERE stale < 1 AND datediff(current_date,date(`created`)) BETWEEN  0 AND 30 AND station LIKE 'nbcnewyork';
+
+// SELECT * FROM stale_content_check WHERE min_diff=(SELECT MAX(min_diff) from stale_content_check WHERE stale < 1 AND datediff(current_date,date(`created`)) BETWEEN  0 AND 30) AND station LIKE 'nbcnewyork'
+
+
             var_dump($stmt,'<br /><br />');
             if ($stmt->execute()) {
                 $staleContentAverage = $stmt->fetch();
