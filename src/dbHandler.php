@@ -869,6 +869,9 @@ class DbHandler {
             $start = $offset + 1;
             $end = min(($offset + $limit), $total);
 
+            var_dump($pages);
+            
+
             // The "back" link
             $prevlink = ($page > 1) ? '<li class="paginate_button "><a href="'.$append.'page=1" title="First page">&laquo;</a></li><li><a href="'.$append.'page=' . ($page - 1) . '" title="Previous page">' . ($page - 1) . '</a></li>' : '<li class="paginate_button previous disabled" id="zctb_previous"><a href="#" aria-controls="zctb" data-dt-idx="0" tabindex="0">&laquo;</a></li>';
 

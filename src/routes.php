@@ -320,6 +320,7 @@ $app->group('/reports', function () {
 		} else if ($regressionView) {
 			// $regressionResults = $db->getAllRegressionTestData();
 			// $recentRegressionTests = $db->getAllTestResultData($args['view'], 'all', 'all');
+			
 			$recentRegressionTests = $db->getAllRegressionTests();
 			$pageTemplate = 'reports-regression.php';
 

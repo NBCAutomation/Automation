@@ -86,52 +86,59 @@
 					echo '<p class="text-muted small"><i>Data will only be display when errors exist.</i></p>';
 
 					$obj = json_decode($reportData, true);
-					$reportFailures = $obj['testResults'];
-					echo '<div class="panel panel-default">
-							<div class="panel-heading">
-								<h3 class="panel-title">Failure details</h3>
-							</div>';
-					echo '<div class="panel-body">';
-					echo '<p class="text-muted small"><i> * Content ID\'s are clickable and will link to the CMS Search.</i></p>';
 
-					foreach ($reportFailures as $thisReportKey => $thisReportValue) {	
-						echo '<div class="panel panel-default">';
-						
-						if (strstr($thisReportKey, 'article_')) {
-							$contentKeyName = explode("_", $thisReportKey);
-							echo '<div class="panel-heading"><h4 class="panel-title"><a href="https://cms.clickability.com/cms?searchTab=contentTab&searchText='.$contentKeyName[1].'&action=consolidatedSearch" target="_blank">Content ID: '.$contentKeyName[1].'</a></h4></div>';
-						} elseif (strstr($thisReportKey, 'endpointContentValidationError_')) {
-							$endpointName = str_replace('_', ' ', str_replace('endpointContentValidationError_', '', $thisReportKey));
-							echo '<div class="panel-heading"><h4 class="panel-title">Endpoint Name: <span class="endpointName">'.$endpointName.'</span></h4></div>';
-						} else {
-							echo '<div class="panel-heading"><h4 class="panel-title">Endpoint Failure: '.$thisReportKey.'</h4></div>';
-						}
-
-						echo '<div class="panel-body">';
-						
-						if (is_array($thisReportValue)) {
-							echo '<ul>';
-							foreach ($thisReportValue as $subReportKey => $subReportValue) {
-								if (strstr($subReportValue, '// ')) {
-									echo "<li>".str_replace('// ', '</li><li>', $subReportValue)."</li>";	
-								} else {
-									echo $subReportValue;
-								}
-							}
-							echo '</ul>';
-						} else {
-							echo str_replace('// ', '<br />', $thisReportValue);
-						}
-						    
-		             	echo '</div>
-		             	</div>';
+					if (strlen($obj) > 1 || strlen($obj) != NULL) {
+						$displayFailureDetails = true;
 					}
-					// Look up failure data and display it
-		             	$testReferenceID = $fullReportData['ref_test_id'];
-		             	$testResultID = $fullReportData['id'];
-		             	
-		             	Spire::displayPayLoadError($testReferenceID, $testResultID);
-					echo '</div></div>';
+
+					if ($displayFailureDetails) {
+						$reportFailures = $obj['testResults'];
+						echo '<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Failure details</h3>
+								</div>';
+						echo '<div class="panel-body">';
+						echo '<p class="text-muted small"><i> * Content ID\'s are clickable and will link to the CMS Search.</i></p>';
+
+						foreach ($reportFailures as $thisReportKey => $thisReportValue) {	
+							echo '<div class="panel panel-default">';
+							
+							if (strstr($thisReportKey, 'article_')) {
+								$contentKeyName = explode("_", $thisReportKey);
+								echo '<div class="panel-heading"><h4 class="panel-title"><a href="https://cms.clickability.com/cms?searchTab=contentTab&searchText='.$contentKeyName[1].'&action=consolidatedSearch" target="_blank">Content ID: '.$contentKeyName[1].'</a></h4></div>';
+							} elseif (strstr($thisReportKey, 'endpointContentValidationError_')) {
+								$endpointName = str_replace('_', ' ', str_replace('endpointContentValidationError_', '', $thisReportKey));
+								echo '<div class="panel-heading"><h4 class="panel-title">Endpoint Name: <span class="endpointName">'.$endpointName.'</span></h4></div>';
+							} else {
+								echo '<div class="panel-heading"><h4 class="panel-title">Endpoint Failure: '.$thisReportKey.'</h4></div>';
+							}
+
+							echo '<div class="panel-body">';
+							
+							if (is_array($thisReportValue)) {
+								echo '<ul>';
+								foreach ($thisReportValue as $subReportKey => $subReportValue) {
+									if (strstr($subReportValue, '// ')) {
+										echo "<li>".str_replace('// ', '</li><li>', $subReportValue)."</li>";	
+									} else {
+										echo $subReportValue;
+									}
+								}
+								echo '</ul>';
+							} else {
+								echo str_replace('// ', '<br />', $thisReportValue);
+							}
+							    
+			             	echo '</div>
+			             	</div>';
+						}
+						// Look up failure data and display it
+			             	$testReferenceID = $fullReportData['ref_test_id'];
+			             	$testResultID = $fullReportData['id'];
+			             	
+			             	Spire::displayPayLoadError($testReferenceID, $testResultID);
+						echo '</div></div>';	
+					}
 				} else {
 					// var_dump($reportData);
 
