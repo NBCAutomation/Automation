@@ -814,14 +814,14 @@ class DbHandler {
     }
 
 
-    public function getPagedStaleContentChecks($dayRange, $searchTerm, $updateTime, $includeStale, $ref) {
-        $output = Spire::spireCache('getPaggedStaleContentChecks_'.$dayRange.'_'.$searchTerm.'_'.$includeStale, 0, function() use($dateRange, $searchTerm, $updateTime, $includeStale, $ref) {
+    public function getPagedStaleContentChecks($dateRange, $searchTerm, $updateTime, $includeStale, $ref) {
+        $output = Spire::spireCache('getPaggedStaleContentChecks_'.$dateRange.'_'.$searchTerm.'_'.$includeStale, 0, function() use($dateRange, $searchTerm, $updateTime, $includeStale, $ref) {
             $db_con = Spire::getConnection();
 
-            if (! $dayRange) {
+            if (! $dateRange) {
                 $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND 7';
             } else {
-                $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND '.$dayRange;
+                $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND '.$dateRange;
             }
 
             if ($updateTime) {
@@ -986,17 +986,9 @@ class DbHandler {
             }
 
             $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$searchClause.' AND stale < 1 '.$daySearchRange);
-            
-// SELECT * FROM stale_content_check WHERE min_diff=(SELECT MAX(min_diff) from stale_content_check WHERE stale < 1 AND datediff(current_date,date(`created`)) BETWEEN  0 AND 30) AND station LIKE 'nbcnewyork' ORDER BY created DESC LIMIT 1; SELECT AVG(min_diff) AS averageTime WHERE stale < 1 AND datediff(current_date,date(`created`)) BETWEEN  0 AND 30 AND station LIKE 'nbcnewyork';
-
-// SELECT * FROM stale_content_check WHERE min_diff=(SELECT MAX(min_diff) from stale_content_check WHERE stale < 1 AND datediff(current_date,date(`created`)) BETWEEN  0 AND 30) AND station LIKE 'nbcnewyork'
-
-
-            var_dump($stmt,'<br /><br />');
             if ($stmt->execute()) {
                 $staleContentAverage = $stmt->fetch();
                 // var_dump($staleContentAverage);
-// exit();
                 $stmt->closeCursor();
                 return $staleContentAverage;
             }
@@ -1011,7 +1003,7 @@ class DbHandler {
         $output = Spire::spireCache('getTestDataById_'.$testID.'_refID-'.$refID, 10000, function() use ($testID) {
             $db_con = Spire::getConnection();
             
-            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE ref_test_id = '".$testID."'");
+            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE id = '".$testID."'");
             $stmt->execute(array($testID));
 
             $tests = array();
@@ -1042,9 +1034,8 @@ class DbHandler {
 
     public function getAllTestResultData($testType, $status, $range) {
         // $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
-        $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 10, function() use ($testType, $status, $range) {
-            // echo $testType."<br />".$status."<br />".$range."<br />";
-            // exit();
+        $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 0, function() use ($testType, $status, $range) {
+            
             $db_con = Spire::getConnection();
 
             switch ($testType) {
@@ -1065,7 +1056,7 @@ class DbHandler {
 
                 case "regression_tests":
                     $testTypeName = 'regressionTest';
-                    $testTableName = 'regression_tests';
+                    $testTableName = 'test_results';
                     break;
 
                 case "ott_tests":
@@ -1120,11 +1111,8 @@ class DbHandler {
                     $dataRange = 'AND DATE(created) >= CURDATE()';
             }
 
-
             if ($testType == 'all') {
                 $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." ".$dataRange." ORDER BY id DESC");
-            } elseif ($testType == 'regression_tests') {
-                $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." ORDER BY id DESC");
             } else {
                 $stmt = $db_con->prepare("SELECT * FROM ".$testTableName." WHERE test_type = '".$testTypeName."' ".$filterStatus." ".$dataRange."");
             }
@@ -1182,6 +1170,116 @@ class DbHandler {
 
         return $output;
     }
+
+
+    // public function getPagedRegressionReports($testType, $dayRange, $ref) {
+    public function getPagedRegressionReports($range, $searchTerm, $failuresOnly, $ref) {
+        $output = Spire::spireCache('getPagedRegressionReports'.$range.'_'.$searchTerm, 0, function() use($range, $searchTerm, $failuresOnly, $ref) {
+            $db_con = Spire::getConnection();
+
+            if (! $range) {
+                $dayRange = 'AND datediff(current_date,date(`created`)) BETWEEN  0 AND 7';
+            } else {
+                $dayRange = 'AND datediff(current_date,date(`created`)) BETWEEN  0 AND '.$range;
+            }
+
+            if ($searchTerm) {
+                $searchClause .= " AND property LIKE '%".$searchTerm."%'";
+            }
+
+            if ($ref) {
+                $append = $ref;
+            } else {
+                $append = '?';
+            }
+
+            $total = $db_con->query("SELECT COUNT(*) FROM test_results WHERE test_type = 'regressionTest'".$dayRange)->fetchColumn();
+
+            $stmt = $db_con->prepare("SELECT COUNT(*) FROM test_results WHERE test_type = 'regressionTest'".$dayRange." ".$searchClause);
+            // var_dump($stmt);
+            // exit();
+
+            $limit = 100;
+
+            // How many pages will there be
+            $pages = ceil($total / $limit);
+
+            // What page are we currently on?
+            $page = min($pages, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT, array(
+                'options' => array(
+                    'default'   => 1,
+                    'min_range' => 1
+                ),
+            )));
+
+            // Calculate the offset for the query
+            $offset = ($page - 1)  * $limit;
+
+            // Some information to display to the user
+            $start = $offset + 1;
+            $end = min(($offset + $limit), $total);
+
+            var_dump($pages);
+            
+
+            // The "back" link
+            $prevlink = ($page > 1) ? '<li class="paginate_button "><a href="'.$append.'page=1" title="First page">&laquo;</a></li><li><a href="'.$append.'page=' . ($page - 1) . '" title="Previous page">' . ($page - 1) . '</a></li>' : '<li class="paginate_button previous disabled" id="zctb_previous"><a href="#" aria-controls="zctb" data-dt-idx="0" tabindex="0">&laquo;</a></li>';
+
+            $currentlink = '<li class="paginate_button active"><a href="#">'. $page. '</a></li>';
+
+            // The "forward" link
+            $nextlink = ($page < $pages) ? '<li class="paginate_button"><a href="'.$append.'page=' . ($page + 1) . '" title="Next page">' . ($page + 1) . '</a></li>
+                                            <li><a href="'.$append.'page=' . $pages . '" title="Last page">&raquo;</a></li>'
+                                            :
+                                            '<li class="paginate_button next disabled" id="zctb_next"><a href="#" aria-controls="zctb" data-dt-idx="7" tabindex="0">&raquo;</a></li>';
+
+            // Prepare the paged query
+            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE test_type = 'regressionTest'".$dayRange." ".$searchClause." ORDER BY id DESC");
+            $stmt->execute();
+
+            // Do we have any results?
+            if ($stmt->rowCount() > 0) {
+                $contentData = $stmt->fetchAll();
+                $pageOutput = '<div class="panel panel-default">';
+                $pageOutput .= '<div class="panel-heading">'.$viewName.' Reports</div>';
+                $pageOutput .= '<div class="panel-body api_results">';
+                $pageOutput .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
+                $pageOutput .= '<thead><tr width="100%"><th>ID</th><th>Score</th><th>Property</th><th>Created</th></tr></thead>';
+                $pageOutput .= "<tbody>";
+
+                foreach( $contentData as $contentCheck ){
+                    $l10nDate = new DateTime($contentCheck['created']);
+                    $l10nDate->setTimeZone($usersTimezone);
+
+                    if (!$contentCheck['score']) {
+                        $testScore = '--';  
+                    } else {
+                        $testScore = $contentCheck['score'];
+                    }
+
+                    $pageOutput .= '<tr>';
+                    $pageOutput .= '<td><a href="/reports/regression_tests/record/'.$contentCheck['id'].'?refID='.$contentCheck['ref_test_id'].'">'.$contentCheck['id'].'</a></td>';
+                    $pageOutput .= '<td><a href="/reports/regression_tests/record/'.$contentCheck['id'].'?refID='.$contentCheck['ref_test_id'].'">'.$testScore.'</a></td>';
+                    $pageOutput .= '<td><a href="/reports/regression_tests/record/'.$contentCheck['id'].'?refID='.$contentCheck['ref_test_id'].'">'.str_replace('stage_', 'stage.', $contentCheck['property']).'</a></td>';
+                    $pageOutput .= '<td><a href="/reports/regression_tests/record/'.$contentCheck['id'].'?refID='.$contentCheck['ref_test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+                    $pageOutput .= '</tr>';
+                }
+                $pageOutput .= "</tbody>";
+                $pageOutput .= "<tfoot><tr><th>ID</th><th>Score</th><th>Property</th><th>Created</th></tr></tfoot>";
+                $pageOutput .= '</table>';
+                $pageOutput .= '</div></div>';
+                $pageOutput .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
+            } else {
+                $pageOutput .= '<p>No results could be displayed.</p>';
+            }
+            $stmt->closeCursor();
+            return $pageOutput;
+        });
+
+        return $output;
+    }
+
+
 
     public function getTestReportCount($testType, $status, $range) {
         $output = Spire::spireCache('getTestReportCount_'.$testType.'-'.$status.'-'.$range, 12600, function() use ($testType, $status, $range) {

@@ -54,7 +54,12 @@
 						<li><a href="/reports/api_navigation_audits">Navigation Audits</a></li>
 						<li><a href="/reports/api_article_audits">Article/Content Audits</a></li>
 						<li><a href="/reports/ott_tests">OTT Audits</a></li>
-						<li><a href="/reports/regression_tests">Regression Results</a></li>
+						<li <?php if ($reportRegressionSubNav) { echo 'class="open"'; } ?>><a href="#">Regression Results</a>
+							<ul>
+								<li><a href="/reports/regression_tests">Overview</a></li>
+								<li><a href="/reports/regression_tests/regression-search">Search</a></li>
+							</ul>
+						</li>
 						<li <?php if ($reportLoadtimeSubNav) { echo 'class="open"'; } ?>><a href="#">API Loadtimes</a>
 							<ul>
 								<li><a href="/reports/loadtimes">Overview</a></li>

@@ -43,6 +43,7 @@
 				<div class="api_results">
 					<ul class="nav nav-tabs">
 						<li class="active"><a href="#today_reports_tab" data-toggle="tab" aria-expanded="false">Recent Reports</a></li>
+						<li class=""><a href="#yesterday_reports_tab" data-toggle="tab" aria-expanded="false">Yesterday Reports</a></li>
 					</ul>
 					<br />
 					<div class="tab-content">
@@ -56,7 +57,44 @@
 								$testReportViewData .= '<thead><tr width="100%"><th>ID</th><th>Score</th><th>Property</th><th>Created</th></tr></thead>';
 								$testReportViewData .= "<tbody>";
 
-								foreach ($recentRegressionTests[0] as $key => $value) {
+								foreach ($todayReports[0] as $key => $value) {
+									$l10nDate = new DateTime($value['created']);
+									$l10nDate->setTimeZone($usersTimezone);
+
+									if (!$value['score']) {
+										$testScore = '--';	
+									} else {
+										$testScore = $value['score'];
+									}
+
+									$testReportViewData .= '<tr>';
+									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.$value['id'].'</a></td>';
+									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.$testScore.'</a></td>';
+									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.str_replace('stage_', 'stage.', $value['property']).'</a></td>';
+									$testReportViewData .= '<td><a href="/reports/regression_tests/record/'.$value['id'].'?refID='.$value['test_id'].'">'.$l10nDate->format('n/d/Y, g:i A').'</a></td>';
+									$testReportViewData .= '</tr>';
+								}
+								$testReportViewData .= "</tbody>";
+								$testReportViewData .= "<tfoot><tr><th>ID</th><th>Score</th><th>Property</th><th>Created</th></tr></tfoot>";
+								$testReportViewData .= '</table>';
+								$testReportViewData .= '</div></div>';
+								$testReportViewData .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
+					         
+					            print($testReportViewData);
+							?>
+							</div>
+						</div>
+						<div class="tab-pane fade in" id="yesterday_reports_tab">
+							<div class="panel-body">
+							<?php
+								$testReportViewData = '<div class="panel panel-default">';
+								$testReportViewData .= '<div class="panel-heading">'.$viewName.' Reports</div>';
+								$testReportViewData .= '<div class="panel-body api_results">';
+								$testReportViewData .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
+								$testReportViewData .= '<thead><tr width="100%"><th>ID</th><th>Score</th><th>Property</th><th>Created</th></tr></thead>';
+								$testReportViewData .= "<tbody>";
+
+								foreach ($yesterdayReports[0] as $key => $value) {
 									$l10nDate = new DateTime($value['created']);
 									$l10nDate->setTimeZone($usersTimezone);
 
@@ -85,6 +123,8 @@
 						</div>
 					</div>
 				</div>
+				</div>
+
 				<!-- Regression Report Data view -->
 				<?php } else { ?>
 				<div class="panel panel-primary">

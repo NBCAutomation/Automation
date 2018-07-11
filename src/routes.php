@@ -319,9 +319,10 @@ $app->group('/reports', function () {
 
 		} else if ($regressionView) {
 			// $regressionResults = $db->getAllRegressionTestData();
-			// $recentRegressionTests = $db->getAllTestResultData($args['view'], 'all', 'all');
+			// $recentRegressionTests = $db->getAllTestResultData($args['view'], 'all', 'today');
 			
-			$recentRegressionTests = $db->getAllRegressionTests();
+			// $recentRegressionTests = $db->getAllRegressionTests();
+			$regressionSubnavClass = true;
 			$pageTemplate = 'reports-regression.php';
 
 		} else if ($pullStaleContentData) {
@@ -355,6 +356,7 @@ $app->group('/reports', function () {
             'fileView' => $fileView,
             'stations' => $stations['data'],
             'reportClass' => true,
+            'reportRegressionSubNav' => $regressionSubnavClass,
             'reportLoadtimeSubNav' => $loadtimeSubnavClass,
             'reportStaleContentSubNav' => $staleContentView,
             'staleContentData' => $staleContentData,
@@ -478,7 +480,27 @@ $app->group('/reports', function () {
 
 				$searchResults = $db->getPagedStaleContentChecks($dayRange, $searchTerm, $updateTime, $staleFilter, $pageQueryRef);
 			}
-			 
+		} else if ($args['subView'] == 'regression-search') {
+			$pageTemplate = 'reports-regression-search.php';
+			$regressionView = true;
+			$regressionSubnavClass = true;
+			$breadcrumbPageName = 'search';
+			$pageName = 'Regression Report Search';
+
+			$dayRange = $allPostPutVars['range'];
+			$searchTerm = $allPostPutVars['term'];
+			$queryRegressionReports = $allPostPutVars['queryRegressionReports'];
+
+			if ($queryRegressionReports) {
+				if (! $allPostPutVars['failuresOnly']) {
+					$staleFilter = 'false';
+				} else {
+					$staleFilter = $allPostPutVars['failuresOnly'];
+				}
+
+				$pageQueryRef = $args['subView'].'?range='.$dayRange.'&term='.$searchTerm.'&stale='.$failuresOnly.'&queryRegressionReports='.$queryRegressionReports.'&view=regressionReports&';
+				$searchResults = $db->getPagedRegressionReports($dayRange, $searchTerm, $failuresOnly, $pageQueryRef);
+			}
 		} else {
 			$pageTemplate = 'reports.php';
 			$loadtimeSubnavClass = false;
@@ -492,6 +514,7 @@ $app->group('/reports', function () {
 		    'fullPath' => $viewPath,
 		    'allView' => true,
 		    'reportClass' => true,
+		    'reportRegressionSubNav' => $regressionSubnavClass,
 		    'reportLoadtimeSubNav' => $loadtimeSubnavClass,
 		    'reportStaleContentSubNav' => $staleContentView,
 		    'allReports' => $allReports,
