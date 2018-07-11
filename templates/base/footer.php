@@ -58,7 +58,7 @@
 			$loadTimeLabelArrayData['loadtime'] = $thisReportData['averageLoadTime'];
 			$loadTimeLabelArrayData['date'] = Date('n/d/Y', strtotime($thisReportData['date']));
 
-			echo $loadTimeLabelArrayData['date'].'<br />';
+			// echo $loadTimeLabelArrayData['date'].'<br />';
 			
 			$loadTimeLabelArray[$thisReportKey] = $loadTimeLabelArrayData;
 			

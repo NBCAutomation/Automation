@@ -298,3 +298,11 @@ table .fail {
 	padding: 0.5em;
 	word-wrap: break-word;
 }
+
+#chart-container {
+	overflow-x: scroll;
+}
+
+#chart-container .chart {
+	min-width: 900px;
+}
