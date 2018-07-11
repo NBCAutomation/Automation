@@ -76,6 +76,8 @@
 						    echo '<td>'.$stationProperty['brand'].'</td>';
 						    echo '<td>'.$stationProperty['shortname'].'</td>';
 						    echo '<td>'.round($stationUpdateAverages['data']['averageTime']).'</td>';
+						  //   	$hours = floor($stationUpdateAverages['data']['maxTime'] / 60);
+								// $minutes = $stationUpdateAverages['data']['maxTime'] % 60;
 						    echo '<td><b>'.round($stationUpdateAverages['data']['maxTime']).'</td>';
 		                	echo "</tr>";
 						}
