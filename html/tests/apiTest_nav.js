@@ -56,6 +56,9 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
             };
 
             if (debugOutput) {
+                // console.log('=== resource');
+                // console.log(JSON.stringify(resource));
+                this.echo('resource.url :: ' + resource.url);
                 this.echo('resourcesTime :: ' + resourcesTime[resource.id].time);
             }
         },
@@ -69,10 +72,27 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
             resourcesTime[resource.id].end  = date_end.getTime();
             resourcesTime[resource.id].time = resourcesTime[resource.id].end - resourcesTime[resource.id].start;
 
+
             if (debugOutput) {
                 /* to debug and compare */
+                console.log('=== resource');
+                console.log(JSON.stringify(resource));
                 this.echo('manifestLoadTime >> ' + resourcesTime[resource.id].time);
                 this.echo('resource time >> ' + resourcesTime[resource.id].time);
+            }
+
+            // Get Click server name
+            var headerObject = resource.headers;
+
+            for (var keys in headerObject) {
+                if (headerObject[keys].name == 'X-Server-Name') {
+                    if (debugOutput) {
+                        console.log(headerObject[keys].name);
+                        console.log(headerObject[keys].value);
+                    }
+                    resourcesTime[resource.id].clickXServerName  = headerObject[keys].value;
+                }
+
             }
         },
         apiSuite = function (url) {
@@ -227,7 +247,13 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                 typeName = 'apiNavTest';
             }
 
-            this.logLoadTime(typeName, thisResource.time, thisResource.url, null);
+            if (debugOutput) {
+                console.log('## --------------');
+                console.log(JSON.stringify(thisResource));
+                console.log('## --------------');
+            }
+
+            this.logLoadTime(typeName, thisResource.time, thisResource.url, thisResource.clickXServerName, null);
         }
     };
 
@@ -288,26 +314,31 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
     };
 
     // Log endpoint time
-    apiSuite.prototype.logLoadTime = function (typeName, manifestLoadTime, endPoint, testInfo) {
+    apiSuite.prototype.logLoadTime = function (typeName, manifestLoadTime, endPoint, clickXServerName, testInfo) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
             console.log(processUrl);
-            console.log(this.manifestTestRefID, typeName, manifestLoadTime, endPoint, testInfo);
+            console.log(this.manifestTestRefID, typeName, manifestLoadTime, endPoint, clickXServerName, testInfo);
         }
 
         if (testInfo === null) {
             testInfo = '';
         }
 
+        if (clickXServerName.length <= 0) {
+            clickXServerName = '----';
+        }
+
         casper.thenOpen(processUrl, {
             method: 'post',
             data:   {
                 'task': 'logLoadTime',
-                'testID': this.manifestTestRefID,
+                'testID': apiSuiteInstance.manifestTestRefID,
                 'testType': typeName,
                 'manifestLoadTime': manifestLoadTime,
                 'endPoint': endPoint,
+                'clickXServerName': clickXServerName,
                 'testInfo': testInfo
             }
         });
@@ -372,7 +403,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
         casper.thenOpen(url, { method: 'get', headers: { 'accept': 'application/json', 'customerID': '8500529', 'useremail': 'discussion_api@clickability.com' } }).then(function (resp) {
             if (debugOutput) {
                 console.log('#REF | collectionNavigationItems()');
-                console.log('------------------------');
+                console.log('----------------------------------');
                 console.log(JSON.stringify(resp));
             }
 

@@ -1750,9 +1750,10 @@ $app->group('/utils', function () {
     		$testType = $utilPostParams['testType'];
     		$manifestLoadTime = $utilPostParams['manifestLoadTime'];
     		$endPoint = $utilPostParams['endPoint'];
+    		$clickXServerName = $utilPostParams['clickXServerName'];
     		$testInfo = $utilPostParams['testInfo'];
 
-    		$logLoadTime = $db->logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $testInfo);
+    		$logLoadTime = $db->logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $clickXServerName, $testInfo);
     		
     		if ($logLoadTime){
     			$this->logger->info("Loadtime logged: [testID=>". $testID .",endPoint=>". $endPoint .",loadTime=>". $manifestLoadTime .",testType=>". $testType ."]");

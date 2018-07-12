@@ -84,6 +84,20 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 this.echo('manifestLoadTime >> ' + resourcesTime[resource.id].time);
                 this.echo('resource time >> ' + resourcesTime[resource.id].time);
             }
+
+            // Get Click server name
+            var headerObject = resource.headers;
+
+            for (var keys in headerObject) {
+                if (headerObject[keys].name == 'X-Server-Name') {
+                    if (debugOutput) {
+                        console.log(headerObject[keys].name);
+                        console.log(headerObject[keys].value);
+                    }
+                    resourcesTime[resource.id].clickXServerName  = headerObject[keys].value;
+                }
+
+            }
         },
         apiSuite = function (url) {
             if (!url) {
@@ -327,7 +341,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 typeName = 'apiSectionContent';
             }
 
-            this.logLoadTime(typeName, thisResource.time, thisResource.url, null);
+            this.logLoadTime(typeName, thisResource.time, thisResource.url, thisResource.clickXServerName, null);
         }
     };
 
@@ -389,16 +403,20 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
     };
 
     // Log endpoint time
-    apiSuite.prototype.logLoadTime = function (typeName, manifestLoadTime, endPoint, testInfo) {
+    apiSuite.prototype.logLoadTime = function (typeName, manifestLoadTime, endPoint, clickXServerName, testInfo) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
             console.log(processUrl);
-            console.log(this.manifestTestRefID, typeName, manifestLoadTime, endPoint, testInfo);
+            console.log(this.manifestTestRefID, typeName, manifestLoadTime, endPoint, clickXServerName, testInfo);
         }
 
         if (testInfo === null) {
             testInfo = '';
+        }
+
+        if (clickXServerName.length <= 0) {
+            clickXServerName = '----';
         }
 
         casper.thenOpen(processUrl, {
@@ -409,6 +427,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 'testType': typeName,
                 'manifestLoadTime': manifestLoadTime,
                 'endPoint': endPoint,
+                'clickXServerName': clickXServerName,
                 'testInfo': testInfo
             }
         });

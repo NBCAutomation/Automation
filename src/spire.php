@@ -310,8 +310,9 @@ class Spire {
 			$testReportViewData .= '<div class="panel-heading">Today Loadtime Reports ( x > 300 ms)</div>';
 			$testReportViewData .= '<div class="panel-body api_results">';
 			$testReportViewData .= '<p class="text-muted small"><i>* If the table doesn\'t style properly, click one of the sorting headers to update the view.</i></p>';
+			$testReportViewData .= '<p class="text-muted small"><i>* Click X-Server added 7/12/18, prior data will display ----.</i></p>';
 			$testReportViewData .= '<table id="" class="reports_table display table table-striped table-bordered table-hover" cellspacing="0" width="100%">';
-			$testReportViewData .= '<thead><tr width="100%"><th>ID</th><th>Ref Test ID</th><th>Loadtime (ms)</th><th>Endpoint URL</th><th>Notes/info</th><th>Created</th></tr></thead>';
+			$testReportViewData .= '<thead><tr width="100%"><th>ID</th><th>Ref Test ID</th><th>Loadtime (ms)</th><th>Endpoint URL</th><th>Click X-Server</th><th>Notes/info</th><th>Created</th></tr></thead>';
 			$testReportViewData .= "<tbody>";
 
 			foreach ($data[0] as $key => $value) {
@@ -323,12 +324,13 @@ class Spire {
 				$testReportViewData .= '<td>'.$value['ref_test_id'].'</td>';
 				$testReportViewData .= '<td>'.$value['loadtime'].'</td>';
 				$testReportViewData .= '<td>'.str_replace('stage_', 'stage.', $value['endpoint']).'</td>';
+				$testReportViewData .= '<td>'.$value['click_server'].'</td>';
 				$testReportViewData .= '<td>'.str_replace('stage_', 'stage.', $value['info']).'</td>';
 				$testReportViewData .= '<td>'.$l10nDate->format('n/d/Y, g:i A').'</td>';
 				$testReportViewData .= '</tr>';
 			}
 			$testReportViewData .= "</tbody>";
-			$testReportViewData .= "<tfoot><tr><th>ID</th><th>Ref Test ID</th><th>Loadtime (ms)</th><th>Endpoint URL</th><th>Notes/info</th><th>Created</th></tr></tfoot>";
+			$testReportViewData .= "<tfoot><tr><th>ID</th><th>Ref Test ID</th><th>Loadtime (ms)</th><th>Endpoint URL</th><th>Click X-Server</th><th>Notes/info</th><th>Created</th></tr></tfoot>";
 			$testReportViewData .= '</table>';
 			$testReportViewData .= '</div></div>';
          

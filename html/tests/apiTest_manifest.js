@@ -59,6 +59,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
         setFail = 0,
         testStartTime,
         manifestLoadTime,
+        clickXServerName,
         testManifestData = true,
         apiSuiteInstance,
         resourcesTime = [],
@@ -89,6 +90,35 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 /* to debug and compare */
                 this.echo('manifestLoadTime >> ' + manifestLoadTime);
                 this.echo('resource time >> ' + resourcesTime[resource.id]['time']);
+            }
+
+            // Get Click server name
+            var headerObject = resource.headers;
+
+            for (var keys in headerObject) {
+                if (headerObject[keys].name == 'X-Server-Name') {
+                    if (debugOutput) {
+                        console.log(headerObject[keys].name);
+                        console.log(headerObject[keys].value);
+                    }
+                    resourcesTime[resource.id].clickXServerName  = headerObject[keys].value;
+                    clickXServerName = headerObject[keys].value;
+                }
+
+            }
+
+            // Get Click server name
+            var headerObject = resource.headers;
+
+            for (var keys in headerObject) {
+                if (headerObject[keys].name == 'X-Server-Name') {
+                    if (debugOutput) {
+                        console.log(headerObject[keys].name);
+                        console.log(headerObject[keys].value);
+                    }
+                    resourcesTime[resource.id].clickXServerName  = headerObject[keys].value;
+                }
+
             }
         },
         // Required API keys for app to function correctly. Commented out some items due to not being 100% needed.
@@ -303,7 +333,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
 
                     // Log test load time. Moved to allow for waiting of testID to get set
                 }).then(function () {
-                    apiSuiteInstance.logLoadTime(manifestTestRefID, 'apiManifestTest', manifestLoadTime, apiSuiteInstance.apiURL);
+                    apiSuiteInstance.logLoadTime(manifestTestRefID, 'apiManifestTest', manifestLoadTime, apiSuiteInstance.apiURL, clickXServerName);
                 }).then(function () {
                     if(createDictionary){
                         apiSuiteInstance.updateInsertManifestDictionary(urlUri, collectionObject);
@@ -441,12 +471,16 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
     };
 
     // Log endpoint time
-    apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, testInfo) {
+    apiSuite.prototype.logLoadTime = function(testID, testType, manifestLoadTime, endPoint, clickXServerName, testInfo) {
         var processUrl = configURL + '/utils/processRequest';
 
         if (debugOutput) {
             console.log(processUrl);
-            console.log(testID, testType, manifestLoadTime, endPoint, testInfo);
+            console.log(testID, testType, manifestLoadTime, endPoint, clickXServerName, testInfo);
+        }
+
+        if (clickXServerName.length <= 0) {
+            clickXServerName = '----';
         }
 
         casper.open(processUrl, {
@@ -457,6 +491,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
                 'testType': testType,
                 'manifestLoadTime': manifestLoadTime,
                 'endPoint': endPoint,
+                'clickXServerName': clickXServerName,
                 'testInfo': testInfo
             }
         });

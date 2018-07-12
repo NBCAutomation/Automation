@@ -465,11 +465,11 @@ class DbHandler {
         $stmt->closeCursor();
     }
 
-    public function logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $testInfo) {
+    public function logLoadTime($testID, $testType, $manifestLoadTime, $endPoint, $clickXServerName, $testInfo) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("INSERT INTO loadtimes(ref_test_id, test_type, loadtime, endpoint, info) VALUES(?, ?, ?, ?, ?)");
-        $insertStatement = $stmt->execute(array($testID, $testType, $manifestLoadTime, $endPoint, $testInfo));
+        $stmt = $db_con->prepare("INSERT INTO loadtimes(ref_test_id, test_type, loadtime, endpoint, click_server, info) VALUES(?, ?, ?, ?, ?, ?)");
+        $insertStatement = $stmt->execute(array($testID, $testType, $manifestLoadTime, $endPoint, $clickXServerName, $testInfo));
 
         if ($insertStatement) {
             $lastInsertId = $db_con->lastInsertId();
