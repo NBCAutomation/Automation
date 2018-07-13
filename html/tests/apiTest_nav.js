@@ -326,7 +326,7 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
             testInfo = '';
         }
 
-        if (clickXServerName.length <= 0) {
+        if (clickXServerName === null) {
             clickXServerName = '----';
         }
 

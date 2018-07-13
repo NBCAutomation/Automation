@@ -479,7 +479,7 @@ casper.test.begin('OTS SPIRE | API Manifest Audit', function suite(test) {
             console.log(testID, testType, manifestLoadTime, endPoint, clickXServerName, testInfo);
         }
 
-        if (clickXServerName.length <= 0) {
+        if (clickXServerName === null) {
             clickXServerName = '----';
         }
 
