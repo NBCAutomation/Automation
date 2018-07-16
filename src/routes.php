@@ -328,13 +328,17 @@ $app->group('/reports', function () {
 		} else if ($pullStaleContentData) {
 			$pageName = 'Stale Content Overview';
 			$pageTemplate = 'reports-stale-content.php';
-			$stations = $db->getAllStations();
 			$breadcrumbPageName = 'overview';
 
 			$queryStaleContentAverage = $allPostPutVars['queryStaleContentAverage'];
 			
 			if ($queryStaleContentAverage) {
+				$cacheFile = './tmp/' . implode('/', array_slice(str_split($staleContentAverages['refLoc'], 2), 0, 3));
+				$cacheClear = Spire::purgeAllCache($cacheFile);
 				$staleQueryRange = $allPostPutVars['range'];
+				$staleContentAverages = $db->getStaleContentAverages($staleQueryRange);
+			} else {
+				$staleContentAverages = $db->getStaleContentAverages();
 			}
 
 		} else {
@@ -354,7 +358,8 @@ $app->group('/reports', function () {
             'ottReportView' => $ottReportView,
             'loadtimeSearchView' => $loadtimeSearchView,
             'fileView' => $fileView,
-            'stations' => $stations['data'],
+            'staleContentAverages' => $staleContentAverages['data'],
+            'staleContentAveragesRefLoc' => $staleContentAverages['refCacheKey'],
             'reportClass' => true,
             'reportRegressionSubNav' => $regressionSubnavClass,
             'reportLoadtimeSubNav' => $loadtimeSubnavClass,

@@ -890,29 +890,6 @@ class DbHandler {
             // Do we have any results?
             if ($stmt->rowCount() > 0) {
                 $contentData = $stmt->fetchAll();
-
-                // $results = array(
-                //     "draw" => 1,
-                //     "recordsTotal" => count($contentData),
-                //     "recordsFiltered" => count($contentData),
-                //     "data" => $contentData
-                // );
-
-                // $jsonTest = json_encode($results);
-
-                // return $jsonTest;
-                // $results = array(
-                //     "draw" => 1,
-                //     "recordsTotal" => count($contentData),
-                //     "recordsFiltered" => count($contentData),
-                //     "data" => $contentData
-                // );
-
-                // $jsonTest = json_encode($results);
-
-                // return $jsonTest;
-                // var_dump($jsonTest);
-                // exit();
                 
                 $pageOutput .= '<table id="stale-content-table" class="table table-bordered table-striped" cellspacing="0" width="100%">';
                 $pageOutput .= '<thead>
@@ -932,7 +909,7 @@ class DbHandler {
                                     '</td><td>'. $contentCheck['ref_test_id'] .
                                     '</td><td>'. $contentCheck['station'] .
                                     '</td><td>'. ($contentCheck['stale'] < 1 ? 'Update' : 'Stale') .
-                                    '</td><td>'. ($contentCheck['time_diff'] < 1 ? '--' : $contentCheck['time_diff']) .
+                                    '</td><td>'. ($contentCheck['min_diff'] < 1 ? '--' : $contentCheck['min_diff']) .
                                     '</td><td>'. $contentCheck['created'] .'</td>';
                     $pageOutput .= '</tr>';
                 }
@@ -964,30 +941,32 @@ class DbHandler {
     }
 
 
-    public function getStaleContentAverages($dayRange, $searchTerm) {
-        $output = Spire::spireCache('getStaleContentAverage_'.$dayRange.'_'.$searchTerm, 10000, function() use($dayRange, $searchTerm) {
+    public function getStaleContentAverages($dateRange) {
+        $output = Spire::spireCache('getStaleContentAverages_'.$dataRange, 0, function() use ($dateRange) {
             
+            if ($dateRange) {
+                $searchTimeFrame = $dateRange;
+            } else {
+                $searchTimeFrame = 30;
+            }
+
             $db_con = Spire::getConnection();
 
-            if ($searchTerm) {
-                $searchClause .= " WHERE station LIKE '%".$searchTerm."%'";
-            }
+            $stmt = $db_con->prepare('
+                SELECT
+                    t2.call_letters, t2.brand, t2.shortname, AVG(t1.min_diff) as averageTime, MAX(t1.min_diff) as maxTime
+                FROM
+                    stale_content_check as t1
+                    LEFT JOIN stations as t2 ON t2.shortname = t1.station
+                WHERE
+                    t1.station = t2.shortname
+                    AND t1.stale < 1
+                    AND datediff(current_date,date(t1.created)) BETWEEN  0 AND '. $searchTimeFrame .'
+                GROUP BY t2.shortname
+            ');
 
-            if ($dayRange) {
-                $daySearchRange = 'AND datediff(current_date,date(`created`)) BETWEEN  0 AND '.$dayRange;
-            } else {
-                $daySearchRange = 'AND datediff(current_date,date(`created`)) BETWEEN  0 AND 7';
-            }
-
-            if ($includeStale === 'true') {
-                $staleClause = "AND stale < 2";
-            } else {
-                $staleClause = "AND stale < 1";
-            }
-
-            $stmt = $db_con->prepare('SELECT AVG(min_diff) AS averageTime, MAX(min_diff) AS maxTime, created FROM stale_content_check '.$searchClause.' AND stale < 1 '.$daySearchRange);
             if ($stmt->execute()) {
-                $staleContentAverage = $stmt->fetch();
+                $staleContentAverage = $stmt->fetchAll();
                 // var_dump($staleContentAverage);
                 $stmt->closeCursor();
                 return $staleContentAverage;
