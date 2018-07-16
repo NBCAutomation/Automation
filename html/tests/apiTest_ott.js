@@ -894,81 +894,89 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
             	}
 
             	if (articleContentID.length <= 0 || (typeof articleContentID != 'number') || articleContentID === 'false') {
-            	    setFail++;
-            	    subTestResults['articleContentID'] = 'FAIL: contentID invalid and/or missing, currently outputting: ' + articleContentID;
-            	}
-
-            	if (articleTitle.length <= 0 || articleTitle === 'false') {
-            	    setFail++;
-            	    subTestResults['articleTitle'] = 'FAIL: articleTitle invalid and/or missing, currently outputting: ' + articleTitle;
-            	    console.log(colorizer.colorize('FAIL: articleTitle invalid and/or missing, currently outputting: ' + articleTitle, 'ERROR'));
-            	}
-            	    
-            	// Check for the Feature flag
-            	if (articleFeature === true) {
-            	    if (articleFeatureName.length <= 0) {
-            	        setFail++;
-
-            	        var __curError = 'Feature flag set to TRUE but featureName empty.';
-
-            	        console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
-            	        subTestResults['articleFeature'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.';
-            	        var __curError = '';
-
-            	    } else if (articleFeatureID.length <= 0) {
-            	        setFail++;
-
-            	        var __curError = 'Feature flag set to TRUE but featureId empty.';
-
-            	        console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
-            	        subTestResults['articleFeatureID'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.';
-            	        var __curError = '';
-            	    }
-            	}
-
-                if (articleThumbnailImageURL.length > 1) {
-                	if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
-                	    console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
-                	    subTestResults['thumbnailImageURL'] = 'FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL;
-                	} else {
-                		// Test fetching image
-                		var urlHealthStatus = apiSuiteInstance.checkURLHealth(articleThumbnailImageURL, function (data) {
-                		    if (! data) {
-
-                		        if (showOutput) {
-                		            console.log(colorizer.colorize('FAIL: Thumbnail image not fetchable, returned status code of: ' + resp.status + '.', 'ERROR'));
-                		        }
-                		        subTestResults['articleThumbnailImageURL'] = 'FAIL: Thumbnail image not fetchable, returned status code of: ' + resp.status;
-                				setFail++
-                		    } else {
-                		    	if (showOutput) {
-                		    		// console.log('> Thumbnail url: ' + colorizer.colorize(' // ' + data, 'INFO') );
-                		    	}
-                		    }
-                		});
-                	}
+                    setFail++;
+                    subTestResults['articleContentID'] = 'FAIL: contentID invalid and/or missing, currently outputting: ' + articleContentID;
+                    endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
                 }
 
-            	// Check for the Sponsor flag
-            	if (articleSponsored === true) {
-            	    if (articleSponsorName.length <= 0) {
-            	        setFail++;
+                if (articleTitle.length <= 0 || articleTitle === 'false') {
+                    setFail++;
+                    subTestResults['articleTitle'] = 'FAIL: articleTitle invalid and/or missing, currently outputting: ' + articleTitle;
+                    endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+                    console.log(colorizer.colorize('FAIL: articleTitle invalid and/or missing, currently outputting: ' + articleTitle, 'ERROR'));
+                }
+                    
+                // Check for the Feature flag
+                if (articleFeature === true) {
+                    if (articleFeatureName.length <= 0) {
+                        setFail++;
 
-            	        var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
+                        var __curError = 'Feature flag set to TRUE but featureName empty.';
 
-            	        console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
-            	        subTestResults['articleSponsorName'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.';
-            	        var __curError = '';
-            	    } else if (articleSponsorID.length <= 0) {
-            	        setFail++;
+                        console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.', 'ERROR'));
+                        subTestResults['articleFeature'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureName empty.';
+                        endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+                        var __curError = '';
 
-            	        var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
+                    } else if (articleFeatureID.length <= 0) {
+                        setFail++;
 
-            	        console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
-            	        subTestResults['articleSponsorID'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.';
-            	        var __curError = '';
-            	    }
-            	}
+                        var __curError = 'Feature flag set to TRUE but featureId empty.';
+
+                        console.log(colorizer.colorize('FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.', 'ERROR'));
+                        subTestResults['articleFeatureID'] = 'FAIL: Feature flag set to TRUE for ' + articleContentID + ', but featureId empty.';
+                        endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+                        var __curError = '';
+                    }
+                }
+
+                if (articleThumbnailImageURL.length > 1) {
+                    if (articleThumbnailImageURL.indexOf('0*false') > -1 || articleThumbnailImageURL == null) {
+                        console.log(colorizer.colorize('FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL + '.', 'ERROR'));
+                        subTestResults['thumbnailImageURL'] = 'FAIL: Image url invalid for thumbnailImageURL: ' + articleThumbnailImageURL;
+                        endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+                    } else {
+                        // Test fetching image
+                        var urlHealthStatus = apiSuiteInstance.checkURLHealth(articleThumbnailImageURL, articleContentID, function (data) {
+                            if (! data) {
+
+                                if (showOutput) {
+                                    console.log(colorizer.colorize('FAIL: Thumbnail image not fetchable, returned status code of: ' + resp.status + '.', 'ERROR'));
+                                }
+                                subTestResults['articleThumbnailImageURL'] = 'FAIL: Thumbnail image not fetchable, returned status code of: ' + resp.status;
+                                endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+                                setFail++
+                            } else {
+                                if (showOutput) {
+                                    // console.log('> Thumbnail url: ' + colorizer.colorize(' // ' + data, 'INFO') );
+                                }
+                            }
+                        });
+                    }
+                }
+
+                // Check for the Sponsor flag
+                if (articleSponsored === true) {
+                    if (articleSponsorName.length <= 0) {
+                        setFail++;
+
+                        var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
+
+                        console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
+                        subTestResults['articleSponsorName'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.';
+                        endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+                        var __curError = '';
+                    } else if (articleSponsorID.length <= 0) {
+                        setFail++;
+
+                        var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
+
+                        console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.', 'ERROR'));
+                        subTestResults['articleSponsorID'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorID empty.';
+                        endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+                        var __curError = '';
+                    }
+                }
 
             	if (articleTypeName == 'Video Release') {
             	    if (debugOutput) {
@@ -985,37 +993,33 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                     }
                     
         	        if (debugOutput) {
-        	            console.log('    ------------------ ');
-        	            console.log('     Lead Media Video Release\n');
+        	            console.log('   -------------------- ');
+        	            console.log('       Lead Media Video Release\n');
         	            console.log('       articleTypeName' + articleTypeName);
         	            console.log('       articleVideoId' + articleVideoId);
         	            console.log('       video url to test ' + videoURL);
         	        }
-
-        	        var urlHealthStatus = apiSuiteInstance.checkURLHealth(videoURL, function (data) {
-        	            if (! data) {
-        	                if (debugOutput) {
-        	                    console.log(' > Lead media: Video release file url Failed to load: ' + colorizer.colorize(data, 'FAIL'));
-                                console.log('  - URL: ' + videoURL);
-                                // console.log('data >> ' + JSON.stringify(data));
+        	        var urlHealthStatus = apiSuiteInstance.checkURLHealth(videoURL, articleContentID, function (data) {
+        	           if (data != 'Pass') {
+        	                if (showOutput) {
+        	                    console.log(' > Lead media: Video release file url Failed to load: ' + colorizer.colorize(data.status, 'FAIL'));
+                                console.log('  - URL: ' + data.url);
+                                console.log('data >> ' + JSON.stringify(data));
         	                }
         	                setFail++;
-        	                subTestResults['leadMedia_video_urlHealthStatus'] = 'Lead media: Video release file url Failed to load; videoURL: ' + videoURL;
+        	                subTestResults['leadMedia_video_urlHealthStatus'] = data.status + ' - Lead media: Video release file url Failed to load; videoURL: ' + data.url;
+                            endpointTestResults['article_' + data.spireArticleRef + '_results'] = subTestResults;
         	            } else {
         	            	if (showOutput) {
         	            		// console.log('> MPX video url: ' + colorizer.colorize(' // ' + data, 'INFO') );
-                                // console.log('  - URL: ' + videoURL);
+                       //          console.log('  - URL: ' + videoURL);
         	            	}
         	            }
         	        });
 
-            	    if (debugOutput) {console.log('  >---------------')};
-            	}
+                    // urlHealthStatus = null;
 
-            	if (Object.keys(subTestResults).length > 0){
-            	    // Add article ID to the results object
-            	    // endpointTestResults['articleContentID'] = articleContentID;
-            	    endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
+            	    if (debugOutput) {console.log('  >---------------')};
             	}
 
             	if (Object.keys(endpointTestResults).length > 0){
@@ -1026,7 +1030,7 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
         }
     };
 
-    apiSuite.prototype.checkURLHealth = function (url, callback) {
+    apiSuite.prototype.checkURLHealth = function (url, contentRef, callback) {
         if (url) {
             casper.thenOpen(url, {method: 'get'}).then(function (resp) {
                 // var status = this.status().currentHTTPStatus
@@ -1036,8 +1040,9 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                 if ( status === 200) {
                     output = 'Pass';
                 } else {
-                    output = false;
-                    // output = resp;
+                    // output = false;
+                    resp['spireArticleRef'] = contentRef;
+                    output = resp;
                 }
 
                 if (typeof(callback) === "function") {
