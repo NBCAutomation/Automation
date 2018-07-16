@@ -1000,11 +1000,11 @@ class DbHandler {
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
         // var_dump($testID);
-        $output = Spire::spireCache('getTestDataById_'.$testID.'_refID-'.$refID, 10000, function() use ($testID) {
+        $output = Spire::spireCache('getTestDataById_'.$testID.'_refID-'.$refID, 0, function() use ($refID) {
             $db_con = Spire::getConnection();
             
-            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE id = '".$testID."'");
-            $stmt->execute(array($testID));
+            $stmt = $db_con->prepare("SELECT * FROM test_results WHERE id = '".$refID."'");
+            $stmt->execute(array($refID));
 
             $tests = array();
 

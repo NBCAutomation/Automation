@@ -17,7 +17,7 @@
 				echo '<div class="panel-body">';
 				echo '<p>Unable to load report, no results data returned for this record.</p>';
 				echo '</div>';
-				exit();
+				// exit();
 			}
 
 			if ($singleView) {
@@ -87,7 +87,7 @@
 
 					$obj = json_decode($reportData, true);
 
-					if (strlen($obj) > 1 || strlen($obj) != NULL) {
+					if (sizeof($obj) >= 1) {
 						$displayFailureDetails = true;
 					}
 

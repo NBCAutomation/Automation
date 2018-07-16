@@ -17,8 +17,10 @@
 		<div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
 			<div class="panel-body">
 				<p class="text-muted small">* Note: times are in ms</p>
-				<div class="chart">
-					<canvas id="lineChart" height="310" width="600"></canvas>
+				<div id="chart-container">
+					<div class="chart">
+						<canvas id="lineChart" height="310" width="600"></canvas>
+					</div>
 				</div>
 				<div id="legendDiv">
 					<ul>
