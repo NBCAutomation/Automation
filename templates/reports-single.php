@@ -68,7 +68,7 @@
 				</div>
 				<div class="panel-body">
 					<?php if ($manifestData): ?>
-						Endpoint: <a href="http://www.<?php echo $thisPropertyName; ?>.com/apps/news-app/navigation?apiVersion=10" target="_blank">http://www.<?php echo $thisPropertyName; ?>.com/apps/news-app/navigation?apiVersion=10</a>
+						Endpoint: <a href="http://www.<?php echo $thisPropertyName; ?>.com/apps/news-app/navigation?apiVersion=12" target="_blank">http://www.<?php echo $thisPropertyName; ?>.com/apps/news-app/navigation?apiVersion=12</a>
 					<?php endif ?>
 					<p>Test completed: <?php echo $l10nDate->format('n/d/Y, g:i A'); ?></p>
 				</div>

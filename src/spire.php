@@ -483,6 +483,25 @@ class Spire {
 		$apiOTTLoadTime = $db->getAverageLoadTime('ottTests', 'today');
 		$chartLoadTimeData = $db->getAllAverageLoadTimes();
 
+		// Get Station stale content numbers
+		$stations = $db->getAllStations();
+		foreach ($stations[0] as $stationProperty) {
+			if (is_array($stationProperty)) {
+				$stationUpdateAverages = $db->getStaleContentAverages($dayRange, $stationProperty['shortname']);
+
+				echo '<tr class="report_row">';
+			    echo '<td>'.$stationProperty['id'].'</td>';
+			    echo '<td>'.$stationProperty['call_letters'].'</td>';
+			    echo '<td>'.$stationProperty['brand'].'</td>';
+			    echo '<td>'.$stationProperty['shortname'].'</td>';
+			    echo '<td>'.round($stationUpdateAverages['data']['averageTime']).'</td>';
+			  //   	$hours = floor($stationUpdateAverages['data']['maxTime'] / 60);
+					// $minutes = $stationUpdateAverages['data']['maxTime'] % 60;
+			    echo '<td><b>'.round($stationUpdateAverages['data']['maxTime']).'</td>';
+            	echo "</tr>";
+			}
+		}
+
 
 		$resultsArray = array();
 			$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
