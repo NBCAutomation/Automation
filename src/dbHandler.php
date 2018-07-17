@@ -780,42 +780,9 @@ class DbHandler {
         $stmt->close();
     }
 
-    public function getStaleContentChecks($dayRange, $searchTerm, $stale) {
-        $output = Spire::spireCache('getStaleContentChecks_'.$dayRange.'_'.$searchTerm.'_'.$stale, 0, function() use ($dayRange, $searchTerm, $stale) {
-            
-            $db_con = Spire::getConnection();
-
-            if (! $dayRange) {
-                $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND 7';
-            } else {
-                $dayRange = 'WHERE datediff(current_date,date(`created`)) BETWEEN  0 AND '.$dayRange;
-            }
-
-            if ($stale > 0) {
-                $staleClause = "AND stale < 2";
-            } else {
-                $staleClause = "AND stale < 1";
-            }
-
-            $stmt = $db_con->prepare("SELECT * FROM stale_content_check ".$dayRange." ".$staleClause." ".$searchClause);
-
-            if ($stmt->execute()) {
-                $contentData = $stmt->fetchAll();
-
-                $stmt->closeCursor();
-                return $contentData;
-                
-            } else {
-                return NULL;
-            }
-        });
-
-        return $output;
-    }
-
 
     public function getPagedStaleContentChecks($dateRange, $searchTerm, $updateTime, $includeStale, $ref) {
-        $output = Spire::spireCache('getPaggedStaleContentChecks_'.$dateRange.'_'.$searchTerm.'_'.$includeStale, 0, function() use($dateRange, $searchTerm, $updateTime, $includeStale, $ref) {
+        $output = Spire::spireCache('getPaggedStaleContentChecks_'.$dateRange.'_'.$searchTerm.'_'.$includeStale, 10000, function() use($dateRange, $searchTerm, $updateTime, $includeStale, $ref) {
             $db_con = Spire::getConnection();
 
             if (! $dateRange) {
@@ -942,7 +909,7 @@ class DbHandler {
 
 
     public function getStaleContentAverages($dateRange) {
-        $output = Spire::spireCache('getStaleContentAverages_'.$dataRange, 0, function() use ($dateRange) {
+        $output = Spire::spireCache('getStaleContentAverages_'.$dataRange, 10000, function() use ($dateRange) {
             
             if ($dateRange) {
                 $searchTimeFrame = $dateRange;
@@ -1013,7 +980,7 @@ class DbHandler {
 
     public function getAllTestResultData($testType, $status, $range) {
         // $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
-        $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 0, function() use ($testType, $status, $range) {
+        $output = Spire::spireCache('getAllTestResultData_'.$testType.'_'.$status.'_'.$range, 12600, function() use ($testType, $status, $range) {
             
             $db_con = Spire::getConnection();
 
@@ -1153,7 +1120,7 @@ class DbHandler {
 
     // public function getPagedRegressionReports($testType, $dayRange, $ref) {
     public function getPagedRegressionReports($range, $searchTerm, $failuresOnly, $ref) {
-        $output = Spire::spireCache('getPagedRegressionReports'.$range.'_'.$searchTerm, 0, function() use($range, $searchTerm, $failuresOnly, $ref) {
+        $output = Spire::spireCache('getPagedRegressionReports'.$range.'_'.$searchTerm, 12600, function() use($range, $searchTerm, $failuresOnly, $ref) {
             $db_con = Spire::getConnection();
 
             if (! $range) {

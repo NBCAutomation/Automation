@@ -545,7 +545,11 @@ $app->group('/reports', function () {
 
     	$allPostPutVars = $request->getQueryParams();
 
-    	$currentRecord = $db->getTestDataById($allPostPutVars['refID'], $args['recordNumber']);
+    	if ($args['view'] == 'regression_tests') {
+    		$currentRecord = $db->getTestDataById($args['recordNumber'], $allPostPutVars['refID']);
+    	} else {
+    		$currentRecord = $db->getTestDataById($allPostPutVars['refID'], $args['recordNumber']);	
+    	}
     	
     	$recordViewType = $currentRecord['data']['test_type'];
     	$currentRecordResults = $currentRecord['data']['results_data'];
