@@ -634,7 +634,7 @@ casper.test.begin('OTS SPIRE | Regression Testing', function suite(test) {
         var refErrors = {};
 
         var suite = this;
-        var entityName = testingEntity.replace('#','_').replace('.','_').replace('\/',"_").split(' ').join('_').toLowerCase();
+        var entityName = testingEntity.replace('.','_').replace('\/',"_").replace('#','_').split(' ').join('_').toLowerCase();
 
         casper.captureSelector(saveLocation + urlUri + '_' + entityName + '_failure-screenshot_' + timeStamp + '_' + browser + '.jpg', 'body');
 
