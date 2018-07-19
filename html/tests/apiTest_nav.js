@@ -425,7 +425,10 @@ casper.test.begin('OTS SPIRE | API Navigation Audit', function (test) {
                             var manifestKeyName = parentManifestItem.toLowerCase();
                             var manifestKeyValue = jsonParsedOutput[parentManifestItem];
                         } else {
-                            apiSuiteInstance.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem], true);
+                            if (parentManifestItem != 'tabbar') {
+                                // console.log(JSON.stringify(parentManifestItem));
+                                apiSuiteInstance.spiderObject(parentManifestItem, jsonParsedOutput[parentManifestItem], true);
+                            }
                         }
                     }
                 } catch (e) {
