@@ -532,7 +532,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
                 console.log('  > URL: ' + resp.url);
 
                 currentTestObject['mainEndpointURL'] = 'Unable to open the provided endpoint/url: (' + resp.url + ')';
-                testResultsObject.testResults = currentTestObject;
+                apiSuiteInstance.testResultsObject.testResults = currentTestObject;
                 manifestTestStatus = 'Fail';
                 setFail++;
             }
@@ -683,7 +683,7 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             } else {
                 console.log(colorizer.colorize('ERROR: ', 'WARNING') + 'NavTestError: No url provided to test against: ' + endpointName);
                 currentTestObject[endpointName] = 'NavDataTestError: No url provided to test against for the current endpoint.';
-                testResultsObject.testResults = currentTestObject;
+                apiSuiteInstance.testResultsObject.testResults = currentTestObject;
                 manifestTestStatus = 'Fail';
                 setFail++;
             }
