@@ -635,57 +635,58 @@ casper.test.begin('OTS SPIRE | API Content Audit', function (test) {
             endpointName = keys[i];
             thisURL = this.collectionObject[endpointName];
 
-            if (thisURL.indexOf('tve') > -1 || thisURL.indexOf('.html') > -1) {
-                if (
-                    thisURL.indexOf('contests') > -1 ||
-                    thisURL.indexOf('community') > -1 ||
-                    thisURL.indexOf('tve') > -1 ||
-                    thisURL.indexOf('weather-alerts') > -1 ||
-                    thisURL.indexOf('tv-listings') > -1 ||
-                    thisURL.indexOf('bit.ly') > -1 ||
-                    thisURL.indexOf('traffic') > -1 ||
-                    thisURL.indexOf('horoscopo') > -1 ||
-                    thisURL.indexOf('lottery') > -1 ||
-                    thisURL.indexOf('avisos-del-tiempo') > -1 ||
-                    thisURL.indexOf('data.nbcstations.com') > -1 ||
-                    thisURL.indexOf('FAQ') > -1 ||
-                    thisURL.indexOf('faq') > -1 ||
-                    thisURL.indexOf('investigations') > -1 ||
-                    thisURL.indexOf('Tips') > -1 ||
-                    thisURL.indexOf('CazaTormentas') > -1)
-                {
-                    if (showOutput) {
-                        test.comment('> Skipping UGC/static content url, skipping JSON test.' );
-                        test.comment('  > ' + endpointName );
-                        test.comment('  > ' + thisURL );
+            if (thisURL.length > 1) {
+                if (thisURL.indexOf('tve') > -1 || thisURL.indexOf('.html') > -1) {
+                    if (
+                        thisURL.indexOf('contests') > -1 ||
+                        thisURL.indexOf('community') > -1 ||
+                        thisURL.indexOf('tve') > -1 ||
+                        thisURL.indexOf('weather-alerts') > -1 ||
+                        thisURL.indexOf('tv-listings') > -1 ||
+                        thisURL.indexOf('bit.ly') > -1 ||
+                        thisURL.indexOf('traffic') > -1 ||
+                        thisURL.indexOf('horoscopo') > -1 ||
+                        thisURL.indexOf('lottery') > -1 ||
+                        thisURL.indexOf('avisos-del-tiempo') > -1 ||
+                        thisURL.indexOf('data.nbcstations.com') > -1 ||
+                        thisURL.indexOf('FAQ') > -1 ||
+                        thisURL.indexOf('faq') > -1 ||
+                        thisURL.indexOf('investigations') > -1 ||
+                        thisURL.indexOf('Tips') > -1 ||
+                        thisURL.indexOf('CazaTormentas') > -1)
+                    {
+                        if (showOutput) {
+                            test.comment('> Skipping UGC/static content url, skipping JSON test.' );
+                            test.comment('  > ' + endpointName );
+                            test.comment('  > ' + thisURL );
+                        }
+                    } else {
+                        var location_url = thisURL,
+                            cms_contentID = null;
+
+                        if (/^https?:\/\/www\.(nbc|telemundo)/.exec(location_url)) {
+                            cms_contentID = /(\d+)\.html$/.exec(location_url);
+                            if (cms_contentID) {
+                                location_url = '?contentId=' + cms_contentID[1];
+                            }
+                        }
+                        // http://www.nbclosangeles.com/apps/news-app/content/?contentId=389777331&apiVersion=6
+                        endpointUrl = apiSuiteInstance.baseUrl + '/apps/news-app/content/' + location_url + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
+
+                        if (debugOutput) { console.log('> parsedLocationURL: ' + location_url); }
                     }
                 } else {
-                    var location_url = thisURL,
-                        cms_contentID = null;
-
-                    if (/^https?:\/\/www\.(nbc|telemundo)/.exec(location_url)) {
-                        cms_contentID = /(\d+)\.html$/.exec(location_url);
-                        if (cms_contentID) {
-                            location_url = '?contentId=' + cms_contentID[1];
-                        }
-                    }
-                    // http://www.nbclosangeles.com/apps/news-app/content/?contentId=389777331&apiVersion=6
-                    endpointUrl = apiSuiteInstance.baseUrl + '/apps/news-app/content/' + location_url + '&apiVersion=' + apiSuiteInstance.apiVersion + enableJsonValidation;
-
-                    if (debugOutput) { console.log('> parsedLocationURL: ' + location_url); }
+                    endpointUrl = thisURL;
                 }
-            } else {
-                endpointUrl = thisURL;
-            }
-
-            if (!!endpointUrl) {
-                this.validateJson(endpointName, endpointUrl);
-            } else {
-                console.log(colorizer.colorize('ERROR: ', 'WARNING') + 'NavTestError: No url provided to test against: ' + endpointName);
-                currentTestObject[endpointName] = 'NavDataTestError: No url provided to test against for the current endpoint.';
-                apiSuiteInstance.testResultsObject.testResults = currentTestObject;
-                manifestTestStatus = 'Fail';
-                setFail++;
+                if (!!endpointUrl) {
+                    this.validateJson(endpointName, endpointUrl);
+                } else {
+                    console.log(colorizer.colorize('ERROR: ', 'WARNING') + 'NavTestError: No url provided to test against: ' + endpointName);
+                    currentTestObject[endpointName] = 'NavDataTestError: No url provided to test against for the current endpoint.';
+                    apiSuiteInstance.testResultsObject.testResults = currentTestObject;
+                    manifestTestStatus = 'Fail';
+                    setFail++;
+                }
             }
         }
     };
