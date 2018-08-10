@@ -1514,7 +1514,7 @@ $app->group('/utils', function () {
 	    		$current_date = date("F j, Y \a\t g:ia");
 
 				$notificationTotals = Spire::buildQueryCache(true);
-				$errorTotals = array($notificationTotals['todayManifestTotalFailureReports'], $notificationTotals['todayNavTotalFailureReports'], $notificationTotals['todayContentTotalFailureReports']);
+				$errorTotals = array($notificationTotals['todayManifestTotalFailureReports'], $notificationTotals['todayNavTotalFailureReports'], $notificationTotals['todayContentTotalFailureReports'], $notificationTotals['todayOTTTotalFailureReports']);
 				$notificationErrors = array_sum($errorTotals);
 				$recentNotifications = $db->getRecentNotificationAlerts();
 
