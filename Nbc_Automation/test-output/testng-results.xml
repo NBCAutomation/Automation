@@ -1,207 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results skipped="0" failed="0" ignored="36" total="46" passed="10">
+<testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="Suite" duration-ms="333336" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:37:04Z">
+  <suite name="Default suite" duration-ms="103648" started-at="2018-08-17T06:53:12Z" finished-at="2018-08-17T06:54:56Z">
     <groups>
     </groups>
-    <test name="Test" duration-ms="333336" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:37:04Z">
-      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast">
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC004_Right_rail_has_Spredfast@376b4233]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:31:31Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC004_Right_rail_has_Spredfast@376b4233]" name="beforeMethod" is-config="true" duration-ms="33220" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:32:04Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC004_Right_rail_has_Spredfast@376b4233]" name="NbcPage" duration-ms="56606" started-at="2018-08-16T14:32:04Z" finished-at="2018-08-16T14:33:01Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC004_Right_rail_has_Spredfast@376b4233]" name="afterMethod" is-config="true" duration-ms="545" started-at="2018-08-16T14:33:01Z" finished-at="2018-08-16T14:33:01Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC004_Right_rail_has_Spredfast -->
-      <class name="nbc_testcases.TC007_Connect_dropdown_appears">
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC007_Connect_dropdown_appears@5fdba6f9]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-16T14:33:13Z" finished-at="2018-08-16T14:33:13Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC007_Connect_dropdown_appears@5fdba6f9]" name="beforeMethod" is-config="true" duration-ms="30175" started-at="2018-08-16T14:33:13Z" finished-at="2018-08-16T14:33:43Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC007_Connect_dropdown_appears@5fdba6f9]" name="NbcPage" duration-ms="34245" started-at="2018-08-16T14:33:43Z" finished-at="2018-08-16T14:34:17Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC007_Connect_dropdown_appears@5fdba6f9]" name="afterMethod" is-config="true" duration-ms="700" started-at="2018-08-16T14:34:17Z" finished-at="2018-08-16T14:34:18Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC007_Connect_dropdown_appears -->
+    <test name="Default test" duration-ms="103648" started-at="2018-08-17T06:53:12Z" finished-at="2018-08-17T06:54:56Z">
       <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll">
-        <test-method status="PASS" signature="beforeSuite()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@5204062d]" name="beforeSuite" is-config="true" duration-ms="1538" started-at="2018-08-16T14:31:29Z" finished-at="2018-08-16T14:31:31Z">
+        <test-method status="PASS" signature="beforeSuite()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@704921a5]" name="beforeSuite" is-config="true" duration-ms="1609" started-at="2018-08-17T06:53:11Z" finished-at="2018-08-17T06:53:12Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- beforeSuite -->
-        <test-method status="PASS" signature="beforeTest()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@5204062d]" name="beforeTest" is-config="true" duration-ms="1" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:31:31Z">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@704921a5]" name="beforeTest" is-config="true" duration-ms="1" started-at="2018-08-17T06:53:12Z" finished-at="2018-08-17T06:53:12Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- beforeTest -->
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@5204062d]" name="setData" is-config="true" duration-ms="1" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:31:31Z">
+        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@704921a5]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-17T06:53:12Z" finished-at="2018-08-17T06:53:12Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@5204062d]" name="beforeMethod" is-config="true" duration-ms="27078" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:31:58Z">
+        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@704921a5]" name="beforeMethod" is-config="true" duration-ms="27168" started-at="2018-08-17T06:53:12Z" finished-at="2018-08-17T06:53:40Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@5204062d]" name="NbcPage" duration-ms="70983" started-at="2018-08-16T14:31:58Z" finished-at="2018-08-16T14:33:09Z">
+        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@704921a5]" name="NbcPage" duration-ms="76058" started-at="2018-08-17T06:53:40Z" finished-at="2018-08-17T06:54:56Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@5204062d]" name="afterMethod" is-config="true" duration-ms="3509" started-at="2018-08-16T14:33:09Z" finished-at="2018-08-16T14:33:13Z">
+        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@704921a5]" name="afterMethod" is-config="true" duration-ms="379" started-at="2018-08-17T06:54:56Z" finished-at="2018-08-17T06:54:56Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- afterMethod -->
-        <test-method status="PASS" signature="afterTest()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@5204062d]" name="afterTest" is-config="true" duration-ms="0" started-at="2018-08-16T14:37:04Z" finished-at="2018-08-16T14:37:04Z">
+        <test-method status="PASS" signature="afterTest()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@704921a5]" name="afterTest" is-config="true" duration-ms="1" started-at="2018-08-17T06:54:56Z" finished-at="2018-08-17T06:54:56Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- afterTest -->
-        <test-method status="PASS" signature="afterSuite()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@5204062d]" name="afterSuite" is-config="true" duration-ms="632" started-at="2018-08-16T14:37:05Z" finished-at="2018-08-16T14:37:05Z">
+        <test-method status="PASS" signature="afterSuite()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@704921a5]" name="afterSuite" is-config="true" duration-ms="543" started-at="2018-08-17T06:54:56Z" finished-at="2018-08-17T06:54:57Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- afterSuite -->
       </class> <!-- nbc_testcases.TC002_Top_stories_playback_with_pre_roll -->
-      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads">
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads@17211155]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-16T14:33:01Z" finished-at="2018-08-16T14:33:01Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads@17211155]" name="beforeMethod" is-config="true" duration-ms="29990" started-at="2018-08-16T14:33:01Z" finished-at="2018-08-16T14:33:31Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads@17211155]" name="NbcPage" duration-ms="84071" started-at="2018-08-16T14:33:31Z" finished-at="2018-08-16T14:34:55Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads@17211155]" name="afterMethod" is-config="true" duration-ms="2219" started-at="2018-08-16T14:34:55Z" finished-at="2018-08-16T14:34:58Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads -->
-      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out">
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out@10d59286]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-16T14:33:18Z" finished-at="2018-08-16T14:33:18Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out@10d59286]" name="beforeMethod" is-config="true" duration-ms="24549" started-at="2018-08-16T14:33:18Z" finished-at="2018-08-16T14:33:43Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out@10d59286]" name="NbcPage" duration-ms="201295" started-at="2018-08-16T14:33:43Z" finished-at="2018-08-16T14:37:04Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out@10d59286]" name="afterMethod" is-config="true" duration-ms="445" started-at="2018-08-16T14:37:04Z" finished-at="2018-08-16T14:37:04Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out -->
-      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears">
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC005_Watch_live_TVE_dropdown_appears@b3d7190]" name="setData" is-config="true" duration-ms="1" started-at="2018-08-16T14:33:07Z" finished-at="2018-08-16T14:33:07Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC005_Watch_live_TVE_dropdown_appears@b3d7190]" name="beforeMethod" is-config="true" duration-ms="32934" started-at="2018-08-16T14:33:07Z" finished-at="2018-08-16T14:33:40Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC005_Watch_live_TVE_dropdown_appears@b3d7190]" name="NbcPage" duration-ms="63238" started-at="2018-08-16T14:33:40Z" finished-at="2018-08-16T14:34:43Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC005_Watch_live_TVE_dropdown_appears@b3d7190]" name="afterMethod" is-config="true" duration-ms="417" started-at="2018-08-16T14:34:43Z" finished-at="2018-08-16T14:34:44Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC005_Watch_live_TVE_dropdown_appears -->
-      <class name="nbc_testcases.TC001_Logo_is_clickable">
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@5d11346a]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:31:31Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@5d11346a]" name="beforeMethod" is-config="true" duration-ms="30629" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:32:02Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@5d11346a]" name="NbcPage" duration-ms="40289" started-at="2018-08-16T14:32:02Z" finished-at="2018-08-16T14:32:42Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@5d11346a]" name="afterMethod" is-config="true" duration-ms="594" started-at="2018-08-16T14:32:42Z" finished-at="2018-08-16T14:32:42Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
-      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings">
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings@2fd66ad3]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:31:31Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings@2fd66ad3]" name="beforeMethod" is-config="true" duration-ms="46161" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:32:17Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings@2fd66ad3]" name="NbcPage" duration-ms="60473" started-at="2018-08-16T14:32:17Z" finished-at="2018-08-16T14:33:18Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings@2fd66ad3]" name="afterMethod" is-config="true" duration-ms="369" started-at="2018-08-16T14:33:18Z" finished-at="2018-08-16T14:33:18Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings -->
-      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module">
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module@7a36aefa]" name="beforeMethod" is-config="true" duration-ms="27255" started-at="2018-08-16T14:32:42Z" finished-at="2018-08-16T14:33:10Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module@7a36aefa]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-16T14:32:42Z" finished-at="2018-08-16T14:32:42Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module@7a36aefa]" name="NbcPage" duration-ms="31525" started-at="2018-08-16T14:33:10Z" finished-at="2018-08-16T14:33:41Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module@7a36aefa]" name="afterMethod" is-config="true" duration-ms="436" started-at="2018-08-16T14:33:41Z" finished-at="2018-08-16T14:33:42Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module -->
-      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article">
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article@4fcd19b3]" name="setData" is-config="true" duration-ms="1" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:31:31Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article@4fcd19b3]" name="beforeMethod" is-config="true" duration-ms="28261" started-at="2018-08-16T14:31:31Z" finished-at="2018-08-16T14:31:59Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article@4fcd19b3]" name="NbcPage" duration-ms="64876" started-at="2018-08-16T14:31:59Z" finished-at="2018-08-16T14:33:04Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article@4fcd19b3]" name="afterMethod" is-config="true" duration-ms="3040" started-at="2018-08-16T14:33:04Z" finished-at="2018-08-16T14:33:07Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-      </class> <!-- nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article -->
-    </test> <!-- Test -->
-  </suite> <!-- Suite -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
 </testng-results>

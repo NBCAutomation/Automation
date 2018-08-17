@@ -2,7 +2,6 @@ package nbc_testcases;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 

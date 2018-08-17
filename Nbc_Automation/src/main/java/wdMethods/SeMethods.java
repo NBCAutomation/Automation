@@ -45,7 +45,7 @@ public class SeMethods extends Reporter implements WdMethods{
 	public static final String URL = "https://" + USERNAME + ":" + ACCESS_KEY + "@ondemand.saucelabs.com:443/wd/hub";
 	DesiredCapabilities dc;
 	public RemoteWebDriver driver;
-	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort;
+	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name;
 	public SeMethods() {
 		Properties prop = new Properties();
 		try {
@@ -53,6 +53,7 @@ public class SeMethods extends Reporter implements WdMethods{
 			sHubUrl = prop.getProperty("HUB");
 			sHubPort = prop.getProperty("PORT");
 			sUrl = prop.getProperty("URL");
+			name=prop.getProperty("NAME");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -72,6 +73,8 @@ public class SeMethods extends Reporter implements WdMethods{
 			dc =new DesiredCapabilities();
 			dc.setBrowserName(b);
 			dc.setPlatform(Platform.WIN10);
+			dc.setCapability("name", "www.nbcnewyork.com:");
+			//dc.setCapability("passed", true);
 
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
