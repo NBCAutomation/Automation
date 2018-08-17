@@ -3,11 +3,6 @@
 					**NBC Automation Testing**
 
 
-**Getting Started**
-
-	1.	
-
-
 **Why POM?**
 
 Starting an UI Automation in Selenium WebDriver is NOT a tough task. You just need to find elements, perform operations on it.
