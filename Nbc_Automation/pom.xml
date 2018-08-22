@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>Nbc_Automation</groupId>
-  <artifactId>Nbc_Automation</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  <dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>Nbc_Automation</groupId>
+	<artifactId>Nbc_Automation</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<dependencies>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
@@ -93,28 +94,24 @@
 			<version>1.0.4</version>
 		</dependency>
 
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>java-dotenv</artifactId>
+			<version>3.1.2</version>
+		</dependency>
+
 		<!-- <dependency> <groupId>io.selendroid</groupId> <version>0.17.0</version> 
 			<artifactId>selendroid-standalone</artifactId> </dependency> <dependency> 
 			<groupId>io.selendroid</groupId> <version>0.17.0</version> <artifactId>selendroid-client</artifactId> 
 			</dependency> -->
 
-		<!-- <dependency>
-  <groupId>com.squareup.okhttp3</groupId>
-  <artifactId>okhttp</artifactId>
-  <version>3.10.0</version>
-</dependency>
-<dependency>
-    <groupId>org.apache.httpcomponents</groupId>
-    <artifactId>httpclient</artifactId>
-    <version>4.5.5</version>
-</dependency> -->
+		<!-- <dependency> <groupId>com.squareup.okhttp3</groupId> <artifactId>okhttp</artifactId> 
+			<version>3.10.0</version> </dependency> <dependency> <groupId>org.apache.httpcomponents</groupId> 
+			<artifactId>httpclient</artifactId> <version>4.5.5</version> </dependency> -->
 
 
 
 
 	</dependencies>
 
-
-</project>
-  
 </project>

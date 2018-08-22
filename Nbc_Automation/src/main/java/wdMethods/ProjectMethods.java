@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
+import org.testng.annotations.Parameters;
 
 import utils.DataInputProvider;
 
@@ -24,12 +25,13 @@ public class ProjectMethods extends SeMethods{
 	public void beforeTest(){
 	}
 	
+	@Parameters({"browser"})
 	@BeforeMethod
-	public void beforeMethod(){
+	public void beforeMethod(String browser){
 		test = startTestCase(testCaseName, testDescription);
 		test.assignCategory(category);
 		test.assignAuthor(authors);
-		startApp("chrome");
+		startApp(browser);
 		
 	}
 		

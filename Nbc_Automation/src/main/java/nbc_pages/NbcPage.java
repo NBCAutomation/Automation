@@ -161,7 +161,9 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//a[contains(text(),'Click for full schedule')]")
+		@FindBy(how=How.XPATH,using="//li[@class='schedule']")
+		
+		////li[@class='schedule']
 		private WebElement elefullschedule;	
 		public TVlistingsschedule clickfullschedule() {
 			click(elefullschedule);
@@ -216,7 +218,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='top-stories']//div[contains(@class,'play')]")
+		@FindBy(how=How.XPATH,using="//div[@class='top-stories']//div[@class='lead-story']")
 		private WebElement eletopstories;	
 		public NbcPage clicktopstories() {
 			click(eletopstories);
@@ -264,13 +266,12 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='tpVideoBlocker']")
 		private WebElement eleplayer;	
 		public NbcPage clickplayer() {
-			scrollingByCoordinatesofAPage();
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			//scrollingByCoordinatesofAPage();
 			click(eleplayer);
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//i[@class='fa fa-facebook fa-stack-1x fa-inverse']")
+		@FindBy(how=How.XPATH,using="//div[@class='social-icon facebook']")
 		private WebElement elefacebook;
 		public NbcPage clickfacebook() {
 			click(elefacebook);

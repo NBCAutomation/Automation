@@ -1,4 +1,4 @@
-package wdMethods;
+ package wdMethods;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,10 +10,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.json.Json;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
@@ -33,55 +37,197 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+
+import io.github.cdimascio.dotenv.Dotenv;
 import utils.Reporter;
 
-public class SeMethods extends Reporter implements WdMethods{
+public class SeMethods extends Reporter implements WdMethods {
+	
+	
+	public static String USERNAME = "";
+	public static String ACCESS_KEY = "";
+	//String USERNAME_D = System.getenv("");
+	//String ACCESS_KEY_D = System.getenv("");
+	public String URL;
+	
+	/*String user = System.getProperty("SAUCE_USERNAME") ;
+	String access = System.getProperty("SAUCE_ACCESS_KEY") ;*/
+	
+	
+	
+	 /*public static class test {
 
+		    public static void main(String[] args) {
+		    	
+		    	//System.out.println("System.getenv("PATH") = ");
+		        System.out.println(System.getenv("PATH"));
+		    	
+		        System.out.println(System.getenv("USERNAME"));
+		            
+		         *//**List<String> url = getData("UserName", 100);*//*
+		        System.out.println(getData("UserName",100));
+		        ArrayList<String> url= new ArrayList<String>();
+		         
+		          driver.get(url);
+		         // further test case coding
+		    }
 
-	public static final String USERNAME = "vinokumar";
-	public static final String ACCESS_KEY = "0e1bf05a-6008-44ac-9730-b730b38afb60";
-	public static final String URL = "https://" + USERNAME + ":" + ACCESS_KEY + "@ondemand.saucelabs.com:443/wd/hub";
-	DesiredCapabilities dc;
-	public RemoteWebDriver driver;
-	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name;
+		    public static ArrayList<String> getData(String Data, int size) {
+
+		        String[] st = null;
+		        String value = null;
+		        File xmlfile = new File(System.getProperty("user.dir") + "\\URLS.xml");
+		        System.out.println(xmlfile);
+		        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		        try {
+		            DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
+		            Document doc = dbuilder.parse(xmlfile);
+
+		            NodeList list = doc.getElementsByTagName(Data);
+
+		            System.out.println("length of  : " + list.getLength());
+		            st = new String[list.getLength()];
+		            for (int i = 0; i < list.getLength(); i++) {
+
+		                st[i] = doc.getElementsByTagName(Data).item(i).getTextContent();
+		                System.out.println(st[i]);
+		                *//**if(i==0){
+		                	USERNAME=st[i];
+		                }
+		                else if(i==1){
+		                	ACCESS_KEY=st[i];
+		                }
+		              *//*
+		               value = st[i];
+		                
+		            }
+		        } catch (Exception e) {
+		            e.printStackTrace();
+
+		        }
+		        ArrayList<String> data = new ArrayList<String>();
+		        data.add(value);
+		        return data;
+		        
+		    }
+
+		}*/
+	
+	public DesiredCapabilities dc;
+	public static RemoteWebDriver driver;
+	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,USERNAME1,ACCESSKEY;
 	public SeMethods() {
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 			sHubUrl = prop.getProperty("HUB");
 			sHubPort = prop.getProperty("PORT");
-			sUrl = prop.getProperty("URL");
+			sUrl = prop.getProperty("NYURL");
 			name=prop.getProperty("NAME");
+			USERNAME1=prop.getProperty("USERNAME");
+			ACCESS_KEY=prop.getProperty("ACCESS_KEY");
+			//accesskey=prop.getProperty("ACCESS_KEY");
+		   
+		    
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void startApp(String b){
+		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY + "@ondemand.saucelabs.com:443/wd/hub";
+		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY);
 		try {
-			/*if(browser.equalsIgnoreCase("chrome")) {
-				System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver");
-				driver = new ChromeDriver();
-			} else if(browser.equalsIgnoreCase("ie")) {
-				System.setProperty("webdriver.ie.driver", "./drivers/internetexplorerserver.exe");
-				driver = new InternetExplorerDriver();
-			}*/
-			dc =new DesiredCapabilities();
-			dc.setBrowserName(b);
+			
+			dc = new DesiredCapabilities();
+			if (b.equalsIgnoreCase("chrome")) {
+				/*if(browser.equalsIgnoreCase("chrome")) {
+							System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver");
+							driver = new ChromeDriver();
+						} else if(browser.equalsIgnoreCase("ie")) {
+							System.setProperty("webdriver.ie.driver", "./drivers/internetexplorerserver.exe");
+							driver = new InternetExplorerDriver();
+						}*/
+			DesiredCapabilities dc = DesiredCapabilities.chrome();	
+			dc.setBrowserName("Chrome");
 			dc.setPlatform(Platform.WIN10);
+			dc.setCapability("version", "67.0");
 			dc.setCapability("name", "www.nbcnewyork.com:");
-			//dc.setCapability("passed", true);
-
 			try {
-				driver = new RemoteWebDriver(new URL(URL), dc);
-			} catch (MalformedURLException e1) {
+			driver = new RemoteWebDriver(new URL(URL), dc);
+			}
+				
+			//driver = new RemoteWebDriver(
+						//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
+			 catch (MalformedURLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			
+			}
+			if (b.equalsIgnoreCase("Firefox")) {
+			DesiredCapabilities dc = DesiredCapabilities.firefox();
+			dc.setBrowserName("Firefox");
+			dc.setPlatform(Platform.WIN10);
+			dc.setCapability("version", "60.0");
+			dc.setCapability("name", "www.nbcnewyork.com:");
+			try {
+				driver = new RemoteWebDriver(new URL(URL), dc);
+				}
+					
+				//driver = new RemoteWebDriver(
+							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
+				 catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+			if(b.equalsIgnoreCase("Edge")){
+			DesiredCapabilities dc = DesiredCapabilities.edge();
+			dc.setCapability("platform", "Windows 10");
+			dc.setCapability("version", "17.17134");
+			dc.setCapability("name", "www.nbcnewyork.com:");
+			try {
+				driver = new RemoteWebDriver(new URL(URL), dc);
+				}
+					
+				//driver = new RemoteWebDriver(
+							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
+				 catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
+			}
+			
+			
+			else if(b.equalsIgnoreCase("Safari")){
+			DesiredCapabilities dc = DesiredCapabilities.safari();
+			dc.setCapability("platform", "macOS 10.13");
+			dc.setCapability("version", "11.1");
+			dc.setCapability("name", "www.nbcnewyork.com:");
+			try {
+				driver = new RemoteWebDriver(new URL(URL), dc);
+				}
+					
+				//driver = new RemoteWebDriver(
+							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
+				 catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			
+			}
+				
+			//dc.setCapability("passed", true);
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			driver.get(sUrl);
 			driver.manage().window().maximize();	
@@ -132,7 +278,7 @@ public class SeMethods extends Reporter implements WdMethods{
 	public void click(WebElement ele) {
 		String text = "";
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 80);
+			WebDriverWait wait = new WebDriverWait(driver, 50);
 			wait.until(ExpectedConditions.elementToBeClickable(ele));			
 			text = ele.getText();
 			ele.click();
