@@ -24,7 +24,7 @@
     <div class="top-banner-root">
       <span class="top-banner-title-font">Test results</span>
       <br/>
-      <span class="top-banner-font-1">1 suite, 3 failed tests</span>
+      <span class="top-banner-font-1">1 suite, 2 failed tests</span>
     </div> <!-- top-banner-root -->
     <div class="navigator-root">
       <div class="navigator-suite-header">
@@ -49,7 +49,7 @@
               <ul>
                 <li>
                   <a href="#" class="navigator-link " panel-name="test-xml-Suite">
-                    <span>TC003.xml</span>
+                    <span>TC001.xml</span>
                   </a> <!-- navigator-link  -->
                 </li>
                 <li>
@@ -91,7 +91,7 @@
               <div class="suite-section-content">
                 <ul>
                   <li>
-                    <span class="method-stats">4 methods, 3 failed,  1 skipped,  </span>
+                    <span class="method-stats">4 methods, 2 failed,   2 passed</span>
                   </li>
                   <li>
                     <span class="method-list-title failed">Failed methods</span>
@@ -102,34 +102,34 @@
                     <div class="method-list-content failed suite-Suite">
                       <span>
                         <img width="3%" src="failed.png"/>
-                        <a href="#" class="method navigator-link" panel-name="suite-Suite" title="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads" hash-for-method="NbcPage">NbcPage</a> <!-- method navigator-link -->
+                        <a href="#" class="method navigator-link" panel-name="suite-Suite" title="nbc_testcases.TC001_Logo_is_clickable" hash-for-method="NbcPage">NbcPage</a> <!-- method navigator-link -->
                       </span>
                       <br/>
                       <span>
                         <img width="3%" src="failed.png"/>
-                        <a href="#" class="method navigator-link" panel-name="suite-Suite" title="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads" hash-for-method="NbcPage">NbcPage</a> <!-- method navigator-link -->
-                      </span>
-                      <br/>
-                      <span>
-                        <img width="3%" src="failed.png"/>
-                        <a href="#" class="method navigator-link" panel-name="suite-Suite" title="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads" hash-for-method="NbcPage">NbcPage</a> <!-- method navigator-link -->
+                        <a href="#" class="method navigator-link" panel-name="suite-Suite" title="nbc_testcases.TC001_Logo_is_clickable" hash-for-method="NbcPage">NbcPage</a> <!-- method navigator-link -->
                       </span>
                       <br/>
                     </div> <!-- method-list-content failed suite-Suite -->
                   </li>
                   <li>
-                    <span class="method-list-title skipped">Skipped methods</span>
-                    <span class="show-or-hide-methods skipped">
-                      <a href="#" panel-name="suite-Suite" class="hide-methods skipped suite-Suite"> (hide)</a> <!-- hide-methods skipped suite-Suite -->
-                      <a href="#" panel-name="suite-Suite" class="show-methods skipped suite-Suite"> (show)</a> <!-- show-methods skipped suite-Suite -->
+                    <span class="method-list-title passed">Passed methods</span>
+                    <span class="show-or-hide-methods passed">
+                      <a href="#" panel-name="suite-Suite" class="hide-methods passed suite-Suite"> (hide)</a> <!-- hide-methods passed suite-Suite -->
+                      <a href="#" panel-name="suite-Suite" class="show-methods passed suite-Suite"> (show)</a> <!-- show-methods passed suite-Suite -->
                     </span>
-                    <div class="method-list-content skipped suite-Suite">
+                    <div class="method-list-content passed suite-Suite">
                       <span>
-                        <img width="3%" src="skipped.png"/>
-                        <a href="#" class="method navigator-link" panel-name="suite-Suite" title="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads" hash-for-method="NbcPage">NbcPage</a> <!-- method navigator-link -->
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-Suite" title="nbc_testcases.TC001_Logo_is_clickable" hash-for-method="NbcPage">NbcPage</a> <!-- method navigator-link -->
                       </span>
                       <br/>
-                    </div> <!-- method-list-content skipped suite-Suite -->
+                      <span>
+                        <img width="3%" src="passed.png"/>
+                        <a href="#" class="method navigator-link" panel-name="suite-Suite" title="nbc_testcases.TC001_Logo_is_clickable" hash-for-method="NbcPage">NbcPage</a> <!-- method navigator-link -->
+                      </span>
+                      <br/>
+                    </div> <!-- method-list-content passed suite-Suite -->
                   </li>
                 </ul>
               </div> <!-- suite-section-content -->
@@ -144,7 +144,7 @@
           <div class="suite-Suite-class-failed">
             <div class="main-panel-header rounded-window-top">
               <img src="failed.png"/>
-              <span class="class-name">nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads</span>
+              <span class="class-name">nbc_testcases.TC001_Logo_is_clickable</span>
             </div> <!-- main-panel-header rounded-window-top -->
             <div class="main-panel-content rounded-window-bottom">
               <div class="method">
@@ -155,9 +155,9 @@
                   <div class="stack-trace">java.lang.RuntimeException: FAILED
 	at utils.Reporter.reportStep(Reporter.java:34)
 	at utils.Reporter.reportStep(Reporter.java:44)
-	at wdMethods.SeMethods.click(SeMethods.java:289)
+	at wdMethods.SeMethods.click(SeMethods.java:291)
 	at nbc_pages.NbcPage.clicknbclogo(NbcPage.java:31)
-	at nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads.NbcPage(TC003_Weather_module_appears_on_HP_and_map_loads.java:26)
+	at nbc_testcases.TC001_Logo_is_clickable.NbcPage(TC001_Logo_is_clickable.java:26)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
@@ -174,28 +174,9 @@
                   <div class="stack-trace">java.lang.RuntimeException: FAILED
 	at utils.Reporter.reportStep(Reporter.java:34)
 	at utils.Reporter.reportStep(Reporter.java:44)
-	at wdMethods.SeMethods.switchToFrame(SeMethods.java:470)
-	at nbc_pages.NbcPage.clickelewetheriframe(NbcPage.java:71)
-	at nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads.NbcPage(TC003_Weather_module_appears_on_HP_and_map_loads.java:27)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-... Removed 16 stack frames
-</div> <!-- stack-trace -->
-                </div> <!-- method-content -->
-              </div> <!-- method -->
-              <div class="method">
-                <div class="method-content">
-                  <a name="NbcPage">
-                  </a> <!-- NbcPage -->
-                  <span class="method-name">NbcPage</span>
-                  <div class="stack-trace">java.lang.RuntimeException: FAILED
-	at utils.Reporter.reportStep(Reporter.java:34)
-	at utils.Reporter.reportStep(Reporter.java:44)
-	at wdMethods.SeMethods.switchToFrame(SeMethods.java:470)
-	at nbc_pages.NbcPage.clickelewetheriframe(NbcPage.java:71)
-	at nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads.NbcPage(TC003_Weather_module_appears_on_HP_and_map_loads.java:27)
+	at wdMethods.SeMethods.click(SeMethods.java:291)
+	at nbc_pages.NbcPage.clicknbclogo(NbcPage.java:31)
+	at nbc_testcases.TC001_Logo_is_clickable.NbcPage(TC001_Logo_is_clickable.java:26)
 	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
@@ -206,10 +187,10 @@
               </div> <!-- method -->
             </div> <!-- main-panel-content rounded-window-bottom -->
           </div> <!-- suite-Suite-class-failed -->
-          <div class="suite-Suite-class-skipped">
+          <div class="suite-Suite-class-passed">
             <div class="main-panel-header rounded-window-top">
-              <img src="skipped.png"/>
-              <span class="class-name">nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads</span>
+              <img src="passed.png"/>
+              <span class="class-name">nbc_testcases.TC001_Logo_is_clickable</span>
             </div> <!-- main-panel-header rounded-window-top -->
             <div class="main-panel-content rounded-window-bottom">
               <div class="method">
@@ -217,23 +198,21 @@
                   <a name="NbcPage">
                   </a> <!-- NbcPage -->
                   <span class="method-name">NbcPage</span>
-                  <div class="stack-trace">org.testng.TestNGException: 
-Parameter &apos;browser&apos; is required by BeforeMethod on method beforeMethod but has not been marked @Optional or defined
-in /Users/tringapps-admin/Documents/GitHub/NBC_Automation/Nbc_Automation/TC003.xml
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-	at java.lang.Thread.run(Thread.java:748)
-... Removed 16 stack frames
-</div> <!-- stack-trace -->
+                </div> <!-- method-content -->
+              </div> <!-- method -->
+              <div class="method">
+                <div class="method-content">
+                  <a name="NbcPage">
+                  </a> <!-- NbcPage -->
+                  <span class="method-name">NbcPage</span>
                 </div> <!-- method-content -->
               </div> <!-- method -->
             </div> <!-- main-panel-content rounded-window-bottom -->
-          </div> <!-- suite-Suite-class-skipped -->
+          </div> <!-- suite-Suite-class-passed -->
         </div> <!-- panel Suite -->
         <div panel-name="test-xml-Suite" class="panel">
           <div class="main-panel-header rounded-window-top">
-            <span class="header-content">/Users/tringapps-admin/Documents/GitHub/NBC_Automation/Nbc_Automation/TC003.xml</span>
+            <span class="header-content">/Users/tringapps-admin/Documents/GitHub/NBC_Automation/Nbc_Automation/TC001.xml</span>
           </div> <!-- main-panel-header rounded-window-top -->
           <div class="main-panel-content rounded-window-bottom">
             <pre>
@@ -241,26 +220,27 @@ in /Users/tringapps-admin/Documents/GitHub/NBC_Automation/Nbc_Automation/TC003.x
 &lt;!DOCTYPE suite SYSTEM &quot;http://testng.org/testng-1.0.dtd&quot;&gt;
 &lt;suite guice-stage=&quot;DEVELOPMENT&quot; name=&quot;Suite&quot; parallel=&quot;tests&quot;&gt;
   &lt;test thread-count=&quot;5&quot; name=&quot;Test2&quot; parallel=&quot;tests&quot;&gt;
+    &lt;parameter name=&quot;browser&quot; value=&quot;chrome&quot;/&gt;
     &lt;classes&gt;
-      &lt;class name=&quot;nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads&quot;/&gt;
+      &lt;class name=&quot;nbc_testcases.TC001_Logo_is_clickable&quot;/&gt;
     &lt;/classes&gt;
   &lt;/test&gt; &lt;!-- Test2 --&gt;
   &lt;test thread-count=&quot;5&quot; name=&quot;Test1&quot; parallel=&quot;tests&quot;&gt;
     &lt;parameter name=&quot;browser&quot; value=&quot;Firefox&quot;/&gt;
     &lt;classes&gt;
-      &lt;class name=&quot;nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads&quot;/&gt;
+      &lt;class name=&quot;nbc_testcases.TC001_Logo_is_clickable&quot;/&gt;
     &lt;/classes&gt;
   &lt;/test&gt; &lt;!-- Test1 --&gt;
   &lt;test thread-count=&quot;5&quot; name=&quot;Test3&quot; parallel=&quot;tests&quot;&gt;
     &lt;parameter name=&quot;browser&quot; value=&quot;Edge&quot;/&gt;
     &lt;classes&gt;
-      &lt;class name=&quot;nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads&quot;/&gt;
+      &lt;class name=&quot;nbc_testcases.TC001_Logo_is_clickable&quot;/&gt;
     &lt;/classes&gt;
   &lt;/test&gt; &lt;!-- Test3 --&gt;
   &lt;test thread-count=&quot;5&quot; name=&quot;Test4&quot; parallel=&quot;tests&quot;&gt;
     &lt;parameter name=&quot;browser&quot; value=&quot;Safari&quot;/&gt;
     &lt;classes&gt;
-      &lt;class name=&quot;nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads&quot;/&gt;
+      &lt;class name=&quot;nbc_testcases.TC001_Logo_is_clickable&quot;/&gt;
     &lt;/classes&gt;
   &lt;/test&gt; &lt;!-- Test4 --&gt;
 &lt;/suite&gt; &lt;!-- Suite --&gt;
@@ -312,25 +292,25 @@ data.addColumn('number', 'Time (ms)');
 data.addRows(4);
 data.setCell(0, 0, 0)
 data.setCell(0, 1, 'NbcPage')
-data.setCell(0, 2, 'nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads')
-data.setCell(0, 3, 38775);
+data.setCell(0, 2, 'nbc_testcases.TC001_Logo_is_clickable')
+data.setCell(0, 3, 48263);
 data.setCell(1, 0, 1)
 data.setCell(1, 1, 'NbcPage')
-data.setCell(1, 2, 'nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads')
-data.setCell(1, 3, 34807);
+data.setCell(1, 2, 'nbc_testcases.TC001_Logo_is_clickable')
+data.setCell(1, 3, 42304);
 data.setCell(2, 0, 2)
 data.setCell(2, 1, 'NbcPage')
-data.setCell(2, 2, 'nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads')
-data.setCell(2, 3, 32170);
+data.setCell(2, 2, 'nbc_testcases.TC001_Logo_is_clickable')
+data.setCell(2, 3, 33609);
 data.setCell(3, 0, 3)
 data.setCell(3, 1, 'NbcPage')
-data.setCell(3, 2, 'nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads')
-data.setCell(3, 3, 0);
+data.setCell(3, 2, 'nbc_testcases.TC001_Logo_is_clickable')
+data.setCell(3, 3, 31535);
 window.suiteTableData['Suite']= { tableData: data, tableDiv: 'times-div-Suite'}
 return data;
 }
               </script>
-              <span class="suite-total-time">Total running time: 1 minutes</span>
+              <span class="suite-total-time">Total running time: 2 minutes</span>
               <div id="times-div-Suite">
               </div> <!-- times-div-Suite -->
             </div> <!-- times-div -->
@@ -356,104 +336,114 @@ return data;
           </div> <!-- main-panel-header rounded-window-top -->
           <div class="main-panel-content rounded-window-bottom">
             <div class="chronological-class">
-              <div class="chronological-class-name">nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads</div> <!-- chronological-class-name -->
-              <div class="test-method">
-                <span class="method-name">NbcPage</span>
-                <span class="method-start">0 ms</span>
-              </div> <!-- test-method -->
+              <div class="chronological-class-name">nbc_testcases.TC001_Logo_is_clickable</div> <!-- chronological-class-name -->
               <div class="configuration-suite before">
                 <span class="method-name">beforeSuite</span>
                 <span class="method-start">0 ms</span>
               </div> <!-- configuration-suite before -->
               <div class="configuration-test before">
                 <span class="method-name">beforeTest</span>
-                <span class="method-start">3224 ms</span>
+                <span class="method-start">2170 ms</span>
               </div> <!-- configuration-test before -->
               <div class="configuration-test before">
                 <span class="method-name">beforeTest</span>
-                <span class="method-start">3229 ms</span>
+                <span class="method-start">2171 ms</span>
               </div> <!-- configuration-test before -->
               <div class="configuration-test before">
                 <span class="method-name">beforeTest</span>
-                <span class="method-start">3231 ms</span>
+                <span class="method-start">2172 ms</span>
               </div> <!-- configuration-test before -->
               <div class="configuration-test before">
                 <span class="method-name">beforeTest</span>
-                <span class="method-start">3235 ms</span>
+                <span class="method-start">2173 ms</span>
               </div> <!-- configuration-test before -->
               <div class="configuration-class before">
                 <span class="method-name">setData</span>
-                <span class="method-start">3248 ms</span>
+                <span class="method-start">2179 ms</span>
               </div> <!-- configuration-class before -->
               <div class="configuration-class before">
                 <span class="method-name">setData</span>
-                <span class="method-start">3248 ms</span>
+                <span class="method-start">2179 ms</span>
               </div> <!-- configuration-class before -->
               <div class="configuration-class before">
                 <span class="method-name">setData</span>
-                <span class="method-start">3248 ms</span>
+                <span class="method-start">2179 ms</span>
               </div> <!-- configuration-class before -->
               <div class="configuration-class before">
                 <span class="method-name">setData</span>
-                <span class="method-start">3248 ms</span>
+                <span class="method-start">2179 ms</span>
               </div> <!-- configuration-class before -->
               <div class="configuration-method before">
-                <span class="method-name">beforeMethod(Firefox)</span>
-                <span class="method-start">3266 ms</span>
+                <span class="method-name">beforeMethod(chrome)</span>
+                <span class="method-start">2190 ms</span>
               </div> <!-- configuration-method before -->
               <div class="configuration-method before">
-                <span class="method-name">beforeMethod(Safari)</span>
-                <span class="method-start">3266 ms</span>
+                <span class="method-name">beforeMethod(Firefox)</span>
+                <span class="method-start">2190 ms</span>
               </div> <!-- configuration-method before -->
               <div class="configuration-method before">
                 <span class="method-name">beforeMethod(Edge)</span>
-                <span class="method-start">3266 ms</span>
+                <span class="method-start">2190 ms</span>
+              </div> <!-- configuration-method before -->
+              <div class="configuration-method before">
+                <span class="method-name">beforeMethod(Safari)</span>
+                <span class="method-start">2190 ms</span>
               </div> <!-- configuration-method before -->
               <div class="test-method">
-                <img src="failed.png">
-                </img>
                 <span class="method-name">NbcPage</span>
-                <span class="method-start">72038 ms</span>
+                <span class="method-start">59605 ms</span>
+              </div> <!-- test-method -->
+              <div class="test-method">
+                <span class="method-name">NbcPage</span>
+                <span class="method-start">59651 ms</span>
               </div> <!-- test-method -->
               <div class="test-method">
                 <img src="failed.png">
                 </img>
                 <span class="method-name">NbcPage</span>
-                <span class="method-start">72765 ms</span>
+                <span class="method-start">59842 ms</span>
               </div> <!-- test-method -->
               <div class="test-method">
                 <img src="failed.png">
                 </img>
                 <span class="method-name">NbcPage</span>
-                <span class="method-start">72840 ms</span>
+                <span class="method-start">61143 ms</span>
               </div> <!-- test-method -->
               <div class="configuration-method after">
                 <span class="method-name">afterMethod</span>
-                <span class="method-start">105013 ms</span>
+                <span class="method-start">91381 ms</span>
               </div> <!-- configuration-method after -->
               <div class="configuration-test after">
                 <span class="method-name">afterTest</span>
-                <span class="method-start">107338 ms</span>
+                <span class="method-start">94573 ms</span>
               </div> <!-- configuration-test after -->
               <div class="configuration-method after">
                 <span class="method-name">afterMethod</span>
-                <span class="method-start">107576 ms</span>
+                <span class="method-start">94754 ms</span>
               </div> <!-- configuration-method after -->
               <div class="configuration-test after">
                 <span class="method-name">afterTest</span>
-                <span class="method-start">107576 ms</span>
+                <span class="method-start">94755 ms</span>
               </div> <!-- configuration-test after -->
               <div class="configuration-method after">
                 <span class="method-name">afterMethod</span>
-                <span class="method-start">110815 ms</span>
+                <span class="method-start">101957 ms</span>
               </div> <!-- configuration-method after -->
               <div class="configuration-test after">
                 <span class="method-name">afterTest</span>
-                <span class="method-start">110816 ms</span>
+                <span class="method-start">101958 ms</span>
+              </div> <!-- configuration-test after -->
+              <div class="configuration-method after">
+                <span class="method-name">afterMethod</span>
+                <span class="method-start">107870 ms</span>
+              </div> <!-- configuration-method after -->
+              <div class="configuration-test after">
+                <span class="method-name">afterTest</span>
+                <span class="method-start">107871 ms</span>
               </div> <!-- configuration-test after -->
               <div class="configuration-suite after">
                 <span class="method-name">afterSuite</span>
-                <span class="method-start">110824 ms</span>
+                <span class="method-start">107891 ms</span>
               </div> <!-- configuration-suite after -->
           </div> <!-- main-panel-content rounded-window-bottom -->
         </div> <!-- panel -->

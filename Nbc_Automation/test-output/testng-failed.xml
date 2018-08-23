@@ -1,71 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite guice-stage="DEVELOPMENT" name="Failed suite [Suite]" parallel="tests">
-  <test thread-count="5" name="Test2(failed)" parallel="tests">
-    <classes>
-      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads">
-        <methods>
-          <include name="beforeTest"/>
-          <include name="afterTest"/>
-          <include name="beforeSuite"/>
-          <include name="afterSuite"/>
-          <include name="afterMethod"/>
-          <include name="beforeMethod"/>
-          <include name="setData"/>
-          <include name="NbcPage"/>
-        </methods>
-      </class> <!-- nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads -->
-    </classes>
-  </test> <!-- Test2(failed) -->
-  <test thread-count="5" name="Test3(failed)" parallel="tests">
-    <parameter name="browser" value="Edge"/>
-    <classes>
-      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads">
-        <methods>
-          <include name="beforeTest"/>
-          <include name="afterTest"/>
-          <include name="beforeSuite"/>
-          <include name="afterSuite"/>
-          <include name="afterMethod"/>
-          <include name="beforeMethod"/>
-          <include name="setData"/>
-          <include name="NbcPage"/>
-        </methods>
-      </class> <!-- nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads -->
-    </classes>
-  </test> <!-- Test3(failed) -->
   <test thread-count="5" name="Test1(failed)" parallel="tests">
     <parameter name="browser" value="Firefox"/>
     <classes>
-      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads">
+      <class name="nbc_testcases.TC001_Logo_is_clickable">
         <methods>
           <include name="beforeTest"/>
           <include name="afterTest"/>
           <include name="beforeSuite"/>
           <include name="afterSuite"/>
+          <include name="setData"/>
           <include name="afterMethod"/>
           <include name="beforeMethod"/>
-          <include name="setData"/>
           <include name="NbcPage"/>
         </methods>
-      </class> <!-- nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads -->
+      </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
     </classes>
   </test> <!-- Test1(failed) -->
   <test thread-count="5" name="Test4(failed)" parallel="tests">
     <parameter name="browser" value="Safari"/>
     <classes>
-      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads">
+      <class name="nbc_testcases.TC001_Logo_is_clickable">
         <methods>
           <include name="beforeTest"/>
           <include name="afterTest"/>
           <include name="beforeSuite"/>
           <include name="afterSuite"/>
+          <include name="setData"/>
           <include name="afterMethod"/>
           <include name="beforeMethod"/>
-          <include name="setData"/>
           <include name="NbcPage"/>
         </methods>
-      </class> <!-- nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads -->
+      </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
     </classes>
   </test> <!-- Test4(failed) -->
 </suite> <!-- Failed suite [Suite] -->
