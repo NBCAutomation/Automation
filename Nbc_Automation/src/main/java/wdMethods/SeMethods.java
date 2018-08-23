@@ -10,14 +10,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.json.Json;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
@@ -37,13 +33,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-
-import io.github.cdimascio.dotenv.Dotenv;
 import utils.Reporter;
 
 public class SeMethods extends Reporter implements WdMethods {
@@ -158,7 +149,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			DesiredCapabilities dc = DesiredCapabilities.chrome();	
 			dc.setBrowserName("Chrome");
 			dc.setPlatform(Platform.WIN10);
-			dc.setCapability("version", "67.0");
+			dc.setCapability("version", "68.0");
 			dc.setCapability("name", "www.nbcnewyork.com:");
 			try {
 			driver = new RemoteWebDriver(new URL(URL), dc);
@@ -176,7 +167,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			DesiredCapabilities dc = DesiredCapabilities.firefox();
 			dc.setBrowserName("Firefox");
 			dc.setPlatform(Platform.WIN10);
-			dc.setCapability("version", "60.0");
+			dc.setCapability("version", "61.0");
 			dc.setCapability("name", "www.nbcnewyork.com:");
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
@@ -208,6 +199,24 @@ public class SeMethods extends Reporter implements WdMethods {
 			
 			}
 			
+			if(b.equalsIgnoreCase("internetExplorer")){
+				DesiredCapabilities caps = DesiredCapabilities.internetExplorer();
+				caps.setCapability("platform", "Windows 10");
+				caps.setCapability("version", "11.103");
+				dc.setCapability("name", "www.nbcnewyork.com:");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
+					}
+						
+					//driver = new RemoteWebDriver(
+								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
+					 catch (MalformedURLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+				}
+			
 			
 			else if(b.equalsIgnoreCase("Safari")){
 			DesiredCapabilities dc = DesiredCapabilities.safari();
@@ -226,6 +235,42 @@ public class SeMethods extends Reporter implements WdMethods {
 				}
 			
 			}
+			
+			else if(b.equalsIgnoreCase("chrome")){
+				DesiredCapabilities caps = DesiredCapabilities.chrome();
+				caps.setCapability("platform", "macOS 10.13");
+				caps.setCapability("version", "68.0");
+				dc.setCapability("name", "www.nbcnewyork.com:");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
+					}
+						
+					//driver = new RemoteWebDriver(
+								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
+					 catch (MalformedURLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+				}
+			
+			if (b.equalsIgnoreCase("Firefox")) {
+				DesiredCapabilities caps = DesiredCapabilities.firefox();
+				caps.setCapability("platform", "macOS 10.13");
+				caps.setCapability("version", "61.0");
+				dc.setCapability("version", "61.0");
+				dc.setCapability("name", "www.nbcnewyork.com:");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
+					}
+						
+					//driver = new RemoteWebDriver(
+								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
+					 catch (MalformedURLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 				
 			//dc.setCapability("passed", true);
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
