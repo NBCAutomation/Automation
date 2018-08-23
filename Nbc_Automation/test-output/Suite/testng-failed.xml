@@ -4,35 +4,69 @@
   <test thread-count="5" name="Test1(failed)" parallel="tests">
     <parameter name="browser" value="Firefox"/>
     <classes>
-      <class name="nbc_testcases.TC001_Logo_is_clickable">
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll">
         <methods>
+          <include name="setData"/>
           <include name="beforeTest"/>
           <include name="afterTest"/>
           <include name="beforeSuite"/>
+          <include name="NbcPage"/>
           <include name="afterSuite"/>
-          <include name="setData"/>
           <include name="afterMethod"/>
           <include name="beforeMethod"/>
-          <include name="NbcPage"/>
         </methods>
-      </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
+      </class> <!-- nbc_testcases.TC002_Top_stories_playback_with_pre_roll -->
     </classes>
   </test> <!-- Test1(failed) -->
   <test thread-count="5" name="Test4(failed)" parallel="tests">
     <parameter name="browser" value="Safari"/>
     <classes>
-      <class name="nbc_testcases.TC001_Logo_is_clickable">
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll">
         <methods>
+          <include name="setData"/>
           <include name="beforeTest"/>
           <include name="afterTest"/>
           <include name="beforeSuite"/>
+          <include name="NbcPage"/>
           <include name="afterSuite"/>
-          <include name="setData"/>
           <include name="afterMethod"/>
           <include name="beforeMethod"/>
-          <include name="NbcPage"/>
         </methods>
-      </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
+      </class> <!-- nbc_testcases.TC002_Top_stories_playback_with_pre_roll -->
     </classes>
   </test> <!-- Test4(failed) -->
+  <test thread-count="5" name="Test2(failed)" parallel="tests">
+    <parameter name="browser" value="chrome"/>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll">
+        <methods>
+          <include name="setData"/>
+          <include name="beforeTest"/>
+          <include name="afterTest"/>
+          <include name="beforeSuite"/>
+          <include name="NbcPage"/>
+          <include name="afterSuite"/>
+          <include name="afterMethod"/>
+          <include name="beforeMethod"/>
+        </methods>
+      </class> <!-- nbc_testcases.TC002_Top_stories_playback_with_pre_roll -->
+    </classes>
+  </test> <!-- Test2(failed) -->
+  <test thread-count="5" name="Test3(failed)" parallel="tests">
+    <parameter name="browser" value="Edge"/>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll">
+        <methods>
+          <include name="setData"/>
+          <include name="beforeTest"/>
+          <include name="afterTest"/>
+          <include name="beforeSuite"/>
+          <include name="NbcPage"/>
+          <include name="afterSuite"/>
+          <include name="afterMethod"/>
+          <include name="beforeMethod"/>
+        </methods>
+      </class> <!-- nbc_testcases.TC002_Top_stories_playback_with_pre_roll -->
+    </classes>
+  </test> <!-- Test3(failed) -->
 </suite> <!-- Failed suite [Suite] -->

@@ -3,6 +3,8 @@
 <suite name="Suite" parallel="tests">
 
   <test thread-count="5" name="Test2">
+  
+    <parameter name="browser" value="Chrome"></parameter>
     <classes>
       <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
     </classes>

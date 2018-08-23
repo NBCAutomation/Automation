@@ -3,7 +3,7 @@
 <suite name="Suite" parallel="tests">
 
   <test thread-count="5" name="Test2">
-  <parameter name="browser" value="chrome"></parameter>
+  <parameter name="browser" value="Chrome"></parameter>
     <classes>
       <class name="nbc_testcases.TC001_Logo_is_clickable"/>
     </classes>
