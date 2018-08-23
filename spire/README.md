@@ -1,0 +1,3 @@
+# OTS Automtion Web App // Spire
+
+Spire is in-house testing suite of automation tools and scripted utilities used for regression and smoke tests for NBC OTS. The testing suite is currently being developed using the [ PhantomJS ](http://phantomjs.org/) and [ CasperJS ](http://casperjs.org/) Javascript libraries. Both of these libraries function as headless WebKit scriptable libraries with a built in JavaScript API. 

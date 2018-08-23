@@ -1,0 +1,308 @@
+h1 {
+	font-family: 'Oswald', sans-serif;
+	font-size: 2em;
+	text-align: left;
+	padding: 0.5em;
+	margin: 0px;
+	float: left;
+}
+
+.tagline {
+	font-family: 'Roboto Condensed', sans-serif;
+	font-size: 1em;
+	text-align: center;
+}
+
+.panel-body {
+
+}
+
+.panel-body .testing_steps {
+	list-style: disc;
+}
+
+.panel-body .api_results {
+	font-size: 0.9em;
+}
+
+.panel-body .api_results ul {
+	list-style-type: disc;
+	list-style-position: inside;
+	font-size: 0.95em;
+}
+
+.panel-body .api_results ul li {
+	padding-left: 0.5em;
+}
+
+.panel-body .api_results .result.file {
+	border: solid 1px #ccc;
+	padding: 0.5em;
+	list-style-type: none;
+	margin-bottom: 0.2em;
+}
+
+.panel-body .api_results .result.file:hover {
+	border-color: #034287;
+	background: #eee;
+}
+
+.panel-body .api_results ul li div {
+	display: inline-table;
+	padding: 0.3em;
+}
+
+.panel-body .test_fail {
+	color: red;
+	font-weight: bold;
+	background: #FFCCCC;
+}
+
+.panel.panel-default.failrues {
+	color: red;
+}
+
+
+#breadcrumbs {
+	font-style: italic;
+	font-size: 0.9em;
+}
+
+#breadcrumbs ul li {
+	display: inline-table;
+	margin-right: 0.2em;
+}
+
+#breadcrumbs ul li::after {
+    content: " >";
+}
+
+#breadcrumbs ul li:last-child {
+	/*font-weight: bold;*/
+}
+
+#breadcrumbs ul li:last-child::after {
+    content: "";
+}
+
+.scripts-library .script_version {
+	text-align: right;
+	float: right;
+	font-size: 0.8em;	
+}
+
+.consoleOutput {
+    font-weight: bold;
+}
+
+.consoleOutput.green {
+	color: #2db300;
+}
+
+.consoleOutput.orange{
+	color: orange;	
+}
+
+.consoleOutput.red{
+	color: red;
+}
+
+.consoleOutput.blue{
+	color: #00ace6;
+}
+
+#register .ts-main-content .content-wrapper,
+#login .ts-main-content .content-wrapper {
+	margin: 60px auto;
+}
+
+table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td {
+	/*text-transform: capitalize;*/
+}
+
+.test_results .report_status,
+.api_results .report_status {
+	border-radius: 100%;
+	width: 13px;
+	height: 13px;
+	position: relative;
+	text-indent: -9999px;
+	overflow: hidden;
+	margin: 0px auto;
+}
+
+.test_results .report_status.fail,
+.api_results .report_status.fail {
+	background: red;
+}
+
+.test_results .report_status.pass,
+.api_results .report_status.pass {
+	background: green;
+}
+
+.test_results .report_row_status.fail,
+.api_results .report_row_status.fail {
+	/*background: #ffd8d8 !important;*/
+	color: red;
+}
+
+.test_results .report_row_status.fail a,
+.api_results .report_row_status.fail a {
+	color: red;
+}
+
+.test_results .report_status.warn,
+.api_results .report_status.warn {
+	background: orange;
+}
+
+.nav-tabs>li>a {
+	border-color: #ddd;
+}
+
+.testel-body .api_results .nav.nav-tabs li,
+.panel-body .api_results .nav.nav-tabs li {
+	padding-left: 0px;
+}
+
+.nav-tabs>li>a {
+    background-color: #f8f5f0;
+    border-color: #dfd7ca;
+    color: #98978b;
+}
+
+.tab-content .nav-tabs>li.active>a,
+.tab-content .nav-tabs>li.active>a:focus,
+.tab-content .nav-tabs>li.active>a:hover {
+	background-color: #325d88;
+	color: #fff;
+}
+
+.defaultList {}
+
+.defaultList li {
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
+#legendDiv {
+	padding: 0.5em;
+	margin: 0px auto;
+	width: 40em;
+}
+
+#legendDiv li {
+	padding-left: 20px;
+	display: inline-table;
+}
+
+#legendDiv li div {
+	width: 15px;
+	height: 15px;
+	margin-right: 8px;
+	border: solid 1px #ccc;
+	float: left;
+	display: inline-table;
+}
+
+.loadTime_manifest,
+#legendDiv li.manifest div {
+	background: rgba(204,29,20,1);
+}
+
+.loadTime_navigation,
+#legendDiv li.navigation div {
+	background: rgba(86,152,56,1);
+}
+
+.loadTime_section,
+#legendDiv li.section div {
+	background: rgba(248,127,6,1);
+}
+
+.loadTime_content,
+#legendDiv li.content div {
+	background: rgba(100,181,205,1);
+}
+
+.loadTime_ott,
+#legendDiv li.ott div {
+	background: rgba(138,43,226,1);
+} 
+
+#app_log {
+    counter-reset: rowNumber;
+}
+
+#app_log tr {
+    counter-increment: rowNumber;
+}
+
+#app_log tr td:first-child {
+	text-align: center;
+	font-weight: bold;
+}
+
+#app_log tr td:first-child::before {
+    content: counter(rowNumber);
+    min-width: 1em;
+    margin-right: 0.5em;
+}
+
+.panel .payload_error {
+    max-width: 100%;
+    max-height: 300px;
+}
+
+table .fail {
+	color: red;
+}
+
+.panel-title .endpointName {
+	text-transform: capitalize;
+}
+
+/*input.form-control {
+	width: initial;
+    display: inline-table;
+}*/
+
+.form-label {
+	min-width: 150px;
+}
+
+.checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] {
+	position: static;
+	margin: 0px;
+}
+
+.checkbox label, .radio label {
+	padding-left: 5px;
+}
+
+.apiNotificationError button {
+	border: solid 1px red;
+	background: #d9534f;
+}
+
+.pagination {
+	margin: 0px;
+    float: right;
+}
+
+#report_stations li {
+	display: inline-grid;
+	margin: 0.2em;
+	border: solid 1px #777;
+	padding: 0.5em;
+	word-wrap: break-word;
+}
+
+#chart-container {
+	overflow-x: scroll;
+}
+
+#chart-container .chart {
+	min-width: 900px;
+}

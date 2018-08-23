@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" verbose="5" name="Failed suite [Suite]" parallel="classes">
+  <test thread-count="5" verbose="5" name="Test(failed)" parallel="classes">
+    <classes>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings">
+        <methods>
+          <include name="beforeTest"/>
+          <include name="afterTest"/>
+          <include name="beforeSuite"/>
+          <include name="afterSuite"/>
+          <include name="setData"/>
+          <include name="NbcPage"/>
+          <include name="afterMethod"/>
+          <include name="beforeMethod"/>
+        </methods>
+      </class> <!-- nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings -->
+    </classes>
+  </test> <!-- Test(failed) -->
+</suite> <!-- Failed suite [Suite] -->

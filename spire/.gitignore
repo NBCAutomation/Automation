@@ -1,0 +1,15 @@
+application/
+test_results/
+node_modules/
+vendor/
+tmp/
+logs/
+screenshots/
+logs/app.log
+composer.phar
+.DS_Store
+
+Archive.zip
+phpcompatinfo.json
+spire_sql_sample.sql
+npm-debug.log

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="135407" started-at="2018-08-13T13:11:49Z" finished-at="2018-08-13T13:14:04Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="135407" started-at="2018-08-13T13:11:49Z" finished-at="2018-08-13T13:14:04Z">
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll">
+        <test-method status="PASS" signature="beforeSuite()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@16f7c8c1]" name="beforeSuite" is-config="true" duration-ms="1762" started-at="2018-08-13T13:11:47Z" finished-at="2018-08-13T13:11:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeSuite -->
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@16f7c8c1]" name="beforeTest" is-config="true" duration-ms="1" started-at="2018-08-13T13:11:49Z" finished-at="2018-08-13T13:11:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeTest -->
+        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@16f7c8c1]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-13T13:11:49Z" finished-at="2018-08-13T13:11:49Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setData -->
+        <test-method status="PASS" signature="beforeMethod()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@16f7c8c1]" name="beforeMethod" is-config="true" duration-ms="36049" started-at="2018-08-13T13:11:49Z" finished-at="2018-08-13T13:12:25Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeMethod -->
+        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@16f7c8c1]" name="NbcPage" duration-ms="98339" started-at="2018-08-13T13:12:25Z" finished-at="2018-08-13T13:14:03Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- NbcPage -->
+        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@16f7c8c1]" name="afterMethod" is-config="true" duration-ms="935" started-at="2018-08-13T13:14:03Z" finished-at="2018-08-13T13:14:04Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterMethod -->
+        <test-method status="PASS" signature="afterTest()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@16f7c8c1]" name="afterTest" is-config="true" duration-ms="0" started-at="2018-08-13T13:14:04Z" finished-at="2018-08-13T13:14:04Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterTest -->
+        <test-method status="PASS" signature="afterSuite()[pri:0, instance:nbc_testcases.TC002_Top_stories_playback_with_pre_roll@16f7c8c1]" name="afterSuite" is-config="true" duration-ms="785" started-at="2018-08-13T13:14:04Z" finished-at="2018-08-13T13:14:05Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterSuite -->
+      </class> <!-- nbc_testcases.TC002_Top_stories_playback_with_pre_roll -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
