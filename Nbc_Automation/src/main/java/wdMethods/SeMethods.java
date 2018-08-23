@@ -36,7 +36,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import utils.Reporter;
-
+/*
+ * ghfchfhg
+ */
 public class SeMethods extends Reporter implements WdMethods {
 	
 	
