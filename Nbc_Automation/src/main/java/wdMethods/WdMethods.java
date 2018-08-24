@@ -15,7 +15,7 @@ public interface WdMethods {
 		 * @param browser - This will load the specified browser
 		 * 		 * 
 		 */
-		public void startApp(String browser) ;
+		public void startApp(String browser, String platform) ;
 
 		/**
 		 * This method will locate the element using any given locator

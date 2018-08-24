@@ -39,7 +39,7 @@ import utils.Reporter;
 public class SeMethods extends Reporter implements WdMethods {
 	public String URL;
 	public DesiredCapabilities dc;
-	public static RemoteWebDriver driver;
+	public RemoteWebDriver driver;
 	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,USERNAME1,ACCESS_KEY1;
 	public SeMethods() {
 		
@@ -62,13 +62,13 @@ public class SeMethods extends Reporter implements WdMethods {
 		}
 	}
 	
-	public void startApp(String b){
+	public void startApp(String b, String p){
 		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
 		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY1);
 		try {
 			
 			dc = new DesiredCapabilities();
-			if (b.equalsIgnoreCase("chrome")) {
+			if (b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Win10")) {
 				/*if(browser.equalsIgnoreCase("chrome")) {
 							System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver");
 							driver = new ChromeDriver();
@@ -167,7 +167,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			
 			}
 			
-			if(b.equalsIgnoreCase("chrome")){
+			if(b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Mac")){  
 				DesiredCapabilities dc = DesiredCapabilities.chrome();
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "68.0");
