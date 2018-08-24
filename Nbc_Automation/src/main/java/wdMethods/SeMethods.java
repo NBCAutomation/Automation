@@ -36,83 +36,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import utils.Reporter;
-
 public class SeMethods extends Reporter implements WdMethods {
-	
-	
-	public static String USERNAME = "";
-	public static String ACCESS_KEY = "";
-	//String USERNAME_D = System.getenv("");
-	//String ACCESS_KEY_D = System.getenv("");
 	public String URL;
-	
-	/*String user = System.getProperty("SAUCE_USERNAME") ;
-	String access = System.getProperty("SAUCE_ACCESS_KEY") ;*/
-	
-	
-	
-	 /*public static class test {
-
-		    public static void main(String[] args) {
-		    	
-		    	//System.out.println("System.getenv("PATH") = ");
-		        System.out.println(System.getenv("PATH"));
-		    	
-		        System.out.println(System.getenv("USERNAME"));
-		            
-		         *//**List<String> url = getData("UserName", 100);*//*
-		        System.out.println(getData("UserName",100));
-		        ArrayList<String> url= new ArrayList<String>();
-		         
-		          driver.get(url);
-		         // further test case coding
-		    }
-
-		    public static ArrayList<String> getData(String Data, int size) {
-
-		        String[] st = null;
-		        String value = null;
-		        File xmlfile = new File(System.getProperty("user.dir") + "\\URLS.xml");
-		        System.out.println(xmlfile);
-		        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		        try {
-		            DocumentBuilder dbuilder = dbFactory.newDocumentBuilder();
-		            Document doc = dbuilder.parse(xmlfile);
-
-		            NodeList list = doc.getElementsByTagName(Data);
-
-		            System.out.println("length of  : " + list.getLength());
-		            st = new String[list.getLength()];
-		            for (int i = 0; i < list.getLength(); i++) {
-
-		                st[i] = doc.getElementsByTagName(Data).item(i).getTextContent();
-		                System.out.println(st[i]);
-		                *//**if(i==0){
-		                	USERNAME=st[i];
-		                }
-		                else if(i==1){
-		                	ACCESS_KEY=st[i];
-		                }
-		              *//*
-		               value = st[i];
-		                
-		            }
-		        } catch (Exception e) {
-		            e.printStackTrace();
-
-		        }
-		        ArrayList<String> data = new ArrayList<String>();
-		        data.add(value);
-		        return data;
-		        
-		    }
-
-		}*/
-	
 	public DesiredCapabilities dc;
-	public static RemoteWebDriver driver;
-	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,USERNAME1,ACCESSKEY;
+	public RemoteWebDriver driver;
+	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,USERNAME1,ACCESS_KEY1;
 	public SeMethods() {
+		
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
@@ -121,7 +51,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			sUrl = prop.getProperty("NYURL");
 			name=prop.getProperty("NAME");
 			USERNAME1=prop.getProperty("USERNAME");
-			ACCESS_KEY=prop.getProperty("ACCESS_KEY");
+			ACCESS_KEY1=prop.getProperty("ACCESS_KEY");
 			//accesskey=prop.getProperty("ACCESS_KEY");
 		   
 		    
@@ -132,13 +62,13 @@ public class SeMethods extends Reporter implements WdMethods {
 		}
 	}
 	
-	public void startApp(String b){
-		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY + "@ondemand.saucelabs.com:443/wd/hub";
-		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY);
+	public void startApp(String b, String p){
+		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
+		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY1);
 		try {
 			
 			dc = new DesiredCapabilities();
-			if (b.equalsIgnoreCase("chrome")) {
+			if (b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Win10")) {
 				/*if(browser.equalsIgnoreCase("chrome")) {
 							System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver");
 							driver = new ChromeDriver();
@@ -163,6 +93,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			}
 			
 			}
+			
 			if (b.equalsIgnoreCase("Firefox")) {
 			DesiredCapabilities dc = DesiredCapabilities.firefox();
 			dc.setBrowserName("Firefox");
@@ -200,9 +131,9 @@ public class SeMethods extends Reporter implements WdMethods {
 			}
 			
 			if(b.equalsIgnoreCase("internetExplorer")){
-				DesiredCapabilities caps = DesiredCapabilities.internetExplorer();
-				caps.setCapability("platform", "Windows 10");
-				caps.setCapability("version", "11.103");
+				DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
+				dc.setCapability("platform", "Windows 10");
+				dc.setCapability("version", "11.103");
 				dc.setCapability("name", "www.nbcnewyork.com:");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
@@ -218,7 +149,7 @@ public class SeMethods extends Reporter implements WdMethods {
 				}
 			
 			
-			else if(b.equalsIgnoreCase("Safari")){
+			if(b.equalsIgnoreCase("Safari")){
 			DesiredCapabilities dc = DesiredCapabilities.safari();
 			dc.setCapability("platform", "macOS 10.13");
 			dc.setCapability("version", "11.1");
@@ -236,10 +167,10 @@ public class SeMethods extends Reporter implements WdMethods {
 			
 			}
 			
-			else if(b.equalsIgnoreCase("chrome")){
-				DesiredCapabilities caps = DesiredCapabilities.chrome();
-				caps.setCapability("platform", "macOS 10.13");
-				caps.setCapability("version", "68.0");
+			if(b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Mac")){  
+				DesiredCapabilities dc = DesiredCapabilities.chrome();
+				dc.setCapability("platform", "macOS 10.13");
+				dc.setCapability("version", "68.0");
 				dc.setCapability("name", "www.nbcnewyork.com:");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
@@ -255,9 +186,9 @@ public class SeMethods extends Reporter implements WdMethods {
 				}
 			
 			if (b.equalsIgnoreCase("Firefox")) {
-				DesiredCapabilities caps = DesiredCapabilities.firefox();
-				caps.setCapability("platform", "macOS 10.13");
-				caps.setCapability("version", "61.0");
+				DesiredCapabilities dc = DesiredCapabilities.firefox();
+				dc.setCapability("platform", "macOS 10.13");
+				dc.setCapability("version", "61.0");
 				dc.setCapability("version", "61.0");
 				dc.setCapability("name", "www.nbcnewyork.com:");
 				try {
@@ -274,7 +205,9 @@ public class SeMethods extends Reporter implements WdMethods {
 				
 			//dc.setCapability("passed", true);
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-			driver.get(sUrl);
+			
+				driver.get(sUrl);
+			
 			driver.manage().window().maximize();	
 
 			reportStep("The browser: launched successfully", "PASS");
@@ -323,7 +256,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public void click(WebElement ele) {
 		String text = "";
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 50);
+			WebDriverWait wait = new WebDriverWait(driver, 80);
 			wait.until(ExpectedConditions.elementToBeClickable(ele));			
 			text = ele.getText();
 			ele.click();

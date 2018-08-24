@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite guice-stage="DEVELOPMENT" name="Failed suite [Suite]" parallel="tests">
-  <test thread-count="5" name="Test1(failed)" parallel="tests">
-    <parameter name="browser" value="Firefox"/>
+  <test thread-count="5" name="Test(failed)" parallel="tests">
+    <parameter name="browser" value="chrome"/>
+    <parameter name="platform" value="mac"/>
     <classes>
       <class name="nbc_testcases.TC001_Logo_is_clickable">
         <methods>
@@ -17,22 +18,5 @@
         </methods>
       </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
     </classes>
-  </test> <!-- Test1(failed) -->
-  <test thread-count="5" name="Test4(failed)" parallel="tests">
-    <parameter name="browser" value="Safari"/>
-    <classes>
-      <class name="nbc_testcases.TC001_Logo_is_clickable">
-        <methods>
-          <include name="beforeTest"/>
-          <include name="afterTest"/>
-          <include name="beforeSuite"/>
-          <include name="afterSuite"/>
-          <include name="setData"/>
-          <include name="afterMethod"/>
-          <include name="beforeMethod"/>
-          <include name="NbcPage"/>
-        </methods>
-      </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
-    </classes>
-  </test> <!-- Test4(failed) -->
+  </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Suite] -->

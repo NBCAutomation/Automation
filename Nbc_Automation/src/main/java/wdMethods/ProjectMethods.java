@@ -25,13 +25,13 @@ public class ProjectMethods extends SeMethods{
 	public void beforeTest(){
 	}
 	
-	@Parameters({"browser"})
+	@Parameters({"browser","platform"})
 	@BeforeMethod
-	public void beforeMethod(String browser){
+	public void beforeMethod(String browser, String platform){
 		test = startTestCase(testCaseName, testDescription);
 		test.assignCategory(category);
 		test.assignAuthor(authors);
-		startApp(browser);
+		startApp(browser,platform);
 		
 	}
 		

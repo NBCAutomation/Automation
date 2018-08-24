@@ -2,24 +2,27 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite" parallel="tests">
 
-  <test thread-count="5" name="Test">
+  <test thread-count="5" name="Test2">
   <parameter name="browser" value="chrome"></parameter>
     <classes>
       <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
     </classes>
   </test> 
+  
   <test name="Test1">
   <parameter name="browser" value="Firefox"></parameter>
   <classes>
       <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
     </classes>
   </test>
+  
   <test name="Test3">
   <parameter name="browser" value="Edge"></parameter>
   <classes>
       <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
     </classes>
   </test>
+  
   <test name="Test4">
   <parameter name="browser" value="Safari"></parameter>
   <classes>
