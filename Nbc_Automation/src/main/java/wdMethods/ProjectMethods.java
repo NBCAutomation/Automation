@@ -34,10 +34,12 @@ public class ProjectMethods extends SeMethods{
 		startApp(browser,platform);
 		
 	}
-		
+	
 	@AfterSuite
-	public void afterSuite(){
+	public void afterSuite() throws Exception{
 		endResult();
+		sendmailAttachment();
+		
 	}
 
 	@AfterTest

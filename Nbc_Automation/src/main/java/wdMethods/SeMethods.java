@@ -13,7 +13,22 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.json.Json;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
@@ -40,7 +55,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public String URL;
 	public DesiredCapabilities dc;
 	public RemoteWebDriver driver;
-	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,USERNAME1,ACCESS_KEY1;
+	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
 	public SeMethods() {
 		
 		Properties prop = new Properties();
@@ -50,9 +65,15 @@ public class SeMethods extends Reporter implements WdMethods {
 			sHubPort = prop.getProperty("PORT");
 			sUrl = prop.getProperty("NYURL");
 			name=prop.getProperty("NAME");
+			status=prop.getProperty("STATUS");
 			USERNAME1=prop.getProperty("USERNAME");
 			ACCESS_KEY1=prop.getProperty("ACCESS_KEY");
-			//accesskey=prop.getProperty("ACCESS_KEY");
+			attachment=prop.getProperty("Filepath");
+			filename=prop.getProperty("FileName");
+			to=prop.getProperty("To");
+			cc=prop.getProperty("CC");
+			email=prop.getProperty("Email");
+			password=prop.getProperty("Password");
 		   
 		    
 		} catch (FileNotFoundException e) {
@@ -76,11 +97,15 @@ public class SeMethods extends Reporter implements WdMethods {
 							System.setProperty("webdriver.ie.driver", "./drivers/internetexplorerserver.exe");
 							driver = new InternetExplorerDriver();
 						}*/
+				
+				
+				
 			DesiredCapabilities dc = DesiredCapabilities.chrome();	
 			dc.setBrowserName("Chrome");
 			dc.setPlatform(Platform.WIN10);
 			dc.setCapability("version", "68.0");
 			dc.setCapability("name", "www.nbcnewyork.com:");
+			dc.setCapability("passed", "True");
 			try {
 			driver = new RemoteWebDriver(new URL(URL), dc);
 			}
@@ -100,6 +125,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			dc.setPlatform(Platform.WIN10);
 			dc.setCapability("version", "61.0");
 			dc.setCapability("name", "www.nbcnewyork.com:");
+			dc.setCapability("passed", "True");
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
 				}
@@ -117,6 +143,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			dc.setCapability("platform", "Windows 10");
 			dc.setCapability("version", "17.17134");
 			dc.setCapability("name", "www.nbcnewyork.com:");
+			dc.setCapability("passed", "True");
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
 				}
@@ -135,6 +162,7 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "11.103");
 				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
 					}
@@ -154,6 +182,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			dc.setCapability("platform", "macOS 10.13");
 			dc.setCapability("version", "11.1");
 			dc.setCapability("name", "www.nbcnewyork.com:");
+			dc.setCapability("passed", "True");
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
 				}
@@ -172,6 +201,7 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "68.0");
 				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
 					}
@@ -191,6 +221,7 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("version", "61.0");
 				dc.setCapability("version", "61.0");
 				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
 					}
@@ -574,6 +605,57 @@ public class SeMethods extends Reporter implements WdMethods {
 				).build();
 
 		return createIssue.toString();
+	}
+	
+	public Boolean sendmailAttachment() throws Exception {
+
+		String fileAttachment = attachment;
+
+		Properties props = new Properties();
+
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", "465");
+
+		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(email,password);
+			}});
+		try {
+
+			Message message = new MimeMessage(session);
+
+			message.setFrom(new InternetAddress(email));
+			message.setRecipients(Message.RecipientType.TO ,InternetAddress.parse(to));
+			message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
+			message.setSubject("NBC Sanity Automation Testing Report NBC Miami");
+			message.setText(filename);  
+
+			MimeBodyPart messageBodyPart =new MimeBodyPart();
+			messageBodyPart.setText("Hi Team, \n \n Please find the automation report for the NBC Miami iOS App. Tested Modules are: \n \n TC-1. Opening the app and allowing the permission pop-up. \n TC-2. Save news as homepage. \n TC-3. Dismiss the tutorial screen. \n TC-4. Navigating to different section/sub-section pages of the app. \n TC-5. TVE. \n TC-6. Weather landing and interactive radar. \n \n Kindly download the attachment to review the report.\n \n");
+
+
+			Multipart multipart = new MimeMultipart();
+			multipart.addBodyPart(messageBodyPart);
+
+			messageBodyPart = new MimeBodyPart();
+			DataSource source = new FileDataSource(fileAttachment);
+			messageBodyPart.setDataHandler(new DataHandler(source));
+			messageBodyPart.setFileName(filename);
+			multipart.addBodyPart(messageBodyPart);
+
+			message.setContent(multipart);
+
+			Transport.send( message );
+			System.out.println("Mail sent");
+		} catch (MessagingException e) {
+			e.printStackTrace();
+			System.out.println("exception in Send Mail");
+			return false;
+		}
+		return true;
 	}
 
 }

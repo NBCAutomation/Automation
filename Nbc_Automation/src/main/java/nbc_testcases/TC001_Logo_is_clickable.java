@@ -32,6 +32,6 @@ public class TC001_Logo_is_clickable extends ProjectMethods{
 	} catch (InterruptedException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	}
+	
 	}*/
 

@@ -2,64 +2,24 @@
 <testng-results skipped="0" failed="0" ignored="0" total="2" passed="2">
   <reporter-output>
   </reporter-output>
-  <suite name="Suite" duration-ms="71089" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:10:00Z">
+  <suite name="Suite" duration-ms="76905" started-at="2018-08-27T12:41:53Z" finished-at="2018-08-27T12:43:10Z">
     <groups>
     </groups>
-    <test name="Test" duration-ms="57015" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:09:46Z">
+    <test name="Test1" duration-ms="48092" started-at="2018-08-27T12:41:53Z" finished-at="2018-08-27T12:42:42Z">
       <class name="nbc_testcases.TC001_Logo_is_clickable">
-        <test-method status="PASS" signature="beforeTest()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2fd66ad3]" name="beforeTest" is-config="true" duration-ms="0" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:08:49Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeTest -->
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2fd66ad3]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:08:49Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod(java.lang.String, java.lang.String)[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2fd66ad3]" name="beforeMethod" is-config="true" duration-ms="32001" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:09:21Z">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[chrome]]>
-              </value>
-            </param>
-            <param index="1">
-              <value>
-                <![CDATA[mac]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2fd66ad3]" name="NbcPage" duration-ms="24470" started-at="2018-08-24T06:09:21Z" finished-at="2018-08-24T06:09:45Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2fd66ad3]" name="afterMethod" is-config="true" duration-ms="515" started-at="2018-08-24T06:09:45Z" finished-at="2018-08-24T06:09:46Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterMethod -->
-        <test-method status="PASS" signature="afterTest()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2fd66ad3]" name="afterTest" is-config="true" duration-ms="0" started-at="2018-08-24T06:09:46Z" finished-at="2018-08-24T06:09:46Z">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- afterTest -->
-      </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
-    </test> <!-- Test -->
-    <test name="Test1" duration-ms="71087" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:10:00Z">
-      <class name="nbc_testcases.TC001_Logo_is_clickable">
-        <test-method status="PASS" signature="beforeSuite()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@8b87145]" name="beforeSuite" is-config="true" duration-ms="2040" started-at="2018-08-24T06:08:47Z" finished-at="2018-08-24T06:08:49Z">
+        <test-method status="PASS" signature="beforeSuite()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@71d15f18]" name="beforeSuite" is-config="true" duration-ms="2212" started-at="2018-08-27T12:41:51Z" finished-at="2018-08-27T12:41:53Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- beforeSuite -->
-        <test-method status="PASS" signature="beforeTest()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@8b87145]" name="beforeTest" is-config="true" duration-ms="0" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:08:49Z">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@71d15f18]" name="beforeTest" is-config="true" duration-ms="0" started-at="2018-08-27T12:41:53Z" finished-at="2018-08-27T12:41:53Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- beforeTest -->
-        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@8b87145]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:08:49Z">
+        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@71d15f18]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-27T12:41:53Z" finished-at="2018-08-27T12:41:53Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setData -->
-        <test-method status="PASS" signature="beforeMethod(java.lang.String, java.lang.String)[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@8b87145]" name="beforeMethod" is-config="true" duration-ms="40172" started-at="2018-08-24T06:08:49Z" finished-at="2018-08-24T06:09:29Z">
+        <test-method status="PASS" signature="beforeMethod(java.lang.String, java.lang.String)[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@71d15f18]" name="beforeMethod" is-config="true" duration-ms="28135" started-at="2018-08-27T12:41:54Z" finished-at="2018-08-27T12:42:22Z">
           <params>
             <param index="0">
               <value>
@@ -75,23 +35,63 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- beforeMethod -->
-        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@8b87145]" name="NbcPage" duration-ms="30326" started-at="2018-08-24T06:09:29Z" finished-at="2018-08-24T06:09:59Z">
+        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@71d15f18]" name="NbcPage" duration-ms="19166" started-at="2018-08-27T12:42:22Z" finished-at="2018-08-27T12:42:41Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- NbcPage -->
-        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@8b87145]" name="afterMethod" is-config="true" duration-ms="564" started-at="2018-08-24T06:09:59Z" finished-at="2018-08-24T06:10:00Z">
+        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@71d15f18]" name="afterMethod" is-config="true" duration-ms="740" started-at="2018-08-27T12:42:41Z" finished-at="2018-08-27T12:42:42Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- afterMethod -->
-        <test-method status="PASS" signature="afterTest()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@8b87145]" name="afterTest" is-config="true" duration-ms="0" started-at="2018-08-24T06:10:00Z" finished-at="2018-08-24T06:10:00Z">
+        <test-method status="PASS" signature="afterTest()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@71d15f18]" name="afterTest" is-config="true" duration-ms="0" started-at="2018-08-27T12:42:42Z" finished-at="2018-08-27T12:42:42Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- afterTest -->
-        <test-method status="PASS" signature="afterSuite()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@8b87145]" name="afterSuite" is-config="true" duration-ms="818" started-at="2018-08-24T06:10:00Z" finished-at="2018-08-24T06:10:01Z">
+        <test-method status="PASS" signature="afterSuite()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@71d15f18]" name="afterSuite" is-config="true" duration-ms="18984" started-at="2018-08-27T12:43:10Z" finished-at="2018-08-27T12:43:29Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- afterSuite -->
       </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
     </test> <!-- Test1 -->
+    <test name="Test" duration-ms="76905" started-at="2018-08-27T12:41:53Z" finished-at="2018-08-27T12:43:10Z">
+      <class name="nbc_testcases.TC001_Logo_is_clickable">
+        <test-method status="PASS" signature="beforeTest()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2f8f5f62]" name="beforeTest" is-config="true" duration-ms="1" started-at="2018-08-27T12:41:53Z" finished-at="2018-08-27T12:41:53Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeTest -->
+        <test-method status="PASS" signature="setData()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2f8f5f62]" name="setData" is-config="true" duration-ms="0" started-at="2018-08-27T12:41:53Z" finished-at="2018-08-27T12:41:53Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setData -->
+        <test-method status="PASS" signature="beforeMethod(java.lang.String, java.lang.String)[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2f8f5f62]" name="beforeMethod" is-config="true" duration-ms="45360" started-at="2018-08-27T12:41:54Z" finished-at="2018-08-27T12:42:39Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[mac]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- beforeMethod -->
+        <test-method status="PASS" signature="NbcPage()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2f8f5f62]" name="NbcPage" duration-ms="30225" started-at="2018-08-27T12:42:39Z" finished-at="2018-08-27T12:43:09Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- NbcPage -->
+        <test-method status="PASS" signature="afterMethod()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2f8f5f62]" name="afterMethod" is-config="true" duration-ms="1269" started-at="2018-08-27T12:43:09Z" finished-at="2018-08-27T12:43:10Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterMethod -->
+        <test-method status="PASS" signature="afterTest()[pri:0, instance:nbc_testcases.TC001_Logo_is_clickable@2f8f5f62]" name="afterTest" is-config="true" duration-ms="0" started-at="2018-08-27T12:43:10Z" finished-at="2018-08-27T12:43:10Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- afterTest -->
+      </class> <!-- nbc_testcases.TC001_Logo_is_clickable -->
+    </test> <!-- Test -->
   </suite> <!-- Suite -->
 </testng-results>
