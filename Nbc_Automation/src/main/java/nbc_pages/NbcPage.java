@@ -157,46 +157,36 @@ import wdMethods.ProjectMethods;
 		private WebElement elewatchlivelogo;	
 		public NbcPage clickwatchlivelogo() {
 			mouseover(elewatchlivelogo);
-			driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//li[@class='schedule']")
-		
-		////li[@class='schedule']
+		@FindBy(how=How.XPATH,using="//li[@class='schedule']/a")
 		private WebElement elefullschedule;	
 		public TVlistingsschedule clickfullschedule() {
 			click(elefullschedule);
 			return new TVlistingsschedule(driver, test);
 		}
 		
-		@FindBy(how=How.XPATH,using="//li[text()='LIVE TV']")
+		@FindBy(how=How.XPATH,using="//li[@class='livetv']")
 		private WebElement elelivetv;	
 		public NbcPage clicklivetv() {
-			Actions act = new Actions(driver);
-			act.doubleClick(elelivetv).build().perform();
 			click(elelivetv);
-			getText(elelivetv);
 			System.out.println(elelivetv);
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//li[text()='ON NOW']")
+		@FindBy(how=How.XPATH,using="//li[@class='onnow']")
 		private WebElement eleonnow;	
 		public NbcPage clickonnow() {
-			Actions act = new Actions(driver);
-			act.doubleClick(eleonnow).build().perform();
 			click(eleonnow);
-			getText(eleonnow);
 			System.out.println(eleonnow);
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//li[text()='ON DEMAND']")
+		@FindBy(how=How.XPATH,using="//li[@class='ondemand']")
 		private WebElement eleondemand;	
 		public NbcPage clickondemand() {
-			verifyDisplayed(eleondemand);
-			getText(eleondemand);
+			click(eleondemand);
 			System.out.println(eleondemand);
 			return this;
 		}
@@ -209,7 +199,8 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='globalRightRail']//p[@class='reltime']")
+		@FindBy(how=How.XPATH,using="//div[@id='sfcontentFill']//p[@class='reltime']")
+		//div[@class='globalRightRail']//p[@class='reltime']")
 		private WebElement eleminutesago;	
 		public NbcPage clickminutesago() {
 			click(eleminutesago);

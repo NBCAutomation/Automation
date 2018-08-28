@@ -74,6 +74,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			cc=prop.getProperty("CC");
 			email=prop.getProperty("Email");
 			password=prop.getProperty("Password");
+			
 		   
 		    
 		} catch (FileNotFoundException e) {
@@ -85,7 +86,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	
 	public void startApp(String b, String p){
 		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
-		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY1);
+/*		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY1);*/		
 		try {
 			
 			dc = new DesiredCapabilities();
@@ -556,7 +557,7 @@ public class SeMethods extends Reporter implements WdMethods {
 
 		try {
 			Actions act = new Actions(driver);
-			act.moveToElement(ele).perform();
+			act.moveToElement(ele).build().perform();
 		} catch (WebDriverException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

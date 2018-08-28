@@ -3,6 +3,7 @@
 	<name>Nbc_Automation</name>
 	<comment></comment>
 	<projects>
+		<project>Nbc_MobileAutomation</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
