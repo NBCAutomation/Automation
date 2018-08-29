@@ -209,17 +209,17 @@ but here we using only JAVA.
 
 **Extent-reports**
 
-The Extent API can produce more interactive reports, a dashboard view, graphical view, capture screenshots as images in the reports, and emailable reports which can be mailed right after the unit test is completed.
+	The Extent API can produce more interactive reports, a dashboard view, graphical view, capture screenshots as images 	in the reports, and emailable reports which can be mailed right after the unit test is completed.
 
-The Extent API can be configured to support programming languages like Java and .Net and unit testing frameworks like JUnit, TestNG, NUnit, etc.
+	The Extent API can be configured to support programming languages like Java and .Net and unit testing frameworks like 	JUnit, TestNG, NUnit, etc.
 
-Implementation of Extent API in Selenium Using TestNG 
-To create reports with the Extent API, we need to follow the below steps.
+	Implementation of Extent API in Selenium Using TestNG 
+	To create reports with the Extent API, we need to follow the below steps.
 
-Create a Maven project in Eclipse and add artifacts like Selenium, TestNG, and the Extent API as dependencies in the pom.xml, as shown below:
-
+	Create a Maven project in Eclipse and add artifacts like Selenium, TestNG, and the Extent API as dependencies in the 
 	
-	
+pom.xml, as shown below:
+
 	<dependencies>
 	<!-- https://mvnrepository.com/artifact/com.relevantcodes/extentreports -->
 	<dependency>
@@ -229,11 +229,18 @@ Create a Maven project in Eclipse and add artifacts like Selenium, TestNG, and t
 	</dependency>
 	</dependencies>
 	
-ExtentTest is initialized from the ExtentReports object by calling the lifecycle methods of reports. To start the log information in the reports, call startTest(). The return of startTest() is assigned to the test as a reference variable to ExtentTest.
+	ExtentTest is initialized from the ExtentReports object by calling the lifecycle methods of reports. To start the log 		information in the reports, call startTest(). The return of startTest() is assigned to the test as a reference 		variable to ExtentTest.
 
-The LogStatus enum is used to add the status message based on the test execution. We have constant values in LogStatus like INFO, PASS, FAIL, SKIP, ERROR, FATAL, WARNING, and UNKNOWN. Call the status message in the respective lifecycle method to get the appropriate message in the report.
+	The LogStatus enum is used to add the status message based on the test execution. We have constant values in LogStatus 		like INFO, PASS, FAIL, SKIP, ERROR, FATAL, WARNING, and UNKNOWN. Call the status message in the respective lifecycle 		method to get the appropriate message in the report.
 
 End the test reports by calling endTest() and flush() from the reports to properly close the resources
+
+**.gitignore**
+
+	1.	Re-commiting the SauceLabs userKey and AccessKey and stored in respective directory.
+	2.	Ensure whenever the push is happen those gitignore file has not to added into your repository.
+	3.	Your base code should be clean with no accessing data which has depending on the execution.
+	4.	All the authorized credentilas has been stored in my local machine and the respective file has been loaded in 		.gitignore file.
 
 **Authors**
 
