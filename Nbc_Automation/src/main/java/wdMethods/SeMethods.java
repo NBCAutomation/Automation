@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +30,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
@@ -56,11 +58,18 @@ public class SeMethods extends Reporter implements WdMethods {
 	public DesiredCapabilities dc;
 	public RemoteWebDriver driver;
 	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
+	public Map<String, String> appData = new HashedMap<>(); 
+	
+	
 	public SeMethods() {
 		
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+			
+			appData.put("sUrl", prop.getProperty("NYURL"));
+			appData.put("LUrl", prop.getProperty("LAURL"));
+			
 			sHubUrl = prop.getProperty("HUB");
 			sHubPort = prop.getProperty("PORT");
 			sUrl = prop.getProperty("NYURL");
@@ -75,9 +84,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			cc=prop.getProperty("CC");
 			email=prop.getProperty("Email");
 			password=prop.getProperty("Password");
-			
-		   
-		    
+			   
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -85,14 +92,16 @@ public class SeMethods extends Reporter implements WdMethods {
 		}
 	}
 	
-	public void startApp(String b, String p){
-		//String webURL="NULL";
+	public void startApp(String b, String p, String applicationUrl){
+		
 		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
 /*		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY1);*/		
 		try {
 			
 			dc = new DesiredCapabilities();
 			if (b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Win10")) {
+				
+				
 				/*if(browser.equalsIgnoreCase("chrome")) {
 							System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver");
 							driver = new ChromeDriver();
@@ -100,9 +109,7 @@ public class SeMethods extends Reporter implements WdMethods {
 							System.setProperty("webdriver.ie.driver", "./drivers/internetexplorerserver.exe");
 							driver = new InternetExplorerDriver();
 						}*/
-				
-				
-				
+			
 			DesiredCapabilities dc = DesiredCapabilities.chrome();	
 			dc.setBrowserName("Chrome");
 			dc.setCapability("platform", "Windows 10");
@@ -240,11 +247,9 @@ public class SeMethods extends Reporter implements WdMethods {
 				}
 				
 			//dc.setCapability("passed", true);
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-			
-				
-				driver.get(sUrl);
-			
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);	
+			System.out.println("Launching URL --> "+appData.get(applicationUrl));
+			driver.get(appData.get(applicationUrl));
 			driver.manage().window().maximize();	
 
 			reportStep("The browser: launched successfully", "PASS");

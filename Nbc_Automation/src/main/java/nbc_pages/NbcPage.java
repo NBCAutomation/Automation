@@ -199,8 +199,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@id='sfcontentFill']//p[@class='reltime']")
-		//div[@class='globalRightRail']//p[@class='reltime']")
+		@FindBy(how=How.XPATH,using="//div[@id='sfcontentFill']//following::p[@class='reltime'][3]")
 		private WebElement eleminutesago;	
 		public NbcPage clickminutesago() {
 			click(eleminutesago);

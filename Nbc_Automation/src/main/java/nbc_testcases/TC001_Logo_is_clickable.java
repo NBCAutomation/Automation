@@ -22,6 +22,12 @@ public class TC001_Logo_is_clickable extends ProjectMethods{
 	@Test
 	public void NbcPage(){
 
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	new NbcPage(driver, test)
 	.clicknbclogo();
 	
