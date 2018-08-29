@@ -55,7 +55,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public String URL;
 	public DesiredCapabilities dc;
 	public RemoteWebDriver driver;
-	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
+	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
 	public SeMethods() {
 		
 		Properties prop = new Properties();
@@ -64,6 +64,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			sHubUrl = prop.getProperty("HUB");
 			sHubPort = prop.getProperty("PORT");
 			sUrl = prop.getProperty("NYURL");
+			LUrl = prop.getProperty("LAURL");
 			name=prop.getProperty("NAME");
 			status=prop.getProperty("STATUS");
 			USERNAME1=prop.getProperty("USERNAME");
@@ -85,6 +86,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	}
 	
 	public void startApp(String b, String p){
+		//String webURL="NULL";
 		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
 /*		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY1);*/		
 		try {
@@ -103,10 +105,11 @@ public class SeMethods extends Reporter implements WdMethods {
 				
 			DesiredCapabilities dc = DesiredCapabilities.chrome();	
 			dc.setBrowserName("Chrome");
-			dc.setPlatform(Platform.WIN10);
+			dc.setCapability("platform", "Windows 10");
 			dc.setCapability("version", "68.0");
 			dc.setCapability("name", "www.nbcnewyork.com:");
 			dc.setCapability("passed", "True");
+			//webURL = sUrl;
 			try {
 			driver = new RemoteWebDriver(new URL(URL), dc);
 			}
@@ -120,13 +123,14 @@ public class SeMethods extends Reporter implements WdMethods {
 			
 			}
 			
-			if (b.equalsIgnoreCase("Firefox")) {
+			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
 			DesiredCapabilities dc = DesiredCapabilities.firefox();
 			dc.setBrowserName("Firefox");
-			dc.setPlatform(Platform.WIN10);
+			dc.setCapability("platform", "Windows 10");
 			dc.setCapability("version", "61.0");
 			dc.setCapability("name", "www.nbcnewyork.com:");
 			dc.setCapability("passed", "True");
+			//webURL=LUrl;
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
 				}
@@ -216,7 +220,7 @@ public class SeMethods extends Reporter implements WdMethods {
 				
 				}
 			
-			if (b.equalsIgnoreCase("Firefox")) {
+			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Mac")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "61.0");
@@ -238,6 +242,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			//dc.setCapability("passed", true);
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			
+				
 				driver.get(sUrl);
 			
 			driver.manage().window().maximize();	

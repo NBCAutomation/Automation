@@ -3,19 +3,21 @@
 <suite name="Suite" parallel="tests">
 	<test thread-count="5" name="Test">
 		<parameter name="browser" value="chrome"></parameter>
-		<parameter name="platform" value="mac"></parameter>
-		<classes>
-			<class name="nbc_testcases.TC001_Logo_is_clickable" />
-		</classes>
-	</test>
-	<!-- <test thread-count="5" name="Test1">
-		<parameter name="browser" value="chrome"></parameter>
 		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
 	</test>
-	<test thread-count="5" name="Test2">
+	<test thread-count="5" name="Test1">
+		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+		<classes>
+			<class name="nbc_testcases.TC001_Logo_is_clickable" />
+		</classes>
+	</test>
+	<!-- <test thread-count="5" name="Test2">
 		<parameter name="browser" value="Firefox"></parameter>
 		<parameter name="platform" value="win10"></parameter>
 		<classes>
@@ -49,6 +51,6 @@
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
-	</test>
- -->	<!-- Test -->
+	</test> -->
+	<!-- Test -->
 </suite> <!-- Suite -->
