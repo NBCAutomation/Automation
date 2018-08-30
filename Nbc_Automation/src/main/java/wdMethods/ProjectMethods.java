@@ -48,7 +48,6 @@ public class ProjectMethods extends SeMethods{
 	
 	@AfterMethod
 	public void afterMethod(){
-		
 		endTestcase();
 		closeAllBrowsers();
 	}

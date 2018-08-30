@@ -6,6 +6,7 @@
 		<parameter name="browser" value="chrome"></parameter>
 		<parameter name="platform" value="win10"></parameter>
 		<parameter name="url" value="sUrl"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
@@ -15,6 +16,7 @@
 		<parameter name="browser" value="Firefox"></parameter>
 		<parameter name="platform" value="win10"></parameter>
 		<parameter name="url" value="LUrl"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
