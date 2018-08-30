@@ -120,6 +120,24 @@ Apache Maven provides support for managing the full lifecycle of a test project.
 		  </depandency>
 
 
+**Configuration**
+	
+1.	Saucelabs Configuration
+	UserName + Access_Key
+2.	Properties file configuration (User Credentials)
+	HUB + PORT + URL
+3.	TestNG Configuration
+	ANNOTAIONS
+4.	XML configuration
+	Test Datas
+5.	Eclipse Tool
+6.	MAVEN Tool
+7.	Jenkins
+8.	GitHub
+9.	JIRA
+10.	SLACK
+
+
 **Jenkins**
 
 Jenkins is a Continuous Integration (CI) server or tool which is written in java. It provides Continuous Integration services for software development, which can be started via command line or web application server. And also, it is happy to know that Jenkins is free software to download and install.
@@ -244,7 +262,7 @@ End the test reports by calling endTest() and flush() from the reports to proper
 
 **Authors**
 
-	1	Vinothkumar
+1	Vinothkumar
 
 
 
