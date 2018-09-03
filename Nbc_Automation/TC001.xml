@@ -1,44 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite" parallel="tests">
-	
-	<test thread-count="5" name="Test">
-		<parameter name="browser" value="chrome"></parameter>
-		<parameter name="platform" value="win10"></parameter>
-		<parameter name="url" value="sUrl"></parameter>
-		<parameter name="url" value="LUrl"></parameter>
-		<classes>
-			<class name="nbc_testcases.TC001_Logo_is_clickable" />
-		</classes>
-	</test>
-	
+
 	<test thread-count="5" name="Test1">
 		<parameter name="browser" value="Firefox"></parameter>
 		<parameter name="platform" value="win10"></parameter>
-		<parameter name="url" value="LUrl"></parameter>
 		<parameter name="url" value="sUrl"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
 	</test>
 	
-	<!-- <test thread-count="5" name="Test2">
-		<parameter name="browser" value="Firefox"></parameter>
+	<!-- <test thread-count="5" name="Test">
+		<parameter name="browser" value="chrome"></parameter>
 		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
 	</test>
+
+	<test thread-count="5" name="Test2">
+		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+		<classes>
+			<class name="nbc_testcases.TC001_Logo_is_clickable" />
+		</classes>
+	</test>
+	
 	<test thread-count="5" name="Test3">
 		<parameter name="browser" value="Edge"></parameter>
 		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
-	</test>
-	<test thread-count="5" name="Test4">
+	</test> -->
+	
+	<!-- <test thread-count="5" name="Test4">
 		<parameter name="browser" value="internetExplorer"></parameter>
 		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
@@ -46,6 +54,9 @@
 	<test thread-count="5" name="Test5">
 		<parameter name="browser" value="Safari"></parameter>
 		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
@@ -53,6 +64,9 @@
 	<test thread-count="5" name="Test6">
 		<parameter name="browser" value="Firefox"></parameter>
 		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>

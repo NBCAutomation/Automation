@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,6 +33,7 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FileUtils;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.JavascriptExecutor;
@@ -50,6 +52,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.DataProvider;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import utils.Reporter;
@@ -57,9 +60,8 @@ public class SeMethods extends Reporter implements WdMethods {
 	public String URL;
 	public DesiredCapabilities dc;
 	public RemoteWebDriver driver;
-	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
-	public Map<String, String> appData = new HashedMap<>(); 
-	
+	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl,T5Url,TPUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
+	public  Map<String, String> appData = new HashedMap<>();
 	
 	public SeMethods() {
 		
@@ -69,11 +71,10 @@ public class SeMethods extends Reporter implements WdMethods {
 			
 			appData.put("sUrl", prop.getProperty("NYURL"));
 			appData.put("LUrl", prop.getProperty("LAURL"));
-			
+			appData.put("T5Url", prop.getProperty("T51URL"));
+			appData.put("TPUrl", prop.getProperty("TPRURL"));
 			sHubUrl = prop.getProperty("HUB");
 			sHubPort = prop.getProperty("PORT");
-			sUrl = prop.getProperty("NYURL");
-			LUrl = prop.getProperty("LAURL");
 			name=prop.getProperty("NAME");
 			status=prop.getProperty("STATUS");
 			USERNAME1=prop.getProperty("USERNAME");
@@ -248,7 +249,7 @@ public class SeMethods extends Reporter implements WdMethods {
 				
 			//dc.setCapability("passed", true);
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);	
-			System.out.println("Launching URL --> "+appData.get(applicationUrl));
+			System.out.println("Launching NBC--->URL --> "+appData.get(applicationUrl));
 			driver.get(appData.get(applicationUrl));
 			driver.manage().window().maximize();	
 
@@ -567,7 +568,7 @@ public class SeMethods extends Reporter implements WdMethods {
 
 		try {
 			Actions act = new Actions(driver);
-			act.moveToElement(ele).build().perform();
+			act.moveToElement(ele).perform();
 		} catch (WebDriverException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

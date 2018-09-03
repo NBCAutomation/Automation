@@ -1,13 +1,19 @@
 package nbc_pages;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.relevantcodes.extentreports.ExtentTest;
 
@@ -20,9 +26,11 @@ import wdMethods.ProjectMethods;
 			this.test = test;
 
 			PageFactory.initElements(driver, this);		
-			if(!verifyTitle("New York News, Local News, Weather, Traffic, Entertainment, Breaking News || Los Angeles News, Sports, Weather, and Traffic")){
-				throw new RuntimeException();
-			}	
+			//if(!verifyTitle("New York News, Local News, Weather, Traffic, Entertainment, Breaking News")){
+//				if(!verifyTitle("Los Angeles News, Local News, Weather, Traffic, Entertainment, Breaking News")){
+//				throw new RuntimeException();
+//				
+//			}	
 		}
 		
 		@FindBy(how=How.XPATH,using="//a[@name='&lpos=section navigation&lid=logo']/img")
@@ -160,7 +168,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//li[@class='schedule']/a")
+		@FindBy(how=How.XPATH,using="//ul[@class='nav-small']//a[text()='Click for full schedule']")
 		private WebElement elefullschedule;	
 		public TVlistingsschedule clickfullschedule() {
 			click(elefullschedule);
@@ -208,7 +216,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='top-stories']//div[@class='lead-story']")
+		@FindBy(how=How.XPATH,using="//div[@class='play-grey-medium'][1]")
 		private WebElement eletopstories;	
 		public NbcPage clicktopstories() {
 			click(eletopstories);

@@ -19,9 +19,9 @@ import wdMethods.ProjectMethods;
 			this.test = test;
 
 			PageFactory.initElements(driver, this);		
-			if(!verifyTitle("TV Listings, Schedule, and What's on Tonight on WNBC 4 New York | NBC New York")) {
+			/*if(!verifyTitle("TV Listings, Schedule, and What's on Tonight on WNBC 4 New York | NBC New York")) {
 				throw new RuntimeException();
-			}
+			}*/
 		}
 		
 		@FindBy(how=How.XPATH,using="//li[contains(text(),'NBC 4')]")

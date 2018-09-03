@@ -22,7 +22,7 @@ public class ProjectMethods extends SeMethods{
 	}
 
 	@BeforeTest
-	public void beforeTest(){
+	public void beforeTest() {
 	}
 	
 	@Parameters({"browser","platform","url"})
@@ -52,9 +52,18 @@ public class ProjectMethods extends SeMethods{
 		closeAllBrowsers();
 	}
 	
-	@DataProvider(name="fetchData")
+	/*@DataProvider(name="fetchData")
 	public  Object[][] getData(){
 		return DataInputProvider.getSheet(dataSheetName);		
-	}	
+	}*/	
 	
+	@DataProvider(name="fetchData")
+	public  Object[][] getData(){
+		
+		/*Object [][] data = new Object [1][1];
+		data[0][0] = "https://www.nbcnewyork.com";
+		
+		return data;*/
+		return DataInputProvider.getSheet(dataSheetName);		
+	}
 }
