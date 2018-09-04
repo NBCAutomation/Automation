@@ -1,5 +1,6 @@
 package wdMethods;
 
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.AfterTest;
@@ -13,9 +14,10 @@ import utils.DataInputProvider;
 
 
 public class ProjectMethods extends SeMethods{
-	
+
 	public String browserName;
 	public String dataSheetName;
+	
 	@BeforeSuite
 	public void beforeSuite(){
 		startResult();
@@ -31,7 +33,9 @@ public class ProjectMethods extends SeMethods{
 		test = startTestCase(testCaseName, testDescription);
 		test.assignCategory(category);
 		test.assignAuthor(authors);
-		startApp(browser,platform,applicationUrl);
+		String tcname=testCaseName;
+		String bname=browserName;
+		startApp(browser,platform,applicationUrl,tcname,bname);
 		
 	}
 	
@@ -47,7 +51,15 @@ public class ProjectMethods extends SeMethods{
 	}
 	
 	@AfterMethod
-	public void afterMethod(){
+	public void afterMethod(ITestResult result){
+		
+		/*((JavascriptExecutor) webDriver.get()).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
+        webDriver.get().quit();
+    }
+
+    protected void annotate(String text) {
+        ((JavascriptExecutor) webDriver.get()).executeScript("sauce:context=" + text);*/
+        
 		endTestcase();
 		closeAllBrowsers();
 	}

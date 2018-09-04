@@ -33,7 +33,8 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FileUtils;
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+import org.junit.rules.TestName;
+//import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.JavascriptExecutor;
@@ -93,10 +94,11 @@ public class SeMethods extends Reporter implements WdMethods {
 		}
 	}
 	
-	public void startApp(String b, String p, String applicationUrl){
+	public void startApp(String b, String p, String applicationUrl, String tcname, String bname){
+		
+		
 		
 		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
-/*		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY1);*/		
 		try {
 			
 			dc = new DesiredCapabilities();
@@ -108,16 +110,15 @@ public class SeMethods extends Reporter implements WdMethods {
 							driver = new ChromeDriver();
 						} else if(browser.equalsIgnoreCase("ie")) {
 							System.setProperty("webdriver.ie.driver", "./drivers/internetexplorerserver.exe");
-							driver = new InternetExplorerDriver();
-						}*/
+							driver = new InternetExplorerDriver();}*/
 			
-			DesiredCapabilities dc = DesiredCapabilities.chrome();	
+			DesiredCapabilities dc = DesiredCapabilities.chrome();
+		    System.out.println(tcname);
 			dc.setBrowserName("Chrome");
 			dc.setCapability("platform", "Windows 10");
 			dc.setCapability("version", "68.0");
-			dc.setCapability("name", "www.nbcnewyork.com:");
+			dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
 			dc.setCapability("passed", "True");
-			//webURL = sUrl;
 			try {
 			driver = new RemoteWebDriver(new URL(URL), dc);
 			}
@@ -136,17 +137,13 @@ public class SeMethods extends Reporter implements WdMethods {
 			dc.setBrowserName("Firefox");
 			dc.setCapability("platform", "Windows 10");
 			dc.setCapability("version", "61.0");
-			dc.setCapability("name", "www.nbcnewyork.com:");
+			dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
 			dc.setCapability("passed", "True");
 			//webURL=LUrl;
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
 				}
-					
-				//driver = new RemoteWebDriver(
-							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
 				 catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -155,16 +152,12 @@ public class SeMethods extends Reporter implements WdMethods {
 			DesiredCapabilities dc = DesiredCapabilities.edge();
 			dc.setCapability("platform", "Windows 10");
 			dc.setCapability("version", "17.17134");
-			dc.setCapability("name", "www.nbcnewyork.com:");
+			dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
 			dc.setCapability("passed", "True");
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
 				}
-					
-				//driver = new RemoteWebDriver(
-							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
 				 catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			
@@ -174,16 +167,12 @@ public class SeMethods extends Reporter implements WdMethods {
 				DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "11.103");
-				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
 					}
-						
-					//driver = new RemoteWebDriver(
-								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
 					 catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				
@@ -194,16 +183,12 @@ public class SeMethods extends Reporter implements WdMethods {
 			DesiredCapabilities dc = DesiredCapabilities.safari();
 			dc.setCapability("platform", "macOS 10.13");
 			dc.setCapability("version", "11.1");
-			dc.setCapability("name", "www.nbcnewyork.com:");
+			dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
 			dc.setCapability("passed", "True");
 			try {
 				driver = new RemoteWebDriver(new URL(URL), dc);
 				}
-					
-				//driver = new RemoteWebDriver(
-							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
 				 catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			
@@ -213,16 +198,12 @@ public class SeMethods extends Reporter implements WdMethods {
 				DesiredCapabilities dc = DesiredCapabilities.chrome();
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "68.0");
-				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
 					}
-						
-					//driver = new RemoteWebDriver(
-								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
 					 catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				
@@ -233,21 +214,15 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "61.0");
 				dc.setCapability("version", "61.0");
-				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
 					}
-						
-					//driver = new RemoteWebDriver(
-								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
 					 catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
-				
-			//dc.setCapability("passed", true);
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);	
 			System.out.println("Launching NBC--->URL --> "+appData.get(applicationUrl));
 			driver.get(appData.get(applicationUrl));

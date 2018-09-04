@@ -1,11 +1,5 @@
 package nbc_pages;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebElement;
@@ -13,7 +7,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import com.relevantcodes.extentreports.ExtentTest;
 

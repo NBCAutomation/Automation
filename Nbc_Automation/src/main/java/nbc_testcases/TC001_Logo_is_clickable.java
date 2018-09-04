@@ -12,7 +12,7 @@ public class TC001_Logo_is_clickable extends ProjectMethods{
 	public void setData() {
 
 		dataSheetName = "TC01_NbcPage_logo";
-		testCaseName = "TC01_NbcPage_logo";
+		testCaseName = "NbcPage logo clickable";
 		testDescription = "To Test Logo has to click and should get refreshed";
 		category= "Smoke";
 		authors	="Vinoth";
