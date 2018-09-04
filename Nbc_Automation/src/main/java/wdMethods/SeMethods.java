@@ -1,4 +1,4 @@
- package wdMethods;
+package wdMethods;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,13 +63,13 @@ public class SeMethods extends Reporter implements WdMethods {
 	public RemoteWebDriver driver;
 	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl,T5Url,TPUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
 	public  Map<String, String> appData = new HashedMap<>();
-	
+
 	public SeMethods() {
-		
+
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
-			
+
 			appData.put("sUrl", prop.getProperty("NYURL"));
 			appData.put("LUrl", prop.getProperty("LAURL"));
 			appData.put("T5Url", prop.getProperty("T51URL"));
@@ -86,143 +86,138 @@ public class SeMethods extends Reporter implements WdMethods {
 			cc=prop.getProperty("CC");
 			email=prop.getProperty("Email");
 			password=prop.getProperty("Password");
-			   
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public void startApp(String b, String p, String applicationUrl, String tcname, String bname){
-		
-		
-		
+
+	public void startApp(String b, String p, String applicationUrl, String tcname){
+
 		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
 		try {
-			
+
 			dc = new DesiredCapabilities();
 			if (b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Win10")) {
-				
-				
+
+
 				/*if(browser.equalsIgnoreCase("chrome")) {
 							System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver");
 							driver = new ChromeDriver();
 						} else if(browser.equalsIgnoreCase("ie")) {
 							System.setProperty("webdriver.ie.driver", "./drivers/internetexplorerserver.exe");
 							driver = new InternetExplorerDriver();}*/
-			
-			DesiredCapabilities dc = DesiredCapabilities.chrome();
-		    System.out.println(tcname);
-			dc.setBrowserName("Chrome");
-			dc.setCapability("platform", "Windows 10");
-			dc.setCapability("version", "68.0");
-			dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
-			dc.setCapability("passed", "True");
-			try {
-			driver = new RemoteWebDriver(new URL(URL), dc);
-			}
-				
-			//driver = new RemoteWebDriver(
-						//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
-			 catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			}
-			
-			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
-			DesiredCapabilities dc = DesiredCapabilities.firefox();
-			dc.setBrowserName("Firefox");
-			dc.setCapability("platform", "Windows 10");
-			dc.setCapability("version", "61.0");
-			dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
-			dc.setCapability("passed", "True");
-			//webURL=LUrl;
-			try {
-				driver = new RemoteWebDriver(new URL(URL), dc);
+
+				DesiredCapabilities dc = DesiredCapabilities.chrome();
+				System.out.println(tcname);
+				dc.setBrowserName("Chrome");
+				dc.setCapability("platform", "Windows 10");
+				dc.setCapability("version", "68.0");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("passed", "True");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
 				}
-				 catch (MalformedURLException e1) {
+				catch (MalformedURLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
+				DesiredCapabilities dc = DesiredCapabilities.firefox();
+				dc.setBrowserName("Firefox");
+				dc.setCapability("platform", "Windows 10");
+				dc.setCapability("version", "61.0");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("passed", "True");
+				//webURL=LUrl;
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
+				}
+				catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				}
 			}
 
 			if(b.equalsIgnoreCase("Edge")){
-			DesiredCapabilities dc = DesiredCapabilities.edge();
-			dc.setCapability("platform", "Windows 10");
-			dc.setCapability("version", "17.17134");
-			dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
-			dc.setCapability("passed", "True");
-			try {
-				driver = new RemoteWebDriver(new URL(URL), dc);
+				DesiredCapabilities dc = DesiredCapabilities.edge();
+				dc.setCapability("platform", "Windows 10");
+				dc.setCapability("version", "17.17134");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("passed", "True");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
 				}
-				 catch (MalformedURLException e1) {
+				catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				}
-			
+
 			}
-			
+
 			if(b.equalsIgnoreCase("internetExplorer")){
 				DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "11.103");
-				dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
-					}
-					 catch (MalformedURLException e1) {
-						e1.printStackTrace();
-					}
-				
 				}
-			
-			
-			if(b.equalsIgnoreCase("Safari")){
-			DesiredCapabilities dc = DesiredCapabilities.safari();
-			dc.setCapability("platform", "macOS 10.13");
-			dc.setCapability("version", "11.1");
-			dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
-			dc.setCapability("passed", "True");
-			try {
-				driver = new RemoteWebDriver(new URL(URL), dc);
-				}
-				 catch (MalformedURLException e1) {
+				catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				}
-			
+
 			}
-			
+
+
+			if(b.equalsIgnoreCase("Safari")){
+				DesiredCapabilities dc = DesiredCapabilities.safari();
+				dc.setCapability("platform", "macOS 10.13");
+				dc.setCapability("version", "11.1");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("passed", "True");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
+				}
+				catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+
 			if(b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Mac")){  
 				DesiredCapabilities dc = DesiredCapabilities.chrome();
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "68.0");
-				dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
-					}
-					 catch (MalformedURLException e1) {
-						e1.printStackTrace();
-					}
-				
 				}
-			
+				catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+
 			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Mac")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "61.0");
 				dc.setCapability("version", "61.0");
-				dc.setCapability("name", (bname)+"  "+appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
-					}
-					 catch (MalformedURLException e1) {
-						e1.printStackTrace();
-					}
 				}
+				catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+			}
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);	
 			System.out.println("Launching NBC--->URL --> "+appData.get(applicationUrl));
 			driver.get(appData.get(applicationUrl));
@@ -593,7 +588,7 @@ public class SeMethods extends Reporter implements WdMethods {
 
 		return createIssue.toString();
 	}
-	
+
 	public Boolean sendmailAttachment() throws Exception {
 
 		String fileAttachment = attachment;

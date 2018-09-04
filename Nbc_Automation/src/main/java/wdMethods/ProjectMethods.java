@@ -34,8 +34,7 @@ public class ProjectMethods extends SeMethods{
 		test.assignCategory(category);
 		test.assignAuthor(authors);
 		String tcname=testCaseName;
-		String bname=browserName;
-		startApp(browser,platform,applicationUrl,tcname,bname);
+		startApp(browser,platform,applicationUrl,tcname);
 		
 	}
 	

@@ -22,7 +22,7 @@
 
 	<test thread-count="5" name="Test2">
 		<parameter name="browser" value="Firefox"></parameter>
-		<parameter name="platform" value="win10"></parameter>
+		<parameter name="platform" value="mac"></parameter>
 		<parameter name="url" value="T5Url"></parameter>
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
