@@ -2,7 +2,9 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite" parallel="tests" verbose="5">
   <test thread-count="5" name="Test">
-  <parameter name="browser" value="chrome"></parameter>
+  		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
     <classes>
       <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
       <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
@@ -16,8 +18,11 @@
       <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
     </classes>
   </test>
+  
   <test thread-count="5" name="Test1">
-  <parameter name="browser" value="Firefox"></parameter>
+  		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
     <classes>
       <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
       <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
@@ -32,6 +37,475 @@
     </classes>
   </test> 
   
+  <test thread-count="5" name="Test2">
+  		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test3">
+  		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test4">
+  		<parameter name="browser" value="Edge"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test5">
+  		<parameter name="browser" value="internetExplorer"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test6">
+  		<parameter name="browser" value="safari"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  
+  <test thread-count="5" name="Test7">
+  		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test8">
+  		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test> 
+  
+  <test thread-count="5" name="Test9">
+  		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test10">
+  		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test11">
+  		<parameter name="browser" value="Edge"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test12">
+  		<parameter name="browser" value="internetExplorer"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <!-- <test thread-count="5" name="Test13">
+  		<parameter name="browser" value="safari"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  
+  <test thread-count="5" name="Test14">
+  		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test15">
+  		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test> 
+  
+  <test thread-count="5" name="Test16">
+  		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test17">
+  		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test18">
+  		<parameter name="browser" value="Edge"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test19">
+  		<parameter name="browser" value="internetExplorer"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test20">
+  		<parameter name="browser" value="safari"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+   <test thread-count="5" name="Test21">
+  		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test22">
+  		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test> 
+  
+  <test thread-count="5" name="Test23">
+  		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test24">
+  		<parameter name="browser" value="Firefox"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test25">
+  		<parameter name="browser" value="Edge"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test26">
+  		<parameter name="browser" value="internetExplorer"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Test27">
+  		<parameter name="browser" value="safari"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll"/>
+      <class name="nbc_testcases.TC009_Share_bar_is_visible_and_functions_Article"/>
+      <class name="nbc_testcases.TC004_Right_rail_has_Spredfast"/>
+      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
+      <class name="nbc_testcases.TC001_Logo_is_clickable"/>
+      <class name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module"/>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+      <class name="nbc_testcases.TC007_Connect_dropdown_appears"/>
+      <class name="nbc_testcases.TC008_Icons_in_connect_dropdown_are_clickable_and_link_out"/>
+    </classes>
+  </test> -->
   
   <!-- Test -->
 </suite> <!-- Suite -->

@@ -14,9 +14,9 @@ import wdMethods.ProjectMethods;
 			this.test = test;
 
 			PageFactory.initElements(driver, this);		
-			if(!verifyTitle("NBC New York on Twitter:")) {
+			/*if(!verifyTitle("NBC New York on Twitter:")) {
 				throw new RuntimeException();
-			}
+			}*/
 		}
 		
 		

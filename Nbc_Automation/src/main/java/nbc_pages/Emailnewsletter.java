@@ -17,10 +17,10 @@ import wdMethods.ProjectMethods;
 			this.test = test;
 
 			PageFactory.initElements(driver, this);		
-			if(!verifyTitle("Email Newsletters and Mobile Alerts | NBC New York'")) {
+			/*if(!verifyTitle("Email Newsletters and Mobile Alerts | NBC New York'")) {
 				
 				throw new RuntimeException();
-			}
+			}*/
 		}
 		
 		@FindBy(how=How.XPATH,using="//a[@name='&lpos=section navigation&lid=logo']/img")

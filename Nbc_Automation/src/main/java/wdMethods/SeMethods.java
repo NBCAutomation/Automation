@@ -1,4 +1,4 @@
- package wdMethods;
+package wdMethods;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,6 +33,8 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FileUtils;
+import org.junit.rules.TestName;
+//import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.JavascriptExecutor;
@@ -50,6 +53,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.DataProvider;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import utils.Reporter;
@@ -57,23 +61,21 @@ public class SeMethods extends Reporter implements WdMethods {
 	public String URL;
 	public DesiredCapabilities dc;
 	public RemoteWebDriver driver;
-	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
-	public Map<String, String> appData = new HashedMap<>(); 
-	
-	
+	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl,T5Url,TPUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
+	public  Map<String, String> appData = new HashedMap<>();
+
 	public SeMethods() {
-		
+
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
-			
+
 			appData.put("sUrl", prop.getProperty("NYURL"));
 			appData.put("LUrl", prop.getProperty("LAURL"));
-			
+			appData.put("T5Url", prop.getProperty("T51URL"));
+			appData.put("TPUrl", prop.getProperty("TPRURL"));
 			sHubUrl = prop.getProperty("HUB");
 			sHubPort = prop.getProperty("PORT");
-			sUrl = prop.getProperty("NYURL");
-			LUrl = prop.getProperty("LAURL");
 			name=prop.getProperty("NAME");
 			status=prop.getProperty("STATUS");
 			USERNAME1=prop.getProperty("USERNAME");
@@ -84,171 +86,140 @@ public class SeMethods extends Reporter implements WdMethods {
 			cc=prop.getProperty("CC");
 			email=prop.getProperty("Email");
 			password=prop.getProperty("Password");
-			   
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public void startApp(String b, String p, String applicationUrl){
-		
+
+	public void startApp(String b, String p, String applicationUrl, String tcname){
+
 		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
-/*		 System.out.println("Username using system property: "  + USERNAME1 + " "+ ACCESS_KEY1);*/		
 		try {
-			
+
 			dc = new DesiredCapabilities();
 			if (b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Win10")) {
-				
-				
+
+
 				/*if(browser.equalsIgnoreCase("chrome")) {
 							System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver");
 							driver = new ChromeDriver();
 						} else if(browser.equalsIgnoreCase("ie")) {
 							System.setProperty("webdriver.ie.driver", "./drivers/internetexplorerserver.exe");
-							driver = new InternetExplorerDriver();
-						}*/
-			
-			DesiredCapabilities dc = DesiredCapabilities.chrome();	
-			dc.setBrowserName("Chrome");
-			dc.setCapability("platform", "Windows 10");
-			dc.setCapability("version", "68.0");
-			dc.setCapability("name", "www.nbcnewyork.com:");
-			dc.setCapability("passed", "True");
-			//webURL = sUrl;
-			try {
-			driver = new RemoteWebDriver(new URL(URL), dc);
-			}
-				
-			//driver = new RemoteWebDriver(
-						//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
-			 catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			}
-			
-			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
-			DesiredCapabilities dc = DesiredCapabilities.firefox();
-			dc.setBrowserName("Firefox");
-			dc.setCapability("platform", "Windows 10");
-			dc.setCapability("version", "61.0");
-			dc.setCapability("name", "www.nbcnewyork.com:");
-			dc.setCapability("passed", "True");
-			//webURL=LUrl;
-			try {
-				driver = new RemoteWebDriver(new URL(URL), dc);
+							driver = new InternetExplorerDriver();}*/
+
+				DesiredCapabilities dc = DesiredCapabilities.chrome();
+				System.out.println(tcname);
+				dc.setBrowserName("Chrome");
+				dc.setCapability("platform", "Windows 10");
+				dc.setCapability("version", "68.0");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("passed", "True");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
 				}
-					
-				//driver = new RemoteWebDriver(
-							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
-				 catch (MalformedURLException e1) {
+				catch (MalformedURLException e1) {
 					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+
+			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
+				DesiredCapabilities dc = DesiredCapabilities.firefox();
+				dc.setBrowserName("Firefox");
+				dc.setCapability("platform", "Windows 10");
+				dc.setCapability("version", "61.0");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("passed", "True");
+				//webURL=LUrl;
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
+				}
+				catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				}
 			}
 
 			if(b.equalsIgnoreCase("Edge")){
-			DesiredCapabilities dc = DesiredCapabilities.edge();
-			dc.setCapability("platform", "Windows 10");
-			dc.setCapability("version", "17.17134");
-			dc.setCapability("name", "www.nbcnewyork.com:");
-			dc.setCapability("passed", "True");
-			try {
-				driver = new RemoteWebDriver(new URL(URL), dc);
+				DesiredCapabilities dc = DesiredCapabilities.edge();
+				dc.setCapability("platform", "Windows 10");
+				dc.setCapability("version", "17.17134");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("passed", "True");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
 				}
-					
-				//driver = new RemoteWebDriver(
-							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
-				 catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
+				catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				}
-			
+
 			}
-			
+
 			if(b.equalsIgnoreCase("internetExplorer")){
 				DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "11.103");
-				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
-					}
-						
-					//driver = new RemoteWebDriver(
-								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
-					 catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				
 				}
-			
-			
-			if(b.equalsIgnoreCase("Safari")){
-			DesiredCapabilities dc = DesiredCapabilities.safari();
-			dc.setCapability("platform", "macOS 10.13");
-			dc.setCapability("version", "11.1");
-			dc.setCapability("name", "www.nbcnewyork.com:");
-			dc.setCapability("passed", "True");
-			try {
-				driver = new RemoteWebDriver(new URL(URL), dc);
-				}
-					
-				//driver = new RemoteWebDriver(
-							//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
-				 catch (MalformedURLException e1) {
-					// TODO Auto-generated catch block
+				catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				}
-			
+
 			}
-			
+
+
+			if(b.equalsIgnoreCase("Safari")){
+				DesiredCapabilities dc = DesiredCapabilities.safari();
+				dc.setCapability("platform", "macOS 10.13");
+				dc.setCapability("version", "11.1");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
+				dc.setCapability("passed", "True");
+				try {
+					driver = new RemoteWebDriver(new URL(URL), dc);
+				}
+				catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+
 			if(b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Mac")){  
 				DesiredCapabilities dc = DesiredCapabilities.chrome();
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "68.0");
-				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
-					}
-						
-					//driver = new RemoteWebDriver(
-								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
-					 catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				
 				}
-			
+				catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+
+			}
+
 			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Mac")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "61.0");
 				dc.setCapability("version", "61.0");
-				dc.setCapability("name", "www.nbcnewyork.com:");
+				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
-					}
-						
-					//driver = new RemoteWebDriver(
-								//new URL(URL),("http://192.168.1.56:4444/wd/hub"),dc);
-					 catch (MalformedURLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
 				}
-				
-			//dc.setCapability("passed", true);
+				catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+			}
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);	
-			System.out.println("Launching URL --> "+appData.get(applicationUrl));
+			System.out.println("Launching NBC--->URL --> "+appData.get(applicationUrl));
 			driver.get(appData.get(applicationUrl));
 			driver.manage().window().maximize();	
 
@@ -567,7 +538,7 @@ public class SeMethods extends Reporter implements WdMethods {
 
 		try {
 			Actions act = new Actions(driver);
-			act.moveToElement(ele).build().perform();
+			act.moveToElement(ele).perform();
 		} catch (WebDriverException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -617,7 +588,7 @@ public class SeMethods extends Reporter implements WdMethods {
 
 		return createIssue.toString();
 	}
-	
+
 	public Boolean sendmailAttachment() throws Exception {
 
 		String fileAttachment = attachment;

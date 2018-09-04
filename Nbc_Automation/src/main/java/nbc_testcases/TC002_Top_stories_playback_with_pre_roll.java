@@ -23,8 +23,8 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 
 	new NbcPage(driver, test)
 	.clicknbclogo()
-	.clicktopstories()
-	.clickplayer();
+	.clicktopstories();
+	//.clickplayer();
 	
 	
 	try {

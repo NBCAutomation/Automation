@@ -19,9 +19,9 @@ import wdMethods.ProjectMethods;
 			this.test = test;
 
 			PageFactory.initElements(driver, this);		
-			if(!verifyTitle("Cabbie Bites Driver, Rams Car in Midtown Road Rage Meltdown: Officials  - NBC New York")) {
+			/*if(!verifyTitle("Cabbie Bites Driver, Rams Car in Midtown Road Rage Meltdown: Officials  - NBC New York")) {
 				throw new RuntimeException();
-			}		
+			}*/		
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@class='tpVideoBlocker']")

@@ -17,9 +17,9 @@ import wdMethods.ProjectMethods;
 			this.test = test;
 
 			PageFactory.initElements(driver, this);		
-			if(!verifyTitle("Mobile | NBC New York'")) {
+			/*if(!verifyTitle("Mobile | NBC New York'")) {
 				throw new RuntimeException();
-			}
+			}*/
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[text()='Connect']")

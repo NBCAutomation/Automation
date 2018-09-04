@@ -17,9 +17,9 @@ import wdMethods.ProjectMethods;
 			this.test = test;
 
 			PageFactory.initElements(driver, this);		
-			if(!verifyTitle("Consumer Complaint Form | NBC New York")) {
+			/*if(!verifyTitle("Consumer Complaint Form | NBC New York")) {
 				throw new RuntimeException();
-			}
+			}*/
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[text()='Connect']")
