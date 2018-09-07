@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -33,7 +32,6 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FileUtils;
-import org.junit.rules.TestName;
 //import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
@@ -43,7 +41,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
@@ -53,7 +50,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.DataProvider;
+import org.testng.ITestResult;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import utils.Reporter;
@@ -61,6 +58,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public String URL;
 	public DesiredCapabilities dc;
 	public RemoteWebDriver driver;
+	public String jobId;
 	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl,T5Url,TPUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
 	public  Map<String, String> appData = new HashedMap<>();
 
@@ -116,9 +114,10 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "68.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					// TODO Auto-generated catch block
@@ -133,10 +132,11 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "61.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				//webURL=LUrl;
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -148,9 +148,10 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "17.17134");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -163,9 +164,10 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "11.103");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -179,9 +181,10 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "11.1");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -194,9 +197,10 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "68.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -210,9 +214,10 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setCapability("version", "61.0");
 				dc.setCapability("version", "61.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();

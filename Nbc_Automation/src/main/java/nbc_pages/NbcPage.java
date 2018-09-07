@@ -73,6 +73,20 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
+		@FindBy(how=How.XPATH,using="//div[@class='row']//a[@class='nav-section-title nav-selected']")
+		private WebElement elenavtiempoTM;
+		public NbcPage clicknavtiempoTM() {
+			click(elenavtiempoTM);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//button[@class='wxmap--src-widgets-map-components-default-timeline-timeline-controls__play ']")
+		private WebElement elemapplayTM;
+		public NbcPage clickmapplayTM() {
+			click(elemapplayTM);
+			return this;
+		}
+		
 		
 		@FindBy(how=How.XPATH,using="//div[@id='__wxmap_MapboxAttribution']")
 		private WebElement elewethermodule;
@@ -209,10 +223,17 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='play-grey-medium'][1]")
+		@FindBy(how=How.XPATH,using="//div[@class='story-icon']//following::div[@class='play-grey-medium'][1]")
 		private WebElement eletopstories;	
 		public NbcPage clicktopstories() {
 			click(eletopstories);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='topStory right-image']//div[@class='smallPlayButton']")
+		private WebElement eletopstoriesTM;	
+		public NbcPage clicktopstoriesTM() {
+			click(eletopstoriesTM);
 			return this;
 		}
 		
@@ -278,5 +299,51 @@ import wdMethods.ProjectMethods;
 			click(eletwitter);
 			return new Heartbreakingtimeline(driver, test);
 		}
+		
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=footer&lid=Contact Us']")
+		private WebElement elecontactus;
+		public ContactUS clickcontactus() {
+			click(elecontactus);
+			return new ContactUS(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='more-dropdown']")
+		private WebElement elenbclist;
+		public NbcPage clicknbclist() {
+			mouseover(elenbclist);
+			driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=ellipsis hover&lid=Traffic']")
+		private WebElement eletraffic;
+		public Newyorktraffic clicktraffic() {
+			click(eletraffic);
+			return new Newyorktraffic(driver, test);
+		}
+	
+		
+		@FindBy(how=How.XPATH,using="//li[@class='nav-section Investigations']/a")
+		private WebElement eleinvestigations;
+		public I_Team_newyork clickinvestigations() {
+			click(eleinvestigations);
+			return new I_Team_newyork(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//li[@class='nav-section News']")
+		private WebElement elenbcnews;
+		public NewsPageLoads clicknbcnews() {
+			click(elenbcnews);
+			return new NewsPageLoads(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=ellipsis hover&lid=Contact Us']")
+		private WebElement elenbccontact;
+		public ContactUS clicknbccontact() {
+			click(elenbccontact);
+			return new ContactUS(driver, test);
+		}
+		
+		
 		
 }

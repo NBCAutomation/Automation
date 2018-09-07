@@ -10,8 +10,7 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 	@BeforeClass
 	public void setData() {
 
-		dataSheetName = "TC002_Top_stories_playback_with_pre_roll";
-		testCaseName = "TC002_Top_stories_playback_with_pre_roll";
+		testCaseName = "Top stories playback with pre roll";
 		testDescription = "To Test stories playback with-pre roll";
 		category= "Smoke";
 		authors	="Vinoth";
@@ -20,18 +19,25 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 
 	@Test
 	public void NbcPage(){
-
-	new NbcPage(driver, test)
-	.clicknbclogo()
-	.clicktopstories();
-	//.clickplayer();
-	
-	
-	try {
-		Thread.sleep(10000);
-	} catch (InterruptedException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+			 
+			new Runnable() {
+				public void run() {
+					if (sUrl.equalsIgnoreCase(sUrl)) {
+						new NbcPage(driver, test).clicknbclogo().clicktopstories();
+					} else if (LUrl.equalsIgnoreCase(LUrl)) {
+						new NbcPage(driver, test).clicknbclogo().clicktopstories();
+					} else if (TPUrl.equalsIgnoreCase(TPUrl)) {
+						new NbcPage(driver, test).clicknbclogo().clicktopstoriesTM();
+					} else if (T5Url.equalsIgnoreCase(T5Url)) {
+						new NbcPage(driver, test).clicknbclogo().clicktopstoriesTM();
+					}
+				}
+			};
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

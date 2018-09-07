@@ -42,18 +42,24 @@ import wdMethods.ProjectMethods;
 		private WebElement eledaynbcnow;	
 		public TVlistingsschedule clickdaynbcnow() {
 			verifyDisplayed(eledaynbcnow);
-			getText(eledaynbcnow);
 			System.out.println(eledaynbcnow);
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//select[@id='daySelect']/option")
+		@FindBy(how=How.XPATH,using="//select[@id='daySelect']")
 		private WebElement eledaySelect;	
 		public TVlistingsschedule clickdaySelect() {
-			driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
 			click(eledaySelect);
 			return this;
 		}
 		
+		@FindBy(how=How.XPATH,using="//div[@id='tvListingContainer']//h3[@class='header0']")
+		private WebElement eletvListingContainer;	
+		public TVlistingsschedule clicktvListingContainer() {
+			click(eletvListingContainer);
+			verifyDisplayed(eletvListingContainer);
+			System.out.println(eletvListingContainer);
+			return this;
+		}
 		
 }

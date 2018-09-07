@@ -1,5 +1,14 @@
 package wdMethods;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import org.openqa.selenium.JavascriptExecutor;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -10,6 +19,9 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.saucerest.SauceREST;
+
 import utils.DataInputProvider;
 
 
@@ -17,6 +29,8 @@ public class ProjectMethods extends SeMethods{
 
 	public String browserName;
 	public String dataSheetName;
+	public String jobId;
+	public String URL1;
 	
 	@BeforeSuite
 	public void beforeSuite(){
@@ -35,39 +49,63 @@ public class ProjectMethods extends SeMethods{
 		test.assignAuthor(authors);
 		String tcname=testCaseName;
 		startApp(browser,platform,applicationUrl,tcname);
-		
+		URL1 = applicationUrl;
 	}
 	
-	@AfterSuite
-	public void afterSuite() throws Exception{
+	@AfterSuite 
+	public void afterSuite(){
 		endResult();
 		//sendmailAttachment();
 		
 	}
 
 	@AfterTest
-	public void afterTest(){
+	public void afterTest()  {
+		
 	}
 	
 	@AfterMethod
-	public void afterMethod(ITestResult result){
+	public void afterMethod() throws Exception{
 		
-		/*((JavascriptExecutor) webDriver.get()).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
-        webDriver.get().quit();
-    }
+//		Properties prop = new Properties();
+//		prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+//		SauceOnDemandAuthentication authentication = new SauceOnDemandAuthentication( prop.getProperty("USERNAME"), prop.getProperty("ACCESS_KEY")); 
+//		SauceREST client = new SauceREST(authentication.getUsername(), authentication.getAccessKey());
+//		
+//		public void jobPassed(String jobId) {
+//	        updates.put("passed", true);
+//	        updateJobInfo(jobId, updates);
+//		}
+//		
+//		public void jobFailed(String jobId) {
+//	        updates.put("passed", false);
+//	        updateJobInfo(jobId, updates);
+//	    }
+		/*updates.put("passed", passed);
+		client.updateJobInfo(jobId, updates);
+		
+		if (passed) {
+            client.jobPassed(jobId);
+        } else {
+            client.jobFailed(jobId);
+        }*/
+			/*try
+			{
+	          //code block
+	            client.jobPassed(this.jobId);
+	        } catch (Exception e) {
+	            client.jobFailed(this.jobId);
+	            throw e;
+	        }*/
+		//((JavascriptExecutor) driver.get()).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
 
-    protected void annotate(String text) {
-        ((JavascriptExecutor) webDriver.get()).executeScript("sauce:context=" + text);*/
         
 		endTestcase();
 		closeAllBrowsers();
+	
+		
 	}
-	
-	/*@DataProvider(name="fetchData")
-	public  Object[][] getData(){
-		return DataInputProvider.getSheet(dataSheetName);		
-	}*/	
-	
+
 	@DataProvider(name="fetchData")
 	public  Object[][] getData(){
 		
@@ -76,5 +114,10 @@ public class ProjectMethods extends SeMethods{
 		
 		return data;*/
 		return DataInputProvider.getSheet(dataSheetName);		
+	}
+
+	public void beforeMethod() {
+		// TODO Auto-generated method stub
+		
 	}
 }

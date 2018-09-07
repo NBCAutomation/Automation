@@ -11,8 +11,7 @@ public class TC004_Right_rail_has_Spredfast extends ProjectMethods{
 	@BeforeClass
 	public void setData() {
 
-		dataSheetName = "TC004_Right_rail_has_Spredfast";
-		testCaseName = "TC004_Right_rail_has_Spredfast";
+		testCaseName = "Right rail has Spredfast";
 		testDescription = "To Test Right rail has Spredfast";
 		category= "Smoke";
 		authors	="Vinoth";
@@ -21,10 +20,19 @@ public class TC004_Right_rail_has_Spredfast extends ProjectMethods{
 
 	@Test 
 	public void NbcPage(){
-	new NbcPage(driver, test)
-	.clicknbclogo()
-	.clickthisjustin()
-	.clickminutesago();
+	new Runnable() {
+		public void run() {
+			if (sUrl.equalsIgnoreCase(sUrl)) {
+				new NbcPage(driver, test).clicknbclogo().clickthisjustin().clickminutesago();
+			} else if (LUrl.equalsIgnoreCase(LUrl)) {
+				new NbcPage(driver, test).clicknbclogo().clickthisjustin().clickminutesago();
+			} else if (TPUrl.equalsIgnoreCase(TPUrl)) {
+				new NbcPage(driver, test).clicknbclogo().clicknavtiempoTM().clickmapplayTM();
+			} else if (T5Url.equalsIgnoreCase(T5Url)) {
+				new NbcPage(driver, test).clicknbclogo().clicknavtiempoTM().clickmapplayTM();
+			}
+		}
+	};
 	
 	try {
 		Thread.sleep(5000);
