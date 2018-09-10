@@ -95,7 +95,8 @@ import wdMethods.ProjectMethods;
 		private WebElement elewethermodule;
 		public NbcPage clickwethermodule() {
 			click(elewethermodule);
-			driver.findElementByXPath("//div[@id='__wxmap_MapboxAttribution']").isDisplayed();
+			//driver.findElementByXPath("//div[@id='__wxmap_MapboxAttribution']").isDisplayed();
+			System.out.println(elewethermodule);
 			return this;
 		}
 		
@@ -253,7 +254,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//iframe[@src='https://cdn.knightlab.com/libs/timeline/latest/embed/index.html?source=0AtzG4fxNBjQjdDFYalFyTW1DR3BjWlVoYnpONkY3c1E&font=Georgia-Helvetica&maptype=toner&lang=en&width=620&height=575']")
 		private WebElement eleframe;
 		public NbcPage clickframe() {
-			scrollingByCoordinatesofAPage();
+			//switchToFrame(eleframe);
 			click(eleframe);
 			return this;
 		}

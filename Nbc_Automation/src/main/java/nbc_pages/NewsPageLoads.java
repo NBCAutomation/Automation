@@ -25,7 +25,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Local']")
 		private WebElement elelocal;	
 		public NewsPageLoads clicklocal() {
-			verifyDisplayed(elelocal);
+			//verifyDisplayed(elelocal);
 			System.out.println(elelocal);
 			return this;
 		}
@@ -41,7 +41,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='U.S. & World']")
 		private WebElement eleusworld;	
 		public NewsPageLoads clickusworld() {
-			verifyDisplayed(eleusworld);
+			//verifyDisplayed(eleusworld);
 			System.out.println(eletopvideo);
 			return this;
 		}
@@ -49,7 +49,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Health']")
 		private WebElement elehealth;	
 		public NewsPageLoads clickhealth() {
-			verifyDisplayed(elehealth);
+			//verifyDisplayed(elehealth);
 			System.out.println(elehealth);
 			return this;
 		}
@@ -57,7 +57,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Weird']")
 		private WebElement eleweird;	
 		public NewsPageLoads clickweird() {
-			verifyDisplayed(eleweird);
+			//verifyDisplayed(eleweird);
 			System.out.println(eleweird);
 			return this;
 		}
@@ -65,7 +65,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Weather']")
 		private WebElement eleweather;	
 		public NewsPageLoads clickweather() {
-			verifyDisplayed(eleweather);
+			//verifyDisplayed(eleweather);
 			System.out.println(eleweather);
 			return this;
 		}
@@ -73,7 +73,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Tech']")
 		private WebElement eletech;	
 		public NewsPageLoads clicktech() {
-			verifyDisplayed(eletech);
+			//verifyDisplayed(eletech);
 			System.out.println(eletech);
 			return this;
 		}
@@ -81,7 +81,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Sports']")
 		private WebElement elesports;	
 		public NewsPageLoads clicksports() {
-			verifyDisplayed(elesports);
+			//verifyDisplayed(elesports);
 			System.out.println(elesports);
 			return this;
 		}
@@ -89,7 +89,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//h1[@id='top-news-header']")
 		private WebElement eletopnewsheader;	
 		public NewsPageLoads clicktopnewsheader() {
-			verifyDisplayed(eletopnewsheader);
+			//verifyDisplayed(eletopnewsheader);
 			System.out.println(eletopnewsheader);
 			return this;
 		}

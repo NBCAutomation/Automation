@@ -53,9 +53,9 @@ public class ProjectMethods extends SeMethods{
 	}
 	
 	@AfterSuite 
-	public void afterSuite(){
+	public void afterSuite() throws Exception{
 		endResult();
-		//sendmailAttachment();
+		sendmailAttachment();
 		
 	}
 

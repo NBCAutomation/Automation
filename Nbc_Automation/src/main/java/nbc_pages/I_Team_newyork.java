@@ -9,40 +9,51 @@ import org.testng.annotations.Test;
 import com.relevantcodes.extentreports.ExtentTest;
 
 import wdMethods.ProjectMethods;
-	@Test
-	public class I_Team_newyork extends ProjectMethods{
+@Test
+public class I_Team_newyork extends ProjectMethods{
 
-		public I_Team_newyork(RemoteWebDriver driver,ExtentTest test) {
-			this.driver = driver;
-			this.test = test;
+	public I_Team_newyork(RemoteWebDriver driver,ExtentTest test) {
+		this.driver = driver;
+		this.test = test;
 
-			PageFactory.initElements(driver, this);		
-			/*if(!verifyTitle("Watch Live TV | NBC New York")) {
+		PageFactory.initElements(driver, this);		
+		/*if(!verifyTitle("Watch Live TV | NBC New York")) {
 				throw new RuntimeException();
 			}*/		
-		}
+	}
+
+	@FindBy(how=How.XPATH,using="//div[@class='postHeader']//following::span[@class='seriesName'][1]")
+	private WebElement eleinvestigationvaild;	
+	public I_Team_newyork clickinvestigationvaild() {
+		click(eleinvestigationvaild);
+		System.out.println(eleinvestigationvaild);
+		return this;
+	}
+
+
+	@FindBy(how=How.XPATH,using="//div[@id='globalRightRail']//div[@class='module-1 investigations-module module more-investigations ']//h4[@class='module-headline']")
+	private WebElement elemoreinvestigation;
+	
+	@FindBy(how=How.XPATH,using="//div[@id='globalRightRail']//div[@class='module-1 investigations-module module custom-html ']//h4[@class='module-headline']")
+	private WebElement elemoreinvestigationLA;
+	public I_Team_newyork clickmoreinvestigation() {
 		
-		@FindBy(how=How.XPATH,using="//div[@class='postHeader']//following::span[@class='seriesName'][1]")
-		private WebElement eleinvestigationvaild;	
-		public I_Team_newyork clickinvestigationvaild() {
-			click(eleinvestigationvaild);
-			System.out.println(eleinvestigationvaild);
-			return this;
-		}
-		
-		@FindBy(how=How.XPATH,using="//div[@class='module-1 investigations-module module more-investigations ']//h4[text()='More Investigations']")
-		private WebElement elemoreinvestigation;	
-		public I_Team_newyork clickmoreinvestigation() {
-			scrollingByCoordinatesofAPage();
+		if(this.driver.getCurrentUrl().startsWith(appData.get("sUrl"))==true){
 			click(elemoreinvestigation);
-			driver.findElementByXPath("/div[@class='module-1 investigations-module module more-investigations ']//h4[text()='More Investigations']\"").isDisplayed();
-			return this;
+			System.out.println(elemoreinvestigation);
+		}
+		else if(this.driver.getCurrentUrl().startsWith(appData.get("LUrl"))==true){
+			click(elemoreinvestigationLA);
+			System.out.println(elemoreinvestigationLA);
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@id='leadVideo']//span")
-		private WebElement eleinvestigationvideo;	
-		public I_Team_newyork clickinvestigationvideo() {
-			click(eleinvestigationvideo);
-			return this;
-		}
+		return this;
+	}
+
+	@FindBy(how=How.XPATH,using="//div[@id='leadVideo']//span")
+	private WebElement eleinvestigationvideo;	
+	public I_Team_newyork clickinvestigationvideo() {
+		click(eleinvestigationvideo);
+		return this;
+	}
 }
