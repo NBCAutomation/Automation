@@ -11,8 +11,7 @@ public class TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_lis
 	@BeforeClass
 	public void setData() {
 
-		dataSheetName = "TC005_Watch live TVE dropdown appears";
-		testCaseName = "TC005_Watch live TVE dropdown appears";
+		testCaseName = "TVEdropdown should have ON NOW On Demand Full Schedule TV listings";
 		testDescription = "To Test TV dropdown appears";
 		category= "Smoke";
 		authors	="Vinoth";
@@ -30,11 +29,5 @@ public class TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_lis
 	.clickcozitv()
 	.clickdaySelect()
 	.clickdaynbcnow();
-	
-	try {
-		Thread.sleep(5000);
-	} catch (InterruptedException e) {
-		e.printStackTrace();
-	}
 	}
 }

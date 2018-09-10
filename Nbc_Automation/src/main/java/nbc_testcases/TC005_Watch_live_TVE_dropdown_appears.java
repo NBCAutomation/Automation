@@ -11,8 +11,7 @@ public class TC005_Watch_live_TVE_dropdown_appears extends ProjectMethods{
 	@BeforeClass
 	public void setData() {
 
-		dataSheetName = "TC005_Watch live TVE dropdown appears";
-		testCaseName = "TC005_Watch live TVE dropdown appears";
+		testCaseName = "Watch live TVE dropdown appears";
 		testDescription = "To Test TV dropdown appears";
 		category= "Smoke";
 		authors	="Vinoth";
@@ -28,10 +27,5 @@ public class TC005_Watch_live_TVE_dropdown_appears extends ProjectMethods{
 	.clickondemand()
 	.clickfullschedule();
 	
-	try {
-		Thread.sleep(5000);
-	} catch (InterruptedException e) {
-		e.printStackTrace();
-	}
 	}
 }

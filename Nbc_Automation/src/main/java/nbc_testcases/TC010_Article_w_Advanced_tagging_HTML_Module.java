@@ -11,8 +11,7 @@ public class TC010_Article_w_Advanced_tagging_HTML_Module extends ProjectMethods
 	@BeforeClass
 	public void setData() {
 
-		dataSheetName = "TC010_Article_w_Advanced_tagging_HTML_Module";
-		testCaseName = "TC010_Article_w_Advanced_tagging_HTML_Module";
+		testCaseName = "Article Advanced tagging HTML Module";
 		testDescription = "To Test HTML Module Appears";
 		category= "Smoke";
 		authors	="Vinoth";

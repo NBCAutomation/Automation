@@ -33,7 +33,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[text()='Connect']")
 		private WebElement eleconnect;	
 		public Emailnewsletter clickconnect() {
-			mouseover(eleconnect);
+			mouseMoveTo(eleconnect);
 			return this;
 		}
 		

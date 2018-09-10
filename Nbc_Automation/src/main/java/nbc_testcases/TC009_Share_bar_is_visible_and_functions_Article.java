@@ -11,8 +11,7 @@ public class TC009_Share_bar_is_visible_and_functions_Article extends ProjectMet
 	@BeforeClass
 	public void setData() {
 
-		dataSheetName = "TC009_Share_bar_is_visible_and_functions_Article";
-		testCaseName = "TC009_Share_bar_is_visible_and_functions_Article";
+		testCaseName = "Share bar is visible and functions Article";
 		testDescription = "To Test Share bar is visible";
 		category= "Smoke";
 		authors	="Vinoth";

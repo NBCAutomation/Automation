@@ -25,7 +25,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[text()='Connect']")
 		private WebElement eleconnect;	
 		public Sendfeedback clickconnect() {
-			mouseover(eleconnect);
+			mouseMoveTo(eleconnect);
 			return this;
 		}
 		

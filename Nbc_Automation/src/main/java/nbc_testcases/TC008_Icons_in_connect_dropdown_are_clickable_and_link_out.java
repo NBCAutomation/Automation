@@ -11,8 +11,7 @@ public class TC008_Icons_in_connect_dropdown_are_clickable_and_link_out extends 
 	@BeforeClass
 	public void setData() {
 
-		dataSheetName = "TC02_Connect";
-		testCaseName = "TC02_Connect";
+		testCaseName = "Connect have all the configuration";
 		testDescription = "To Test Logo has to click";
 		category= "Smoke";
 		authors	="Vinoth";

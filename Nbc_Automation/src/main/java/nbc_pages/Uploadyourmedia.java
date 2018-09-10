@@ -34,7 +34,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[text()='Connect']")
 		private WebElement eleconnect;	
 		public Uploadyourmedia clickconnect() {
-			mouseover(eleconnect);
+			mouseMoveTo(eleconnect);
 			driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
 			return this;
 		}

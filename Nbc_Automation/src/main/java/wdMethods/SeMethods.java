@@ -113,6 +113,7 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setBrowserName("Chrome");
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "68.0");
+				//dc.setCapability("version", "66.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				try {
@@ -128,9 +129,11 @@ public class SeMethods extends Reporter implements WdMethods {
 
 			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
+				System.out.println(tcname);
 				dc.setBrowserName("Firefox");
 				dc.setCapability("platform", "Windows 10");
-				dc.setCapability("version", "61.0");
+				//dc.setCapability("version", "61.0");
+				dc.setCapability("version", "55.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				//webURL=LUrl;
@@ -143,8 +146,9 @@ public class SeMethods extends Reporter implements WdMethods {
 				}
 			}
 
-			if(b.equalsIgnoreCase("Edge")){
+			if(b.equalsIgnoreCase("Edge") && p.equalsIgnoreCase("Win10")){
 				DesiredCapabilities dc = DesiredCapabilities.edge();
+				System.out.println(tcname);
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "17.17134");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
@@ -159,10 +163,11 @@ public class SeMethods extends Reporter implements WdMethods {
 
 			}
 
-			if(b.equalsIgnoreCase("internetExplorer")){
+			if(b.equalsIgnoreCase("internetExplorer") && p.equalsIgnoreCase("Win10")){
 				DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
+				System.out.println(tcname);
 				dc.setCapability("platform", "Windows 10");
-				dc.setCapability("version", "11.103");
+				dc.setCapability("version", "11.03");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				try {
@@ -176,8 +181,9 @@ public class SeMethods extends Reporter implements WdMethods {
 			}
 
 
-			if(b.equalsIgnoreCase("Safari")){
+			if(b.equalsIgnoreCase("Safari") && p.equalsIgnoreCase("Mac")){
 				DesiredCapabilities dc = DesiredCapabilities.safari();
+				System.out.println(tcname);
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "11.1");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
@@ -194,8 +200,10 @@ public class SeMethods extends Reporter implements WdMethods {
 
 			if(b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Mac")){  
 				DesiredCapabilities dc = DesiredCapabilities.chrome();
+				System.out.println(tcname);
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "68.0");
+				//dc.setCapability("version", "66.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				try {
@@ -210,9 +218,10 @@ public class SeMethods extends Reporter implements WdMethods {
 
 			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Mac")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
+				System.out.println(tcname);
 				dc.setCapability("platform", "macOS 10.13");
-				dc.setCapability("version", "61.0");
-				dc.setCapability("version", "61.0");
+				//dc.setCapability("version", "61.0");
+				dc.setCapability("version", "47.0.1");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				try {
@@ -274,7 +283,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public void click(WebElement ele) {
 		String text = "";
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 80);
+			WebDriverWait wait = new WebDriverWait(driver, 100);
 			wait.until(ExpectedConditions.elementToBeClickable(ele));			
 			text = ele.getText();
 			ele.click();
@@ -539,17 +548,19 @@ public class SeMethods extends Reporter implements WdMethods {
 		}
 	}
 
-	public void mouseover(WebElement ele){
-
-		try {
-			Actions act = new Actions(driver);
-			act.moveToElement(ele).perform();
-		} catch (WebDriverException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void mouseMoveTo(WebElement ele){
+		
+			try {
+				Actions act = new Actions(driver);
+				act.moveToElement(ele).build().perform();
+			} catch (WebDriverException e) {
+				reportStep("WebDriverException : "+e.getMessage(), "FAIL"); {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				}
+			}
 	}
-
+	
 	public void scrollingByCoordinatesofAPage() {
 		((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1250)");
 	}

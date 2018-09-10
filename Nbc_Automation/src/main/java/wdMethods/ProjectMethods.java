@@ -65,46 +65,44 @@ public class ProjectMethods extends SeMethods{
 	}
 	
 	@AfterMethod
-	public void afterMethod() throws Exception{
+	public void afterMethod(){
 		
-//		Properties prop = new Properties();
-//		prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
-//		SauceOnDemandAuthentication authentication = new SauceOnDemandAuthentication( prop.getProperty("USERNAME"), prop.getProperty("ACCESS_KEY")); 
-//		SauceREST client = new SauceREST(authentication.getUsername(), authentication.getAccessKey());
-//		
-//		public void jobPassed(String jobId) {
-//	        updates.put("passed", true);
-//	        updateJobInfo(jobId, updates);
-//		}
-//		
-//		public void jobFailed(String jobId) {
-//	        updates.put("passed", false);
-//	        updateJobInfo(jobId, updates);
-//	    }
-		/*updates.put("passed", passed);
+		endTestcase();
+		closeAllBrowsers();
+	}
+		
+		/*Properties prop = new Properties();
+		prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+		SauceOnDemandAuthentication authentication = new SauceOnDemandAuthentication( prop.getProperty("USERNAME"), prop.getProperty("ACCESS_KEY")); 
+		SauceREST client = new SauceREST(authentication.getUsername(), authentication.getAccessKey());
+		
+		public void jobPassed(String jobId) {
+	        updates.put("passed", true);
+	        updateJobInfo(jobId, updates);
+		}
+		
+		public void jobFailed(String jobId) {
+	        updates.put("passed", false);
+	        updateJobInfo(jobId, updates);
+	    }
+		updates.put("passed", passed);
 		client.updateJobInfo(jobId, updates);
 		
 		if (passed) {
             client.jobPassed(jobId);
         } else {
             client.jobFailed(jobId);
-        }*/
-			/*try
+        }
+			try
 			{
 	          //code block
 	            client.jobPassed(this.jobId);
 	        } catch (Exception e) {
 	            client.jobFailed(this.jobId);
 	            throw e;
-	        }*/
-		//((JavascriptExecutor) driver.get()).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
+	        }
+		((JavascriptExecutor) driver.get()).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));*/
 
-        
-		endTestcase();
-		closeAllBrowsers();
-	
-		
-	}
 
 	@DataProvider(name="fetchData")
 	public  Object[][] getData(){

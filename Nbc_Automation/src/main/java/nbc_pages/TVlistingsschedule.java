@@ -2,6 +2,7 @@ package nbc_pages;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.poi.ddf.EscherColorRef.SysIndexSource;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
@@ -27,6 +28,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//li[contains(text(),'NBC 4')]")
 		private WebElement elenbc4;	
 		public TVlistingsschedule clicknbc4() {
+			driver.findElementByXPath("//li[contains(text(),'NBC 4')]").isDisplayed();
 			click(elenbc4);
 			return this;
 		}
@@ -35,14 +37,14 @@ import wdMethods.ProjectMethods;
 		private WebElement elecozitv;	
 		public TVlistingsschedule clickcozitv() {
 			click(elecozitv);
+			driver.findElementByXPath("//li[contains(text(),'Cozi TV')]").isDisplayed();
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[contains(text(),'NOW')]")
 		private WebElement eledaynbcnow;	
 		public TVlistingsschedule clickdaynbcnow() {
-			verifyDisplayed(eledaynbcnow);
-			System.out.println(eledaynbcnow);
+			driver.findElementByXPath("//div[contains(text(),'NOW')]").isDisplayed();
 			return this;
 		}
 		
@@ -57,7 +59,6 @@ import wdMethods.ProjectMethods;
 		private WebElement eletvListingContainer;	
 		public TVlistingsschedule clicktvListingContainer() {
 			click(eletvListingContainer);
-			verifyDisplayed(eletvListingContainer);
 			System.out.println(eletvListingContainer);
 			return this;
 		}

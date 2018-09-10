@@ -27,7 +27,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='tpVideoBlocker']")
 		private WebElement eleplayer;	
 		public Heartbreakingtimeline clickplayer() {
-			mouseover(eleplayer);
+			mouseMoveTo(eleplayer);
 			return this;
 		}
 		
