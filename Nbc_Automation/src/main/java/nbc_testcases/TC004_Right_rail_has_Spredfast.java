@@ -1,5 +1,13 @@
 package nbc_testcases;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.commons.collections4.map.HashedMap;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -8,32 +16,54 @@ import wdMethods.ProjectMethods;
 
 public class TC004_Right_rail_has_Spredfast extends ProjectMethods{
 
-	@BeforeClass
+	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
 		testCaseName = "Right rail has Spredfast";
 		testDescription = "To Test Right rail has Spredfast";
-		category= "Smoke";
+		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
 
-	@Test 
+	public  Map<String, String> appData = new HashedMap<>();
+	
+	@Test(groups= {"Regression"}, priority=3)
 	public void NbcPage(){
 	
-			//if (sUrl.equalsIgnoreCase(sUrl)) {
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
 				.clickthisjustin()
 				.clickminutesago();
-			/*} else if (LUrl.equalsIgnoreCase(LUrl)) {
-				new NbcPage(driver, test).clicknbclogo().clickthisjustin().clickminutesago();
-			} else if (TPUrl.equalsIgnoreCase(TPUrl)) {
-				new NbcPage(driver, test).clicknbclogo().clicknavtiempoTM().clickmapplayTM();
-			} else if (T5Url.equalsIgnoreCase(T5Url)) {
-				new NbcPage(driver, test).clicknbclogo().clicknavtiempoTM().clickmapplayTM();
+
 			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo()
+				.clickthisjustin()
+				.clickminutesago();
+
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo();
+				
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo();
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-	};*/
+
 	}
 }

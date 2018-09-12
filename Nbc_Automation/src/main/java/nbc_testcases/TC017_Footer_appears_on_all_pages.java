@@ -1,5 +1,13 @@
 package nbc_testcases;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.commons.collections4.map.HashedMap;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -8,27 +16,50 @@ import wdMethods.ProjectMethods;
 
 public class TC017_Footer_appears_on_all_pages extends ProjectMethods{
 
-	@BeforeClass
+	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 		
 		testCaseName = "Footer appears on all pages";
 		testDescription = "To Test News Page Loads with Sub-Nav successfully";
-		category= "Smoke";
+		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
 
-	@Test
+	public  Map<String, String> appData = new HashedMap<>();
+	
+	@Test(groups= {"Regression"}, priority=16)
 	public void NbcPage(){
 
+		Properties prop = new Properties();
 		try {
-			Thread.sleep(4000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+				new NbcPage(driver, test)
+				.clickfooter();
+
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+				new NbcPage(driver, test)
+				.clickfooter();
+
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo();
+
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo();
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	new NbcPage(driver, test)
-	.clickfooter();
 	
 	}
 }

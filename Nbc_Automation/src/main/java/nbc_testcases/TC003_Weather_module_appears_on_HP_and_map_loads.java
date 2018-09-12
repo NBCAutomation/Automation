@@ -2,6 +2,8 @@ package nbc_testcases;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -14,67 +16,53 @@ import wdMethods.ProjectMethods;
 
 public class TC003_Weather_module_appears_on_HP_and_map_loads extends ProjectMethods{
 
-	@BeforeClass
+	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
 		testCaseName = "Weather Radar Interactive Loads/Plays";
 		testDescription = "To Test Weather Radar Interactive Loads/Plays";
-		category= "Smoke";
+		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-	/*public  Map<String, String> appData = new HashedMap<>();
-	public String applicationUrl;*/
-	
-		@Test
-		public void NbcPage() {
-			
-			new NbcPage(driver, test)
-			.clicknbclogo()
-			.clickelewetheriframe()
-			.clickwethermodule();
-		}
-			/*Properties prop = new Properties();
-			try {
-				prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
-				appData.put("sUrl", prop.getProperty("NYURL"));
-				appData.put("LUrl", prop.getProperty("LAURL"));
-				appData.put("T5Url", prop.getProperty("T51URL"));
-				appData.put("TPUrl", prop.getProperty("TPRURL"));
-				String url1 = "https://www.nbcnewyork.com", url2 = "http://www.nbclosangeles.com", url3 = "http://www.telemundo51.com", url4 = "http://www.telemundopr.com";
-				*/
-				
-//			if (appData.get(applicationUrl).equalsIgnoreCase(prop.getProperty("NYURL"))) {
-				//System.out.println(appData.get(URL1));
-				//if(url1.equalsIgnoreCase(appData.get(URL1))) {
-				
-			/*} else if (url2.equalsIgnoreCase(appData.get(URL1))) {
+	public  Map<String, String> appData = new HashedMap<>();
+
+	@Test(groups= {"Regression"}, priority=2)
+	public void NbcPage() {
+
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
 				.clickelewetheriframe()
 				.clickwethermodule();
-			} else if (url3.equalsIgnoreCase(appData.get(URL1))) {
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clicknavtiempoTM()
-				.clickmapplayTM();
-			} else if (url4.equalsIgnoreCase(appData.get(URL1))) {
+				.clickelewetheriframe()
+				.clickwethermodule();
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
 				.clicknavtiempoTM()
 				.clickmapplayTM();
 			}
-//try {
-*///	Thread.sleep(10000);
-//} catch (InterruptedException e) {
-//	// TODO Auto-generated catch block
-//	e.printStackTrace();
-//}
-		/*}
-			
-			catch(Exception e) {
-				System.out.println(e);
-				e.printStackTrace();
-				
-				}*/
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo()
+				.clicknavtiempoTM()
+				.clickmapplayTM();
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

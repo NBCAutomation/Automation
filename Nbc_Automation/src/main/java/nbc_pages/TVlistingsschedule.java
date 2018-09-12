@@ -28,19 +28,6 @@ public class TVlistingsschedule extends ProjectMethods{
 		/*if(!verifyTitle("TV Listings, Schedule, and What's on Tonight on WNBC 4 New York | NBC New York")) {
 				throw new RuntimeException();
 			}*/
-		
-		/*Properties prop = new Properties();
-		try {
-			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
-			appData.put("sUrl", prop.getProperty("NYURL"));
-			appData.put("LUrl", prop.getProperty("LAURL"));
-			appData.put("T5Url", prop.getProperty("T51URL"));
-			appData.put("TPUrl", prop.getProperty("TPRURL"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
 	}
 	
 	
@@ -49,7 +36,7 @@ public class TVlistingsschedule extends ProjectMethods{
 	private WebElement elenbc4;	
 	@FindBy(how=How.XPATH,using="//li[contains(text(),'NBC4')]")
 	private WebElement elenbc4LA;
-	public TVlistingsschedule clicknbc4() {
+	public TVlistingsschedule clicknbc4(){
 		
 		if(this.driver.getCurrentUrl().startsWith(appData.get("sUrl"))==true){
 			click(elenbc4);

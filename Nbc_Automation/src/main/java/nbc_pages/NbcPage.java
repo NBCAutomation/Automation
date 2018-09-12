@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 import com.relevantcodes.extentreports.ExtentTest;
 
 import wdMethods.ProjectMethods;
-	@Test
+	@Test (groups= {"Regression"})
 	public class NbcPage extends ProjectMethods{
 
 		public NbcPage(RemoteWebDriver driver,ExtentTest test) {
@@ -76,7 +76,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='row']//a[@class='nav-section-title nav-selected']")
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=section navigation&lid=El Tiempo']")
 		private WebElement elenavtiempoTM;
 		public NbcPage clicknavtiempoTM() {
 			click(elenavtiempoTM);
@@ -85,8 +85,13 @@ import wdMethods.ProjectMethods;
 		
 		@FindBy(how=How.XPATH,using="//button[@class='wxmap--src-widgets-map-components-default-timeline-timeline-controls__play ']")
 		private WebElement elemapplayTM;
+		@FindBy(how=How.XPATH,using="//div[@id='wsiRadarFrame']//iframe[@class='wx-standalone-map']")
+		private WebElement elemapiframe;
 		public NbcPage clickmapplayTM() {
+		this.driver.switchTo().frame(elemapiframe);
+		this.driver.switchTo().frame(0);
 			click(elemapplayTM);
+			this.driver.switchTo().defaultContent();
 			return this;
 		}
 		
@@ -300,13 +305,51 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='social-icon twitter']/a/span")
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon twitter']")
+		private WebElement eletwitter;
+		public NbcPage clicktwitter() {
+			click(eletwitter);
+			switchToWindow(1);
+			driver.close();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon comment']")
+		private WebElement eleiconcomment;
+		public NbcPage clickiconcomment() {
+			click(eleiconcomment);
+			driver.navigate().back();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon email']")
+		private WebElement eleiconemail;
+		public NbcPage clickiconemail() {
+			click(eleiconemail);
+			switchToWindow(1);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.close();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon print']")
+		private WebElement eleiconprint;
+		public NbcPage clickiconprint() {
+			click(eleiconprint);
+			switchToWindow(1);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.close();
+			return this;
+		}
+		
+		/*@FindBy(how=How.XPATH,using="//div[@class='social-icon twitter']/a/span")
 		private WebElement eletwitter;
 		public Heartbreakingtimeline clicktwitter() {
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			click(eletwitter);
 			return new Heartbreakingtimeline(driver, test);
-		}
+		}*/
 		
 		@FindBy(how=How.XPATH,using="//a[@name='&lpos=footer&lid=Contact Us']")
 		private WebElement elecontactus;
@@ -359,6 +402,24 @@ import wdMethods.ProjectMethods;
 		public NbcPage clickfooter() {
 			click(elefooter);
 			scrollingByCoordinatesofAPage();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=New York Live']")
+		private WebElement elenewyorklive;
+		public NbcPage clicknewyorklive() {
+			scrollingByCoordinatesofAPage();
+			click(elenewyorklive);
+			driver.navigate().back();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=News']")
+		private WebElement elefooternews;
+		public NbcPage clickfooternews() {
+			scrollingByCoordinatesofAPage();
+			click(elefooternews);
+			driver.navigate().back();
 			return this;
 		}
 		

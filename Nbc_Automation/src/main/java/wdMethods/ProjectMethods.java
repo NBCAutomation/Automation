@@ -32,17 +32,17 @@ public class ProjectMethods extends SeMethods{
 	public String jobId;
 	public String URL1;
 	
-	@BeforeSuite
+	@BeforeSuite(groups= {"Regression"})
 	public void beforeSuite(){
 		startResult();
 	}
 
-	@BeforeTest
+	@BeforeTest(groups= {"Regression"})
 	public void beforeTest() {
 	}
 	
 	@Parameters({"browser","platform","url"})
-	@BeforeMethod
+	@BeforeMethod(groups= {"Regression"})
 	public void beforeMethod(String browser, String platform, String applicationUrl){
 		test = startTestCase(testCaseName, testDescription);
 		test.assignCategory(category);
@@ -52,19 +52,19 @@ public class ProjectMethods extends SeMethods{
 		URL1 = applicationUrl;
 	}
 	
-	@AfterSuite 
+	@AfterSuite (groups= {"Regression"})
 	public void afterSuite() throws Exception{
 		endResult();
-		sendmailAttachment();
+		//sendmailAttachment();
 		
 	}
 
-	@AfterTest
+	@AfterTest(groups= {"Regression"})
 	public void afterTest()  {
 		
 	}
 	
-	@AfterMethod
+	@AfterMethod(groups= {"Regression"})
 	public void afterMethod(){
 		
 		endTestcase();

@@ -1,5 +1,13 @@
 package nbc_testcases;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.commons.collections4.map.HashedMap;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
@@ -7,29 +15,52 @@ import wdMethods.ProjectMethods;
 
 public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 
-	@BeforeClass
+	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
 		testCaseName = "Top stories playback with pre roll";
 		testDescription = "To Test stories playback with-pre roll";
-		category= "Smoke";
+		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
 
-	@Test
+	public  Map<String, String> appData = new HashedMap<>();
+	
+	@Test(groups= {"Regression"}, priority=1)
 	public void NbcPage(){
-			 
-					//if (sUrl.equalsIgnoreCase(sUrl)) {
-						new NbcPage(driver, test)
-						.clicknbclogo()
-						.clicktopstories();
-					/*} else if (LUrl.equalsIgnoreCase(LUrl)) {
-						new NbcPage(driver, test).clicknbclogo().clicktopstories();
-					} else if (TPUrl.equalsIgnoreCase(TPUrl)) {
-						new NbcPage(driver, test).clicknbclogo().clicktopstoriesTM();
-					} else if (T5Url.equalsIgnoreCase(T5Url)) {
-						new NbcPage(driver, test).clicknbclogo().clicktopstoriesTM();
-			};*/
+			
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo()
+				.clicktopstories();
+
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo()
+				.clicktopstories();
+
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo();
+				
+			}
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo();
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

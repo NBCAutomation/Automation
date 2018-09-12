@@ -467,7 +467,7 @@ public class SeMethods extends Reporter implements WdMethods {
 
 	public void switchToFrame(WebElement ele) {
 		try {
-			driver.switchTo().frame(ele);
+			this.driver.switchTo().frame(ele);
 			reportStep("switch In to the Frame "+ele,"PASS");
 		} catch (NoSuchFrameException e) {
 			reportStep("WebDriverException : "+e.getMessage(), "FAIL");
