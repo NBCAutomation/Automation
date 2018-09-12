@@ -38,12 +38,10 @@
 		</classes>
 	</test>
 	
-	<!-- <test thread-count="5" name="Test4">
+	<test thread-count="5" name="Test4">
 		<parameter name="browser" value="internetExplorer"></parameter>
 		<parameter name="platform" value="win10"></parameter>
 		<parameter name="url" value="sUrl"></parameter>
-		<parameter name="url" value="LUrl"></parameter>
-
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
@@ -51,9 +49,7 @@
 	<test thread-count="5" name="Test5">
 		<parameter name="browser" value="Safari"></parameter>
 		<parameter name="platform" value="mac"></parameter>
-		<parameter name="url" value="sUrl"></parameter>
 		<parameter name="url" value="LUrl"></parameter>
-
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
@@ -62,11 +58,9 @@
 		<parameter name="browser" value="Firefox"></parameter>
 		<parameter name="platform" value="mac"></parameter>
 		<parameter name="url" value="sUrl"></parameter>
-		<parameter name="url" value="LUrl"></parameter>
-
 		<classes>
 			<class name="nbc_testcases.TC001_Logo_is_clickable" />
 		</classes>
-	</test> -->
+	</test>
 	<!-- Test -->
 </suite> <!-- Suite -->

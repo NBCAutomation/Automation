@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -33,7 +32,6 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FileUtils;
-import org.junit.rules.TestName;
 //import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.InvalidElementStateException;
@@ -43,7 +41,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
@@ -53,7 +50,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.DataProvider;
+import org.testng.ITestResult;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import utils.Reporter;
@@ -61,6 +58,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public String URL;
 	public DesiredCapabilities dc;
 	public RemoteWebDriver driver;
+	public String jobId;
 	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl,T5Url,TPUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
 	public  Map<String, String> appData = new HashedMap<>();
 
@@ -115,10 +113,12 @@ public class SeMethods extends Reporter implements WdMethods {
 				dc.setBrowserName("Chrome");
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "68.0");
+				//dc.setCapability("version", "66.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					// TODO Auto-generated catch block
@@ -129,28 +129,33 @@ public class SeMethods extends Reporter implements WdMethods {
 
 			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
+				System.out.println(tcname);
 				dc.setBrowserName("Firefox");
 				dc.setCapability("platform", "Windows 10");
-				dc.setCapability("version", "61.0");
+				//dc.setCapability("version", "61.0");
+				dc.setCapability("version", "55.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				//webURL=LUrl;
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				}
 			}
 
-			if(b.equalsIgnoreCase("Edge")){
+			if(b.equalsIgnoreCase("Edge") && p.equalsIgnoreCase("Win10")){
 				DesiredCapabilities dc = DesiredCapabilities.edge();
+				System.out.println(tcname);
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "17.17134");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -158,14 +163,16 @@ public class SeMethods extends Reporter implements WdMethods {
 
 			}
 
-			if(b.equalsIgnoreCase("internetExplorer")){
+			if(b.equalsIgnoreCase("internetExplorer") && p.equalsIgnoreCase("Win10")){
 				DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
+				System.out.println(tcname);
 				dc.setCapability("platform", "Windows 10");
-				dc.setCapability("version", "11.103");
+				dc.setCapability("version", "11.03");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -174,14 +181,16 @@ public class SeMethods extends Reporter implements WdMethods {
 			}
 
 
-			if(b.equalsIgnoreCase("Safari")){
+			if(b.equalsIgnoreCase("Safari") && p.equalsIgnoreCase("Mac")){
 				DesiredCapabilities dc = DesiredCapabilities.safari();
+				System.out.println(tcname);
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "11.1");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -191,12 +200,15 @@ public class SeMethods extends Reporter implements WdMethods {
 
 			if(b.equalsIgnoreCase("chrome") && p.equalsIgnoreCase("Mac")){  
 				DesiredCapabilities dc = DesiredCapabilities.chrome();
+				System.out.println(tcname);
 				dc.setCapability("platform", "macOS 10.13");
 				dc.setCapability("version", "68.0");
+				//dc.setCapability("version", "66.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -206,13 +218,15 @@ public class SeMethods extends Reporter implements WdMethods {
 
 			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Mac")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
+				System.out.println(tcname);
 				dc.setCapability("platform", "macOS 10.13");
-				dc.setCapability("version", "61.0");
-				dc.setCapability("version", "61.0");
+				//dc.setCapability("version", "61.0");
+				dc.setCapability("version", "47.0.1");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
-				dc.setCapability("passed", "True");
+				//dc.setCapability("passed", "True");
 				try {
 					driver = new RemoteWebDriver(new URL(URL), dc);
+					jobId = (((RemoteWebDriver) driver).getSessionId()).toString();
 				}
 				catch (MalformedURLException e1) {
 					e1.printStackTrace();
@@ -269,7 +283,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public void click(WebElement ele) {
 		String text = "";
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 80);
+			WebDriverWait wait = new WebDriverWait(driver, 100);
 			wait.until(ExpectedConditions.elementToBeClickable(ele));			
 			text = ele.getText();
 			ele.click();
@@ -453,7 +467,7 @@ public class SeMethods extends Reporter implements WdMethods {
 
 	public void switchToFrame(WebElement ele) {
 		try {
-			driver.switchTo().frame(ele);
+			this.driver.switchTo().frame(ele);
 			reportStep("switch In to the Frame "+ele,"PASS");
 		} catch (NoSuchFrameException e) {
 			reportStep("WebDriverException : "+e.getMessage(), "FAIL");
@@ -534,17 +548,19 @@ public class SeMethods extends Reporter implements WdMethods {
 		}
 	}
 
-	public void mouseover(WebElement ele){
-
-		try {
-			Actions act = new Actions(driver);
-			act.moveToElement(ele).perform();
-		} catch (WebDriverException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void mouseMoveTo(WebElement ele){
+		
+			try {
+				Actions act = new Actions(driver);
+				act.moveToElement(ele).build().perform();
+			} catch (WebDriverException e) {
+				reportStep("WebDriverException : "+e.getMessage(), "FAIL"); {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				}
+			}
 	}
-
+	
 	public void scrollingByCoordinatesofAPage() {
 		((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1250)");
 	}
@@ -612,11 +628,22 @@ public class SeMethods extends Reporter implements WdMethods {
 			message.setFrom(new InternetAddress(email));
 			message.setRecipients(Message.RecipientType.TO ,InternetAddress.parse(to));
 			message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
-			message.setSubject("NBC Sanity Automation Testing Report NBC Miami");
+			message.setSubject("NBC Regression Automation Testing Report NBC NewYork and NBC Losangeles");
 			message.setText(filename);  
 
 			MimeBodyPart messageBodyPart =new MimeBodyPart();
-			messageBodyPart.setText("Hi Team, \n \n Please find the automation report for the NBC Miami iOS App. Tested Modules are: \n \n TC-1. Opening the app and allowing the permission pop-up. \n TC-2. Save news as homepage. \n TC-3. Dismiss the tutorial screen. \n TC-4. Navigating to different section/sub-section pages of the app. \n TC-5. TVE. \n TC-6. Weather landing and interactive radar. \n \n Kindly download the attachment to review the report.\n \n");
+			messageBodyPart.setText("Hi Team, \n \n Please find the automation report for the NBC. Tested Modules are:"
+					+ " \n \n TC-1. NbcPage logo clickable."
+					+ " \n TC-2. Top stories playback with pre roll."
+					+ " \n TC-3. Weather Radar Interactive Loads/Plays."
+					+ " \n TC-4. Right rail has Spredfast."
+					+ " \n TC-5. Watch live TVE dropdown appears."
+					+ " \n TC-6. TVEdropdown should have ON NOW On Demand Full Schedule TV listings."
+					+ " \n TC-7. Connect dropdown appears."
+					+ " \n TC-8. Connect have all the configuration."
+					+ " \n TC-9. Share bar is visible and functions Article."
+					+ " \n TC-10. Article Advanced tagging HTML Module."
+					+ " \n \n Kindly download the attachment to review the report.\n \n");
 
 
 			Multipart multipart = new MimeMultipart();

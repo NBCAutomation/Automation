@@ -10,23 +10,23 @@ import com.relevantcodes.extentreports.ExtentTest;
 
 import wdMethods.ProjectMethods;
 	@Test
-	public class Noticiasdenuevayork extends ProjectMethods{
+	public class Newyorktraffic extends ProjectMethods{
 
-		public Noticiasdenuevayork(RemoteWebDriver driver,ExtentTest test) {
+		public Newyorktraffic(RemoteWebDriver driver,ExtentTest test) {
 			this.driver = driver;
 			this.test = test;
 
 			PageFactory.initElements(driver, this);		
-			/*if(!verifyTitle("Consumer Complaint Form | NBC New York")) {
+			/*if(!verifyTitle("Watch Live TV | NBC New York")) {
 				throw new RuntimeException();
-			}*/
+			}*/		
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[text()='Connect']")
-		private WebElement eleconnect;	
-		public Termsofservice clickconnect() {
-			mouseMoveTo(eleconnect);
-			return new Termsofservice(driver, test);
+		@FindBy(how=How.XPATH,using="//div[@id='body']//h1[text()='Traffic']")
+		private WebElement eleverifytraffic;	
+		public Newyorktraffic clickverifytraffic() {
+			click(eleverifytraffic);
+			System.out.println(eleverifytraffic);
+			return this;
 		}
-		
 }

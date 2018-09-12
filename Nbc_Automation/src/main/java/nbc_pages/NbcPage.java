@@ -3,6 +3,7 @@ package nbc_pages;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -11,7 +12,7 @@ import org.testng.annotations.Test;
 import com.relevantcodes.extentreports.ExtentTest;
 
 import wdMethods.ProjectMethods;
-	@Test
+	@Test (groups= {"Regression"})
 	public class NbcPage extends ProjectMethods{
 
 		public NbcPage(RemoteWebDriver driver,ExtentTest test) {
@@ -36,13 +37,15 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[text()='Connect']")
 		private WebElement eleconnect;	
 		public NbcPage clickconnect() {
-			mouseover(eleconnect);
+			Actions action = new Actions(driver);
+	        action.moveToElement(eleconnect).perform();
+			//mouseMoveTo(eleconnect);
 			driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
 			//driver.close();
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//i[@class='fa fa-twitter']")
+		@FindBy(how=How.XPATH,using="//div[@class='subnav-large-container']//a[@alt='Twitter']")
 		private WebElement eleconnecttwitter;	
 		public NbcPage clickconnecttwitter() {
 			click(eleconnecttwitter);
@@ -50,7 +53,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//i[@class='fa fa-instagram']")
+		@FindBy(how=How.XPATH,using="//div[@class='subnav-large-container']//a[@alt='Instagram']")
 		private WebElement eleconnectinstagram;	
 		public NbcPage clickconnectinstagram() {
 			click(eleconnectinstagram);
@@ -58,7 +61,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//i[@class='fa fa fa-facebook-official']")
+		@FindBy(how=How.XPATH,using="//div[@class='subnav-large-container']//a[@alt='Facebook']")
 		private WebElement eleconnectfacebook;	
 		public NbcPage clickconnectfacebook() {
 			click(eleconnectfacebook);
@@ -73,11 +76,32 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=section navigation&lid=El Tiempo']")
+		private WebElement elenavtiempoTM;
+		public NbcPage clicknavtiempoTM() {
+			click(elenavtiempoTM);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//button[@class='wxmap--src-widgets-map-components-default-timeline-timeline-controls__play ']")
+		private WebElement elemapplayTM;
+		@FindBy(how=How.XPATH,using="//div[@id='wsiRadarFrame']//iframe[@class='wx-standalone-map']")
+		private WebElement elemapiframe;
+		public NbcPage clickmapplayTM() {
+		this.driver.switchTo().frame(elemapiframe);
+		this.driver.switchTo().frame(0);
+			click(elemapplayTM);
+			this.driver.switchTo().defaultContent();
+			return this;
+		}
+		
 		
 		@FindBy(how=How.XPATH,using="//div[@id='__wxmap_MapboxAttribution']")
 		private WebElement elewethermodule;
 		public NbcPage clickwethermodule() {
 			click(elewethermodule);
+			//driver.findElementByXPath("//div[@id='__wxmap_MapboxAttribution']").isDisplayed();
+			System.out.println(elewethermodule);
 			return this;
 		}
 		
@@ -154,10 +178,11 @@ import wdMethods.ProjectMethods;
 		}
 
 		
-		@FindBy(how=How.XPATH,using="//div[@class='watch-live-logo']")
+		@FindBy(how=How.XPATH,using="//li[@class='nav-small-section nav-live-tv']//div[@class='watch-live-logo']")
 		private WebElement elewatchlivelogo;	
 		public NbcPage clickwatchlivelogo() {
-			mouseover(elewatchlivelogo);
+			mouseMoveTo(elewatchlivelogo);
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			return this;
 		}
 		
@@ -168,27 +193,27 @@ import wdMethods.ProjectMethods;
 			return new TVlistingsschedule(driver, test);
 		}
 		
-		@FindBy(how=How.XPATH,using="//li[@class='livetv']")
+		@FindBy(how=How.XPATH,using="//li[@class='nav-small-section nav-live-tv']//li[text()='LIVE TV']")
 		private WebElement elelivetv;	
 		public NbcPage clicklivetv() {
 			click(elelivetv);
-			System.out.println(elelivetv);
+			verifyDisplayed(elelivetv);;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//li[@class='onnow']")
+		@FindBy(how=How.XPATH,using="//li[@class='nav-small-section nav-live-tv']//li[@class='onnow']")
 		private WebElement eleonnow;	
 		public NbcPage clickonnow() {
 			click(eleonnow);
-			System.out.println(eleonnow);
+			verifyDisplayed(eleonnow);
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//li[@class='ondemand']")
+		@FindBy(how=How.XPATH,using="//li[@class='nav-small-section nav-live-tv']//li[@class='ondemand']")
 		private WebElement eleondemand;	
 		public NbcPage clickondemand() {
 			click(eleondemand);
-			System.out.println(eleondemand);
+			verifyDisplayed(eleondemand);
 			return this;
 		}
 		
@@ -200,19 +225,27 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@id='sfcontentFill']//following::p[@class='reltime'][3]")
+		@FindBy(how=How.XPATH,using="//p[@class='reltime']//a[1]")
+		//div[@id='sfcontentFill']//following-sibling::p[@class='reltime'][1]")
 		private WebElement eleminutesago;	
 		public NbcPage clickminutesago() {
 			click(eleminutesago);
-			switchToWindow(1);
+			//switchToWindow(1);
 			driver.close();
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='play-grey-medium'][1]")
+		@FindBy(how=How.XPATH,using="//div[@class='story-icon']//following::div[@class='play-grey-medium'][1]")
 		private WebElement eletopstories;	
 		public NbcPage clicktopstories() {
 			click(eletopstories);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='topStory right-image']//div[@class='smallPlayButton']")
+		private WebElement eletopstoriesTM;	
+		public NbcPage clicktopstoriesTM() {
+			click(eletopstoriesTM);
 			return this;
 		}
 		
@@ -226,7 +259,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//iframe[@src='https://cdn.knightlab.com/libs/timeline/latest/embed/index.html?source=0AtzG4fxNBjQjdDFYalFyTW1DR3BjWlVoYnpONkY3c1E&font=Georgia-Helvetica&maptype=toner&lang=en&width=620&height=575']")
 		private WebElement eleframe;
 		public NbcPage clickframe() {
-			scrollingByCoordinatesofAPage();
+			//switchToFrame(eleframe);
 			click(eleframe);
 			return this;
 		}
@@ -238,11 +271,12 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//a[text()='Privacy Policy']")
+		@FindBy(how=How.XPATH,using="//div[@class='nav-connect-footer']//li[@class='privacy-policy']")
 		private WebElement eleprivacypolicy;	
 		public NbcPage clickprivacypolicy() {
 			click(eleprivacypolicy);
 			driver.navigate().back();
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			return this;
 		}
 		
@@ -262,7 +296,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='social-icon facebook']")
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon facebook']")
 		private WebElement elefacebook;
 		public NbcPage clickfacebook() {
 			click(elefacebook);
@@ -271,12 +305,131 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='social-icon twitter']/a/span")
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon twitter']")
+		private WebElement eletwitter;
+		public NbcPage clicktwitter() {
+			click(eletwitter);
+			switchToWindow(1);
+			driver.close();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon comment']")
+		private WebElement eleiconcomment;
+		public NbcPage clickiconcomment() {
+			click(eleiconcomment);
+			driver.navigate().back();
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon email']")
+		private WebElement eleiconemail;
+		public NbcPage clickiconemail() {
+			click(eleiconemail);
+			switchToWindow(1);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.close();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon print']")
+		private WebElement eleiconprint;
+		public NbcPage clickiconprint() {
+			click(eleiconprint);
+			switchToWindow(1);
+			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+			driver.close();
+			return this;
+		}
+		
+		/*@FindBy(how=How.XPATH,using="//div[@class='social-icon twitter']/a/span")
 		private WebElement eletwitter;
 		public Heartbreakingtimeline clicktwitter() {
 			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 			click(eletwitter);
 			return new Heartbreakingtimeline(driver, test);
+		}*/
+		
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=footer&lid=Contact Us']")
+		private WebElement elecontactus;
+		public ContactUS clickcontactus() {
+			scrollingByCoordinatesofAPage();
+			click(elecontactus);
+			return new ContactUS(driver, test);
 		}
+		
+		@FindBy(how=How.XPATH,using="//li[@class='nav-section nav-more']")
+		private WebElement elenbclist;
+		public NbcPage clicknbclist() {
+			mouseMoveTo(elenbclist);
+			driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=ellipsis hover&lid=Traffic']")
+		private WebElement eletraffic;
+		public Newyorktraffic clicktraffic() {
+			click(eletraffic);
+			System.out.println(eletraffic);
+			return new Newyorktraffic(driver, test);
+		}
+	
+		
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=footer&lid=Investigations']")
+		private WebElement eleinvestigations;
+		public I_Team_newyork clickinvestigations() {
+			click(eleinvestigations);
+			return new I_Team_newyork(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//li[@class='nav-section News']")
+		private WebElement elenbcnews;
+		public NewsPageLoads clicknbcnews() {
+			click(elenbcnews);
+			return new NewsPageLoads(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//a[@name='&lpos=ellipsis hover&lid=Contact Us']")
+		private WebElement elenbccontact;
+		public ContactUS clicknbccontact() {
+			click(elenbccontact);
+			return new ContactUS(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='footer']/div")
+		private WebElement elefooter;
+		public NbcPage clickfooter() {
+			click(elefooter);
+			scrollingByCoordinatesofAPage();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=New York Live']")
+		private WebElement elenewyorklive;
+		public NbcPage clicknewyorklive() {
+			scrollingByCoordinatesofAPage();
+			click(elenewyorklive);
+			driver.navigate().back();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=News']")
+		private WebElement elefooternews;
+		public NbcPage clickfooternews() {
+			scrollingByCoordinatesofAPage();
+			click(elefooternews);
+			driver.navigate().back();
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//li[@class='nav-section News']//a[@class='nav-section-title ']")
+		private WebElement elenews;
+		public NbcPage clicknews() {
+			click(elenews);
+			return this;
+		}
+		
+		
 		
 }

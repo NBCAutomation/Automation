@@ -10,46 +10,49 @@ import java.util.Properties;
 import org.apache.commons.collections4.map.HashedMap;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
+public class TC012_Traffic_Page_Loads_with_SubNav extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Top stories playback with pre roll";
-		testDescription = "To Test stories playback with-pre roll";
+		testCaseName = "Traffic Page Loads with Sub-Nav";
+		testDescription = "To Test raffic Page Loads with Sub-Nav";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
 
 	public  Map<String, String> appData = new HashedMap<>();
-	
-	@Test(groups= {"Regression"}, priority=1)
+
+	@Test(groups= {"Regression"}, priority=11)
 	public void NbcPage(){
-			
+
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicktopstories();
+				.clicknbclist()
+				.clicktraffic()
+				.clickverifytraffic();
 
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicktopstories();
+				.clicknbclist()
+				.clicktraffic()
+				.clickverifytraffic();
 
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
-				
+
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
@@ -64,3 +67,4 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 
 	}
 }
+

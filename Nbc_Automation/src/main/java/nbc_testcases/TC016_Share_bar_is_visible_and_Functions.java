@@ -10,16 +10,17 @@ import java.util.Properties;
 import org.apache.commons.collections4.map.HashedMap;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
+public class TC016_Share_bar_is_visible_and_Functions extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
-
-		testCaseName = "Top stories playback with pre roll";
-		testDescription = "To Test stories playback with-pre roll";
+		
+		testCaseName = "News Page Loads with Sub-Nav";
+		testDescription = "To Test News Page Loads with Sub-Nav successfully";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -27,29 +28,37 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 
 	public  Map<String, String> appData = new HashedMap<>();
 	
-	@Test(groups= {"Regression"}, priority=1)
+	@Test(groups= {"Regression"}, priority=15)
 	public void NbcPage(){
-			
+
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicktopstories();
+				.clicktopstories()
+				.clickfacebook()
+				.clicktwitter()
+				.clickiconcomment()
+				.clickiconemail()
+				.clickiconprint();
 
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicktopstories();
+				.clicktopstories()
+				.clickfacebook()
+				.clicktwitter()
+				.clickiconcomment()
+				.clickiconemail()
+				.clickiconprint();
 
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
-				
+
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
@@ -61,6 +70,7 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+	
 	}
 }
+
