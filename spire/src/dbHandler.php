@@ -943,6 +943,29 @@ class DbHandler {
         return $output;
     }
 
+
+    public function logWeatherTileCheck($httpStatus) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO weather_tile_checks(http_status) VALUES(?)");
+        $stmtStatus = $stmt->execute(array($httpStatus));
+
+        if ($stmtStatus) {
+            // task row created
+            $rowID = $db_con->lastInsertId();
+
+            if ($rowID != NULL) {
+                return $rowID;
+            } else {
+                return NULL;
+            }
+        } else {
+            return NULL;
+        }
+
+        $stmt->close();
+    }
+
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
         // var_dump($testID);

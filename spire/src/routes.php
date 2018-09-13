@@ -1821,6 +1821,12 @@ $app->group('/utils', function () {
 				}
     		}
     	}
+
+    	if ($utilPostParams['task'] == 'logWeatherTileCheck') {
+			$httpStatus = $utilPostParams['httpStatus'];
+			
+			$db->logWeatherTileCheck($httpStatus);
+		}
     });
 
 

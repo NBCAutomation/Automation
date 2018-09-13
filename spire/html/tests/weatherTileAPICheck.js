@@ -28,7 +28,47 @@ casper.test.begin('OTS SPIRE | WSI Weather Tile Check', function suite(test) {
         wsiWeatherTileURL = 'https://wsimap.weather.com/201205/en-us/1117/0019/capability.json?layer=0856',
         weatherTileOutput,
         testingObject = {},
-        alertObject = {};
+        alertObject = {},
+        resourcesTime = {},
+        enableJsonValidation = '',
+        linkParser = document.createElement('a'),
+        listener = function (resource) {
+            linkParser.href = resource.url;
+            if (/^\/apps\/news-app/.exec(linkParser.pathname) === null) {
+                // not an api call, skip it.
+                return;
+            }
+            var date_start = new Date();
+
+            resourcesTime[resource.id] = {
+                'id': resource.id,
+                'url': resource.url,
+                'start': date_start.getTime(),
+                'end': -1,
+                'time': -1,
+                'status': resource.status
+            };
+
+            if (debugOutput) {
+                this.echo('resourcesTime :: ' + resourcesTime[resource.id].time);
+            }
+        },
+        receivedListener = function (resource) {
+            if (resourcesTime.hasOwnProperty(resource.id) === false) {
+                // we don't have any data for this request.
+                return;
+            }
+
+            var date_end = new Date();
+            resourcesTime[resource.id].end  = date_end.getTime();
+            resourcesTime[resource.id].time = resourcesTime[resource.id].end - resourcesTime[resource.id].start;
+
+            if (debugOutput) {
+                /* to debug and compare */
+                this.echo('manifestLoadTime >> ' + resourcesTime[resource.id].time);
+                this.echo('resource time >> ' + resourcesTime[resource.id].time);
+            }
+        };
 
         if (minutes < 10){
             minutes = "0" + minutes;
@@ -47,6 +87,46 @@ casper.test.begin('OTS SPIRE | WSI Weather Tile Check', function suite(test) {
     var timeStamp = month+'_'+day+'_'+year+'-'+hours+'_'+minutes+'-'+toD;
 
     manifestTestRefID = casper.cli.get('refID');
+
+    function setDebugEvents() {
+        var triggerEvent = function (event, args) {
+                // test.comment(arguments);
+                var array_args = Array.prototype.slice.call(args);
+                console.log("EVENT: " + event);
+                console.log("\t" + JSON.stringify(array_args));
+                console.log("\t" + array_args);
+            },
+            setTriggerEvent = function (evtName) {
+                casper.on(evtName, function () {
+                    triggerEvent(evtName, arguments);
+                });
+            },
+            eventsArray = [
+                "back", "capture.saved", "click", "complete.error", "die", "downloaded.file",
+                "downloaded.error", "error", "exit", "fill", "forward", "frame.changed", "http.auth",
+                "http.status.[code]", "load.started", "load.failed", "load.finished", "log",
+                "mouse.click", "mouse.down", "mouse.move", "mouse.up", "navigation.requested", "open",
+                "page.created", "page.error", "page.initialized", "page.resource.received",
+                "page.resource.requested", "popup.created", "popup.loaded", "popup.closed",
+                "remote.alert", "remote.callback", "remote.longRunningScript", "remote.message",
+                "resource.error", "resource.received", "resource.requested", "resource.timeout",
+                "run.complete", "run.start", "starting", "started", "step.added", "step.bypassed",
+                "step.complete", "step.created", "step.error", "step.start", "step.timeout", "timeout",
+                "url.changed", "viewport.changed", "wait.done", "wait.start", "waitFor.timeout",
+                "capture.target_filename", "echo.message", "log.message", "open.location", "page.confirm",
+                "page.filePicker", "page.prompt"
+            ],
+            i,
+            event;
+
+        for (i = eventsArray.length - 1; i >= 0; i -= 1) {
+            event = eventsArray[i];
+            setTriggerEvent(event);
+        }
+    }
+
+    casper.on('resource.requested', listener);
+    casper.on('resource.received', receivedListener);
 
     if (envConfig === 'local') {
         var configURL = 'http://spire.local';
@@ -79,26 +159,17 @@ casper.test.begin('OTS SPIRE | WSI Weather Tile Check', function suite(test) {
         });
     }
 
+     // Output debug logging
+    // if (debugOutput) {
+    //     setDebugEvents();
+    // }
     /*************************
     *
     * Begin test suite setup
     *
     *************************/
-    var weatherTileVerificationCheck = function() {
+    var apiSuiteInstance = function() {
         var suite = this;
-
-        casper.options.onTimeout = function () {
-            timeoutDetails['failure'] = 'Script Stopped! Timeout occured, max execution time reached: 300000ms';
-            testResultsObject['testResults'] = timeoutDetails;
-
-            suite.processTestResults(urlUri, testResultsObject, '1', testResultsObject['testID'], 'regressionTest', 'Fail', 'Script timeout');
-
-            casper.wait(100, function() {
-                console.log(colorizer.colorize(' > Script Stopped! Timeout occured (max execution time reached: 300000ms) ', 'RED_BAR'));
-                this.exit();
-                test.done();
-            });
-        };
 
         /*******************
         *
@@ -106,114 +177,48 @@ casper.test.begin('OTS SPIRE | WSI Weather Tile Check', function suite(test) {
         *
         *******************/
         // casper.start().then(function(response) {
-        casper.start( wsiWeatherTileURL ).then(function(response) {
+        casper.start( wsiWeatherTileURL, function(response) {
+        // casper.thenOpen(endpointUrl, { method: 'get', headers: { 'accept': 'application/json' } }, function (resp) {
             if (debugOutput) {
                 console.log('-------------------------');
                 console.log('  Response Output');
                 console.log('-------------------------');
+                var headerObject = response.headers;
                 console.log(JSON.stringify(response));
                 console.log('-------------------------');
             }
 
-            var headerObject = response.headers;
             weatherTileOutput = this.getPageContent();
 
-            if ( response.status == 200 || response.status == 301) {
-                console.log('URL: ' + response.url);
-                console.log('> Load OK: ' + response.status);
-                console.log('------------------------------------------');
-            } else {
-                console.log(colorizer.colorize('FAIL/WARN','WARN_BAR') + ' HTTP Response: ' + response.status + ' - page didn\'t load correctly and/or was redirected. Test Manually');
-                failureType = 'loadingError';
-                sendEmailAlert = true;
-            }
+            // Log HTTP Status of URL
+            suite.processTestResults(response.status);
 
-        }).then(function() {
-            if (sendEmailAlert) {
-                suite.sendAlert(failureType);
-                console.log('alert sent');
-            }
         }).run(function() {
             console.log(colorizer.colorize('Testing complete. ', 'COMMENT'));
             this.exit();
         });
     };
 
-    // Create test id in DB
-    apiSuite.prototype.createTestID = function (url, stationProperty) {
-        // var apiSuiteInstance = this;
-
-        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-staleContentCheck&property=' + stationProperty + '&fileLoc=json_null';
-
-        if (!logResults) {
-            if (debugOutput) { console.log(colorizer.colorize('TestID: ', 'COMMENT') + 'xx'); }
-            apiSuiteInstance.manifestTestRefID = 'xx';
-        } else {
-            if (dbUrl) {
-                console.log(dbUrl);
-                casper.thenOpen(dbUrl).then(function (resp) {
-                    var pageOutput = null;
-
-                    if (resp.status === 200) {
-                        if (debugOutput) { console.log(colorizer.colorize('DB dbURL Loaded: ', 'COMMENT') + dbUrl); }
-
-                        pageOutput = this.getHTML();
-                        apiSuiteInstance.manifestTestRefID = casper.getElementInfo('body').text;
-                    } else {
-                        throw new Error('Unable to get/store Test ID!');
-                    }
-                });
-            }
-        }
-    };
-
-    // Send Email Notice
-    weatherTileVerificationCheck.prototype.sendAlert = function(failureType) {
-        var processUrl = configURL + '/utils/processRequest';
-
-        casper.open(processUrl, {
-            method: 'post',
-            data:   {
-                'taskType': 'weatherTile-alert',
-                'failureType': failureType
-            }
-        });
-    };
-
     // Log results in DB
-    weatherTileVerificationCheck.prototype.processTestResults = function (testFailureCount, typeName, manifestTestStatus) {
+    apiSuiteInstance.prototype.processTestResults = function (httpStatus) {
         var processUrl = configURL + '/utils/processRequest';
 
-        if (debugOutput) {
-            // console.log('>> process url: ' + processUrl);
+        // if (debugOutput) {
+            console.log('>> process url: ' + processUrl);
             console.log('------------------------');
             console.log(' Process Results Data  ');
             console.log('------------------------');
-            console.log('urlUri => ' + this.stationProperty);
-            console.log('testResultsObject => ' + apiSuiteInstance.testResultsObject);
-            console.log('contentObject => ' + endpointTestObject);
-            console.log('testID => ' + apiSuiteInstance.manifestTestRefID);
-            console.log('testFailureCount => ' + testFailureCount);
-            console.log('testType => ' + typeName);
-            // console.log('manifestLoadTime => ' + manifestLoadTime);
-            console.log('manifestTestStatus => ' + manifestTestStatus);
-        }
+            console.log('httpStatus => ' + httpStatus);
+        // }
 
         casper.open(processUrl, {
             method: 'post',
             data:   {
-                'task' : 'processScrapedContentStaleCheck',
-                'testID' : apiSuiteInstance.manifestTestRefID,
-                'testType' : typeName,
-                'testProperty' : this.stationProperty,
-                'contentObject' : JSON.stringify(endpointTestObject),
-                'testStatus' : manifestTestStatus,
-                'testFailureCount' : testFailureCount,
-                // 'manifestLoadTime' : 123,
-                'testResults' :  JSON.stringify(apiSuiteInstance.testResultsObject)
+                'task' : 'logWeatherTileCheck',
+                'httpStatus' : httpStatus
             }
         });
     };
 
-    new weatherTileVerificationCheck(casper.cli.get('url'));
+    new apiSuiteInstance(casper.cli.get('url'));
 });
