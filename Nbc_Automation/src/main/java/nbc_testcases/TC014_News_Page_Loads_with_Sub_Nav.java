@@ -37,7 +37,16 @@ public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbcnews().clicklocal().clicktopvideo().clickusworld().clickhealth().clickweird().clickweather().clicktech().clicksports().clicktopnewsheader();
+				.clicknbcnews()
+				.clicklocal()
+				.clicktopvideo()
+				.clickusworld()
+				.clickhealth()
+				.clickweird()
+				.clickweather()
+				.clicktech()
+				.clicksports()
+				.clicktopnewsheader();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)

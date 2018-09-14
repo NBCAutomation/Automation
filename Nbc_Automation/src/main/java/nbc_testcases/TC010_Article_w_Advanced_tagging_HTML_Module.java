@@ -37,7 +37,8 @@ public class TC010_Article_w_Advanced_tagging_HTML_Module extends ProjectMethods
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickrayrice().clickframe();
+				.clickrayrice()
+				.clickframe();
 				/*.clicktwitter();
 				.clickcomments();
 				.clickenvelope()

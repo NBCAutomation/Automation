@@ -37,7 +37,11 @@ public class TC005_Watch_live_TVE_dropdown_appears extends ProjectMethods{
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickwatchlivelogo().clicklivetv().clickonnow().clickondemand().clickfullschedule();
+				.clickwatchlivelogo()
+				.clicklivetv()
+				.clickonnow()
+				.clickondemand()
+				.clickfullschedule();
 
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){

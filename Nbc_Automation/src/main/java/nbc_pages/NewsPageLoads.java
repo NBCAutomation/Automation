@@ -25,72 +25,78 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Local']")
 		private WebElement elelocal;	
 		public NewsPageLoads clicklocal() {
-			//verifyDisplayed(elelocal);
-			System.out.println(elelocal);
+			click(elelocal);
+			System.out.println(elelocal.getText());
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='story_details']//following::span[@class='bordermask'][1]")
+		private WebElement elelocalarticle;	
+		public NewsPageLoads clicklocalarticle() {
+			click(elelocalarticle);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='story_details']//following::span[@class='playButtonSmall'][1]")
+		private WebElement elelocalvideo;
+		public NewsPageLoads clicklocalvideo() {
+			click(elelocalvideo);
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Top Video ']")
 		private WebElement eletopvideo;	
 		public NewsPageLoads clicktopvideo() {
-			verifyDisplayed(elelocal);
-			System.out.println(eletopvideo);
+			click(eletopvideo);
+			System.out.println(eletopvideo.getText());
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='U.S. & World']")
 		private WebElement eleusworld;	
 		public NewsPageLoads clickusworld() {
-			//verifyDisplayed(eleusworld);
-			System.out.println(eletopvideo);
+			System.out.println(eleusworld.getText());
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Health']")
 		private WebElement elehealth;	
 		public NewsPageLoads clickhealth() {
-			//verifyDisplayed(elehealth);
-			System.out.println(elehealth);
+			System.out.println(elehealth.getText());
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Weird']")
 		private WebElement eleweird;	
 		public NewsPageLoads clickweird() {
-			//verifyDisplayed(eleweird);
-			System.out.println(eleweird);
+			System.out.println(eleweird.getText());
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Weather']")
 		private WebElement eleweather;	
 		public NewsPageLoads clickweather() {
-			//verifyDisplayed(eleweather);
-			System.out.println(eleweather);
+			System.out.println(eleweather.getText());
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Tech']")
 		private WebElement eletech;	
 		public NewsPageLoads clicktech() {
-			//verifyDisplayed(eletech);
-			System.out.println(eletech);
+			System.out.println(eletech.getText());
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@class='subnav-section-landing']//a[text()='Sports']")
 		private WebElement elesports;	
 		public NewsPageLoads clicksports() {
-			//verifyDisplayed(elesports);
-			System.out.println(elesports);
+			System.out.println(elesports.getText());
 			return this;
 		}
 		
 		@FindBy(how=How.XPATH,using="//h1[@id='top-news-header']")
 		private WebElement eletopnewsheader;	
 		public NewsPageLoads clicktopnewsheader() {
-			//verifyDisplayed(eletopnewsheader);
-			System.out.println(eletopnewsheader);
 			return this;
 		}
 		

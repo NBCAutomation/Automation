@@ -41,7 +41,6 @@ import wdMethods.ProjectMethods;
 	        action.moveToElement(eleconnect).perform();
 			//mouseMoveTo(eleconnect);
 			driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
-			//driver.close();
 			return this;
 		}
 		
@@ -100,8 +99,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elewethermodule;
 		public NbcPage clickwethermodule() {
 			click(elewethermodule);
-			//driver.findElementByXPath("//div[@id='__wxmap_MapboxAttribution']").isDisplayed();
-			System.out.println(elewethermodule);
+			System.out.println(elewethermodule.getText());
 			return this;
 		}
 		
@@ -109,6 +107,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleinstagram;	
 		public NbcPage clickinstagram() {
 			click(eleinstagram);
+			System.out.println(eleinstagram.getText());
 			return this;
 		}
 		
@@ -117,6 +116,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleourapps;	
 		public Mobilenbc_ny clickourapps() {
 			click(eleourapps);
+			System.out.println(eleourapps.getText());
 			return new Mobilenbc_ny(driver, test);
 		}
 		
@@ -124,6 +124,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elesocialmedia;	
 		public NbcPage clickelesocialmedia() {
 			click(elesocialmedia);
+			System.out.println(elesocialmedia.getText());
 			return this;
 		}
 		
@@ -131,6 +132,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elenewsletters;	
 		public NbcPage clicknewsletter() {
 			click(elenewsletters);
+			System.out.println(elenewsletters.getText());
 			return this;
 		}
 		
@@ -138,6 +140,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elevideosandpictures;	
 		public Emailnewsletter clickvideosandpictures() {
 			click(elevideosandpictures);
+			System.out.println(elevideosandpictures.getText());
 			return new Emailnewsletter(driver, test);
 		}
 		
@@ -152,6 +155,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elesubmitcomplaint;	
 		public Consumercomplaint clicksubmitcomplaint() {
 			click(elesubmitcomplaint);
+			System.out.println(elesubmitcomplaint.getText());
 			return new Consumercomplaint(driver, test);
 		}
 		
@@ -159,6 +163,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elesubmittips;	
 		public NbcPage clicksubmittips() {
 			click(elesubmittips);
+			System.out.println(elesubmittips.getText());
 			return this;
 		}
 		
@@ -166,6 +171,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elesendfeedback;	
 		public NbcPage clicksendfeedback() {
 			click(elesendfeedback);
+			System.out.println(elesendfeedback.getText());
 			return this;
 		}
 	
@@ -190,6 +196,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elefullschedule;	
 		public TVlistingsschedule clickfullschedule() {
 			click(elefullschedule);
+			System.out.println(elefullschedule.getText());
 			return new TVlistingsschedule(driver, test);
 		}
 		
@@ -197,7 +204,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elelivetv;	
 		public NbcPage clicklivetv() {
 			click(elelivetv);
-			verifyDisplayed(elelivetv);;
+			System.out.println(elelivetv.getText());
 			return this;
 		}
 		
@@ -205,7 +212,6 @@ import wdMethods.ProjectMethods;
 		private WebElement eleonnow;	
 		public NbcPage clickonnow() {
 			click(eleonnow);
-			verifyDisplayed(eleonnow);
 			return this;
 		}
 		
@@ -213,7 +219,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleondemand;	
 		public NbcPage clickondemand() {
 			click(eleondemand);
-			verifyDisplayed(eleondemand);
+			System.out.println(eleondemand.getText());
 			return this;
 		}
 		
@@ -221,7 +227,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elethisjustin;	
 		public NbcPage clickthisjustin() {
 			click(elethisjustin);
-			verifyDisplayed(elethisjustin);
+			System.out.println(elethisjustin.getText());
 			return this;
 		}
 		
@@ -268,6 +274,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eletermsofservice;	
 		public NbcPage clicktermsofservice() {
 			click(eletermsofservice);
+			System.out.println(eletermsofservice.getText());
 			return this;
 		}
 		
@@ -318,6 +325,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleiconcomment;
 		public NbcPage clickiconcomment() {
 			click(eleiconcomment);
+			System.out.println(eleiconcomment.getText());
 			driver.navigate().back();
 			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 			return this;
@@ -327,6 +335,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleiconemail;
 		public NbcPage clickiconemail() {
 			click(eleiconemail);
+			System.out.println(eleiconemail.getText());
 			switchToWindow(1);
 			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 			driver.close();
@@ -337,19 +346,12 @@ import wdMethods.ProjectMethods;
 		private WebElement eleiconprint;
 		public NbcPage clickiconprint() {
 			click(eleiconprint);
+			System.out.println(eleiconprint.getText());
 			switchToWindow(1);
 			driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
 			driver.close();
 			return this;
 		}
-		
-		/*@FindBy(how=How.XPATH,using="//div[@class='social-icon twitter']/a/span")
-		private WebElement eletwitter;
-		public Heartbreakingtimeline clicktwitter() {
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-			click(eletwitter);
-			return new Heartbreakingtimeline(driver, test);
-		}*/
 		
 		@FindBy(how=How.XPATH,using="//a[@name='&lpos=footer&lid=Contact Us']")
 		private WebElement elecontactus;
@@ -358,6 +360,8 @@ import wdMethods.ProjectMethods;
 			click(elecontactus);
 			return new ContactUS(driver, test);
 		}
+		
+		
 		
 		@FindBy(how=How.XPATH,using="//li[@class='nav-section nav-more']")
 		private WebElement elenbclist;
@@ -371,7 +375,6 @@ import wdMethods.ProjectMethods;
 		private WebElement eletraffic;
 		public Newyorktraffic clicktraffic() {
 			click(eletraffic);
-			System.out.println(eletraffic);
 			return new Newyorktraffic(driver, test);
 		}
 	
@@ -387,6 +390,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elenbcnews;
 		public NewsPageLoads clicknbcnews() {
 			click(elenbcnews);
+			System.out.println(elenbcnews.getText());
 			return new NewsPageLoads(driver, test);
 		}
 		
@@ -394,8 +398,10 @@ import wdMethods.ProjectMethods;
 		private WebElement elenbccontact;
 		public ContactUS clicknbccontact() {
 			click(elenbccontact);
+			System.out.println(elenbccontact.getText());
 			return new ContactUS(driver, test);
 		}
+	
 		
 		@FindBy(how=How.XPATH,using="//div[@class='footer']/div")
 		private WebElement elefooter;
@@ -410,7 +416,15 @@ import wdMethods.ProjectMethods;
 		public NewsPageLoads clicknewyorklive() {
 			scrollingByCoordinatesofAPage();
 			click(elenewyorklive);
+			System.out.println(elenewyorklive.getText());
 			driver.navigate().back();
 			return new NewsPageLoads(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//li[@class='nav-section Weather']//a[@class='nav-section-title ']")
+		private WebElement eleweather;
+		public Newyorkweather clickweather() {
+			click(eleweather);
+			return new Newyorkweather(driver, test);
 		}
 }

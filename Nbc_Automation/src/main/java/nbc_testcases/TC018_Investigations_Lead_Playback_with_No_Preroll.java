@@ -37,7 +37,8 @@ public class TC018_Investigations_Lead_Playback_with_No_Preroll extends ProjectM
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickinvestigations().clickinvestigationvideo();
+				.clickinvestigations()
+				.clickinvestigationvideo();
 			}
 
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){

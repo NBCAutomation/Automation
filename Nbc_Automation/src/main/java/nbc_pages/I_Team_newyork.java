@@ -26,7 +26,7 @@ public class I_Team_newyork extends ProjectMethods{
 	private WebElement eleinvestigationvaild;	
 	public I_Team_newyork clickinvestigationvaild() {
 		click(eleinvestigationvaild);
-		System.out.println(eleinvestigationvaild);
+		System.out.println(eleinvestigationvaild.getText());
 		return this;
 	}
 
@@ -40,11 +40,11 @@ public class I_Team_newyork extends ProjectMethods{
 		
 		if(this.driver.getCurrentUrl().startsWith(appData.get("sUrl"))==true){
 			click(elemoreinvestigation);
-			System.out.println(elemoreinvestigation);
+			System.out.println(elemoreinvestigation.getText());
 		}
 		else if(this.driver.getCurrentUrl().startsWith(appData.get("LUrl"))==true){
 			click(elemoreinvestigationLA);
-			System.out.println(elemoreinvestigationLA);
+			System.out.println(elemoreinvestigationLA.getText());
 		}
 		
 		return this;

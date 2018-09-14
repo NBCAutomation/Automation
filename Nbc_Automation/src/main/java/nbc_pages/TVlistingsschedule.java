@@ -40,11 +40,11 @@ public class TVlistingsschedule extends ProjectMethods{
 		
 		if(this.driver.getCurrentUrl().startsWith(appData.get("sUrl"))==true){
 			click(elenbc4);
-			System.out.println(elenbc4);
+			System.out.println(elenbc4.getText());
 		}
 		else if(this.driver.getCurrentUrl().startsWith(appData.get("LUrl"))==true){
 			click(elenbc4LA);
-			System.out.println(elenbc4LA);
+			System.out.println(elenbc4LA.getText());
 		}
 		return this;
 	}
@@ -53,8 +53,7 @@ public class TVlistingsschedule extends ProjectMethods{
 	private WebElement elecozitv;	
 	public TVlistingsschedule clickcozitv() {
 		click(elecozitv);
-		System.out.println(elecozitv);
-		//driver.findElementByXPath("//li[contains(text(),'Cozi TV')]").isDisplayed();
+		System.out.println(elecozitv.getText());
 		return this;
 	}
 
@@ -62,8 +61,7 @@ public class TVlistingsschedule extends ProjectMethods{
 	private WebElement eledaynbcnow;	
 	public TVlistingsschedule clickdaynbcnow() {
 		click(eledaynbcnow);
-		System.out.println(eledaynbcnow);
-		//driver.findElementByXPath("//div[contains(text(),'NOW')]").isDisplayed();
+		System.out.println(eledaynbcnow.getText());
 		return this;
 	}
 

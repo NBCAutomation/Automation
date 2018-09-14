@@ -43,6 +43,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elesendtips;	
 		public Uploadyourmedia clicksendtips() {
 			click(elesendtips);
+			System.out.println(elesendtips.getText());
 			switchToWindow(3);
 			driver.close();
 			return this;
@@ -52,6 +53,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elesendfeedback;	
 		public Sendfeedback clicksendfeedback() {
 			click(elesendfeedback);
+			System.out.println(elesendfeedback.getText());
 			return new Sendfeedback(driver, test);
 		}
 }

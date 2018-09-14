@@ -37,7 +37,9 @@ public class TC009_Share_bar_is_visible_and_functions_Article extends ProjectMet
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo().clicktopstories().clickfacebook();
+				.clicknbclogo()
+				.clicktopstories()
+				.clickfacebook();
 				/*.clicktwitter();
 				.clickcomments();
 				.clickenvelope()
