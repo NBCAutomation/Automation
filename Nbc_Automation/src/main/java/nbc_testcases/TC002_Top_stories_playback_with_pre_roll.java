@@ -34,26 +34,13 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicktopstories();
-
+				.clicknbclogo().clicktopstories();
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicktopstories();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo();
-				
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo();
+				.clicknbclogo();	
 			}
 
 		} catch (FileNotFoundException e) {

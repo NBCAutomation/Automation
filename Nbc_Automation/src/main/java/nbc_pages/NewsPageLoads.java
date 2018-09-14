@@ -93,4 +93,13 @@ import wdMethods.ProjectMethods;
 			System.out.println(eletopnewsheader);
 			return this;
 		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=New York Live']")
+		private WebElement elenewyorklive;
+		public NewsPageLoads clicknewyorklive() {
+			scrollingByCoordinatesofAPage();
+			click(elenewyorklive);
+			driver.navigate().back();
+			return this;
+		}
 }

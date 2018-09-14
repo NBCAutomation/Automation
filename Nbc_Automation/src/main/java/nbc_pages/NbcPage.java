@@ -407,29 +407,10 @@ import wdMethods.ProjectMethods;
 		
 		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=New York Live']")
 		private WebElement elenewyorklive;
-		public NbcPage clicknewyorklive() {
+		public NewsPageLoads clicknewyorklive() {
 			scrollingByCoordinatesofAPage();
 			click(elenewyorklive);
 			driver.navigate().back();
-			return this;
+			return new NewsPageLoads(driver, test);
 		}
-		
-		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=News']")
-		private WebElement elefooternews;
-		public NbcPage clickfooternews() {
-			scrollingByCoordinatesofAPage();
-			click(elefooternews);
-			driver.navigate().back();
-			return this;
-		}
-		
-		@FindBy(how=How.XPATH,using="//li[@class='nav-section News']//a[@class='nav-section-title ']")
-		private WebElement elenews;
-		public NbcPage clicknews() {
-			click(elenews);
-			return this;
-		}
-		
-		
-		
 }

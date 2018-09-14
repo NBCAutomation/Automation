@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC019_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
+public class TC019_News_local_article_pages_that_contain_a_lead_video_should_feature_carousel_beneath_the_player extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 		
-		testCaseName = "News Page Loads with Sub-Nav";
-		testDescription = "To Test News Page Loads with Sub-Nav successfully";
+		testCaseName = "News/local article pages that contain a lead video should feature a carousel beneath the player";
+		testDescription = "To Test News/local article pages that contain a lead video should feature a carousel beneath the player";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -35,24 +35,15 @@ public class TC019_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknews();
-
+				.clicknbcnews().clicklocal();
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
-				new NbcPage(driver, test)
-				.clicknews();
 
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
 
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo();
 			}
 
 		} catch (FileNotFoundException e) {

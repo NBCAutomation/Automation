@@ -34,29 +34,12 @@ public class TC003_Weather_module_appears_on_HP_and_map_loads extends ProjectMet
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clickelewetheriframe()
-				.clickwethermodule();
+				.clicknbclogo().clickelewetheriframe().clickwethermodule();
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clickelewetheriframe()
-				.clickwethermodule();
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicknavtiempoTM()
-				.clickmapplayTM();
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicknavtiempoTM()
-				.clickmapplayTM();
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+				new NbcPage(driver, test).clicknbclogo().clicknavtiempoTM().clickmapplayTM();
 			}
 
 		} catch (FileNotFoundException e) {
