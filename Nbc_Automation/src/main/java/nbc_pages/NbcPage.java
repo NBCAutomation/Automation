@@ -255,18 +255,20 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//h2[text()='Ray Rice: A Timeline']")
-		private WebElement elerayrice;
-		public NbcPage clickrayrice() {
-			driver.navigate().to("https://www.nbcnewyork.com/news/local/Ray-Rice-Appeal-Hearing-Janay-Palmer-Roger-Goodell-Atlantic-City-NFL-Domestic-Abuse-281594071.html");
+		@FindBy(how=How.XPATH,using="//div[@class='leadMediaRegion gallery']//div[@class='pg_article_viewport']")
+		private WebElement elegallery;
+		public NbcPage clickgallery() {
+			click(elegallery);
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//iframe[@src='https://cdn.knightlab.com/libs/timeline/latest/embed/index.html?source=0AtzG4fxNBjQjdDFYalFyTW1DR3BjWlVoYnpONkY3c1E&font=Georgia-Helvetica&maptype=toner&lang=en&width=620&height=575']")
-		private WebElement eleframe;
-		public NbcPage clickframe() {
-			//switchToFrame(eleframe);
-			click(eleframe);
+		@FindBy(how=How.XPATH,using="//div[@class='pg_article_footer']//button[text()='Play Gallery']")
+		private WebElement eleplaygallery;
+		public NbcPage clickplaygallery() {
+			driver.navigate().to("https://www.nbcnewyork.com/news/national-international/World-Cup-Soccer-Brazil-Most-Popular-Facebook--263978591.html");
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			scrollingByCoordinatesofAPage();
+			click(eleplaygallery);
 			return this;
 		}
 		
@@ -427,4 +429,52 @@ import wdMethods.ProjectMethods;
 			click(eleweather);
 			return new Newyorkweather(driver, test);
 		}
+		
+		@FindBy(how=How.XPATH,using="//span[contains(text(),'Photos')]")
+		private WebElement elephoto;	
+		public NbcPage clickphoto() {
+			click(elephoto);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@id='slide1']//div[@class='slide_count']")
+		private WebElement eleslidecount;	
+		public NbcPage clickslidecount() {
+			click(eleslidecount);
+			System.out.println(eleslidecount.getText());
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@id='slide2']//div[@class='slide_count']")
+		private WebElement eleslidecount2;	
+		public NbcPage clickslidecount2() {
+			click(eleslidecount2);
+			System.out.println(eleslidecount2.getText());
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='section mid']//div[@class='citymodule full']/h1[@class='moduletitle']")
+		private WebElement elemoduletitle;	
+		public NbcPage clickmoduletitle() {
+			click(elemoduletitle);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//span[@class='Gallery headline_color']//following::h3[@class='headline'][6]")
+		private WebElement elestory1;	
+		public NbcPage clickstory1() {
+			scrollingByCoordinatesofAPage();
+			click(elestory1);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='slide_count']//following::span[@class='total_number'][1]")
+		private WebElement elecountTM;	
+		public NbcPage clickcountTM() {
+			scrollingByCoordinatesofAPage();
+			click(elecountTM);
+			System.out.println(elecountTM.getText());
+			return this;
+		}
+		
 }

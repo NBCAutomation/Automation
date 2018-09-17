@@ -14,12 +14,12 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC010_Article_w_Advanced_tagging_HTML_Module extends ProjectMethods{
+public class TC010_Article_with_gallery_in_lead extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Article Advanced tagging HTML Module";
+		testCaseName = "Article with gallery in lead";
 		testDescription = "To Test HTML Module Appears";
 		category= "Regression";
 		authors	="Vinoth";
@@ -37,12 +37,9 @@ public class TC010_Article_w_Advanced_tagging_HTML_Module extends ProjectMethods
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickrayrice()
-				.clickframe();
-				/*.clicktwitter();
-				.clickcomments();
-				.clickenvelope()
-				.clickprint();*/
+				.clickplaygallery()
+				.clickgallery();
+				
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)

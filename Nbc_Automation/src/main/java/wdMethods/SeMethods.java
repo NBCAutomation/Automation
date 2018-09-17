@@ -562,7 +562,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	}
 	
 	public void scrollingByCoordinatesofAPage() {
-		((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1250)");
+		((JavascriptExecutor) driver).executeScript("window.scrollBy(0,500)");
 	}
 
 	public void jiraSendRequest(String method, String description) {
