@@ -21,7 +21,7 @@
 			<class
 				name="nbc_testcases.TC018_Investigations_Lead_Playback_with_No_Preroll" />
 			<class
-				name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module" />
+				name="nbc_testcases.TC010_Article_with_gallery_in_lead" />
 			<class
 				name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll" />
 			<class name="nbc_testcases.TC011_Contact_Us_Page" />
@@ -62,7 +62,7 @@
 			<class
 				name="nbc_testcases.TC018_Investigations_Lead_Playback_with_No_Preroll" />
 			<class
-				name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module" />
+				name="nbc_testcases.TC010_Article_with_gallery_in_lead" />
 			<class
 				name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll" />
 			<class name="nbc_testcases.TC011_Contact_Us_Page" />
@@ -103,7 +103,7 @@
 			<class
 				name="nbc_testcases.TC018_Investigations_Lead_Playback_with_No_Preroll" />
 			<class
-				name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module" />
+				name="nbc_testcases.TC010_Article_with_gallery_in_lead" />
 			<class
 				name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll" />
 			<class name="nbc_testcases.TC011_Contact_Us_Page" />
@@ -144,7 +144,7 @@
 			<class
 				name="nbc_testcases.TC018_Investigations_Lead_Playback_with_No_Preroll" />
 			<class
-				name="nbc_testcases.TC010_Article_w_Advanced_tagging_HTML_Module" />
+				name="nbc_testcases.TC010_Article_with_gallery_in_lead" />
 			<class
 				name="nbc_testcases.TC002_Top_stories_playback_with_pre_roll" />
 			<class name="nbc_testcases.TC011_Contact_Us_Page" />
