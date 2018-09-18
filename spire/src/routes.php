@@ -1461,6 +1461,27 @@ $app->group('/utils', function () {
 			$getStationsGlobalAPIVer = true;
 		}
 
+		// Check logged data from logWeatherTileCheck and determie if an alert needs to be sent
+		if ($utilReqParams['task'] == 'evalWeatherTileChecks'){
+			$weatherCheckData = $db->getWeatherTileChecks();
+
+			if ($weatherCheckData) {
+				$weatherAlert = 0;
+				foreach ($weatherCheckData['data'] as $key => $value) {
+
+					if ($value['http_status'] != '200') {
+						$weatherAlert++;
+					}
+				}
+
+				if ($weatherAlert > 2) {
+					echo "set trippin";
+					$spireNotifications = true;
+					$notificationType = "weatherTileAlert";
+				}
+			}
+		}
+
 		if ($utilReqParams['task'] == 'sendAlert'){
 			$spireNotifications = true;
 			$notificationType = $utilReqParams['notificationType'];
@@ -1578,12 +1599,19 @@ $app->group('/utils', function () {
 	    		$emailContent .= '</table>';
 	    	}
 
-			// if ($taskRef == 'APITestingComplete') {
-	  //   		$emailRecipient = 'deltrie.allen@nbcuni.com';
-	  //   		$sendEmailNotification = true;
-			// 	$emailSubject = 'SPIRE: API Testing Complete';
-			// 	$emailContent = 'API Testing has completed';
-			// }
+			if ($taskRef == 'APITestingComplete') {
+	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+	    		$sendEmailNotification = true;
+				$emailSubject = 'SPIRE: API Testing Complete';
+				$emailContent = 'API Testing has completed';
+			}
+
+			if ($notificationType == 'weatherTileAlert') {
+	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+	    		$sendEmailNotification = true;
+				$emailSubject = '[SPIRE] Weather data failure';
+				$emailContent = 'The weather tile data is failing to load properly. The site has returned a 404 on consecutive checks, please investigate.<br /><br />URL:  https://wsimap.weather.com/201205/en-us/1117/0019/capability.json?layer=0856';
+			}
 
 	    	if ($notificationType == 'regression-notification') {
 	    		$db = new DbHandler();
@@ -1620,6 +1648,22 @@ $app->group('/utils', function () {
 	    if ($utilReqParams['task'] == 'testingOutput'){
 	    	$db = new DbHandler();
 
+	    	$weatherCheckData = $db->getWeatherTileChecks();
+
+	    	if ($weatherCheckData) {
+	    		$weatherAlert = 0;
+	    		foreach ($weatherCheckData['data'] as $key => $value) {
+
+	    			if ($value['http_status'] != '200') {
+	    				$weatherAlert++;
+	    			}
+	    		}
+
+	    		if ($weatherAlert > 2) {
+	    			echo "set trippin";
+	    		}
+	    	}
+
 	    	// $pageContent = $db->getPagedStaleContentChecks();
 	    	// // var_dump($pageContent);
 	    	// // print_r($pageContent['data']);
@@ -1645,47 +1689,47 @@ $app->group('/utils', function () {
 	     //    ]);
 	    	// echo $pageContent['data'];
 	    	
-    		$refTestID = $utilPostParams['testID'];
-    		$station = 'nbcdfw';
-    		$status = 'Pass';
-    		$testFailureCount = $utilPostParams['testFailureCount'];
-    		$sectionContentPayload = $utilPostParams['contentObject'];
-    		$results = $utilPostParams['testResults'];
+    // 		$refTestID = $utilPostParams['testID'];
+    // 		$station = 'nbcdfw';
+    // 		$status = 'Pass';
+    // 		$testFailureCount = $utilPostParams['testFailureCount'];
+    // 		$sectionContentPayload = $utilPostParams['contentObject'];
+    // 		$results = $utilPostParams['testResults'];
 
 
 
-    		if ($status == 'Pass') {
-				$thisContentObject = $db->getRecentContentObject($station);
-				// var_dump($thisContentObject);
-				$recentCotnentPayload = $thisContentObject['data']['payload'];
-				$payloadID = $thisContentObject['data']['id'];
+    // 		if ($status == 'Pass') {
+				// $thisContentObject = $db->getRecentContentObject($station);
+				// // var_dump($thisContentObject);
+				// $recentCotnentPayload = $thisContentObject['data']['payload'];
+				// $payloadID = $thisContentObject['data']['id'];
 
-				if ($recentCotnentPayload) {
-					// $payloadID = $thisContentObject['data']['id'];
-					// $refTestID = $thisContentObject['data']['ref_test_id'];
+				// if ($recentCotnentPayload) {
+				// 	// $payloadID = $thisContentObject['data']['id'];
+				// 	// $refTestID = $thisContentObject['data']['ref_test_id'];
 
-					// // echo Spire::dateDiff("now", $thisContentObject['data']['created']);
+				// 	// // echo Spire::dateDiff("now", $thisContentObject['data']['created']);
 					
-					// $to_time = strtotime("now");
-					// $from_time = strtotime($thisContentObject['data']['created']);
-					// echo 'MINUTES:: '.round(abs($to_time - $from_time) / 60). " minute";
-					// $updateMinutes = round(abs($to_time - $from_time) / 60,2);
+				// 	// $to_time = strtotime("now");
+				// 	// $from_time = strtotime($thisContentObject['data']['created']);
+				// 	// echo 'MINUTES:: '.round(abs($to_time - $from_time) / 60). " minute";
+				// 	// $updateMinutes = round(abs($to_time - $from_time) / 60,2);
 					
-					// exit();
+				// 	// exit();
 
-					// if ($recentCotnentPayload == $sectionContentPayload) {
-					// 	echo "matches";
-					// 	$db->logContentCheck($refTestID, $payloadID, $station, 1);
-					// } else {
-					// 	echo "NO";
-					// 	$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-					// 	$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-					// }
-				} else {
-					// $storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-					// $db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-				}
-    		}
+				// 	// if ($recentCotnentPayload == $sectionContentPayload) {
+				// 	// 	echo "matches";
+				// 	// 	$db->logContentCheck($refTestID, $payloadID, $station, 1);
+				// 	// } else {
+				// 	// 	echo "NO";
+				// 	// 	$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
+				// 	// 	$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+				// 	// }
+				// } else {
+				// 	// $storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
+				// 	// $db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
+				// }
+    		// }
 	    }
     });
 
@@ -1824,8 +1868,12 @@ $app->group('/utils', function () {
 
     	if ($utilPostParams['task'] == 'logWeatherTileCheck') {
 			$httpStatus = $utilPostParams['httpStatus'];
-			
-			$db->logWeatherTileCheck($httpStatus);
+			// $httpStatus = 404;
+
+			$logWeatherTileCheck = $db->logWeatherTileCheck($httpStatus);
+			if ($logWeatherTileCheck) {
+				return $response->withRedirect('/utils/tasks?task=evalWeatherTileChecks');
+			}
 		}
     });
 
@@ -1896,7 +1944,7 @@ $app->group('/utils', function () {
 			$this->logger->info("DB records purged: ". $purgedResults);
 
 			// Purge cache
-			return $response->withRedirect('/utils/purgeResults?auto=y');
+			// return $response->withRedirect('/utils/purgeResults?auto=y');
     	}
 
     	return $response->withRedirect('/dashboard/main');

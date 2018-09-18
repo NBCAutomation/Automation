@@ -966,6 +966,27 @@ class DbHandler {
         $stmt->close();
     }
 
+
+    public function getWeatherTileChecks() {
+        $output = Spire::spireCache('getWeatherTileChecks', 0, function() {
+            $db_con = Spire::getConnection();
+
+            $stmt = $db_con->prepare("SELECT * FROM weather_tile_checks ORDER BY id DESC LIMIT 3");
+
+            if ($stmt->execute()) {
+                $weatherAPIHTTPStatuses = $stmt->fetchAll();
+
+                $stmt->closeCursor();
+                return $weatherAPIHTTPStatuses;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
         // var_dump($testID);
