@@ -12,8 +12,112 @@
 			<h4>Welcome, <?php echo $user['first_name']; ?></h4>
 			<hr />
 		<?php } ?>
+		
+		<?php
+			if (strlen($recentAlerts['data']['info']) > 0 && $recentAlerts['data']['sendable'] == 0) {
+				echo '<div class="alert alert-dismissible alert-info"><p class="text-muted small">'.$recentAlerts['data']['info'].'</p></div>';
+			}
+		
+		if ($recentAlerts['data']['sendable'] > 0): ?>
+			<div class="apiNotificationError">
+				<form action="/dashboard/clear-alert" method="post" id="notification-alert-form" class="mt">
+					<input type="hidden" value="<?php echo $recentAlerts['data']['id']; ?>" name="alertID" />
+					<input type="hidden" value="clearNotification" name="task" />
+					<input type="hidden" value="<?php echo $recentAlerts['refCacheKey']; ?>" name="refCacheLocation" />
+					<input type="hidden" value="set" name="method" />
+					<input type="hidden" value="true" name="submitted" />
+					<button id="clear-notification"  class="btn btn-primary btn-block" type="submit" value="Submit" name="submit"><i class="fa fa-bell-slash" style="font-size:20px;" alt="Disable"></i> Mute email notification</button>
+
+					<br/>
+					<p class="text-muted small">* Mute email notification for recent alert. Will re-enable on additional/new errors. </p>
+				</form>
+			</div>
+		<?php endif ?>
+		<hr />
+		<div class="panel">
+			<div class="col-md-6">
+				<div class="panel-heading">Radar Tile Data Up%</div>
+				<div class="panel-body">
+					<div class="wrapper">
+					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?> green">
+					      <span><?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?>%</span>
+					      <div class="slice">
+					        <div class="bar"></div>
+					        <div class="fill"></div>
+					      </div>
+					      <h4>Today</h4>
+					  </div>
+					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?> green">
+					      <span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
+					      <div class="slice">
+					        <div class="bar"></div>
+					        <div class="fill"></div>
+					      </div>
+					      <h4>Yesterday</h4>
+					  </div>
+					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?> green">
+					      <span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
+					      <div class="slice">
+					        <div class="bar"></div>
+					        <div class="fill"></div>
+					      </div>
+					      <h4>Current Week</h4>
+					  </div>
+					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?> green">
+					      <span><?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?>%</span>
+					      <div class="slice">
+					        <div class="bar"></div>
+					        <div class="fill"></div>
+					      </div>
+					      <h4>Month</h4>
+					  </div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel-heading">Radar Tile Data Up%</div>
+				<div class="panel-body">
+					<div class="wrapper">
+					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?> green">
+					      <span><?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?>%</span>
+					      <div class="slice">
+					        <div class="bar"></div>
+					        <div class="fill"></div>
+					      </div>
+					      <h4>Today</h4>
+					  </div>
+					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?> green">
+					      <span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
+					      <div class="slice">
+					        <div class="bar"></div>
+					        <div class="fill"></div>
+					      </div>
+					      <h4>Yesterday</h4>
+					  </div>
+					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?> green">
+					      <span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
+					      <div class="slice">
+					        <div class="bar"></div>
+					        <div class="fill"></div>
+					      </div>
+					      <h4>Current Week</h4>
+					  </div>
+					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?> green">
+					      <span><?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?>%</span>
+					      <div class="slice">
+					        <div class="bar"></div>
+					        <div class="fill"></div>
+					      </div>
+					      <h4>Month</h4>
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
 		<div class="panel panel-default">
-			<div class="panel-heading">Today's Failures/Errors</div>
+			<div class="panel-heading">Today's API Failures/Errors</div>
 			<div class="panel-body">
 				<div class="col-md-12">
 					<div class="row">
@@ -82,29 +186,8 @@
 				</div>
 			<?php } ?>
 		<?php } ?>
-		<?php
-			if (strlen($recentAlerts['data']['info']) > 0 && $recentAlerts['data']['sendable'] == 0) {
-				echo '<div class="alert alert-dismissible alert-info"><p class="text-muted small">'.$recentAlerts['data']['info'].'</p></div>';
-			}
-		
-		if ($recentAlerts['data']['sendable'] > 0): ?>
-			<div class="apiNotificationError">
-				<form action="/dashboard/clear-alert" method="post" id="notification-alert-form" class="mt">
-					<input type="hidden" value="<?php echo $recentAlerts['data']['id']; ?>" name="alertID" />
-					<input type="hidden" value="clearNotification" name="task" />
-					<input type="hidden" value="<?php echo $recentAlerts['refCacheKey']; ?>" name="refCacheLocation" />
-					<input type="hidden" value="set" name="method" />
-					<input type="hidden" value="true" name="submitted" />
-					<button id="clear-notification"  class="btn btn-primary btn-block" type="submit" value="Submit" name="submit"><i class="fa fa-bell-slash" style="font-size:20px;" alt="Disable"></i> Mute email notification</button>
-
-					<br/>
-					<p class="text-muted small">* Mute email notification for recent alert. Will re-enable on additional/new errors. </p>
-				</form>
-			</div>
-		<?php endif ?>
-		<hr />
 		<div class="panel panel-default">
-			<div class="panel-heading"><i class="fa fa-clock-o"></i> Average loadtimes today</div>
+			<div class="panel-heading"><i class="fa fa-clock-o"></i> Average API loadtimes today</div>
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-12">

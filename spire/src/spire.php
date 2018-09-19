@@ -483,6 +483,12 @@ class Spire {
 		$apiOTTLoadTime = $db->getAverageLoadTime('ottTests', 'today');
 		$chartLoadTimeData = $db->getAllAverageLoadTimes();
 
+		// Weather API Tile Data checks
+		$weatherTileUptimeAverage_today = $db->getWeatherTileCheckAvg('today');
+		$weatherTileUptimeAverage_yesterday = $db->getWeatherTileCheckAvg('yesterday');
+		$weatherTileUptimeAverage_week = $db->getWeatherTileCheckAvg('week');
+		$weatherTileUptimeAverage_month = $db->getWeatherTileCheckAvg('currentMonth');
+
 		// Get Station stale content
 		$staleContentAverages = $db->getStaleContentAverages();
 
@@ -508,6 +514,11 @@ class Spire {
 			$resultsArray['apiSectionContentLoadTime'] = $apiSectionContentLoadTime['data'];
 			$resultsArray['apiOTTLoadTime'] = $apiOTTLoadTime['data'];
 			$resultsArray['chartLoadTimeData'] = $chartLoadTimeData['data'];
+
+			$resultsArray['weatherTileUptimeAverage_today'] = $weatherTileUptimeAverage_today['data'];
+			$resultsArray['weatherTileUptimeAverage_yesterday'] = $weatherTileUptimeAverage_yesterday['data'];
+			$resultsArray['weatherTileUptimeAverage_week'] = $weatherTileUptimeAverage_week['data'];
+			$resultsArray['weatherTileUptimeAverage_month'] = $weatherTileUptimeAverage_month['data'];
 
 
 		return $resultsArray;

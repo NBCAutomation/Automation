@@ -73,6 +73,11 @@ $app->group('/dashboard', function () use ($app) {
 			'apiSectionContentLoadTime' => $dashboardData['apiSectionContentLoadTime'],
 			'chartLoadTimeData' => $dashboardData['chartLoadTimeData'],
 			'recentRegressionScore' => $recentRegressionScore['data'],
+			'recentRegressionScore' => $recentRegressionScore['data'],
+			'weatherTileUptimeAverage_today' => $dashboardData['weatherTileUptimeAverage_today'],
+			'weatherTileUptimeAverage_yesterday' => $dashboardData['weatherTileUptimeAverage_yesterday'],
+			'weatherTileUptimeAverage_week' => $dashboardData['weatherTileUptimeAverage_week'],
+			'weatherTileUptimeAverage_month' => $dashboardData['weatherTileUptimeAverage_month'],
 			'recentAlerts' => $recentAlerts,
 
 	        //Auth Specific
@@ -1648,21 +1653,22 @@ $app->group('/utils', function () {
 	    if ($utilReqParams['task'] == 'testingOutput'){
 	    	$db = new DbHandler();
 
-	    	$weatherCheckData = $db->getWeatherTileChecks();
+	    	$weatherCheckData = $db->getWeatherTileCheckAvg('today');
+	    	var_dump($weatherCheckData['data']['avgUptime']);
 
-	    	if ($weatherCheckData) {
-	    		$weatherAlert = 0;
-	    		foreach ($weatherCheckData['data'] as $key => $value) {
+	    	// if ($weatherCheckData) {
+	    	// 	$weatherAlert = 0;
+	    	// 	foreach ($weatherCheckData['data'] as $key => $value) {
 
-	    			if ($value['http_status'] != '200') {
-	    				$weatherAlert++;
-	    			}
-	    		}
+	    	// 		if ($value['http_status'] != '200') {
+	    	// 			$weatherAlert++;
+	    	// 		}
+	    	// 	}
 
-	    		if ($weatherAlert > 2) {
-	    			echo "set trippin";
-	    		}
-	    	}
+	    	// 	if ($weatherAlert > 2) {
+	    	// 		echo "set trippin";
+	    	// 	}
+	    	// }
 
 	    	// $pageContent = $db->getPagedStaleContentChecks();
 	    	// // var_dump($pageContent);

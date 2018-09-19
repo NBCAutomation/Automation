@@ -987,6 +987,54 @@ class DbHandler {
         return $output;
     }
 
+    
+    public function getWeatherTileCheckAvg($range) {
+        $output = Spire::spireCache('getWeatherTileCheckAvg_'.$range, 0, function() use ($range) {
+            $db_con = Spire::getConnection();
+
+            switch ($range) {
+                case "today":
+                    $dataRange = 'DATE(created) >= CURDATE()';
+                    break;
+
+                case "yesterday":
+                    $dataRange = 'DATE(created) = CURDATE()-1';
+                    break;
+
+                case "week":
+                    $dataRange = 'DATE(created) = CURDATE()-7';
+                    break;
+
+                case "currentMonth":
+                    $dataRange = 'Month(created) = Month(CURRENT_DATE())';
+                    break;
+
+                default:
+                    $dataRange = 'DATE(created) >= CURDATE()';
+            }
+
+            // $stmt = $db_con->prepare("SELECT * FROM weather_tile_checks ORDER BY id DESC LIMIT 3");
+            // $total = $db_con->query("SELECT COUNT(*) FROM weather_tile_checks WHERE ".$dayRange)->fetchColumn();
+
+            $stmt = $db_con->prepare("SELECT
+                        (SELECT COUNT(*) FROM weather_tile_checks WHERE ".$dataRange.") AS totalTests,
+                        (SELECT COUNT(*) FROM weather_tile_checks WHERE ".$dataRange." AND http_status = 404) AS totalFailures,
+                        (SELECT (totalTests - totalFailures) * 100 / totalTests) AS avgUptime;");
+
+            if ($stmt->execute()) {
+                $weatherAvgData = $stmt->fetch();
+
+                $stmt->closeCursor();
+                return $weatherAvgData;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
         // var_dump($testID);
