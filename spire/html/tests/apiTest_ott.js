@@ -764,7 +764,8 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
                         resp.url.indexOf('CazaTormentas') > -1 ||
                         resp.url.indexOf('ott%2Fweather') > -1 ||
                         resp.url.indexOf('.png') > -1 ||
-                        resp.url.indexOf('.jpg') > -1
+                        resp.url.indexOf('.jpg') > -1 ||
+                        resp.url.indexOf('wsidata.weather.com') > -1
                     ) {
                         if (debugOutput) {
                             console.log(colorizer.colorize(' ...skipping endpoint testing for url:', 'PARAMETER'));
