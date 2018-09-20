@@ -1,7 +1,9 @@
 package nbc_pages;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -208,6 +210,14 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
+		@FindBy(how=How.XPATH,using="//div[@class='watch-live-title']")
+		private WebElement elewatchlive;	
+		public NbcPage clickwatchlive() {
+			click(elewatchlive);
+			switchToWindow(1);
+			return this;
+		}
+		
 		@FindBy(how=How.XPATH,using="//li[@class='nav-small-section nav-live-tv']//li[@class='onnow']")
 		private WebElement eleonnow;	
 		public NbcPage clickonnow() {
@@ -396,6 +406,21 @@ import wdMethods.ProjectMethods;
 			return new NewsPageLoads(driver, test);
 		}
 		
+		@FindBy(how=How.XPATH,using="//li[@class='nav-section Weather']//a[@class='nav-section-title ']")
+		private WebElement elenbcweather;
+		public NewsPageLoads clicknbcweather() {
+			click(elenbcweather);
+			return new NewsPageLoads(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//a[text()='Home']")
+		private WebElement elenbchome;
+		public NewsPageLoads clicknbchome() {
+			click(elenbchome);
+			System.out.println(elenbchome.getText());
+			return new NewsPageLoads(driver, test);
+		}
+		
 		@FindBy(how=How.XPATH,using="//a[@name='&lpos=ellipsis hover&lid=Contact Us']")
 		private WebElement elenbccontact;
 		public ContactUS clicknbccontact() {
@@ -437,19 +462,17 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@id='slide1']//div[@class='slide_count']")
+		@FindBy(how=How.XPATH,using="//div[@class='slide_count']")
 		private WebElement eleslidecount;	
 		public NbcPage clickslidecount() {
-			click(eleslidecount);
-			System.out.println(eleslidecount.getText());
-			return this;
-		}
-		
-		@FindBy(how=How.XPATH,using="//div[@id='slide2']//div[@class='slide_count']")
-		private WebElement eleslidecount2;	
-		public NbcPage clickslidecount2() {
-			click(eleslidecount2);
-			System.out.println(eleslidecount2.getText());
+			List<WebElement> drplist= driver.findElements(By.xpath("//div[@class='slide_count']"));
+			int size=drplist.size();
+			System.out.println("Total xpath: " + size);
+			for(int i=0; i<drplist.size(); i++)
+			{
+
+			System.out.println(drplist.get(i).getText());
+			}
 			return this;
 		}
 		
@@ -468,13 +491,11 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='slide_count']//following::span[@class='total_number'][1]")
-		private WebElement elecountTM;	
-		public NbcPage clickcountTM() {
-			scrollingByCoordinatesofAPage();
-			click(elecountTM);
-			System.out.println(elecountTM.getText());
-			return this;
+		@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//a[@alt='Entertainment']")
+		private WebElement eleentertainment;	
+		public EntertainmentNews clickentertainment() {
+			click(eleentertainment);
+			System.out.println(eleentertainment.getText());
+			return new EntertainmentNews(driver, test);
 		}
-		
 }

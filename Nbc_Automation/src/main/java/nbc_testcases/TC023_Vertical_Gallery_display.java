@@ -39,14 +39,14 @@ public class TC023_Vertical_Gallery_display extends ProjectMethods{
 				new NbcPage(driver, test)
 				.clicknbclogo()
 				.clickphoto()
-				.clickslidecount()
-				.clickslidecount2();
+				.clickslidecount();
+				//.clickslidecount2();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clickmoduletitle()
-				.clickstory1()
-				.clickcountTM();
+				.clickstory1();
+				//.clickcountTM();
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

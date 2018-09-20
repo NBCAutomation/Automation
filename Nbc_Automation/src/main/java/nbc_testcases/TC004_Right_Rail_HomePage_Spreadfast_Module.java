@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC004_Right_rail_has_Spredfast extends ProjectMethods{
+public class TC004_Right_Rail_HomePage_Spreadfast_Module extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Right rail has Spredfast";
-		testDescription = "To Test Right rail has Spredfast";
+		testCaseName = "Right Rail HomePage Spreadfast Module";
+		testDescription = "To Test Right Rail HomePage Spreadfast Module";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
