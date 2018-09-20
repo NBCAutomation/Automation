@@ -37,83 +37,50 @@
 		<div class="panel">
 			<div class="col-md-6">
 				<div class="panel-heading">Radar Tile Data Up%</div>
-				<div class="panel-body">
-					<div class="wrapper">
-					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?> green">
-					      <span><?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?>%</span>
-					      <div class="slice">
-					        <div class="bar"></div>
-					        <div class="fill"></div>
-					      </div>
-					      <h4>Today</h4>
-					  </div>
-					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?> green">
-					      <span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
-					      <div class="slice">
-					        <div class="bar"></div>
-					        <div class="fill"></div>
-					      </div>
-					      <h4>Yesterday</h4>
-					  </div>
-					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?> green">
-					      <span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
-					      <div class="slice">
-					        <div class="bar"></div>
-					        <div class="fill"></div>
-					      </div>
-					      <h4>Current Week</h4>
-					  </div>
-					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?> green">
-					      <span><?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?>%</span>
-					      <div class="slice">
-					        <div class="bar"></div>
-					        <div class="fill"></div>
-					      </div>
-					      <h4>Month</h4>
-					  </div>
+					<div class="panel-body">
+						<div class="percent_container">
+							<div class="c100 p<?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?> green">
+								<span><?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?>%</span>
+								<div class="slice">
+									<div class="bar"></div>
+									<div class="fill"></div>
+								</div>
+							</div>
+							<h4>Yesterday</h4>
+						</div>
+						<div class="percent_container">
+							<div class="c100 p<?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?> green">
+								<span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
+								<div class="slice">
+									<div class="bar"></div>
+									<div class="fill"></div>
+								</div>
+							</div>
+							<h4>Today</h4>
+						</div>
+						<div class="percent_container">
+							<div class="c100 p<?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?> green">
+								<span><?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?>%</span>
+								<div class="slice">
+									<div class="bar"></div>
+									<div class="fill"></div>
+								</div>
+							</div>
+							<h4>Current Week</h4>
+						</div>
+						<div class="percent_container">
+							<div class="c100 p<?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?> green">
+								<span><?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?>%</span>
+								<div class="slice">
+									<div class="bar"></div>
+									<div class="fill"></div>
+								</div>
+							</div>
+							<h4>Month</h4>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-md-6">
-				<div class="panel-heading">Radar Tile Data Up%</div>
-				<div class="panel-body">
-					<div class="wrapper">
-					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?> green">
-					      <span><?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?>%</span>
-					      <div class="slice">
-					        <div class="bar"></div>
-					        <div class="fill"></div>
-					      </div>
-					      <h4>Today</h4>
-					  </div>
-					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?> green">
-					      <span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
-					      <div class="slice">
-					        <div class="bar"></div>
-					        <div class="fill"></div>
-					      </div>
-					      <h4>Yesterday</h4>
-					  </div>
-					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?> green">
-					      <span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
-					      <div class="slice">
-					        <div class="bar"></div>
-					        <div class="fill"></div>
-					      </div>
-					      <h4>Current Week</h4>
-					  </div>
-					  <div class="c100 p<?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?> green">
-					      <span><?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?>%</span>
-					      <div class="slice">
-					        <div class="bar"></div>
-					        <div class="fill"></div>
-					      </div>
-					      <h4>Month</h4>
-					  </div>
-					</div>
-				</div>
-			</div>
-		</div>
 
 
 		<div class="panel panel-default">

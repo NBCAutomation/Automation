@@ -1881,6 +1881,19 @@ $app->group('/utils', function () {
 				return $response->withRedirect('/utils/tasks?task=evalWeatherTileChecks');
 			}
 		}
+
+    	if ($utilPostParams['task'] == 'logRadarStatus') {
+			$refTestID = $utilPostParams['testID'];
+			$weatherRadarSite = $utilPostParams['weatherRadarSite'];
+			$weatherRadarPrettyRef = $utilPostParams['weatherRadarPrettyRef'];
+			$weatherRadarID = $utilPostParams['weatherRadarID'];
+			$weatherRadarStatus = $utilPostParams['weatherRadarStatus'];
+
+			$logWeatherRadarStatus = $db->logWeatherRadarStatus($refTestID, $weatherRadarSite, $weatherRadarPrettyRef, $weatherRadarID, $weatherRadarStatus);
+			if ($logWeatherRadarStatus) {
+				return $response->withRedirect('/utils/tasks?task=evalWeatherTileChecks');
+			}
+		}
     });
 
 

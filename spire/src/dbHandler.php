@@ -1035,6 +1035,29 @@ class DbHandler {
         return $output;
     }
 
+
+    public function logWeatherRadarStatus($refTestID, $weatherRadarSite, $weatherRadarPrettyRef, $weatherRadarID, $weatherRadarStatus) {
+        $db_con = Spire::getConnection();
+
+        $stmt = $db_con->prepare("INSERT INTO weather_radar_status(ref_test_id, layer_id, wsi_site, radar_status, pretty_ref) VALUES(?, ?, ?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($refTestID, $weatherRadarID, $weatherRadarSite, $weatherRadarStatus, $weatherRadarPrettyRef));
+
+        if ($stmtStatus) {
+            // task row created
+            $rowID = $db_con->lastInsertId();
+
+            if ($rowID != NULL) {
+                return $rowID;
+            } else {
+                return NULL;
+            }
+        } else {
+            return NULL;
+        }
+
+        $stmt->close();
+    }
+
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
         // var_dump($testID);

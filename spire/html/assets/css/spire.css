@@ -306,3 +306,9 @@ table .fail {
 #chart-container .chart {
 	min-width: 900px;
 }
+
+.percent_container {
+	display: inline-block;
+    float: left;
+    text-align: center;
+}
