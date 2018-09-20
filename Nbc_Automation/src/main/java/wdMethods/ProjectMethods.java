@@ -19,8 +19,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 
-import com.saucelabs.common.SauceOnDemandAuthentication;
-import com.saucelabs.saucerest.SauceREST;
+/*import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.saucerest.SauceREST;*/
 
 import utils.DataInputProvider;
 

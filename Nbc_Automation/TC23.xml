@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite" parallel="tests">
+  <test thread-count="5" name="Chrome win10 LA">
+  <parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC030_Live_Video_playback_with_pre_roll"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Chrome win10 NY">
+  <parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC030_Live_Video_playback_with_pre_roll"/>
+    </classes>
+  </test> 
+  
+  <!-- <test thread-count="5" name="Chrome win10 T5">
+  <parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="T5Url"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC030_Live_Video_playback_with_pre_roll"/>
+    </classes>
+  </test>
+  
+  <test thread-count="5" name="Chrome mac TP">
+  <parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="TPUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC030_Live_Video_playback_with_pre_roll"/>
+    </classes>
+  </test> --> <!-- Test -->
+</suite> <!-- Suite -->

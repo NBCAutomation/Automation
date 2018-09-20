@@ -20,7 +20,7 @@ public class TC017_Footer_appears_on_all_pages extends ProjectMethods{
 	public void setData() {
 		
 		testCaseName = "Footer appears on all pages";
-		testDescription = "To Test News Page Loads with Sub-Nav successfully";
+		testDescription = "To Test Footer appears on all pages successfully";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -35,22 +35,13 @@ public class TC017_Footer_appears_on_all_pages extends ProjectMethods{
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickfooter();
-
+				.clickfooter()
+				.clicknewyorklive();
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
-				new NbcPage(driver, test)
-				.clickfooter();
 
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
 			}

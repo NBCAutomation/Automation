@@ -26,7 +26,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleverifytraffic;	
 		public Newyorktraffic clickverifytraffic() {
 			click(eleverifytraffic);
-			System.out.println(eleverifytraffic);
+			System.out.println(eleverifytraffic.getText());
 			return this;
 		}
 }

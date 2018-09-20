@@ -35,7 +35,7 @@ public class TC016_Share_bar_is_visible_and_Functions extends ProjectMethods{
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicktopstories()
 				.clickfacebook()
@@ -45,22 +45,7 @@ public class TC016_Share_bar_is_visible_and_Functions extends ProjectMethods{
 				.clickiconprint();
 
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
-				new NbcPage(driver, test)
-				.clicktopstories()
-				.clickfacebook()
-				.clicktwitter()
-				.clickiconcomment()
-				.clickiconemail()
-				.clickiconprint();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
 			}

@@ -36,7 +36,7 @@ public class TC008_Icons_in_connect_dropdown_are_clickable_and_link_out extends 
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
 				.clickconnect()
@@ -63,43 +63,8 @@ public class TC008_Icons_in_connect_dropdown_are_clickable_and_link_out extends 
 				.clickprivacypolicy()
 				.clickconnect()
 				.clickvisitourpartner();
-
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clickconnect()
-				.clickconnecttwitter()
-				.clickconnect()
-				.clickconnectinstagram()
-				.clickconnect()
-				.clickconnectfacebook()
-				.clickconnect()
-				.clickourapps()
-				.clickconnect()
-				.clicknewsletter()
-				.clickconnect()
-				.clickvideosandpictures()
-				.clickconnect()
-				.clicknbclogo()
-				.clickconnect()
-				.clicksendfeedback()
-				.clickconnect()
-				.clicktermsofservice()
-				.clickconnect()
-				.clickprivacypolicy()
-				.clickconnect()
-				.clickprivacypolicy()
-				.clickconnect()
-				.clickvisitourpartner();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
 			}

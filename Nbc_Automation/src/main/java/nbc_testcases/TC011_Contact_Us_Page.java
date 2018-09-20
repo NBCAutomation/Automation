@@ -35,26 +35,19 @@ public class TC011_Contact_Us_Page extends ProjectMethods{
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
 				.clickcontactus()
-				.clickcontactWNBC();
-
+				.clickcontactWNBC()
+				.clickcontactsocial()
+				.clickcontactmobile()
+				.clickmeettheteam()
+				.clickcontactnewsletters()
+				.clickcontacttvlistings()
+				.clickcontactphoto();
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clickcontactus()
-				.clickcontactWNBC();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
 			}
