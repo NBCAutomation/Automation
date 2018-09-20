@@ -1,3 +1,4 @@
+
 *.properties
 /.idea
 *.iml
@@ -10,3 +11,5 @@
 /regression-automation/reports/
 /regression-automation/test-output/
 selenium-server-standalone-3.14.0.jar
+/Users/tringapps-admin/git/NBCWebapp/Nbc_Automation/src/main/resources/config.properties
+
