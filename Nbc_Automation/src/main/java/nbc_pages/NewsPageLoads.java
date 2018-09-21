@@ -39,6 +39,29 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
+		@FindBy(how=How.XPATH,using="//div[@id='news-top-stories-all']//h1[@id='top-news-header']")
+		private WebElement elenewsheader;
+		public NewsPageLoads clicknewsheader() {
+			click(elenewsheader);
+			System.out.println(elenewsheader.getText());
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@id='news-top-stories-module']//div[@id='carousel-story-selection']//following::h2[@class='flaggedHeadline'][1]")
+		private WebElement elenbcnewstopstory;
+		public NewsPageLoads clicknbcnewstopstory() {
+			click(elenbcnewstopstory);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@id='article_0_headline_byline']//h1[@class='headline']")
+		private WebElement elenbcnewstopstoryHeader;
+		public NewsPageLoads clicknbcnewstopstoryHeader() {
+			click(elenbcnewstopstoryHeader);
+			System.out.println(elenbcnewstopstoryHeader.getText());
+			return this;
+		}
+		
 		@FindBy(how=How.XPATH,using="//li[@class='nav-section I-Team']//a[@class='nav-section-title ']")
 		private WebElement elei_team;
 		public NewsPageLoads clicki_team() {

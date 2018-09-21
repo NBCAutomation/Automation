@@ -110,7 +110,6 @@ public class SeMethods extends Reporter implements WdMethods {
 
 				DesiredCapabilities dc = DesiredCapabilities.chrome();
 				System.out.println(tcname);
-				dc.setBrowserName("Chrome");
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "68.0");
 				//dc.setCapability("version", "66.0");
@@ -130,10 +129,9 @@ public class SeMethods extends Reporter implements WdMethods {
 			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
 				System.out.println(tcname);
-				dc.setBrowserName("Firefox");
 				dc.setCapability("platform", "Windows 10");
-				//dc.setCapability("version", "61.0");
-				dc.setCapability("version", "55.0");
+				dc.setCapability("version", "61.0");
+				//dc.setCapability("version", "55.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				//webURL=LUrl;
@@ -220,8 +218,8 @@ public class SeMethods extends Reporter implements WdMethods {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
 				System.out.println(tcname);
 				dc.setCapability("platform", "macOS 10.13");
-				//dc.setCapability("version", "61.0");
-				dc.setCapability("version", "47.0.1");
+				dc.setCapability("version", "61.0");
+				//dc.setCapability("version", "47.0.1");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				try {
@@ -283,7 +281,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public void click(WebElement ele) {
 		String text = "";
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 100);
+			WebDriverWait wait = new WebDriverWait(driver, 60);
 			wait.until(ExpectedConditions.elementToBeClickable(ele));			
 			text = ele.getText();
 			ele.click();
@@ -552,7 +550,7 @@ public class SeMethods extends Reporter implements WdMethods {
 		
 			try {
 				Actions act = new Actions(driver);
-				act.moveToElement(ele).build().perform();
+				act.moveToElement(ele).perform();
 			} catch (WebDriverException e) {
 				reportStep("WebDriverException : "+e.getMessage(), "FAIL"); {
 				// TODO Auto-generated catch block

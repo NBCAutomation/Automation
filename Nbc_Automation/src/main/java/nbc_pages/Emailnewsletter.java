@@ -1,6 +1,9 @@
 package nbc_pages;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -30,7 +33,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[text()='Connect']")
+		@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//div[contains(text(),'Connect')]")
 		private WebElement eleconnect;	
 		public Emailnewsletter clickconnect() {
 			mouseMoveTo(eleconnect);
@@ -38,7 +41,15 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[contains(text(),'Send us Videos and Pictures')]")
+		@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//div[contains(text(),'Conócenos')]")
+		private WebElement eleconnectTM;	
+		public Emailnewsletter clickconnectTM() {
+			mouseMoveTo(eleconnectTM);
+	        driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='subnav-large-container']//div[@class='connect-ugc']")
 		private WebElement elevideosandpictures;	
 		public Uploadyourmedia clickvideosandpictures() {
 			click(elevideosandpictures);

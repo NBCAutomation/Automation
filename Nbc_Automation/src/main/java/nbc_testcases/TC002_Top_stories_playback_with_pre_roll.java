@@ -18,7 +18,7 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Top stories playback with pre roll";
+		testCaseName = "Top stories playback with pre roll(Both NBC and Telemundo)";
 		testDescription = "To Test stories playback with-pre roll";
 		category= "Regression";
 		authors	="Vinoth";
@@ -40,7 +40,8 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();	
+				.clicknbclogo()
+				.clicktopstoriesTM();
 			}
 
 		} catch (FileNotFoundException e) {

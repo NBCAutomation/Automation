@@ -1,5 +1,7 @@
 package nbc_pages;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
@@ -33,6 +35,17 @@ import wdMethods.ProjectMethods;
 		private WebElement elenbclogo;	
 		public Watchtv clicknbclogo() {
 			click(elenbclogo);
+			WebElement elenbclogo = driver.findElement(By.xpath("//a[@name='&lpos=section navigation&lid=logo']/img"));
+
+		    Boolean ImagePresent = (Boolean) ((JavascriptExecutor)driver).executeScript("return arguments[0].complete && typeof arguments[0].naturalWidth != \"undefined\" && arguments[0].naturalWidth > 0", elenbclogo);
+		    if (!ImagePresent)
+		    {
+		         System.out.println("Image not displayed.");
+		    }
+		    else
+		    {
+		        System.out.println("Image displayed.");
+		    }
 			return this;
 		}
 }

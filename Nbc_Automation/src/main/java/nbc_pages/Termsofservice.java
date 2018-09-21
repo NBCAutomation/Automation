@@ -1,5 +1,7 @@
 package nbc_pages;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.FindBy;
@@ -22,10 +24,18 @@ import wdMethods.ProjectMethods;
 			}*/
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[text()='Connect']")
+		@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//div[contains(text(),'Connect')]")
 		private WebElement eleconnect;	
 		public Termsofservice clickconnect() {
 			mouseMoveTo(eleconnect);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//div[contains(text(),'Conócenos')]")
+		private WebElement eleconnectTM;	
+		public Termsofservice clickconnectTM() {
+			mouseMoveTo(eleconnectTM);
+	        driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
 			return this;
 		}
 		
