@@ -416,7 +416,7 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="")
+		@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//div[@class='social-icon twitter']")
 		private WebElement eletwitter;
 		public NbcPage clicktwitter() {
 			click(eletwitter);
