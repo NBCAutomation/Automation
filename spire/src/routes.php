@@ -78,6 +78,10 @@ $app->group('/dashboard', function () use ($app) {
 			'weatherTileUptimeAverage_yesterday' => $dashboardData['weatherTileUptimeAverage_yesterday'],
 			'weatherTileUptimeAverage_week' => $dashboardData['weatherTileUptimeAverage_week'],
 			'weatherTileUptimeAverage_month' => $dashboardData['weatherTileUptimeAverage_month'],
+			'weatherRadarAverage_today' => $dashboardData['weatherRadarAverage_today'],
+			'weatherRadarAverage_yeserday' => $dashboardData['weatherRadarAverage_yeserday'],
+			'weatherRadarAverage_week' => $dashboardData['weatherRadarAverage_week'],
+			'weatherRadarAverage_month' => $dashboardData['weatherRadarAverage_month'],
 			'recentAlerts' => $recentAlerts,
 
 	        //Auth Specific
@@ -284,6 +288,10 @@ $app->group('/reports', function () {
        	        $pullStaleContentData = true;
        	        break;
 
+   	        case "radar_averages":
+       	        $radarAveragesView = true;
+       	        break;
+
 		    default:
 		        $testTypeName = 'none-existent';
 		}
@@ -343,9 +351,11 @@ $app->group('/reports', function () {
 				$staleQueryRange = $allPostPutVars['range'];
 				$staleContentAverages = $db->getStaleContentAverages($staleQueryRange);
 			} else {
-				$staleContentAverages = $db->getStaleContentAverages();
+				$staleContentAverages = $db->getStaleContentAverages(30);
 			}
 
+		} else if ($radarAveragesView) {
+			$pageTemplate = 'reports-radar-averages.php';
 		} else {
 			$pageTemplate = 'reports.php';
 		}
@@ -1481,7 +1491,7 @@ $app->group('/utils', function () {
 
 				if ($weatherAlert > 2) {
 					echo "set trippin";
-					$spireNotifications = true;
+					// $spireNotifications = true;
 					$notificationType = "weatherTileAlert";
 				}
 			}
@@ -1525,7 +1535,7 @@ $app->group('/utils', function () {
             }
 
             if (!empty($radarFailures)) {
-            	$spireNotifications = true;
+            	// $spireNotifications = true;
 				$notificationType = "weatherRadarAlert";
             }
 		}

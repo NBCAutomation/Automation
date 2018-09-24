@@ -512,22 +512,42 @@ class Spire {
         $weatherRadarStationAverage = array();
 
     	foreach ($radarStat as $radarID => $radarName) {
-    		
-    		"today_".$radarID. = $db->getWeatherRadarCheckAvg('today', $radarID);
-    		"yesterday_".$radarID = $db->getWeatherRadarCheckAvg('yesterday', $radarID);
-    		"week_".$radarID = $db->getWeatherRadarCheckAvg('week', $radarID);
-    		"month_".$radarID = $db->getWeatherRadarCheckAvg('currentMonth', $radarID);
+    		$__today = "today_".$radarID;
+    		$__yesterday = "yesterday_".$radarID;
+    		$__week = "week_".$radarID;
+    		$__month = "month_".$radarID;
 
-    		// $weatherRadarStationAverage[$radarID."_today"] = $radarID."_weatherRadarUptimeAverage_today".['data'];
-    		// $weatherRadarStationAverage[$radarID."_yesterday"] = $radarID."_weatherRadarUptimeAverage_yesterday".['data'];
-    		// $weatherRadarStationAverage[$radarID."_week"] = $radarID."_weatherRadarUptimeAverage_week".['data'];
-    		// $weatherRadarStationAverage[$radarID."_month"] = $radarID."_weatherRadarUptimeAverage_month".['data'];
 
-    		// $weatherRadarStationAverages[$radarID] = $weatherRadarStationAverage;
+
+    		$__today = $db->getWeatherRadarCheckAvg('today', $radarID);
+    		$__yesterday = $db->getWeatherRadarCheckAvg('yesterday', $radarID);
+    		$__week = $db->getWeatherRadarCheckAvg('week', $radarID);
+    		$__month = $db->getWeatherRadarCheckAvg('currentMonth', $radarID);
+
+    		$weatherRadarStationAverage["today"] = $__today['data']['avgUptime'];
+    		$weatherRadarStationAverage["yesterday"] = $__yesterday['data']['avgUptime'];
+    		$weatherRadarStationAverage["week"] = $__week['data']['avgUptime'];
+    		$weatherRadarStationAverage["month"] = $__month['data']['avgUptime'];
+
+    		$weatherRadarStationAverages[$radarID.'-'.$radarName] = $weatherRadarStationAverage;
+
+    		$weatherRadarStationAverage = array();
     	}
 
+    	$__today = array_column($weatherRadarStationAverages, 'today');
+    	$__yesterday = array_column($weatherRadarStationAverages, 'yesterday');
+    	$__week = array_column($weatherRadarStationAverages, 'week');
+    	$__month = array_column($weatherRadarStationAverages, 'month');
+    	
+
+    	$weatherRadarAverage_today = array_sum($__today)/count($__today);
+    	$weatherRadarAverage_yeserday = array_sum($__yesterday)/count($__yesterday);
+    	$weatherRadarAverage_week = array_sum($__week)/count($__week);
+    	$weatherRadarAverage_month = array_sum($__month)/count($__month);
+
+
 		// Get Station stale content
-		$staleContentAverages = $db->getStaleContentAverages();
+		$staleContentAverages = $db->getStaleContentAverages(30);
 
 		$resultsArray = array();
 			$resultsArray['todayManifestTotalFailureReports'] = $todayManifestTotalFailureReports['data'];
@@ -557,7 +577,10 @@ class Spire {
 			$resultsArray['weatherTileUptimeAverage_week'] = $weatherTileUptimeAverage_week['data'];
 			$resultsArray['weatherTileUptimeAverage_month'] = $weatherTileUptimeAverage_month['data'];
 			
-			$resultsArray['weatherRadarStationAverages'] = $weatherRadarStationAverages;
+			$resultsArray['weatherRadarAverage_today'] = $weatherRadarAverage_today;
+			$resultsArray['weatherRadarAverage_yeserday'] = $weatherRadarAverage_yeserday;
+			$resultsArray['weatherRadarAverage_week'] = $weatherRadarAverage_week;
+			$resultsArray['weatherRadarAverage_month'] = $weatherRadarAverage_month;
 
 
 		return $resultsArray;

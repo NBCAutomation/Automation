@@ -1099,8 +1099,8 @@ class DbHandler {
             }
 
             $stmt = $db_con->prepare("SELECT
-                        (SELECT COUNT(*) FROM weather_radar_status WHERE radar_status = '".$dataRange."' AND layer_id = '".$stationLayerID."') AS totalTests,
-                        (SELECT COUNT(*) FROM weather_radar_status WHERE radar_status = '".$dataRange."' AND layer_id = '".$stationLayerID."' AND radar_status = offline) AS totalFailures,
+                        (SELECT COUNT(*) FROM weather_radar_status WHERE layer_id = '".$stationLayerID."') AS totalTests,
+                        (SELECT COUNT(*) FROM weather_radar_status WHERE layer_id = '".$stationLayerID."' AND radar_status = 'offline') AS totalFailures,
                         (SELECT (totalTests - totalFailures) * 100 / totalTests) AS avgUptime;");
 
             if ($stmt->execute()) {

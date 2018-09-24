@@ -80,6 +80,52 @@
 						</div>
 					</div>
 				</div>
+
+				<div class="col-md-6">
+					<div class="panel-heading">AVG. Radar Online% (all radar average)</div>
+						<div class="panel-body">
+							<div class="percent_container">
+								<div class="c100 p<?php echo round($weatherRadarAverage_yesterday); ?> green">
+									<span><?php echo round($weatherRadarAverage_yesterday); ?>%</span>
+									<div class="slice">
+										<div class="bar"></div>
+										<div class="fill"></div>
+									</div>
+								</div>
+								<h4>Yesterday</h4>
+							</div>
+							<div class="percent_container">
+								<div class="c100 p<?php echo round($weatherRadarAverage_today); ?> green">
+									<span><?php echo round($weatherRadarAverage_today); ?>%</span>
+									<div class="slice">
+										<div class="bar"></div>
+										<div class="fill"></div>
+									</div>
+								</div>
+								<h4>Today</h4>
+							</div>
+							<div class="percent_container">
+								<div class="c100 p<?php echo round($weatherRadarAverage_week); ?> green">
+									<span><?php echo round($weatherRadarAverage_week); ?>%</span>
+									<div class="slice">
+										<div class="bar"></div>
+										<div class="fill"></div>
+									</div>
+								</div>
+								<h4>Current Week</h4>
+							</div>
+							<div class="percent_container">
+								<div class="c100 p<?php echo round($weatherRadarAverage_month); ?> green">
+									<span><?php echo round($weatherRadarAverage_month); ?>%</span>
+									<div class="slice">
+										<div class="bar"></div>
+										<div class="fill"></div>
+									</div>
+								</div>
+								<h4>Month</h4>
+							</div>
+						</div>
+					</div>
 			</div>
 
 
