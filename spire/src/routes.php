@@ -1487,6 +1487,49 @@ $app->group('/utils', function () {
 			}
 		}
 
+		if ($utilReqParams['task'] == 'evalWeatherRadarChecks'){
+	    	$radarStat = array(
+		    	"0845" => "First Alert Live Doppler - Los Angeles",
+	            "0846" => "First Alert Live Doppler - Orange County",
+	            "0847" => "First Alert Live Doppler - San Diego",
+	            "0848" => "StormRanger - Los Angeles",
+	            "0849" => "NBC 5 S-Band Radar - DFW",
+	            "0850" => "StormRanger - DFW",
+	            "0851" => "StormRanger - Philadelphia",
+	            "0854" => "NBC Boston Fixed",
+	            "0855" => "StormTracker 4 - New York",
+	            "0856" => "Live Doppler 5 - Chicago",
+	            "0837" => "TeleDoppler - Puerto Rico",
+	            "0853" => "First Alert Doppler 6000",
+	            "0870" => "StormRanger 2 - New York/Boston",
+	            "0871" => "StormRanger 2 - Philadelphia",
+	            "0872" => "StormRanger 2 - DFW"
+            );
+
+            $radarFailures = array();
+
+            foreach ($radarStat as $key => $value) {
+            	$weatherCheckData = $db->getAllWeatherRadarChecks($key);
+
+            	$weatherRadarAlert = 0;
+            	foreach ($weatherCheckData['data'] as $radarKey => $radarValue) {
+            		if ($radarValue['radar_status'] == 'offline') {
+            			$weatherRadarAlert++;
+            		}
+            	}
+
+            	if ($weatherRadarAlert > 2) {
+            		// echo $key . " -- ".$value ."<br />";
+            		$radarFailures[$key] = $value;
+            	}
+            }
+
+            if (!empty($radarFailures)) {
+            	$spireNotifications = true;
+				$notificationType = "weatherRadarAlert";
+            }
+		}
+
 		if ($utilReqParams['task'] == 'sendAlert'){
 			$spireNotifications = true;
 			$notificationType = $utilReqParams['notificationType'];
@@ -1614,8 +1657,19 @@ $app->group('/utils', function () {
 			if ($notificationType == 'weatherTileAlert') {
 	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
 	    		$sendEmailNotification = true;
-				$emailSubject = '[SPIRE] Weather data failure';
+				$emailSubject = '[SPIRE] WSI Weather tile data failure';
 				$emailContent = 'The weather tile data is failing to load properly. The site has returned a 404 on consecutive checks, please investigate.<br /><br />URL:  https://wsimap.weather.com/201205/en-us/1117/0019/capability.json?layer=0856';
+			}
+
+			if ($notificationType == 'weatherRadarAlert') {
+	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
+	    		$sendEmailNotification = true;
+				$emailSubject = '[SPIRE] WSI Weather radars offline';
+				$emailContent .= 'Local weather station radars returning as "offline" in multiple tests/checks, please investigate.<br /><br />Offline radars:<br />';
+
+				foreach ($radarFailures as $failKey => $failVal) {
+	            	$emailContent .= "   - ".$failKey." - ".$failVal."<br />";
+	            }
 			}
 
 	    	if ($notificationType == 'regression-notification') {
@@ -1653,8 +1707,60 @@ $app->group('/utils', function () {
 	    if ($utilReqParams['task'] == 'testingOutput'){
 	    	$db = new DbHandler();
 
-	    	$weatherCheckData = $db->getWeatherTileCheckAvg('today');
-	    	var_dump($weatherCheckData['data']['avgUptime']);
+	    	$radarStat = array(
+		    	"0845" => "First Alert Live Doppler - Los Angeles",
+	            "0846" => "First Alert Live Doppler - Orange County",
+	            "0847" => "First Alert Live Doppler - San Diego",
+	            "0848" => "StormRanger - Los Angeles",
+	            "0849" => "NBC 5 S-Band Radar - DFW",
+	            "0850" => "StormRanger - DFW",
+	            "0851" => "StormRanger - Philadelphia",
+	            "0854" => "NBC Boston Fixed",
+	            "0855" => "StormTracker 4 - New York",
+	            "0856" => "Live Doppler 5 - Chicago",
+	            "0837" => "TeleDoppler - Puerto Rico",
+	            "0853" => "First Alert Doppler 6000",
+	            "0870" => "StormRanger 2 - New York/Boston",
+	            "0871" => "StormRanger 2 - Philadelphia",
+	            "0872" => "StormRanger 2 - DFW"
+            );
+            $radarFailures = array();
+
+            foreach ($radarStat as $key => $value) {
+            	// echo $key.'<br />';
+            	$weatherCheckData = $db->getAllWeatherRadarChecks($key);
+
+            	$weatherRadarAlert = 0;
+            	foreach ($weatherCheckData['data'] as $radarKey => $radarValue) {
+            		if ($radarValue['radar_status'] == 'offline') {
+            			$weatherRadarAlert++;
+            		}
+            	}
+
+            	if ($weatherRadarAlert > 2) {
+            		echo $key . " -- ".$value ."<br />";
+            		$radarFailures[$key] = $value;
+            	}
+            }
+
+	    	// $weatherCheckData = $db->getAllWeatherRadarChecks('wpr0');
+	    	// echo "<pre>";
+	    	// var_dump($weatherCheckData['data']);
+	    	// echo "</pre>";
+	    	// echo "<br />";
+
+	    	// $weatherRadarAlert = 0;
+	    	// foreach ($weatherCheckData['data'] as $key => $value) {
+	    	// 	if ($value['radar_status'] == 'offline') {
+	    	// 		$weatherRadarAlert++;
+	    	// 	}
+	    	// }
+
+	    	// if ($weatherRadarAlert > 2) {
+	    	// 	echo "set trippin";
+	    	// 	$spireNotifications = true;
+	    	// 	$notificationType = "weatherTileAlert";
+	    	// }
 
 	    	// if ($weatherCheckData) {
 	    	// 	$weatherAlert = 0;
@@ -1890,9 +1996,6 @@ $app->group('/utils', function () {
 			$weatherRadarStatus = $utilPostParams['weatherRadarStatus'];
 
 			$logWeatherRadarStatus = $db->logWeatherRadarStatus($refTestID, $weatherRadarSite, $weatherRadarPrettyRef, $weatherRadarID, $weatherRadarStatus);
-			if ($logWeatherRadarStatus) {
-				return $response->withRedirect('/utils/tasks?task=evalWeatherTileChecks');
-			}
 		}
     });
 

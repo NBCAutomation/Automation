@@ -36,10 +36,10 @@ casper.test.begin('OTS SPIRE | WSI Weather Radar Status Check', function (test) 
         currentTestObject = {},
         manifestTestStatus = 'Pass',
         noticeColor = 'INFO',
-        setFail = 0,
         resourcesTime = {},
         endpointTestResults = {},
         sectionContent,
+        weatherRadarStatuseOutput,
         radarIDKeys = {
             "0845": "First Alert Live Doppler - Los Angeles",
             "0846": "First Alert Live Doppler - Orange County",
@@ -122,108 +122,18 @@ casper.test.begin('OTS SPIRE | WSI Weather Radar Status Check', function (test) 
                 console.log('----------------');
                 console.log(' Starting Test  ');
                 console.log('----------------');
+                apiSuiteInstance.createTestID(apiSuiteInstance.apiURL, 'wsi-radar-check');
+                
 
                 if (resp.status === 200) {
-                    var weatherRadarStatuseOutput = this.getPageContent();
-                    apiSuiteInstance.collectStationRadarStatusData(weatherRadarStatuseOutput);
+                    // Create test ref ID 
+                    weatherRadarStatuseOutput = this.getPageContent();    
                 }
             }).then(function () {
-
-                // Create test ref ID 
-                apiSuiteInstance.createTestID(apiSuiteInstance.apiURL, apiSuiteInstance.stationProperty);
+                apiSuiteInstance.collectStationRadarStatusData(weatherRadarStatuseOutput);
             }).then(function () {
-                
-                // Set tests to run
-                // apiSuiteInstance.testRadarData(apiSuiteInstance.collectionObject);
-            }).then(function () {
-
-                // Test Collection data
-                // apiSuiteInstance.validateJson('mainOTTManifestURL', apiSuiteInstance.apiURL);
-            }).then(function () {
-                console.log('------------------------------------------');
-                console.log(colorizer.colorize(' ...testing endpoint content items', 'PARAMETER'));
-                console.log('------------------------------------------');
-
-                if (debugOutput) {
-                    console.log('-----------------------------------------');
-                    console.log(' Start testing content collectionObject   ');
-                    console.log('-----------------------------------------');
-                    console.log('---------------------');
-                    console.log(' Collection object   ');
-                    console.log('---------------------');
-                    var keys = Object.keys(apiSuiteInstance.collectionObject),
-                        thisItem = null,
-                        i = 0;
-
-                    for (i = 0; i < keys.length; i += 1) {
-                        thisItem = apiSuiteInstance.collectionObject[keys[i]];
-                        console.log('>>>>> ' + keys[i] + ' : ' + thisItem);
-                    }
-                }
-                // Test endpoint content
-                // apiSuiteInstance.testEndpointContent(apiSuiteInstance.collectionObject, apiSuiteInstance.manifestTestRefID);
-            }).then(function () {
-                // Porcess All Test Results Data
-                if (setFail > 0) {
-                	manifestTestStatus = 'Fail';
-                	noticeColor = 'WARNING';
-				}
-                console.log(colorizer.colorize('Processing test results...', 'COMMENT'));
-                console.log('------------------------');
-                console.log(' Test Results   ');
-                console.log('------------------------');
-                console.log(' [] Test Status: ' + colorizer.colorize(manifestTestStatus, noticeColor));
-                console.log('  - ' + setFail + ' Failures!');
-
-                // Process test results
-                if (debugOutput) {
-                    console.log('---------------------');
-                    console.log(' Results debug object   ');
-                    console.log('---------------------');
-                    console.log(JSON.stringify(apiSuiteInstance.testResultsObject));
-                    console.log('---------------------');
-                    console.log('  starting for loop..');
-
-                    var i = 0,
-                        i2 = 0,
-                        i3 = 0,
-                        keys = Object.keys(apiSuiteInstance.testResultsObject),
-                        keys2 = null,
-                        keys3 = null,
-                        resultsCollectionItem = null,
-                        resultsItemSubObject = null,
-                        thisSubItem = null,
-                        thisChildObject = null,
-                        thisChildItem = null;
-
-                    for (i = 0; i < keys.length; i += 1) {
-                        resultsCollectionItem = keys[i];
-                        resultsItemSubObject = apiSuiteInstance.testResultsObject[keys[i]];
-                        console.log('- ' + resultsCollectionItem + ' : ' + resultsItemSubObject);
-
-                        if (resultsItemSubObject instanceof Object) {
-                            keys2 = Object.keys(resultsItemSubObject);
-                            for (i2 = 0; i2 < keys2.length; i += 1) {
-                                thisSubItem = keys2[i2];
-                                thisChildObject = resultsItemSubObject[thisSubItem];
-                                if (thisChildObject instanceof Object) {
-                                    keys3 = Object.keys(thisChildObject);
-                                    for (i3 = 0; i < keys3.length; i += 1) {
-                                        thisChildItem = keys3[i3];
-                                        console.log('      --- ' + thisChildItem + ' : ' + thisChildObject[thisChildItem]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    console.log('done');
-                }
-
-                //Process test results to the DB
-                if (logResults) {
-                    // apiSuiteInstance.processTestResults(setFail, 'apiOTTTest', manifestTestStatus);
-                    // apiSuiteInstance.processLoadTimes();
-                }
+                // Eval and send alert
+                apiSuiteInstance.evalStationRadarData();
             }).run(function () {
                 console.log(colorizer.colorize('Testing complete: ', 'COMMENT') + 'See test_results folder for logs.');
                 this.exit();
@@ -295,7 +205,7 @@ casper.test.begin('OTS SPIRE | WSI Weather Radar Status Check', function (test) 
     apiSuite.prototype.createTestID = function (url, stationProperty) {
         // var apiSuiteInstance = this;
 
-        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=apiCheck-OTT&property=' + stationProperty + '&fileLoc=json_null';
+        var dbUrl = configURL + '/utils/tasks?task=generate&testscript=wsiRadarCheck&property=' + stationProperty + '&fileLoc=json_null';
 
         if (!logResults) {
             if (debugOutput) { console.log(colorizer.colorize('TestID: ', 'COMMENT') + 'xx'); }
@@ -346,34 +256,12 @@ casper.test.begin('OTS SPIRE | WSI Weather Radar Status Check', function (test) 
     };
 
     // Log results in DB
-    apiSuite.prototype.processTestResults = function (testFailureCount, typeName, manifestTestStatus) {
-        var processUrl = configURL + '/utils/processRequest';
+    apiSuite.prototype.evalStationRadarData = function (testFailureCount, typeName, manifestTestStatus) {
+        var processUrl = configURL + '/utils/tasks?task=evalWeatherRadarChecks';
 
-        if (debugOutput) {
-            // console.log('>> process url: ' + processUrl);
-            console.log('------------------------');
-            console.log(' Process Results Data  ');
-            console.log('------------------------');
-            console.log('urlUri => ' + this.stationProperty);
-            console.log('testResultsObject => ' + apiSuiteInstance.testResultsObject);
-            console.log('testID => ' + apiSuiteInstance.manifestTestRefID);
-            console.log('testFailureCount => ' + testFailureCount);
-            console.log('testType => ' + typeName);
-            // console.log('manifestLoadTime => ' + manifestLoadTime);
-            console.log('manifestTestStatus => ' + manifestTestStatus);
-        }
-
-        casper.open(processUrl, {
-            method: 'post',
-            data:   {
-                'task': 'processManifestTestResults',
-                'testID': apiSuiteInstance.manifestTestRefID,
-                'testType': typeName,
-                'testProperty': this.stationProperty,
-                'testStatus': manifestTestStatus,
-                'testFailureCount': testFailureCount,
-                'manifestLoadTime': 123,
-                'testResults':  JSON.stringify(apiSuiteInstance.testResultsObject)
+        casper.thenOpen(processUrl).then(function (resp) {
+            if (resp.status == 200) {
+                console.log('process ok, process url: ' + processUrl);
             }
         });
     };
@@ -448,13 +336,13 @@ casper.test.begin('OTS SPIRE | WSI Weather Radar Status Check', function (test) 
                             }
 
                             if (feedRadarID in radarIDKeys) {
-                                // if (debugOutput) {
+                                if (debugOutput) {
                                     console.log(radarIDKeys[feedRadarID]);
                                     console.log(' - ' + subObject[subItem]['site']);
                                     console.log(' - ' + subObject[subItem]['status']);
                                     console.log(' - ' + subObject[subItem]['layerId']);
                                     console.log('-------------------');
-                                // }
+                                }
 
                                 // Check radar status
                                 if (subObject[subItem]['status'] != 'online') {

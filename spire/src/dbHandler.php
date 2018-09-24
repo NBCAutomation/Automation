@@ -1058,6 +1058,65 @@ class DbHandler {
         $stmt->close();
     }
 
+    public function getAllWeatherRadarChecks($radarStationID) {
+        $output = Spire::spireCache('getAllWeatherRadarChecks_'.$radarStationID, 0, function() use ($radarStationID) {
+            $db_con = Spire::getConnection();
+            $stmt = $db_con->prepare("SELECT * FROM weather_radar_status WHERE layer_id = '".$radarStationID."' ORDER BY id DESC LIMIT 3");
+
+            if ($stmt->execute()) {
+                $testData = $stmt->fetchAll();
+                return $testData;
+            } else {
+                return NULL;
+            }
+        });
+        return $output;
+    }
+
+    public function getWeatherRadarCheckAvg($range, $stationLayerID) {
+        $output = Spire::spireCache('getWeatherRadarCheckAvg_'.$stationLayerID.'_'.$range, 0, function() use ($range, $stationLayerID) {
+            $db_con = Spire::getConnection();
+
+            switch ($range) {
+                case "today":
+                    $dataRange = 'DATE(created) >= CURDATE()';
+                    break;
+
+                case "yesterday":
+                    $dataRange = 'DATE(created) = CURDATE()-1';
+                    break;
+
+                case "week":
+                    $dataRange = 'DATE(created) = CURDATE()-7';
+                    break;
+
+                case "currentMonth":
+                    $dataRange = 'Month(created) = Month(CURRENT_DATE())';
+                    break;
+
+                default:
+                    $dataRange = 'DATE(created) >= CURDATE()';
+            }
+
+            $stmt = $db_con->prepare("SELECT
+                        (SELECT COUNT(*) FROM weather_radar_status WHERE radar_status = '".$dataRange."' AND layer_id = '".$stationLayerID."') AS totalTests,
+                        (SELECT COUNT(*) FROM weather_radar_status WHERE radar_status = '".$dataRange."' AND layer_id = '".$stationLayerID."' AND radar_status = offline) AS totalFailures,
+                        (SELECT (totalTests - totalFailures) * 100 / totalTests) AS avgUptime;");
+
+            if ($stmt->execute()) {
+                $weatherAvgData = $stmt->fetch();
+
+                $stmt->closeCursor();
+                return $weatherAvgData;
+                
+            } else {
+                return NULL;
+            }
+        });
+
+        return $output;
+    }
+
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
         // var_dump($testID);
