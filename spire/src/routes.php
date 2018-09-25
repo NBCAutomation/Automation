@@ -1531,8 +1531,7 @@ $app->group('/utils', function () {
 				}
 
 				if ($weatherAlert > 2) {
-					echo "set trippin";
-					// $spireNotifications = true;
+					$spireNotifications = true;
 					$notificationType = "weatherTileAlert";
 				}
 			}
@@ -1576,7 +1575,7 @@ $app->group('/utils', function () {
             }
 
             if (!empty($radarFailures)) {
-            	// $spireNotifications = true;
+            	$spireNotifications = true;
 				$notificationType = "weatherRadarAlert";
             }
 		}
