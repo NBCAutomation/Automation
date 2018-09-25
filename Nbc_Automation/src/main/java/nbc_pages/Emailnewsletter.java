@@ -34,6 +34,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleconnect;	
 		public Emailnewsletter clickconnect() {
 			mouseMoveTo(eleconnect);
+			System.out.println(eleconnect.getText());
 			return this;
 		}
 		
@@ -41,6 +42,7 @@ import wdMethods.ProjectMethods;
 		private WebElement elevideosandpictures;	
 		public Uploadyourmedia clickvideosandpictures() {
 			click(elevideosandpictures);
+			System.out.println(elevideosandpictures.getText());
 			return new Uploadyourmedia(driver, test);
 		}
 		

@@ -40,6 +40,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleprivacypolicy;	
 		public Privacypolicy clickprivacypolicy() {
 			click(eleprivacypolicy);
+			System.out.println(eleprivacypolicy.getText());
 			driver.navigate().back();
 			return new Privacypolicy(driver, test);
 		}

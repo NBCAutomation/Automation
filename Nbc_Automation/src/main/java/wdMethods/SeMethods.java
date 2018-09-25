@@ -562,8 +562,28 @@ public class SeMethods extends Reporter implements WdMethods {
 	}
 	
 	public void scrollingByCoordinatesofAPage() {
-		((JavascriptExecutor) driver).executeScript("window.scrollBy(0,1250)");
+		((JavascriptExecutor) driver).executeScript("window.scrollBy(0,500)");
 	}
+	
+	/*public boolean scrollingByCoordinatesofAPage(WebElement webelement, int scrollPoints)
+	{
+	    try
+	    {               
+	        Actions dragger = new Actions(driver);
+	        // drag downwards
+	        int numberOfPixelsToDragTheScrollbarDown = 30;
+	        for (int i = 30; i < scrollPoints; i = i + numberOfPixelsToDragTheScrollbarDown)
+	        {
+	            dragger.moveToElement(webelement).clickAndHold().moveByOffset(0, numberOfPixelsToDragTheScrollbarDown).release(webelement).build().perform();
+	        }
+	        return true;
+	    }
+	    catch (Exception e)
+	    {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}*/
 
 	public void jiraSendRequest(String method, String description) {
 		try {

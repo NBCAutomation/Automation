@@ -26,6 +26,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleconnect;	
 		public Sendfeedback clickconnect() {
 			mouseMoveTo(eleconnect);
+			System.out.println(eleconnect.getText());
 			return this;
 		}
 		
@@ -40,6 +41,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eletermsofservice;	
 		public Termsofservice clicktermsofservice() {
 			click(eletermsofservice);
+			System.out.println(eletermsofservice.getText());
 			return new Termsofservice(driver, test);
 		}
 }

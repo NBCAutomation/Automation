@@ -37,11 +37,11 @@ public class ContactUS extends ProjectMethods{
 		
 		if(this.driver.getCurrentUrl().startsWith(appData.get("sUrl"))==true){
 			click(elecontactWNBC);
-			System.out.println(elecontactWNBC);
+			System.out.println(elecontactWNBC.getText());
 		}
 		else if(this.driver.getCurrentUrl().startsWith(appData.get("LUrl"))==true){
 			click(elecontactWNBCLA);
-			System.out.println(elecontactWNBCLA);
+			System.out.println(elecontactWNBCLA.getText());
 		}
 		
 		return this;
@@ -59,5 +59,53 @@ public class ContactUS extends ProjectMethods{
 	public TVlistingsschedule clicktvlistings() {
 		click(eletvlistings);
 		return new TVlistingsschedule(driver, test);
+	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='social_module']//a[contains(text(),'Social')]")
+	private WebElement elecontactsocial;
+	public ContactUS clickcontactsocial() {
+		click(elecontactsocial);
+		System.out.println(elecontactsocial.getText());
+		return this;
+	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='mobile_module']//a[contains(text(),'mobile')]")
+	private WebElement elecontactmobile;
+	public ContactUS clickcontactmobile() {
+		click(elecontactmobile);
+		System.out.println(elecontactmobile.getText());
+		return this;
+	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='team_module']//a[text()='meet the team']")
+	private WebElement elemeettheteam;
+	public ContactUS clickmeettheteam() {
+		click(elemeettheteam);
+		System.out.println(elemeettheteam.getText());
+		return this;
+	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='contact-landing-module containerNewsletter']//a[text()='Newsletters']")
+	private WebElement elecontactnewsletters;
+	public ContactUS clickcontactnewsletters() {
+		click(elecontactnewsletters);
+		System.out.println(elecontactnewsletters.getText());
+		return this;
+	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='contact-landing-module']//a[text()='tv listings']")
+	private WebElement elecontacttvlistings;
+	public ContactUS clickcontacttvlistings() {
+		click(elecontacttvlistings);
+		System.out.println(elecontacttvlistings.getText());
+		return this;
+	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='photos-videos_module']//a[text()='Photos & Videos']")
+	private WebElement elecontactphoto;
+	public ContactUS clickcontactphoto() {
+		click(elecontactphoto);
+		System.out.println(elecontactphoto.getText());
+		return this;
 	}
 }

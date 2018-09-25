@@ -26,10 +26,17 @@ public class I_Team_newyork extends ProjectMethods{
 	private WebElement eleinvestigationvaild;	
 	public I_Team_newyork clickinvestigationvaild() {
 		click(eleinvestigationvaild);
-		System.out.println(eleinvestigationvaild);
+		System.out.println(eleinvestigationvaild.getText());
 		return this;
 	}
 
+	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//a[@alt='Entertainment']")
+	private WebElement eleentertainment;	
+	public EntertainmentNews clickentertainment() {
+		click(eleentertainment);
+		System.out.println(eleentertainment.getText());
+		return new EntertainmentNews(driver, test);
+	}
 
 	@FindBy(how=How.XPATH,using="//div[@id='globalRightRail']//div[@class='module-1 investigations-module module more-investigations ']//h4[@class='module-headline']")
 	private WebElement elemoreinvestigation;
@@ -40,11 +47,11 @@ public class I_Team_newyork extends ProjectMethods{
 		
 		if(this.driver.getCurrentUrl().startsWith(appData.get("sUrl"))==true){
 			click(elemoreinvestigation);
-			System.out.println(elemoreinvestigation);
+			System.out.println(elemoreinvestigation.getText());
 		}
 		else if(this.driver.getCurrentUrl().startsWith(appData.get("LUrl"))==true){
 			click(elemoreinvestigationLA);
-			System.out.println(elemoreinvestigationLA);
+			System.out.println(elemoreinvestigationLA.getText());
 		}
 		
 		return this;

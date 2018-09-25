@@ -35,7 +35,7 @@ public class TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_lis
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clickwatchlivelogo()
 				.clickfullschedule()
@@ -47,24 +47,7 @@ public class TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_lis
 				.clickdaynbcnow();
 
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
-				new NbcPage(driver, test)
-				.clickwatchlivelogo()
-				.clickfullschedule()
-				.clicknbc4()
-				.clickdaySelect()
-				.clickdaynbcnow()
-				.clickcozitv()
-				.clickdaySelect()
-				.clickdaynbcnow();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo();
-
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
 			}
