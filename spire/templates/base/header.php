@@ -72,6 +72,12 @@
 								<li><a href="/reports/stale_content_check/stalecontent-search">Search</a></li>
 							</ul>
 						</li>
+						<li <?php if ($radarSubNav) { echo 'class="open"'; } ?>><a href="#">Radar Averages</a>
+							<ul>
+								<li><a href="/reports/radar_averages">Overview</a></li>
+								<li><a href="/reports/radar_averages/radar-search">Search</a></li>
+							</ul>
+						</li>
 					</ul>
 				</li>
 				<li <?php if ($scriptClass) { echo 'class="open"'; } ?>><a href="/scripts/main"><i class="fa fa-bolt"></i> Scripts</a></li>

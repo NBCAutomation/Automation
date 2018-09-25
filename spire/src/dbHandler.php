@@ -1117,6 +1117,141 @@ class DbHandler {
         return $output;
     }
 
+    public function getPagedRadarStatusChecks($dateRange, $searchTerm, $updateTime, $offlineOnly, $queryType, $ref) {
+        $output = Spire::spireCache('getPaggedStaleContentChecks_'.$dateRange.'_'.$searchTerm.'_'.$offlineOnly.'_'.$queryType, 0, function() use($dateRange, $searchTerm, $updateTime, $offlineOnly, $queryType, $ref) {
+            $db_con = Spire::getConnection();
+
+            if ($searchTerm) {
+                if ($queryType == 'radarID') {
+                    $searchClause = " WHERE layer_id = ".$searchTerm;
+                } else {
+                    $searchClause = " WHERE pretty_ref LIKE '%".$searchTerm."%'";
+                }
+            }
+
+            if (! $dateRange) {
+                $dayRange = ' AND datediff(current_date,date(`created`)) BETWEEN  0 AND 7';
+            } else {
+                $dayRange = ' AND datediff(current_date,date(`created`)) BETWEEN  0 AND '.$dateRange;
+            }
+
+            if ($updateTime) {
+                $searchTimeClause = 'AND min_diff >= '.$updateTime;
+            }
+
+            if ($offlineOnly === 'true') {
+                $offlineClause = "AND radar_status = 'offline'";
+            }
+
+            if ($ref) {
+                $append = $ref;
+            } else {
+                $append = '?';
+            }
+
+            $total = $db_con->query('SELECT COUNT(*) FROM weather_radar_status '.$searchClause.' '.$dayRange.' '.$offlineClause.' '.$searchTimeClause)->fetchColumn();
+            $stmt = $db_con->prepare('SELECT COUNT(*) FROM weather_radar_status '.$searchClause.' '.$dayRange.' '.$offlineClause.' '.$searchTimeClause);
+            // var_dump($stmt);
+            // exit();
+
+            $limit = 100;
+
+            // How many pages will there be
+            $pages = ceil($total / $limit);
+
+            // What page are we currently on?
+            $page = min($pages, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT, array(
+                'options' => array(
+                    'default'   => 1,
+                    'min_range' => 1
+                ),
+            )));
+
+            // Calculate the offset for the query
+            $offset = ($page - 1)  * $limit;
+
+            // Some information to display to the user
+            $start = $offset + 1;
+            $end = min(($offset + $limit), $total);
+
+            if ($pages > 1) {
+                $offsetQueryStatement = "'OFFSET '". $offset;
+            }
+            
+
+            // The "back" link
+            $prevlink = ($page > 1) ? '<li class="paginate_button "><a href="'.$append.'page=1" title="First page">&laquo;</a></li><li><a href="'.$append.'page=' . ($page - 1) . '" title="Previous page">' . ($page - 1) . '</a></li>' : '<li class="paginate_button previous disabled" id="zctb_previous"><a href="#" aria-controls="zctb" data-dt-idx="0" tabindex="0">&laquo;</a></li>';
+
+            $currentlink = '<li class="paginate_button active"><a href="#">'. $page. '</a></li>';
+
+            // The "forward" link
+            $nextlink = ($page < $pages) ? '<li class="paginate_button"><a href="'.$append.'page=' . ($page + 1) . '" title="Next page">' . ($page + 1) . '</a></li>
+                                            <li><a href="'.$append.'page=' . $pages . '" title="Last page">&raquo;</a></li>'
+                                            :
+                                            '<li class="paginate_button next disabled" id="zctb_next"><a href="#" aria-controls="zctb" data-dt-idx="7" tabindex="0">&raquo;</a></li>';
+
+            // Prepare the paged query
+            $stmt = $db_con->prepare('SELECT * FROM weather_radar_status '.$searchClause.' '.$dayRange.' '.$offlineClause.' '.$searchTimeClause.' ORDER BY id DESC LIMIT '.$limit.' '.$offsetQueryStatement );
+
+            // var_dump($stmt);
+            // exit();
+            $stmt->execute();
+
+            // Do we have any results?
+            if ($stmt->rowCount() > 0) {
+                $contentData = $stmt->fetchAll();
+                
+                $pageOutput .= '<table id="radarAverages-content-table" class="table table-bordered table-striped" cellspacing="0" width="100%">';
+                $pageOutput .= '<thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Ref ID</th>
+                                        <th>Layer ID</th>
+                                        <th>WSI Site ID</th>
+                                        <th>Radar Name</th>
+                                        <th>Radar Status</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>';
+
+                foreach( $contentData as $contentCheck ){                    
+                    $pageOutput .= '<tr>';
+                    $pageOutput .= '<td>'. $contentCheck['id'] .
+                                    '</td><td>'. $contentCheck['ref_test_id'] .
+                                    '</td><td>'. $contentCheck['layer_id'] .
+                                    '</td><td>'. $contentCheck['wsi_site'] .
+                                    '</td><td>'. $contentCheck['pretty_ref'] .
+                                    '</td><td>'. $contentCheck['radar_status'] .
+                                    '</td><td>'. $contentCheck['created'] .'</td>';
+                    $pageOutput .= '</tr>';
+                }
+
+                $pageOutput .= '</table>';
+
+                // Display the paging information
+                $pageOutput .= '<div class="row">';
+                $pageOutput .= '<div class="col-sm-5">
+                                    <div class="dataTables_info" id="zctb_info" role="status" aria-live="polite">
+                                        Showing '. $start. ' to '. $end. ' of '. $total. ' results
+                                    </div>
+                                </div>
+                                <div class="col-sm-7">
+                                    <div class="dataTables_paginate paging_simple_numbers" id="zctb_paginate">
+                                        <ul class="pagination">'. $prevlink .''. $currentlink .''. $nextlink. '</ul>
+                                    </div>
+                                </div>';
+                $pageOutput .= '</div>';
+
+            } else {
+                $pageOutput .= '<p>No results could be displayed.</p>';
+            }
+            $stmt->closeCursor();
+            return $pageOutput;
+        });
+
+        return $output;
+    }
+
     /* ------------- Reporting ------------------ */
     public function getTestDataById($refID, $testID) {
         // var_dump($testID);

@@ -355,7 +355,10 @@ $app->group('/reports', function () {
 			}
 
 		} else if ($radarAveragesView) {
+			$pageName = 'Radar Uptime Averages';
 			$pageTemplate = 'reports-radar-averages.php';
+			$breadcrumbPageName = 'main';
+			$radarSubnavClass = true;
 		} else {
 			$pageTemplate = 'reports.php';
 		}
@@ -378,6 +381,7 @@ $app->group('/reports', function () {
             'reportClass' => true,
             'reportRegressionSubNav' => $regressionSubnavClass,
             'reportLoadtimeSubNav' => $loadtimeSubnavClass,
+            'radarSubNav' => $radarSubnavClass,
             'reportStaleContentSubNav' => $staleContentView,
             'staleContentData' => $staleContentData,
     		'allReports' => $allReports,
@@ -460,6 +464,11 @@ $app->group('/reports', function () {
            	    $pullAllReportData = false;
            	    break;
 
+       	    case "radar-search":
+       	        $radarSearchView = true;
+       	        $pullAllReportData = false;
+       	        break;
+
 		    default:
 		        $testTypeName = 'none-existent';
 		}
@@ -521,6 +530,35 @@ $app->group('/reports', function () {
 				$pageQueryRef = $args['subView'].'?range='.$dayRange.'&term='.$searchTerm.'&stale='.$failuresOnly.'&queryRegressionReports='.$queryRegressionReports.'&view=regressionReports&';
 				$searchResults = $db->getPagedRegressionReports($dayRange, $searchTerm, $failuresOnly, $pageQueryRef);
 			}
+		} else if ($args['subView'] == 'radar-search') {
+			$pageTemplate = 'reports-radar-averages-search.php';
+			$radarSubnavClass = true;
+			$breadcrumbPageName = 'search';
+			$pageName = 'Radar Uptime Averages Search';
+
+			$dayRange = $allPostPutVars['range'];
+			$searchTerm = $allPostPutVars['term'];
+			$queryRadarAverages = $allPostPutVars['queryRadarAverages'];
+
+			if ($queryRadarAverages) {
+				if (! $allPostPutVars['offline']) {
+					$offlineFilter = 'false';
+				} else {
+					$offlineFilter = $allPostPutVars['offline'];
+				}
+
+				if ($allPostPutVars['radar_id']) {
+					$queryType = 'radarID';
+					$searchTerm = $allPostPutVars['radar_id'];
+				} else {
+					$queryType = 'radarName';
+					$searchTerm = $allPostPutVars['radar_name'];
+				}
+
+				$pageQueryRef = $args['subView'].'?range='.$dayRange.'&queryType='.$queryType.'$term='.$searchTerm.'&updateTime='.$updateTime.'&offline='.$offlineFilter.'&queryStaleContent='.$queryStaleContent.'&view=radarAverages&';
+
+				$searchResults = $db->getPagedRadarStatusChecks($dayRange, $searchTerm, $updateTime, $offlineFilter, $queryType, $pageQueryRef);
+			}
 		} else {
 			$pageTemplate = 'reports.php';
 			$loadtimeSubnavClass = false;
@@ -537,11 +575,14 @@ $app->group('/reports', function () {
 		    'reportRegressionSubNav' => $regressionSubnavClass,
 		    'reportLoadtimeSubNav' => $loadtimeSubnavClass,
 		    'reportStaleContentSubNav' => $staleContentView,
+		    'radarSubNav' => $radarSubnavClass,
 		    'allReports' => $allReports,
 		    'searchResults' => $searchResults['data'],
 		    'dayRange' => $dayRange,
+		    'queryType' => $queryType,
 		    'searchTerm' => $searchTerm,
 		    'staleFilter' => $staleFilter,
+		    'offlineFilter' => $offlineFilter,
 		    'updateTime' => $updateTime,
 
 		    //Auth Specific

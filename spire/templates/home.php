@@ -82,7 +82,7 @@
 				</div>
 
 				<div class="col-md-6">
-					<div class="panel-heading">AVG. Radar Online% (all radar average)</div>
+					<div class="panel-heading">AVG. Radar Online% (all radars average)</div>
 						<div class="panel-body">
 							<div class="percent_container">
 								<div class="c100 p<?php echo round($weatherRadarAverage_yesterday); ?> green">
