@@ -41,7 +41,11 @@
 		"olympicsCheck": "casperjs test \"./tests/olympicsDataCheck.js\"",
 		"staleContentCheck": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiTest_staleContentCheck.js\" --url=\"{}\"",
 		"staleContentCheck-local": "cat sites.txt | xargs -P10 -I{} casperjs test \"./tests/apiTest_staleContentCheck.js\" --url=\"{}\" --env=local",
-		"weatherTileAPICheck": "casperjs test \"./tests/weatherTileAPICheck.js\" --output=console --ignore-ssl-errors=true --env=local"
+		"weatherDataChecks": "npm run weatherTileAPICheck && npm run weatherRadarStatusCheck",
+		"weatherTileAPICheck-local": "casperjs test \"./tests/weatherTileAPICheck.js\" --output=console --ignore-ssl-errors=true --env=local",
+		"weatherRadarStatusCheck-local": "casperjs test \"./tests/weatherRadarStatusAPICheck.js\" --output=console --ignore-ssl-errors=true --env=local",
+		"weatherTileAPICheck": "casperjs test \"./tests/weatherTileAPICheck.js\" --output=console --ignore-ssl-errors=true",
+		"weatherRadarStatusCheck": "casperjs test \"./tests/weatherRadarStatusAPICheck.js\" --output=console --ignore-ssl-errors=true"
 	},
 	"dependencies": {
 		"casperjs": "^1.1.4-2",
