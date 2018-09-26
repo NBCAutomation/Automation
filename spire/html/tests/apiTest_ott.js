@@ -958,16 +958,7 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
 
                 // Check for the Sponsor flag
                 if (articleSponsored === true) {
-                    if (articleSponsorName.length <= 0) {
-                        setFail++;
-
-                        var __curError = 'Sponsored flag set to TRUE but sponsorName empty.';
-
-                        console.log(colorizer.colorize('FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.', 'ERROR'));
-                        subTestResults['articleSponsorName'] = 'FAIL: Sponsored flag set to TRUE for ' + articleContentID + ', but sponsorName empty.';
-                        endpointTestResults['article_' + articleContentID + '_results'] = subTestResults;
-                        var __curError = '';
-                    } else if (articleSponsorID.length <= 0) {
+                    if (articleSponsorID.length <= 0) {
                         setFail++;
 
                         var __curError = 'Sponsored flag set to TRUE but sponsorID empty.';
