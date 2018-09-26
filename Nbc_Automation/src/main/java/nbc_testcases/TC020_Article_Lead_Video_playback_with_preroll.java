@@ -19,7 +19,7 @@ public class TC020_Article_Lead_Video_playback_with_preroll extends ProjectMetho
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "News Page Loads with Sub-Nav";
+		testCaseName = "News Page Loads with Sub-Nav (Both NBC and Telemundo)";
 		testDescription = "To Test News Page Loads with Sub-Nav successfully";
 		category= "Regression";
 		authors	="Vinoth";

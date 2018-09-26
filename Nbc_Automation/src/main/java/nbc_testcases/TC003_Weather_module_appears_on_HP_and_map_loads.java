@@ -43,8 +43,7 @@ public class TC003_Weather_module_appears_on_HP_and_map_loads extends ProjectMet
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clicknavtiempoTM()
-				.clickmapplayTM();
+				.clicknavtiempoTM();
 			}
 
 		} catch (FileNotFoundException e) {

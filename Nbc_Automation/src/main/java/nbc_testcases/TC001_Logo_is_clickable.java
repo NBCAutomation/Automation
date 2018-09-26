@@ -19,7 +19,7 @@ public class TC001_Logo_is_clickable extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "NbcPage logo clickable";
+		testCaseName = "NbcPage logo clickable (Both NBC and Telemundo)";
 		testDescription = "To Test Logo has to click and should get refreshed";
 		category= "Regression";
 		authors	="Vinoth";

@@ -39,6 +39,37 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
+		@FindBy(how=How.XPATH,using="//div[@class='nav-section-subnav']//a[text()='Lo q']")
+		private WebElement eleLoacalPR;
+		public NewsPageLoads clickLoacalPR() {
+			click(eleLoacalPR);
+			System.out.println(eleLoacalPR.getText());
+			return new NewsPageLoads(driver, test);
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@id='news-top-stories-all']//h1[@id='top-news-header']")
+		private WebElement elenewsheader;
+		public NewsPageLoads clicknewsheader() {
+			click(elenewsheader);
+			System.out.println(elenewsheader.getText());
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@id='news-top-stories-module']//div[@id='carousel-story-selection']//following::h2[@class='flaggedHeadline'][1]")
+		private WebElement elenbcnewstopstory;
+		public NewsPageLoads clicknbcnewstopstory() {
+			click(elenbcnewstopstory);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@id='article_0_headline_byline']//h1[@class='headline']")
+		private WebElement elenbcnewstopstoryHeader;
+		public NewsPageLoads clicknbcnewstopstoryHeader() {
+			click(elenbcnewstopstoryHeader);
+			System.out.println(elenbcnewstopstoryHeader.getText());
+			return this;
+		}
+		
 		@FindBy(how=How.XPATH,using="//li[@class='nav-section I-Team']//a[@class='nav-section-title ']")
 		private WebElement elei_team;
 		public NewsPageLoads clicki_team() {
@@ -139,7 +170,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=New York Live']")
 		private WebElement elenewyorklive;
 		public NewsPageLoads clicknewyorklive() {
-			scrollingByCoordinatesofAPage();
+			//scrollingByCoordinatesofAPage();
 			click(elenewyorklive);
 			driver.navigate().back();
 			return this;
@@ -241,7 +272,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleweatherbanner;	
 		public NewsPageLoads clickweatherbanner() {
 			click(eleweatherbanner);
-			scrollingByCoordinatesofAPage();
+			//scrollingByCoordinatesofAPage();
 			System.out.println(eleweatherbanner.getText());
 			return this;
 		}

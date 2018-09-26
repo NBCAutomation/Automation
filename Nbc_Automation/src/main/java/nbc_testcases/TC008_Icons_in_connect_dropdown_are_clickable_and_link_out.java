@@ -38,7 +38,6 @@ public class TC008_Icons_in_connect_dropdown_are_clickable_and_link_out extends 
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
 				.clickconnect()
 				.clickconnecttwitter()
 				.clickconnect()
@@ -66,7 +65,35 @@ public class TC008_Icons_in_connect_dropdown_are_clickable_and_link_out extends 
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
+				.clickconnectTM()
+				.clickconnecttwitter()
+				.clickconnectTM()
+				.clickconnectinstagram()
+				.clickconnectTM()
+				.clickconnectfacebook()
+				.clickconnectTM()
+				.clickourapps()
+				.clickconnectTM()
+				.clicknewsletter()
+				.clickconnectTM()
+				.clickvideosandpictures()
+				.clickconnectTM()
+				.clickconnectteam()
+				.clicknbclogo()
+				.clickconnectTM()
+				.clickconnectourstations()
+				.clickconnectTM()
+				.clickconnectpromotions()
+				.clickconnectTM()
+				.clickconnectprogramming()
+				.clickconnectTM()
+				.clicksendfeedback()
+				.clickconnectTM()
+				.clicktermsofservice()
+				.clickconnectTM()
+				.clickprivacypolicy()
+				.clickconnectTM()
+				.clickprivacypolicy();
 			}
 
 		} catch (FileNotFoundException e) {

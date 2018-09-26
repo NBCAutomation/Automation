@@ -36,22 +36,21 @@ public class TC028_Weather_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true) { 
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicknbcweather()
-				.clickweatherforecast()
+				.clicknbcweather();
+				/*.clickweatherforecast()
 				.clickweatheralerts()
 				.clickweatherschool()
-				.clickweathernews();
+				.clickweathernews();*/
 			}
 			
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clicknbcweather()
-				.clickweatheralertforecast()
+				.clicknbcweather();
+				/*.clickweatheralertforecast()
 				.clickweatheralerts()
 				.clickweatherstories()
-				.clickweathercalifornia();
+				.clickweathercalifornia();*/
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)

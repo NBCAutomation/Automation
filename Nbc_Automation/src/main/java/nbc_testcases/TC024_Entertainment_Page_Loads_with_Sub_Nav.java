@@ -35,10 +35,10 @@ public class TC024_Entertainment_Page_Loads_with_Sub_Nav extends ProjectMethods{
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true) {
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) {
 				new NbcPage(driver, test)
-				.clickentertainment()
-				.clickentertainmentnews()
+				.clickentertainment();
+				/*.clickentertainmentnews()
 				.clickhomeheader()
 				.clickthescene()
 				.clickthesceneheader()
@@ -55,13 +55,12 @@ public class TC024_Entertainment_Page_Loads_with_Sub_Nav extends ProjectMethods{
 				.clickgeorgeheader()
 				.click1stlook()
 				.click1stlookheader()
-				.clickcozitv();
+				.clickcozitv();*/
 			}
 
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) {
-				new NbcPage(driver, test)
-				.clickentertainment()
-				.clickentertainmentnews()
+			
+				//.clickentertainment();
+				/*.clickentertainmentnews()
 				.clickhomeheader()
 				.clickthescene()
 				.clickthesceneheader()
@@ -71,8 +70,7 @@ public class TC024_Entertainment_Page_Loads_with_Sub_Nav extends ProjectMethods{
 				.clickworthtripheader()
 				.clickgeorgeLA()
 				.clickgeorgeheader()
-				.clickbreakfast();
-			}
+				.clickbreakfast();*/
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();

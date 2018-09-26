@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -53,11 +54,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.saucerest.SauceREST;
+
 import utils.Reporter;
 public class SeMethods extends Reporter implements WdMethods {
 	public String URL;
 	public DesiredCapabilities dc;
 	public RemoteWebDriver driver;
+	public Actions act;
 	public String jobId;
 	public String sUrl,primaryWindowHandle,sHubUrl,sHubPort,name,LUrl,T5Url,TPUrl, USERNAME1,ACCESS_KEY1,status,attachment,filename,to,cc,email,password;
 	public  Map<String, String> appData = new HashedMap<>();
@@ -67,7 +72,7 @@ public class SeMethods extends Reporter implements WdMethods {
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
-
+			
 			appData.put("sUrl", prop.getProperty("NYURL"));
 			appData.put("LUrl", prop.getProperty("LAURL"));
 			appData.put("T5Url", prop.getProperty("T51URL"));
@@ -95,6 +100,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public void startApp(String b, String p, String applicationUrl, String tcname){
 
 		URL = "https://" + USERNAME1 + ":" + ACCESS_KEY1 + "@ondemand.saucelabs.com:443/wd/hub";
+		
 		try {
 
 			dc = new DesiredCapabilities();
@@ -110,7 +116,6 @@ public class SeMethods extends Reporter implements WdMethods {
 
 				DesiredCapabilities dc = DesiredCapabilities.chrome();
 				System.out.println(tcname);
-				dc.setBrowserName("Chrome");
 				dc.setCapability("platform", "Windows 10");
 				dc.setCapability("version", "68.0");
 				//dc.setCapability("version", "66.0");
@@ -130,10 +135,9 @@ public class SeMethods extends Reporter implements WdMethods {
 			if (b.equalsIgnoreCase("Firefox") && p.equalsIgnoreCase("Win10")) {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
 				System.out.println(tcname);
-				dc.setBrowserName("Firefox");
 				dc.setCapability("platform", "Windows 10");
-				//dc.setCapability("version", "61.0");
-				dc.setCapability("version", "55.0");
+				dc.setCapability("version", "61.0");
+				//dc.setCapability("version", "55.0");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				//webURL=LUrl;
@@ -220,8 +224,8 @@ public class SeMethods extends Reporter implements WdMethods {
 				DesiredCapabilities dc = DesiredCapabilities.firefox();
 				System.out.println(tcname);
 				dc.setCapability("platform", "macOS 10.13");
-				//dc.setCapability("version", "61.0");
-				dc.setCapability("version", "47.0.1");
+				dc.setCapability("version", "61.0");
+				//dc.setCapability("version", "47.0.1");
 				dc.setCapability("name", "(" + b + ") " + appData.get(applicationUrl)+":"+tcname);
 				//dc.setCapability("passed", "True");
 				try {
@@ -283,7 +287,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public void click(WebElement ele) {
 		String text = "";
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 100);
+			WebDriverWait wait = new WebDriverWait(driver, 60);
 			wait.until(ExpectedConditions.elementToBeClickable(ele));			
 			text = ele.getText();
 			ele.click();
@@ -551,8 +555,8 @@ public class SeMethods extends Reporter implements WdMethods {
 	public void mouseMoveTo(WebElement ele){
 		
 			try {
-				Actions act = new Actions(driver);
-				act.moveToElement(ele).build().perform();
+				act = new Actions(driver);
+				act.moveToElement(ele).perform();
 			} catch (WebDriverException e) {
 				reportStep("WebDriverException : "+e.getMessage(), "FAIL"); {
 				// TODO Auto-generated catch block
@@ -565,17 +569,18 @@ public class SeMethods extends Reporter implements WdMethods {
 		((JavascriptExecutor) driver).executeScript("window.scrollBy(0,500)");
 	}
 	
-	/*public boolean scrollingByCoordinatesofAPage(WebElement webelement, int scrollPoints)
+	/*public static boolean scroll_Page(WebElement webelement, int scrollPoints)
 	{
 	    try
 	    {               
 	        Actions dragger = new Actions(driver);
 	        // drag downwards
-	        int numberOfPixelsToDragTheScrollbarDown = 30;
-	        for (int i = 30; i < scrollPoints; i = i + numberOfPixelsToDragTheScrollbarDown)
+	        int numberOfPixelsToDragTheScrollbarDown = 10;
+	        for (int i = 10; i < scrollPoints; i = i + numberOfPixelsToDragTheScrollbarDown)
 	        {
 	            dragger.moveToElement(webelement).clickAndHold().moveByOffset(0, numberOfPixelsToDragTheScrollbarDown).release(webelement).build().perform();
 	        }
+	        Thread.sleep(500);
 	        return true;
 	    }
 	    catch (Exception e)
@@ -584,6 +589,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	        return false;
 	    }
 	}*/
+
 
 	public void jiraSendRequest(String method, String description) {
 		try {
@@ -685,6 +691,31 @@ public class SeMethods extends Reporter implements WdMethods {
 			return false;
 		}
 		return true;
+	}
+	
+
+	
+	public void shutDownDriver(ITestResult result) throws IOException {
+		 Map<String, Object>sauceJob = new HashMap<String, Object>();
+		Properties prop = new Properties();
+		prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+		SauceOnDemandAuthentication authentication = new SauceOnDemandAuthentication( prop.getProperty("USERNAME"), prop.getProperty("ACCESS_KEY")); 
+
+	    if(authentication != null) {
+	        String jobID = ((RemoteWebDriver)driver).getSessionId().toString();
+	      SauceREST client = new SauceREST(authentication.getUsername(), authentication.getAccessKey());
+	        sauceJob.put("name", "Test method: "+result.getMethod().getMethodName());
+	        if(result.isSuccess()) {
+	            client.jobPassed(jobID);
+	           
+	           
+	        } else {
+	            client.jobFailed(jobID);
+	        }
+	        client.updateJobInfo(jobID, sauceJob);            
+	    }
+	    driver.manage().deleteAllCookies();
+	    driver.quit();
 	}
 
 }

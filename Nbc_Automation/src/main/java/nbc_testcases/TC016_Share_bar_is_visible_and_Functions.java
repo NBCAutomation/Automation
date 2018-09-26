@@ -19,7 +19,7 @@ public class TC016_Share_bar_is_visible_and_Functions extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 		
-		testCaseName = "News Page Loads with Sub-Nav";
+		testCaseName = "News Page Loads with Sub-Nav(Both NBC and Telemundo)";
 		testDescription = "To Test News Page Loads with Sub-Nav successfully";
 		category= "Regression";
 		authors	="Vinoth";
@@ -47,7 +47,12 @@ public class TC016_Share_bar_is_visible_and_Functions extends ProjectMethods{
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
+				.clickarticleTM()
+				.clickfacebook()
+				.clicktwitter()
+				.clickiconcomment()
+				.clickiconemail()
+				.clickiconprint();
 			}
 
 		} catch (FileNotFoundException e) {
