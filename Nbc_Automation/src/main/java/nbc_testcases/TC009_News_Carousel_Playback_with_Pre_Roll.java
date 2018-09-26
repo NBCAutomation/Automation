@@ -19,8 +19,8 @@ public class TC009_News_Carousel_Playback_with_Pre_Roll extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Share bar is visible and functions Article";
-		testDescription = "To Test Share bar is visible";
+		testCaseName = "News Carousel Playback with Pre Roll (Or) Noticias/local article pages that contain a lead video should feature a carousel beneath the player";
+		testDescription = "To Test News Carousel Playback with Pre Roll";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -45,7 +45,9 @@ public class TC009_News_Carousel_Playback_with_Pre_Roll extends ProjectMethods{
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
+				.clicknbclogo()
+				.clickteleNoticias()
+				.clickLoacalPR();
 			}
 
 		} catch (FileNotFoundException e) {

@@ -39,6 +39,14 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
+		@FindBy(how=How.XPATH,using="//div[@class='nav-section-subnav']//a[text()='Lo q']")
+		private WebElement eleLoacalPR;
+		public NewsPageLoads clickLoacalPR() {
+			click(eleLoacalPR);
+			System.out.println(eleLoacalPR.getText());
+			return new NewsPageLoads(driver, test);
+		}
+		
 		@FindBy(how=How.XPATH,using="//div[@id='news-top-stories-all']//h1[@id='top-news-header']")
 		private WebElement elenewsheader;
 		public NewsPageLoads clicknewsheader() {
@@ -162,7 +170,7 @@ import wdMethods.ProjectMethods;
 		@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=New York Live']")
 		private WebElement elenewyorklive;
 		public NewsPageLoads clicknewyorklive() {
-			scrollingByCoordinatesofAPage();
+			//scrollingByCoordinatesofAPage();
 			click(elenewyorklive);
 			driver.navigate().back();
 			return this;
@@ -264,7 +272,7 @@ import wdMethods.ProjectMethods;
 		private WebElement eleweatherbanner;	
 		public NewsPageLoads clickweatherbanner() {
 			click(eleweatherbanner);
-			scrollingByCoordinatesofAPage();
+			//scrollingByCoordinatesofAPage();
 			System.out.println(eleweatherbanner.getText());
 			return this;
 		}
