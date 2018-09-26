@@ -19,7 +19,7 @@ public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "News Page Loads with Sub-Nav";
+		testCaseName = "News Page Loads with Sub-Nav (0r) Noticias Page Loads with Sub-Nav on Hover";
 		testDescription = "To Test News Page Loads with Sub-Nav successfully";
 		category= "Regression";
 		authors	="Vinoth";
@@ -37,20 +37,21 @@ public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbcnews()
-				.clicklocal()
+				.clicknbcnews();
+				/*.clicklocal()
 				.clicktopvideo()
 				.clickusworld()
 				.clickhealth()
 				.clickweird()
 				.clickweather()
 				.clicktech()
-				.clicksports()
-				.clicktopnewsheader();
+				.clicksports();*/
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
+				.clicknbclogo()
+				.clickteleNoticias()
+				.clickLoacalPR();
 			}
 
 		} catch (FileNotFoundException e) {

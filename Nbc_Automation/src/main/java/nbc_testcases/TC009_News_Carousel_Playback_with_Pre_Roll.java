@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC009_Share_bar_is_visible_and_functions_Article extends ProjectMethods{
+public class TC009_News_Carousel_Playback_with_Pre_Roll extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Share bar is visible and functions Article";
-		testDescription = "To Test Share bar is visible";
+		testCaseName = "News Carousel Playback with Pre Roll (Or) Noticias/local article pages that contain a lead video should feature a carousel beneath the player";
+		testDescription = "To Test News Carousel Playback with Pre Roll";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -38,16 +38,16 @@ public class TC009_Share_bar_is_visible_and_functions_Article extends ProjectMet
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clicktopstories()
-				.clickfacebook();
-				/*.clicktwitter();
-				.clickcomments();
-				.clickenvelope()
-				.clickprint();*/
+				.clicknbcnews()
+				.clicknewsheader()
+				.clicknbcnewstopstory();
+				
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
+				.clicknbclogo()
+				.clickteleNoticias()
+				.clickLoacalPR();
 			}
 
 		} catch (FileNotFoundException e) {
