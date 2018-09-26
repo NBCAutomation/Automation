@@ -34,100 +34,103 @@
 			</div>
 		<?php endif ?>
 		<hr />
-		<div class="panel">
-			<div class="col-md-6">
-				<div class="panel-heading">Radar Tile Data Up%</div>
-					<div class="panel-body">
-						<div class="percent_container">
-							<div class="c100 p<?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?> green">
-								<span><?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?>%</span>
-								<div class="slice">
-									<div class="bar"></div>
-									<div class="fill"></div>
-								</div>
-							</div>
-							<h4>Yesterday</h4>
-						</div>
-						<div class="percent_container">
-							<div class="c100 p<?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?> green">
-								<span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
-								<div class="slice">
-									<div class="bar"></div>
-									<div class="fill"></div>
-								</div>
-							</div>
-							<h4>Today</h4>
-						</div>
-						<div class="percent_container">
-							<div class="c100 p<?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?> green">
-								<span><?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?>%</span>
-								<div class="slice">
-									<div class="bar"></div>
-									<div class="fill"></div>
-								</div>
-							</div>
-							<h4>Current Week</h4>
-						</div>
-						<div class="percent_container">
-							<div class="c100 p<?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?> green">
-								<span><?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?>%</span>
-								<div class="slice">
-									<div class="bar"></div>
-									<div class="fill"></div>
-								</div>
-							</div>
-							<h4>Month</h4>
-						</div>
-					</div>
-				</div>
-
+		<div class="panel panel-default">
+			<div class="panel-heading">Weather Radar Data Tests</div>
+			<div class="panel-body">
 				<div class="col-md-6">
-					<div class="panel-heading">AVG. Radar Online% (all radars average)</div>
+					<div class="panel-heading">Radar Tile Data Up%</div>
 						<div class="panel-body">
 							<div class="percent_container">
-								<div class="c100 p<?php echo round($weatherRadarAverage_yesterday); ?> green">
+								<div class="c100 p<?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?> small green">
+									<span><?php echo round($weatherTileUptimeAverage_yesterday['avgUptime']); ?>%</span>
+									<div class="slice">
+										<div class="bar"></div>
+										<div class="fill"></div>
+									</div>
+								</div>
+								<h6>Yesterday</h6>
+							</div>
+							<div class="percent_container">
+								<div class="c100 p<?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?> small green">
+									<span><?php echo round($weatherTileUptimeAverage_today['avgUptime']); ?>%</span>
+									<div class="slice">
+										<div class="bar"></div>
+										<div class="fill"></div>
+									</div>
+								</div>
+								<h6>Today</h6>
+							</div>
+							<div class="percent_container">
+								<div class="c100 p<?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?> small green">
+									<span><?php echo round($weatherTileUptimeAverage_week['avgUptime']); ?>%</span>
+									<div class="slice">
+										<div class="bar"></div>
+										<div class="fill"></div>
+									</div>
+								</div>
+								<h6>Current Week</h6>
+							</div>
+							<div class="percent_container">
+								<div class="c100 p<?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?> small green">
+									<span><?php echo round($weatherTileUptimeAverage_month['avgUptime']); ?>%</span>
+									<div class="slice">
+										<div class="bar"></div>
+										<div class="fill"></div>
+									</div>
+								</div>
+								<h6>Month</h6>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="panel-heading">All AVG. Radar Online% - <a href="/reports/radar_averages">view by radar</a></div>
+						<div class="panel-body">
+							<div class="percent_container">
+								<div class="c100 p<?php echo round($weatherRadarAverage_yesterday); ?> small green">
 									<span><?php echo round($weatherRadarAverage_yesterday); ?>%</span>
 									<div class="slice">
 										<div class="bar"></div>
 										<div class="fill"></div>
 									</div>
 								</div>
-								<h4>Yesterday</h4>
+								<h6>Yesterday</h6>
 							</div>
 							<div class="percent_container">
-								<div class="c100 p<?php echo round($weatherRadarAverage_today); ?> green">
+								<div class="c100 p<?php echo round($weatherRadarAverage_today); ?> small green">
 									<span><?php echo round($weatherRadarAverage_today); ?>%</span>
 									<div class="slice">
 										<div class="bar"></div>
 										<div class="fill"></div>
 									</div>
 								</div>
-								<h4>Today</h4>
+								<h6>Today</h6>
 							</div>
 							<div class="percent_container">
-								<div class="c100 p<?php echo round($weatherRadarAverage_week); ?> green">
+								<div class="c100 p<?php echo round($weatherRadarAverage_week); ?> small green">
 									<span><?php echo round($weatherRadarAverage_week); ?>%</span>
 									<div class="slice">
 										<div class="bar"></div>
 										<div class="fill"></div>
 									</div>
 								</div>
-								<h4>Current Week</h4>
+								<h6>Current Week</h6>
 							</div>
 							<div class="percent_container">
-								<div class="c100 p<?php echo round($weatherRadarAverage_month); ?> green">
+								<div class="c100 p<?php echo round($weatherRadarAverage_month); ?> small green">
 									<span><?php echo round($weatherRadarAverage_month); ?>%</span>
 									<div class="slice">
 										<div class="bar"></div>
 										<div class="fill"></div>
 									</div>
 								</div>
-								<h4>Month</h4>
+								<h6>Month</h6>
 							</div>
 						</div>
 					</div>
+				</div>
 			</div>
-
+		</div>
 
 		<div class="panel panel-default">
 			<div class="panel-heading">Today's API Failures/Errors</div>
