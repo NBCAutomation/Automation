@@ -406,29 +406,30 @@ class Spire {
 		$failurePayloadData = $db->getPayLoadError($testReferenceID, $testResultID);
 
 		if (sizeof($failurePayloadData['data']) > 0) {
-			foreach ($failurePayloadData as $failureData) {
+			foreach ($failurePayloadData['data'] as $failureData) {
 				// echo $failureData->id;
-				$strippedData = $failureData->payload;
-				$strippedData = str_replace('<', '&lt;', $failureData->payload);
+				$strippedData = $failureData['payload'];
+				$strippedData = str_replace('<', '&lt;', $failureData['payload']);
 				$strippedData = str_replace('>', '&gt;', $strippedData);
 				
+				
 				$testReportViewData .= '<div class="panel panel-default">';
-				$testReportViewData .= '<div class="panel-heading"><h3 class="panel-title">sub test type: '.$failureData->test_type.'</h3></div>';
+				$testReportViewData .= '<div class="panel-heading"><h3 class="panel-title">sub test type: '.$failureData['test_type'].'</h3></div>';
 				$testReportViewData .= '<div class="panel-body">';
 				$testReportViewData .= '<table id="" class="reports_table display table table-bordered" cellspacing="0" width="100%">';
 				$testReportViewData .= '<tbody>';
-				$testReportViewData .= '<tr><td class="text-muted small">JSON Error: '.$failureData->error.'</td></tr>';
-				$testReportViewData .= '<tr><td class="text-muted small">Endpoint url: '.$failureData->endpoint.'</td></tr>';
+				$testReportViewData .= '<tr><td class="text-muted small">JSON Error: '.$failureData['error'].'</td></tr>';
+				$testReportViewData .= '<tr><td class="text-muted small">Endpoint url: '.$failureData['endpoint'].'</td></tr>';
 				$testReportViewData .= '<tr><td class="text-muted small">JSON error payload</td></tr>';
 				$testReportViewData .= '
 				<tr><td>
 				<div class="panel panel-default">
 					<div class="panel-heading" role="tab" id="headingOne">
-						<a role="button" data-toggle="collapse" class="accordion-button" data-parent="#accordion" href="#collapse'.$failureData->id.'" aria-expanded="true" aria-controls="collapse'.$failureData->id.'">
+						<a role="button" data-toggle="collapse" class="accordion-button" data-parent="#accordion" href="#collapse'.$failureData['id'].'" aria-expanded="true" aria-controls="collapse'.$failureData['id'].'">
 							<i class="fa fa-bars" aria-hidden="true"></i> &nbsp;show/hide
 						</a>
 					</div>
-					<div id="collapse'.$failureData->id.'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+					<div id="collapse'.$failureData['id'].'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
 						<div class="panel-body">
 							<pre class=\"payload_error\""><code>'.$strippedData.'</code></pre>
 						</div>

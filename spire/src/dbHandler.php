@@ -968,7 +968,7 @@ class DbHandler {
 
 
     public function getWeatherTileChecks() {
-        $output = Spire::spireCache('getWeatherTileChecks', 0, function() {
+        $output = Spire::spireCache('getWeatherTileChecks', 3600, function() {
             $db_con = Spire::getConnection();
 
             $stmt = $db_con->prepare("SELECT * FROM weather_tile_checks ORDER BY id DESC LIMIT 3");
@@ -989,7 +989,7 @@ class DbHandler {
 
     
     public function getWeatherTileCheckAvg($range) {
-        $output = Spire::spireCache('getWeatherTileCheckAvg_'.$range, 0, function() use ($range) {
+        $output = Spire::spireCache('getWeatherTileCheckAvg_'.$range, 3600, function() use ($range) {
             $db_con = Spire::getConnection();
 
             switch ($range) {
@@ -1059,7 +1059,7 @@ class DbHandler {
     }
 
     public function getAllWeatherRadarChecks($radarStationID) {
-        $output = Spire::spireCache('getAllWeatherRadarChecks_'.$radarStationID, 0, function() use ($radarStationID) {
+        $output = Spire::spireCache('getAllWeatherRadarChecks_'.$radarStationID, 3600, function() use ($radarStationID) {
             $db_con = Spire::getConnection();
             $stmt = $db_con->prepare("SELECT * FROM weather_radar_status WHERE layer_id = '".$radarStationID."' ORDER BY id DESC LIMIT 3");
 
@@ -1074,7 +1074,7 @@ class DbHandler {
     }
 
     public function getWeatherRadarCheckAvg($range, $stationLayerID) {
-        $output = Spire::spireCache('getWeatherRadarCheckAvg_'.$stationLayerID.'_'.$range, 0, function() use ($range, $stationLayerID) {
+        $output = Spire::spireCache('getWeatherRadarCheckAvg_'.$stationLayerID.'_'.$range, 3600, function() use ($range, $stationLayerID) {
             $db_con = Spire::getConnection();
 
             switch ($range) {

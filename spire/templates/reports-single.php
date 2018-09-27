@@ -96,9 +96,9 @@
 						echo '<div class="panel panel-default">
 								<div class="panel-heading">
 									<h3 class="panel-title">Failure details</h3>
-								</div>';
-						echo '<div class="panel-body">';
-						echo '<p class="text-muted small"><i> * Content ID\'s are clickable and will link to the CMS Search.</i></p>';
+								</div>
+								<div class="panel-body">
+								<p class="text-muted small"><i> * Content ID\'s are clickable and will link to the CMS Search.</i></p>';
 
 						foreach ($reportFailures as $thisReportKey => $thisReportValue) {	
 							echo '<div class="panel panel-default">';
