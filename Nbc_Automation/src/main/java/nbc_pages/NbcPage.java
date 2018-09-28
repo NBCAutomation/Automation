@@ -204,6 +204,12 @@ public class NbcPage extends ProjectMethods{
 	private WebElement elewatchlivelogo;	
 	public NbcPage clickwatchlivelogo() {
 		mouseMoveTo(elewatchlivelogo);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		WebElement elewatchlivelogo = driver.findElement(By.xpath("//a[@name='&lpos=section navigation&lid=logo']/img"));
 
 		Boolean ImagePresent = (Boolean) ((JavascriptExecutor)driver).executeScript("return arguments[0].complete && typeof arguments[0].naturalWidth != \"undefined\" && arguments[0].naturalWidth > 0", elewatchlivelogo);
@@ -243,7 +249,7 @@ public class NbcPage extends ProjectMethods{
 		return this;
 	}
 
-	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//li[@class='onnow']")
+	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//li[contains(text(),'ON NOW')]")
 	private WebElement eleonnow;	
 	public NbcPage clickonnow() {
 		click(eleonnow);
@@ -287,6 +293,13 @@ public class NbcPage extends ProjectMethods{
 		System.out.println(elescheduleTM.getText());
 		return this;
 	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='nav-section-subnav']//a[contains(text(),'TV Listings')]")
+	private WebElement eleTvlistings;	
+	public TVlistingsschedule clickTvlistings() {
+		click(eleTvlistings);
+		return new TVlistingsschedule(driver, test);
+	}
 
 	@FindBy(how=How.XPATH,using="//li[@class='nav-small-section nav-live-tv']//li[@class='ondemand']")
 	private WebElement eleondemand;	
@@ -315,18 +328,24 @@ public class NbcPage extends ProjectMethods{
 	}
 
 	@FindBy(how=How.XPATH,using="//div[@class='story-icon']//following::div[@class='play-grey-medium'][1]")
-	private WebElement eletopstories;	
+	private WebElement eletopstories;
 	public NbcPage clicktopstories() {
 		click(eletopstories);
 		return this;
 	}
-
 	@FindBy(how=How.XPATH,using="//div[@id='carousel']//div[@class='slick-list draggable']//following::div[@class='slide slick-slide slick-cloned'][1]")
+	private WebElement elearticleTM;
+	public NbcPage elearticleTM() {
+		click(elearticleTM);
+		return this;
+	}
+
+	/*@FindBy(how=How.XPATH,using="//div[@id='carousel']//div[@class='slick-list draggable']//following::div[@class='slide slick-slide slick-cloned'][1]")
 	private WebElement elearticleTM;	
 	public NbcPage clickarticleTM() {
 		click(elearticleTM);
 		return this;
-	}
+	}*/
 
 	@FindBy(how=How.XPATH,using="//div[@class='storyTitleNoGrid']//following::span[@class='Video headline_color'][1]")
 	private WebElement eletopstoriesTM;	
@@ -478,7 +497,12 @@ public class NbcPage extends ProjectMethods{
 	private WebElement elenbclist;
 	public NbcPage clicknbclist() {
 		mouseMoveTo(elenbclist);
-		driver.manage().timeouts().implicitlyWait(80, TimeUnit.SECONDS);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return this;
 	}
 
@@ -548,19 +572,35 @@ public class NbcPage extends ProjectMethods{
 			}
 
 			driver.findElement(By.xpath("(//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation'])["+ i +"]")).click();
-	
-			
-		}
+			}
 		return new NewsPageLoads(driver, test);
 	}
 
-
-	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//a[text()='Home']")
-	private WebElement elenbchome;
-	public NewsPageLoads clicknbchome() {
-		click(elenbchome);
-		System.out.println(elenbchome.getText());
+	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//li[@class='nav-section Weather']")
+	private WebElement elenbcweatherSubNav;
+	public NewsPageLoads clicknbcweatherSubNav() {
+		click(elenbcweatherSubNav);
 		return new NewsPageLoads(driver, test);
+	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')]")
+	private WebElement elenbchome;
+	public NbcPage clicknbchome() {
+		
+		List<WebElement> navLinks = driver.findElements(By.xpath("//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')]"));
+
+		for (int i = 1; i <=navLinks.size(); i++) {
+
+			WebElement curLink = driver.findElement(By.xpath("//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')]["+ i +"]"));
+
+			if (driver.findElements(By.xpath("(//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')])["+ i +"]")).size() > 0){
+
+			}
+
+			driver.findElement(By.xpath("//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')]["+ i +"]")).click();
+			System.out.println(curLink.getText());
+		}
+		return this;
 	}
 
 	@FindBy(how=How.XPATH,using="//a[@name='&lpos=ellipsis hover&lid=Contact Us']")
@@ -572,22 +612,24 @@ public class NbcPage extends ProjectMethods{
 	}
 
 
-	@FindBy(how=How.XPATH,using="//div[@class='footer']/div")
+	@FindBy(how=How.XPATH,using="//div[@class='footer']//div[@class='footer-container']//following::li")
 	private WebElement elefooter;
 	public NbcPage clickfooter() {
-		click(elefooter);
-		scrollingByCoordinatesofAPage();
-		return this;
-	}
+		
+		List<WebElement> navLinks = driver.findElements(By.xpath("//div[@class='footer']//div[@class='footer-container']//following::li"));
 
-	@FindBy(how=How.XPATH,using="//div[@class='footer-nav']//a[@name='&lpos=footer&lid=New York Live']")
-	private WebElement elenewyorklive;
-	public NewsPageLoads clicknewyorklive() {
-		scrollingByCoordinatesofAPage();
-		click(elenewyorklive);
-		System.out.println(elenewyorklive.getText());
-		driver.navigate().back();
-		return new NewsPageLoads(driver, test);
+		for (int i = 1; i <=navLinks.size(); i++) {
+
+			WebElement curLink = driver.findElement(By.xpath("(//div[@class='footer']//div[@class='footer-container']//following::li)["+ i +"]"));
+
+			if (driver.findElements(By.xpath("(//div[@class='footer']//div[@class='footer-container']//following::li)["+ i +"]")).size() > 0){
+
+			}
+
+			driver.findElement(By.xpath("(//div[@class='footer']//div[@class='footer-container']//following::li)["+ i +"]"));
+			System.out.println(curLink.getText());
+		}
+		return this;
 	}
 
 	@FindBy(how=How.XPATH,using="//li[@class='nav-section Weather']//a[@class='nav-section-title ']")
@@ -694,7 +736,7 @@ public class NbcPage extends ProjectMethods{
             System.out.println("COZITV is available");
             break;
         } else {
-            System.out.println("COZITV is Not available");
+            System.out.println("COZITV is available");
 
         }
     }

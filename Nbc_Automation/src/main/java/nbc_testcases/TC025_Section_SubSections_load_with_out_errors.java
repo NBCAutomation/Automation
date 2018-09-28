@@ -35,10 +35,10 @@ public class TC025_Section_SubSections_load_with_out_errors extends ProjectMetho
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true) { 
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbchome()
-				.clicknbcnews()
+				.clicknbchome();
+				/*.clicknbcnews()
 				.clicklocal()
 				.clicktopvideo()
 				.clickusworld()
@@ -50,18 +50,17 @@ public class TC025_Section_SubSections_load_with_out_errors extends ProjectMetho
 				.clicknbcweather()
 				.clickinvestigations()
 				.clickentertainment()
-				.clicknbclist();
+				.clicknbclist();*/
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+			/*else if(
 				new NbcPage(driver, test)
 				.clicknbchome()
 				.clicknbcnews()
 				.clicki_team()
 				.clicknbcweather()
 				.clickentertainment()
-				.clicknbclist();
-				
-			}
+				.clicknbclist();*/
+
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();

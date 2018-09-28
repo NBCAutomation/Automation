@@ -37,7 +37,7 @@ public class TC029_Weather_Page_Video_Playback_with_Pre_roll extends ProjectMeth
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) { 
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clicknbcweather()
+				.clickweather()
 				.clickweatherbanner();
 				
 			}

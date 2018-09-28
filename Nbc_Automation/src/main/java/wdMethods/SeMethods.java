@@ -303,7 +303,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	public void clickWithNoSnap(WebElement ele) {
 		String text = "";
 		try {
-			WebDriverWait wait = new WebDriverWait(driver, 10);
+			WebDriverWait wait = new WebDriverWait(driver, 30);
 			wait.until(ExpectedConditions.elementToBeClickable(ele));	
 			text = ele.getText();
 			ele.click();
@@ -695,7 +695,7 @@ public class SeMethods extends Reporter implements WdMethods {
 	
 
 	
-	public void shutDownDriver(ITestResult result) throws IOException {
+	/*public void shutDownDriver(ITestResult result) throws IOException {
 		 Map<String, Object>sauceJob = new HashMap<String, Object>();
 		Properties prop = new Properties();
 		prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
@@ -714,9 +714,8 @@ public class SeMethods extends Reporter implements WdMethods {
 	        }
 	        client.updateJobInfo(jobID, sauceJob);            
 	    }
-	    driver.manage().deleteAllCookies();
-	    driver.quit();
-	}
+	
+	}*/
 
 }
 
