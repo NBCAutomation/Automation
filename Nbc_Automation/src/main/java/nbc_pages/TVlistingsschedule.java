@@ -29,27 +29,24 @@ public class TVlistingsschedule extends ProjectMethods{
 				throw new RuntimeException();
 			}*/
 	}
-	
-	
 
-	@FindBy(how=How.XPATH,using="//li[contains(text(),'NBC 4')]")
+
+
+	@FindBy(how=How.XPATH,using="//div[@id='listings']//li[contains(text(),'NBC 4')]")
 	private WebElement elenbc4;	
-	@FindBy(how=How.XPATH,using="//li[contains(text(),'NBC4')]")
-	private WebElement elenbc4LA;
 	public TVlistingsschedule clicknbc4(){
-		
-		if(this.driver.getCurrentUrl().startsWith(appData.get("sUrl"))==true){
-			click(elenbc4);
-			System.out.println(elenbc4.getText());
-		}
-		else if(this.driver.getCurrentUrl().startsWith(appData.get("LUrl"))==true){
-			click(elenbc4LA);
-			System.out.println(elenbc4LA.getText());
-		}
+		click(elenbc4);
+		System.out.println(elenbc4.getText());
+		return this;
+	}
+	@FindBy(how=How.XPATH,using="//div[@id='listings']//li[contains(text(),'NBC4')]")
+	private WebElement elenbc4LA;
+	public TVlistingsschedule clicknbc4LA(){
+		click(elenbc4LA);
 		return this;
 	}
 
-	@FindBy(how=How.XPATH,using="//li[contains(text(),'Cozi TV')]")
+	@FindBy(how=How.XPATH,using="//div[@id='listings']//li[contains(text(),'Cozi TV')]")
 	private WebElement elecozitv;	
 	public TVlistingsschedule clickcozitv() {
 		click(elecozitv);

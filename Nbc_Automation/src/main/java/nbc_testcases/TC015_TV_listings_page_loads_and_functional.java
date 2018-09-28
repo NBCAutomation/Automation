@@ -38,8 +38,8 @@ public class TC015_TV_listings_page_loads_and_functional extends ProjectMethods{
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclist()
-				.clicknbccontact()
-				.clicktvlistings()
+				.clickTvlistings()
+				//.clicknbc4()
 				.clickcozitv()
 				.clickdaySelect()
 				.clicktvListingContainer();

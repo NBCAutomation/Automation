@@ -26,7 +26,23 @@ import wdMethods.ProjectMethods;
 		private WebElement elepersonalweather;	
 		public Newyorkweather clickpersonalweather() {
 			click(elepersonalweather);
-			System.out.println(elepersonalweather.getText());
 			return this;
 		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='leaflet-marker-icon my-div-icon standard-pin leaflet-zoom-animated leaflet-clickable']//following::span[1]")
+		private WebElement elepersonalweatherDegree;	
+		public Newyorkweather clickpersonalweatherDegree() {
+			click(elepersonalweatherDegree);
+			return this;
+		}
+		
+		@FindBy(how=How.XPATH,using="//div[@class='wuBanner']")
+		private WebElement eleweatherbanner;	
+		public Newyorkweather clickweatherbanner() {
+			click(eleweatherbanner);
+			//scrollingByCoordinatesofAPage();
+			System.out.println(eleweatherbanner.getText());
+			return this;
+		}
+		
 }

@@ -37,15 +37,9 @@ public class TC011_Contact_Us_Page extends ProjectMethods{
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
+				.clicknbclist()
 				.clickcontactus()
-				.clickcontactWNBC()
-				.clickcontactsocial()
-				.clickcontactmobile()
-				.clickmeettheteam()
-				.clickcontactnewsletters()
-				.clickcontacttvlistings()
-				.clickcontactphoto();
+				.clickcontactuslistings();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)

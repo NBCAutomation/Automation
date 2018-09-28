@@ -19,8 +19,8 @@ public class TC030_Live_Video_playback_with_pre_roll extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Watch live TVE dropdown appears";
-		testDescription = "To Test TV dropdown appears";
+		testCaseName = "Live Video playback with pre roll";
+		testDescription = "To Test Live Video playback with pre roll";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -37,9 +37,7 @@ public class TC030_Live_Video_playback_with_pre_roll extends ProjectMethods{
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickwatchlivelogo()
-				.clicklivetv()
-				.clickwatchlive();
+				.clicktopstories();
 				
 
 			}

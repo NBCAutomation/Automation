@@ -125,7 +125,6 @@ import wdMethods.ProjectMethods;
 		private WebElement elehealth;	
 		public NewsPageLoads clickhealth() {
 			click(eleusworld);
-			System.out.println(eleusworld.getText());
 			return this;
 		}
 		
@@ -192,22 +191,25 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@id='wunderPane']//li[@class='IRV tab selected']")
-		private WebElement eleirvtab;	
-		public NewsPageLoads clickirvtab() {
-			click(eleirvtab);
-			System.out.println(eleirvtab.getText());
+		@FindBy(how=How.XPATH,using="//div[@class='subnav-large-container']//a[contains(text(),'Maps & Radar')]")
+		private WebElement eleMapRadar;	
+		public NewsPageLoads clickMapRadar() {
+			click(eleMapRadar);
+			System.out.println(eleMapRadar.getText());
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@id='wuContainer']//div[@id='expandMap']")
-		private WebElement eleexpandmap;	
-		public NewsPageLoads clickexpandmap() {
-			click(eleexpandmap);
+		
+		
+		@FindBy(how=How.XPATH,using="//div[@id='interactive']//h1[contains(text(),' Interactive Radar')]")
+		private WebElement eleintractiveRadar;	
+		public NewsPageLoads clickintractiveRadar() {
+			click(eleintractiveRadar);
+			System.out.println(eleintractiveRadar.getText());
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//button[@class='wxmap--src-widgets-map-components-default-timeline-timeline-controls__play ']")
+		@FindBy(how=How.XPATH,using="//div[@id='bodyWrap']//iframe[@class='wx-standalone-map']")
 		private WebElement elemapplay;	
 		public NewsPageLoads clickmapplay() {
 			click(elemapplay);
@@ -268,12 +270,5 @@ import wdMethods.ProjectMethods;
 			return this;
 		}
 		
-		@FindBy(how=How.XPATH,using="//div[@class='wuBanner']")
-		private WebElement eleweatherbanner;	
-		public NewsPageLoads clickweatherbanner() {
-			click(eleweatherbanner);
-			//scrollingByCoordinatesofAPage();
-			System.out.println(eleweatherbanner.getText());
-			return this;
-		}
+		
 }

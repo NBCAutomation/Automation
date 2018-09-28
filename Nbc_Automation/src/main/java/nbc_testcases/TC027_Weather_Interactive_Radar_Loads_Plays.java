@@ -37,10 +37,10 @@ public class TC027_Weather_Interactive_Radar_Loads_Plays extends ProjectMethods{
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clicknbcweather()
-				.clickirvtab()
-				.clickexpandmap();
-				//.clickmapplay();
+				.clicknbcweatherSubNav()
+				.clickMapRadar()
+				.clickintractiveRadar()
+				.clickmapplay();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
