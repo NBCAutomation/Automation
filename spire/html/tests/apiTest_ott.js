@@ -860,7 +860,8 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
             	    articleLength = singleArticleItemObject.length,
             	    articleVideoId = singleArticleItemObject.videoId,
             	    articlePID = singleArticleItemObject.pid,
-            	    articleSponsored = singleArticleItemObject.sponsored,
+                    articleSponsored = singleArticleItemObject.sponsored,
+            	    articleSponsorID = singleArticleItemObject.sponsoredId,
             	    articleTitle = singleArticleItemObject.title,
             	    articleDisplayTimestamp = singleArticleItemObject.displayTimestamp,
             	    articleSensitiveContent = singleArticleItemObject.sensitiveContent,
@@ -884,7 +885,8 @@ casper.test.begin('OTS SPIRE | OTT API Content Audit', function (test) {
             	    console.log('    > articleLength : ' + singleArticleItemObject.length);
             	    console.log('    > articleVideoId : ' + singleArticleItemObject.videoId);
             	    console.log('    > articlePID : ' + singleArticleItemObject.pid);
-            	    console.log('    > articleSponsored : ' + singleArticleItemObject.sponsored);
+                    console.log('    > articleSponsored : ' + singleArticleItemObject.sponsored);
+            	    console.log('    > articleSponsorID : ' + singleArticleItemObject.sponsoredId);
             	    console.log('    > articleTitle : ' + singleArticleItemObject.title);
             	    console.log('    > articleDisplayTimestamp : ' + singleArticleItemObject.displayTimestamp);
             	    console.log('    > articleSensitiveContent : ' + singleArticleItemObject.sensitiveContent);
