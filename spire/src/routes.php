@@ -1734,17 +1734,19 @@ $app->group('/utils', function () {
 				
 				if ($radarAlerts) {
 					$emailContent .= 'Local weather station radars returning as "offline" in multiple tests/checks, please investigate.<br /><br />Offline radars:<br />';
-					$radarFailures = $radarAlerts;
+
+					foreach ($radarAlerts as $failKey => $failVal) {
+		            	$emailContent .= "   - ".$failKey." - ".$failVal."<br />";
+		            }
 				}
 
 				if ($radarSRAlerts) {
 					$emailContent .= 'Storm Ranger radar status changed.<br />Radar(s):<br />';
-					$radarFailures = $radarAlerts;	
+					
+					foreach ($radarSRAlerts as $failKey => $failVal) {
+		            	$emailContent .= "   - ".$failKey." - ".$failVal."<br />";
+		            }
 				}
-
-				foreach ($radarFailures as $failKey => $failVal) {
-	            	$emailContent .= "   - ".$failKey." - ".$failVal."<br />";
-	            }
 			}
 
 	    	if ($notificationType == 'regression-notification') {
