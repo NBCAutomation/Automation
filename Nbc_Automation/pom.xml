@@ -145,7 +145,7 @@
                 	<parallel>tests</parallel>
           			<threadCount>40</threadCount>
           			<suiteXmlFiles>
-          			<suiteXmlfile>Regression.xml</suiteXmlfile>
+          			<suiteXmlfile>testng.xml</suiteXmlfile>
           			</suiteXmlFiles>
                     <redirectTestOutputToFile>false</redirectTestOutputToFile>
                 </configuration>
