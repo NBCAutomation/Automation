@@ -520,13 +520,20 @@ public class NbcPage extends ProjectMethods{
 		click(eleinvestigations);
 		return new I_Team_newyork(driver, test);
 	}
+	
+	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//li[@class='nav-section News']")
+	private WebElement elenews;
+	public NewsPageLoads clicknews() {
+		click(elenews);
+		return new NewsPageLoads(driver, test);
+	}
 
 	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//li[@class='nav-section News']")
 	private WebElement elenbcnews;
 	public NewsPageLoads clicknbcnews() {
 		click(elenbcnews);
 		List<WebElement> navLinks = driver.findElements(By.xpath("//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation']"));
-		System.out.println(navLinks.toString());
+		
 		for (int i = 1; i <=navLinks.size(); i++) {
 
 			WebElement curLink = driver.findElement(By.xpath("(//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation'])["+ i +"]"));
@@ -583,24 +590,22 @@ public class NbcPage extends ProjectMethods{
 		return new NewsPageLoads(driver, test);
 	}
 	
-	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')]")
+	@FindBy(how=How.XPATH,using="//a[contains(@class,'nav-section-title')]")
 	private WebElement elenbchome;
-	public NbcPage clicknbchome() {
+	public NewsPageLoads clicknbchome() {
 		
-		List<WebElement> navLinks = driver.findElements(By.xpath("//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')]"));
-
+		List<WebElement> navLinks = driver.findElements(By.xpath("//a[contains(@class,'nav-section-title')]"));
 		for (int i = 1; i <=navLinks.size(); i++) {
 
-			WebElement curLink = driver.findElement(By.xpath("//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')]["+ i +"]"));
+			WebElement curLink = driver.findElement(By.xpath("(//a[contains(@class,'nav-section-title')])["+ i +"]"));
 
-			if (driver.findElements(By.xpath("(//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')])["+ i +"]")).size() > 0){
-
+			if (driver.findElements(By.xpath("(//a[contains(@class,'nav-section-title')])["+ i +"]")).size() > 0){
+				System.out.println(curLink.getText());
 			}
 
-			driver.findElement(By.xpath("//div[@class='navbar-container']//ul[@class='nav-sections']//a[contains(@class,'nav-section-title')]["+ i +"]")).click();
-			System.out.println(curLink.getText());
-		}
-		return this;
+			driver.findElement(By.xpath("(//a[contains(@class,'nav-section-title')])["+ i +"]")).click();
+			}
+		return new NewsPageLoads(driver, test);
 	}
 
 	@FindBy(how=How.XPATH,using="//a[@name='&lpos=ellipsis hover&lid=Contact Us']")

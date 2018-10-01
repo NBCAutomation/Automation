@@ -14,22 +14,21 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC013_Investigations_page_loads_along_with_sub_nav extends ProjectMethods{
+public class TC026_Weather_Interactive_Radar_Loads_Plays extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Investigations page loads along with sub nav";
-		testDescription = "To Test Investigations page loads along with sub nav successfully";
+		testCaseName = "Weather Radar Interactive Loads/Plays";
+		testDescription = "To Test Weather Radar Interactive Loads/Plays";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=12)
-	public void NbcPage(){
+	@Test(groups= {"Regression"}, priority=2)
+	public void NbcPage() {
 
 		Properties prop = new Properties();
 		try {
@@ -37,9 +36,11 @@ public class TC013_Investigations_page_loads_along_with_sub_nav extends ProjectM
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickinvestigations()
-				.clickinvestigationvaild()
-				.clickmoreinvestigation();
+				.clicknbclogo()
+				.clicknbcweatherSubNav()
+				.clickMapRadar()
+				.clickintractiveRadar()
+				.clickmapplay();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
@@ -51,8 +52,5 @@ public class TC013_Investigations_page_loads_along_with_sub_nav extends ProjectM
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 	}
 }
-

@@ -14,41 +14,46 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC023_Vertical_Gallery_display extends ProjectMethods{
+public class TC020_Civic_science_module_appears_when_in_articles extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
-
-		testCaseName = "Vertical Gallery display";
-		testDescription = "To Test Vertical Gallery display";
+		
+		testCaseName = "Civic science module appears when in articles";
+		testDescription = "To Test Civic science module appears when in articles";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-
-	public  Map<String, String> appData = new HashedMap<>();
 	
-	@Test(groups= {"Regression"}, priority=22)
+	public  Map<String, String> appData = new HashedMap<>();
+
+	@Test(groups= {"Regression"}, priority=20)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) {
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickslidecount();
+				.clicknbcnews()
+				.clicklocal()
+				.clicklocalarticle();
 			}
+
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clickslidecountTM();
+				.clicknbclogo();
+
 			}
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+	
 	}
 }
 

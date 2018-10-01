@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC024_Entertainment_Page_Loads_with_Sub_Nav extends ProjectMethods{
+public class TC023_Entertainment_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {

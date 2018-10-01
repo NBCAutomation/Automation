@@ -14,53 +14,45 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC028_Weather_Page_Loads_with_Sub_Nav extends ProjectMethods{
+public class TC025_Entertainment_Carousel_Playback_with_Pre_roll extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Weather Page Loads with Sub-Nav";
-		testDescription = "To Test Weather Page Loads with Sub-Nav";
+		testCaseName = "Entertainment Carousel Playback - with Pre-roll";
+		testDescription = "To Test Entertainment Carousel Playback - with Pre-roll";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
+
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=2)
-	public void NbcPage() {
+	@Test(groups= {"Regression"}, priority=22)
+	public void NbcPage(){
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true) { 
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) {
 				new NbcPage(driver, test)
-				.clicknbcweather();
-				/*.clickweatherforecast()
-				.clickweatheralerts()
-				.clickweatherschool()
-				.clickweathernews();*/
-			}
-			
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicknbcweather();
-				/*.clickweatheralertforecast()
-				.clickweatheralerts()
-				.clickweatherstories()
-				.clickweathercalifornia();*/
+				.clickentertainment()
+				.clickentertainmentheader()
+				.clickentertainmentcarousel();
+				
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
 			}
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
+
 }
+

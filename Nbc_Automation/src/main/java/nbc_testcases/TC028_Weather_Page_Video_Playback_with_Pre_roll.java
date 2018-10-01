@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC027_Weather_Interactive_Radar_Loads_Plays extends ProjectMethods{
+public class TC028_Weather_Page_Video_Playback_with_Pre_roll extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Weather Radar Interactive Loads/Plays";
-		testDescription = "To Test Weather Radar Interactive Loads/Plays";
+		testCaseName = "Weather Page Loads with Sub-Nav";
+		testDescription = "To Test Weather Page Loads with Sub-Nav";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -34,13 +34,12 @@ public class TC027_Weather_Interactive_Radar_Loads_Plays extends ProjectMethods{
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) { 
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clicknbcweatherSubNav()
-				.clickMapRadar()
-				.clickintractiveRadar()
-				.clickmapplay();
+				.clickweather()
+				.clickweatherbanner();
+				
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)

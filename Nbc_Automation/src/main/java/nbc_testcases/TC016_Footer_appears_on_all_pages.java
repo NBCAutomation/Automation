@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC017_Footer_appears_on_all_pages extends ProjectMethods{
+public class TC016_Footer_appears_on_all_pages extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {

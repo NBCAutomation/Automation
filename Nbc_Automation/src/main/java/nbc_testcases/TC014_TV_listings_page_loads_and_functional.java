@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC026_Entertainment_Carousel_Playback_with_Pre_roll extends ProjectMethods{
+public class TC014_TV_listings_page_loads_and_functional extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Entertainment Carousel Playback - with Pre-roll";
-		testDescription = "To Test Entertainment Carousel Playback - with Pre-roll";
+		testCaseName = "TV listings page loads and functional";
+		testDescription = "To Test TV listings page loads and functional successfully";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -28,19 +28,21 @@ public class TC026_Entertainment_Carousel_Playback_with_Pre_roll extends Project
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=22)
+	@Test(groups= {"Regression"}, priority=14)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) {
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickentertainment()
-				.clickentertainmentheader()
-				.clickentertainmentcarousel();
-				
+				.clicknbclist()
+				.clickTvlistings()
+				//.clicknbc4()
+				.clickcozitv()
+				.clickdaySelect()
+				.clicktvListingContainer();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
@@ -53,6 +55,5 @@ public class TC026_Entertainment_Carousel_Playback_with_Pre_roll extends Project
 		}
 
 	}
-
 }
 

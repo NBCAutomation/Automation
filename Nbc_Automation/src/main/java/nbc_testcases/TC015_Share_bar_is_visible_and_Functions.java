@@ -14,12 +14,12 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
+public class TC015_Share_bar_is_visible_and_Functions extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
-
-		testCaseName = "News Page Loads with Sub-Nav (0r) Noticias Page Loads with Sub-Nav on Hover";
+		
+		testCaseName = "News Page Loads with Sub-Nav(Both NBC and Telemundo)";
 		testDescription = "To Test News Page Loads with Sub-Nav successfully";
 		category= "Regression";
 		authors	="Vinoth";
@@ -27,31 +27,29 @@ public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 	}
 
 	public  Map<String, String> appData = new HashedMap<>();
-
-	@Test(groups= {"Regression"}, priority=13)
+	
+	@Test(groups= {"Regression"}, priority=15)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbcnews();
-				/*.clicklocal()
-				.clicktopvideo()
-				.clickusworld()
-				.clickhealth()
-				.clickweird()
-				.clickweather()
-				.clicktech()
-				.clicksports();*/
-			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
-				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clickteleNoticias()
-				.clickLoacalPR();
+				.clicktopstories();
+				/*.clickfacebook()
+				.clicktwitter()
+				.clickiconcomment()
+				.clickiconemail()
+				.clickiconprint()*/
+
+				/*.clickarticleTM()
+				.clickfacebook()
+				.clicktwitter()
+				.clickiconcomment()
+				.clickiconemail()
+				.clickiconprint();*/
 			}
 
 		} catch (FileNotFoundException e) {
@@ -59,7 +57,7 @@ public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+	
 	}
 }
 

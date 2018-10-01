@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC011_Contact_Us_Page extends ProjectMethods{
+public class TC024_Section_SubSections_load_with_out_errors extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Contact Us Page";
-		testDescription = "To Test Contact Us Page is loading";
+		testCaseName = "Section & SubSections load with out errors";
+		testDescription = "To Test Section & SubSections load with out errors successfully";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -28,19 +28,39 @@ public class TC011_Contact_Us_Page extends ProjectMethods{
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=10)
+	@Test(groups= {"Regression"}, priority=13)
 	public void NbcPage(){
-		
+
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclist()
-				.clickcontactus()
-				.clickcontactuslistings();
+				.clicknbchome();
+				/*.clicknbcnews()
+				.clicklocal()
+				.clicktopvideo()
+				.clickusworld()
+				.clickhealth()
+				.clickweird()
+				.clickweather()
+				.clicktech()
+				.clicksports()
+				.clicknbcweather()
+				.clickinvestigations()
+				.clickentertainment()
+				.clicknbclist();*/
 			}
+			/*else if(
+				new NbcPage(driver, test)
+				.clicknbchome()
+				.clicknbcnews()
+				.clicki_team()
+				.clicknbcweather()
+				.clickentertainment()
+				.clicknbclist();*/
+
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
@@ -51,6 +71,7 @@ public class TC011_Contact_Us_Page extends ProjectMethods{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 }
 

@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC008_Icons_in_connect_dropdown_are_clickable_and_link_out extends ProjectMethods{
+public class TC007_Icons_in_connect_dropdown_are_clickable_and_link_out extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {

@@ -14,39 +14,35 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC030_Live_Video_playback_with_pre_roll extends ProjectMethods{
+public class TC022_Vertical_Gallery_display extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Live Video playback with pre roll";
-		testDescription = "To Test Live Video playback with pre roll";
+		testCaseName = "Vertical Gallery display";
+		testDescription = "To Test Vertical Gallery display";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
 
 	public  Map<String, String> appData = new HashedMap<>();
-
-	@Test(groups= {"Regression"}, priority=4)
+	
+	@Test(groups= {"Regression"}, priority=22)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) {
 				new NbcPage(driver, test)
-				.clicktopstories();
-				
-
+				.clickslidecount();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
-
+				.clickslidecountTM();
 			}
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -55,3 +51,4 @@ public class TC030_Live_Video_playback_with_pre_roll extends ProjectMethods{
 
 	}
 }
+

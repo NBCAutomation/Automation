@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC020_Article_Lead_Video_playback_with_preroll extends ProjectMethods{
+public class TC006_Connect_dropdown_appears extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "News Page Loads with Sub-Nav (Both NBC and Telemundo)";
-		testDescription = "To Test News Page Loads with Sub-Nav successfully";
+		testCaseName = "Connect dropdown appears || Conocenos dropdown appears";
+		testDescription = "To Test Connect dropdown appears";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -28,7 +28,7 @@ public class TC020_Article_Lead_Video_playback_with_preroll extends ProjectMetho
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=19)
+	@Test(groups= {"Regression"}, priority=6) 
 	public void NbcPage(){
 
 		Properties prop = new Properties();
@@ -38,17 +38,18 @@ public class TC020_Article_Lead_Video_playback_with_preroll extends ProjectMetho
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clicktopstories();
+				.clickconnect();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
 			}
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 }
-

@@ -14,42 +14,44 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC029_Weather_Page_Video_Playback_with_Pre_roll extends ProjectMethods{
+public class TC017_Investigations_Lead_Playback_with_No_Preroll extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Weather Page Loads with Sub-Nav";
-		testDescription = "To Test Weather Page Loads with Sub-Nav";
+		testCaseName = "Investigations Lead Playback - with No Pre-roll";
+		testDescription = "To Test Investigations Lead Playback - with No Pre-roll successfully";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
+
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=2)
-	public void NbcPage() {
+	@Test(groups= {"Regression"}, priority=17)
+	public void NbcPage(){
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) { 
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clickweather()
-				.clickweatherbanner();
-				
+				.clickinvestigations();
+				//.clickinvestigationvideo();
 			}
+
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
-			}
 
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 }
+

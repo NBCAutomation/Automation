@@ -14,21 +14,21 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC025_Section_SubSections_load_with_out_errors extends ProjectMethods{
+public class TC021_Personal_weather_station_tab_loads_with_pins extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
-
-		testCaseName = "Section & SubSections load with out errors";
-		testDescription = "To Test Section & SubSections load with out errors successfully";
+		
+		testCaseName = "Personal weather station tab loads with pins";
+		testDescription = "To Test Personal weather station tab loads with pins";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-
+	
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=13)
+	@Test(groups= {"Regression"}, priority=21)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
@@ -37,33 +37,15 @@ public class TC025_Section_SubSections_load_with_out_errors extends ProjectMetho
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbchome();
-				/*.clicknbcnews()
-				.clicklocal()
-				.clicktopvideo()
-				.clickusworld()
-				.clickhealth()
-				.clickweird()
 				.clickweather()
-				.clicktech()
-				.clicksports()
-				.clicknbcweather()
-				.clickinvestigations()
-				.clickentertainment()
-				.clicknbclist();*/
+				.clickpersonalweather()
+				.clickpersonalweatherDegree();
 			}
-			/*else if(
-				new NbcPage(driver, test)
-				.clicknbchome()
-				.clicknbcnews()
-				.clicki_team()
-				.clicknbcweather()
-				.clickentertainment()
-				.clicknbclist();*/
 
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
+
 			}
 
 		} catch (FileNotFoundException e) {
@@ -71,7 +53,7 @@ public class TC025_Section_SubSections_load_with_out_errors extends ProjectMetho
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+	
 	}
 }
 

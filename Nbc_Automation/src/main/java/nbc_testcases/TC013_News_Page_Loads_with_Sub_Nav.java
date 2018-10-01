@@ -14,21 +14,21 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC009_News_Carousel_Playback_with_Pre_Roll extends ProjectMethods{
+public class TC013_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "News Carousel Playback with Pre Roll (Or) Noticias/local article pages that contain a lead video should feature a carousel beneath the player";
-		testDescription = "To Test News Carousel Playback with Pre Roll";
+		testCaseName = "News Page Loads with Sub-Nav (0r) Noticias Page Loads with Sub-Nav on Hover";
+		testDescription = "To Test News Page Loads with Sub-Nav successfully";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
 
 	public  Map<String, String> appData = new HashedMap<>();
-	
-	@Test(groups= {"Regression"}, priority=8) 
+
+	@Test(groups= {"Regression"}, priority=13)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
@@ -37,11 +37,15 @@ public class TC009_News_Carousel_Playback_with_Pre_Roll extends ProjectMethods{
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clicknbcnews()
-				.clicknewsheader()
-				.clicknbcnewstopstory();
-				
+				.clicknbcnews();
+				/*.clicklocal()
+				.clicktopvideo()
+				.clickusworld()
+				.clickhealth()
+				.clickweird()
+				.clickweather()
+				.clicktech()
+				.clicksports();*/
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
@@ -55,5 +59,7 @@ public class TC009_News_Carousel_Playback_with_Pre_Roll extends ProjectMethods{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 }
+
