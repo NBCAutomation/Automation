@@ -542,7 +542,7 @@ class Spire {
     	
 
     	$weatherRadarAverage_today = array_sum($__today)/count($__today);
-    	$weatherRadarAverage_yeserday = array_sum($__yesterday)/count($__yesterday);
+    	$weatherRadarAverage_yesterday = array_sum($__yesterday)/count($__yesterday);
     	$weatherRadarAverage_week = array_sum($__week)/count($__week);
     	$weatherRadarAverage_month = array_sum($__month)/count($__month);
 
@@ -579,7 +579,7 @@ class Spire {
 			$resultsArray['weatherTileUptimeAverage_month'] = $weatherTileUptimeAverage_month['data'];
 			
 			$resultsArray['weatherRadarAverage_today'] = $weatherRadarAverage_today;
-			$resultsArray['weatherRadarAverage_yeserday'] = $weatherRadarAverage_yeserday;
+			$resultsArray['weatherRadarAverage_yesterday'] = $weatherRadarAverage_yesterday;
 			$resultsArray['weatherRadarAverage_week'] = $weatherRadarAverage_week;
 			$resultsArray['weatherRadarAverage_month'] = $weatherRadarAverage_month;
 
