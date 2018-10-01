@@ -79,7 +79,7 @@ $app->group('/dashboard', function () use ($app) {
 			'weatherTileUptimeAverage_week' => $dashboardData['weatherTileUptimeAverage_week'],
 			'weatherTileUptimeAverage_month' => $dashboardData['weatherTileUptimeAverage_month'],
 			'weatherRadarAverage_today' => $dashboardData['weatherRadarAverage_today'],
-			'weatherRadarAverage_yeserday' => $dashboardData['weatherRadarAverage_yeserday'],
+			'weatherRadarAverage_yesterday' => $dashboardData['weatherRadarAverage_yesterday'],
 			'weatherRadarAverage_week' => $dashboardData['weatherRadarAverage_week'],
 			'weatherRadarAverage_month' => $dashboardData['weatherRadarAverage_month'],
 			'recentAlerts' => $recentAlerts,
@@ -1556,28 +1556,44 @@ $app->group('/utils', function () {
 	            "0872" => "StormRanger 2 - DFW"
             );
 
-            $radarFailures = array();
+            $radarAlerts = array();
+            $radarSRAlerts = array();
+            $radarStatus = array();
 
             foreach ($radarStat as $key => $value) {
             	$weatherCheckData = $db->getAllWeatherRadarChecks($key);
-
+            	$weatherDataArray = array_reverse($weatherCheckData['data']);
+            	
             	$weatherRadarAlert = 0;
-            	foreach ($weatherCheckData['data'] as $radarKey => $radarValue) {
-            		if ($radarValue['radar_status'] == 'offline') {
-            			$weatherRadarAlert++;
+            	// echo "<pre>";
+            	// print_r($weatherDataArray);
+            	// echo "</pre><br />";
+            	// exit();
+
+            	foreach ($weatherDataArray as $radarKey => $radarValue) {
+
+            		$radarStatus['check_1'] = $weatherDataArray[0]['radar_status'];
+            		$radarStatus['check_2'] = $weatherDataArray[1]['radar_status'];
+            		$radarStatus['check_3'] = $weatherDataArray[2]['radar_status'];
+            		
+            		if ( strpos($radarValue['pretty_ref'], 'StormRanger') !== false ) {
+            			if ($radarStatus['check_2'] != $radarStatus['check_3']) {
+            				$radarSRAlerts[$radarValue['layer_id'].' - '.$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            			}
+            		} else {
+            			if ( strpos($radarValue['pretty_ref'], 'Puerto Rico') == false && $radarValue['radar_status'] === 'offline') {
+            				if ($radarStatus['check_1'] == 'offline' && $radarStatus['check_2'] == 'offline' && $radarStatus['check_3'] == 'offline') {
+            					$radarAlerts[$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            				}
+            			}
             		}
             	}
-
-            	if ($weatherRadarAlert > 2) {
-            		// echo $key . " -- ".$value ."<br />";
-            		$radarFailures[$key] = $value;
-            	}
             }
 
-            if (!empty($radarFailures)) {
-            	$spireNotifications = true;
+	        if (!empty($radarAlerts) || !empty($radarSRAlerts)) {
+	        	$spireNotifications = true;
 				$notificationType = "weatherRadarAlert";
-            }
+	        }
 		}
 
 		if ($utilReqParams['task'] == 'sendAlert'){
@@ -1697,12 +1713,12 @@ $app->group('/utils', function () {
 	    		$emailContent .= '</table>';
 	    	}
 
-			if ($taskRef == 'APITestingComplete') {
-	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
-	    		$sendEmailNotification = true;
-				$emailSubject = 'SPIRE: API Testing Complete';
-				$emailContent = 'API Testing has completed';
-			}
+			// if ($taskRef == 'APITestingComplete') {
+	  //   		$emailRecipient = 'deltrie.allen@nbcuni.com';
+	  //   		$sendEmailNotification = true;
+			// 	$emailSubject = 'SPIRE: API Testing Complete';
+			// 	$emailContent = 'API Testing has completed';
+			// }
 
 			if ($notificationType == 'weatherTileAlert') {
 	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
@@ -1714,8 +1730,17 @@ $app->group('/utils', function () {
 			if ($notificationType == 'weatherRadarAlert') {
 	    		$emailRecipient = 'deltrie.allen@nbcuni.com';
 	    		$sendEmailNotification = true;
-				$emailSubject = '[SPIRE] WSI Weather radars offline';
-				$emailContent .= 'Local weather station radars returning as "offline" in multiple tests/checks, please investigate.<br /><br />Offline radars:<br />';
+				$emailSubject = '[SPIRE] WSI Weather radars alerts';
+				
+				if ($radarAlerts) {
+					$emailContent .= 'Local weather station radars returning as "offline" in multiple tests/checks, please investigate.<br /><br />Offline radars:<br />';
+					$radarFailures = $radarAlerts;
+				}
+
+				if ($radarSRAlerts) {
+					$emailContent .= 'Storm Ranger radar status changed.<br />Radar(s):<br />';
+					$radarFailures = $radarAlerts;	
+				}
 
 				foreach ($radarFailures as $failKey => $failVal) {
 	            	$emailContent .= "   - ".$failKey." - ".$failVal."<br />";
@@ -1774,124 +1799,71 @@ $app->group('/utils', function () {
 	            "0871" => "StormRanger 2 - Philadelphia",
 	            "0872" => "StormRanger 2 - DFW"
             );
-            $radarFailures = array();
+
+            $radarAlerts = array();
+            $radarSRAlerts = array();
+            $radarStatus = array();
 
             foreach ($radarStat as $key => $value) {
-            	// echo $key.'<br />';
             	$weatherCheckData = $db->getAllWeatherRadarChecks($key);
-
+            	// $weatherCheckData = $db->getAllWeatherRadarChecks('0851');
+            	$weatherDataArray = array_reverse($weatherCheckData['data']);
+            	
             	$weatherRadarAlert = 0;
-            	foreach ($weatherCheckData['data'] as $radarKey => $radarValue) {
-            		if ($radarValue['radar_status'] == 'offline') {
-            			$weatherRadarAlert++;
+            	// echo "<pre>";
+            	// print_r($weatherDataArray);
+            	// echo "</pre><br />";
+            	// exit();
+
+            	foreach ($weatherDataArray as $radarKey => $radarValue) {
+            		$radarStatus['check_1'] = $weatherDataArray[0]['radar_status'];
+            		$radarStatus['check_2'] = $weatherDataArray[1]['radar_status'];
+            		$radarStatus['check_3'] = $weatherDataArray[2]['radar_status'];
+            		// echo $radarKey.'<br />';
+            		// echo $radarValue['pretty_ref'].'<br />';
+            		// echo 'prev status: '.$previousRadarStatus.'<br />';
+
+            		// echo $radarValue['id'].'<br />';
+            		// echo $radarValue['layer_id'].' - '.$radarValue['pretty_ref'].'<br />';
+            		// echo "set<br />";
+            		// echo 'previous '.$previousRadarStatus.'<br />';
+            		// echo 'current '.$radarValue['radar_status'].'<br />';
+            		// echo "ALERT<br />";
+            		
+            		if ( strpos($radarValue['pretty_ref'], 'StormRanger') !== false ) {
+            			// echo $radarValue['pretty_ref'].' - storm ranger<br />';
+            			if ($radarStatus['check_2'] != $radarStatus['check_3']) {
+            				// echo $radarValue['pretty_ref'].'<br />';
+            				// echo "==== SR ALERT ====<br />";
+            				// echo "<br />";
+            				$radarSRAlerts[$radarValue['layer_id'].' - '.$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            			}
+
+            		} else {
+            			if ( strpos($radarValue['pretty_ref'], 'Puerto Rico') == false && $radarValue['radar_status'] === 'offline') {
+            				if ($radarStatus['check_1'] == 'offline' && $radarStatus['check_2'] == 'offline' && $radarStatus['check_3'] == 'offline') {
+            					// echo $radarValue['pretty_ref'].'<br />';
+            					// echo "==== ALERT ====<br />";
+            					$radarAlerts[$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            				}
+            			}
             		}
             	}
 
-            	if ($weatherRadarAlert > 2) {
-            		echo $key . " -- ".$value ."<br />";
-            		$radarFailures[$key] = $value;
-            	}
+            	// if ($weatherRadarAlert > 2) {
+            	// 	echo $key . " -- ".$value ."<br />";
+            	// 	$radarAlerts[$key] = $value;
+            	// }
             }
 
-	    	// $weatherCheckData = $db->getAllWeatherRadarChecks('wpr0');
-	    	// echo "<pre>";
-	    	// var_dump($weatherCheckData['data']);
-	    	// echo "</pre>";
-	    	// echo "<br />";
+            echo "<pre>";
+        	print_r($radarAlerts);
+        	echo "</pre><br />";
 
-	    	// $weatherRadarAlert = 0;
-	    	// foreach ($weatherCheckData['data'] as $key => $value) {
-	    	// 	if ($value['radar_status'] == 'offline') {
-	    	// 		$weatherRadarAlert++;
-	    	// 	}
-	    	// }
-
-	    	// if ($weatherRadarAlert > 2) {
-	    	// 	echo "set trippin";
-	    	// 	$spireNotifications = true;
-	    	// 	$notificationType = "weatherTileAlert";
-	    	// }
-
-	    	// if ($weatherCheckData) {
-	    	// 	$weatherAlert = 0;
-	    	// 	foreach ($weatherCheckData['data'] as $key => $value) {
-
-	    	// 		if ($value['http_status'] != '200') {
-	    	// 			$weatherAlert++;
-	    	// 		}
-	    	// 	}
-
-	    	// 	if ($weatherAlert > 2) {
-	    	// 		echo "set trippin";
-	    	// 	}
-	    	// }
-
-	    	// $pageContent = $db->getPagedStaleContentChecks();
-	    	// // var_dump($pageContent);
-	    	// // print_r($pageContent['data']);
-	     //    return $this->renderer->render($response, 'reports-stale-content-search.php', [
-	     //        'title' => 'Reports',
-	     //        'page_name' => 'reports',
-	     //        'view' => $args['view'],
-	     //        'viewPath' => $args['view'],
-	     //        'mainView' => $mainView,
-	     //        'reportsView' => $reportsView,
-	     //        'singleView' => $singleView,
-	     //        'overView' => $overView,
-	     //        'reportClass' => true,
-	     //        'reportLoadtimeSubNav' => $loadtimeSubnavClass,
-	     //        'reportStaleContentSubNav' => $staleContentView,
-	     //        'staleContentData' => $pageContent,
-
-	    	// 	//Auth Specific
-	    	// 	'user' => $request->getAttribute('spAuth'),
-		    //     'uAuth' => $permissions['auth'],
-		    //     'uRole' => $permissions['role'],
-		    //     'uAthMessage' => $permissions['uAthMessage']
-	     //    ]);
-	    	// echo $pageContent['data'];
-	    	
-    // 		$refTestID = $utilPostParams['testID'];
-    // 		$station = 'nbcdfw';
-    // 		$status = 'Pass';
-    // 		$testFailureCount = $utilPostParams['testFailureCount'];
-    // 		$sectionContentPayload = $utilPostParams['contentObject'];
-    // 		$results = $utilPostParams['testResults'];
-
-
-
-    // 		if ($status == 'Pass') {
-				// $thisContentObject = $db->getRecentContentObject($station);
-				// // var_dump($thisContentObject);
-				// $recentCotnentPayload = $thisContentObject['data']['payload'];
-				// $payloadID = $thisContentObject['data']['id'];
-
-				// if ($recentCotnentPayload) {
-				// 	// $payloadID = $thisContentObject['data']['id'];
-				// 	// $refTestID = $thisContentObject['data']['ref_test_id'];
-
-				// 	// // echo Spire::dateDiff("now", $thisContentObject['data']['created']);
-					
-				// 	// $to_time = strtotime("now");
-				// 	// $from_time = strtotime($thisContentObject['data']['created']);
-				// 	// echo 'MINUTES:: '.round(abs($to_time - $from_time) / 60). " minute";
-				// 	// $updateMinutes = round(abs($to_time - $from_time) / 60,2);
-					
-				// 	// exit();
-
-				// 	// if ($recentCotnentPayload == $sectionContentPayload) {
-				// 	// 	echo "matches";
-				// 	// 	$db->logContentCheck($refTestID, $payloadID, $station, 1);
-				// 	// } else {
-				// 	// 	echo "NO";
-				// 	// 	$storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-				// 	// 	$db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-				// 	// }
-				// } else {
-				// 	// $storeScrapedContent = $db->storeScrapedContent($refTestID, $station, $sectionContentPayload);
-				// 	// $db->logContentCheck($refTestID, $storeScrapedContent, $station, 0);
-				// }
-    		// }
+            if (!empty($radarAlerts)) {
+            	$spireNotifications = true;
+				$notificationType = "weatherRadarAlert";
+            }
 	    }
     });
 
@@ -2046,6 +2018,9 @@ $app->group('/utils', function () {
 			$weatherRadarStatus = $utilPostParams['weatherRadarStatus'];
 
 			$logWeatherRadarStatus = $db->logWeatherRadarStatus($refTestID, $weatherRadarSite, $weatherRadarPrettyRef, $weatherRadarID, $weatherRadarStatus);
+			if ($logWeatherRadarStatus) {
+				return $response->withRedirect('/utils/tasks?task=evalWeatherRadarChecks');
+			}
 		}
     });
 
