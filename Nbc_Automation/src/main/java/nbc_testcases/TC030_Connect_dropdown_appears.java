@@ -14,7 +14,7 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC006_Connect_dropdown_appears extends ProjectMethods{
+public class TC030_Connect_dropdown_appears extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
