@@ -54,6 +54,26 @@ casper.test.begin('OTS SPIRE | Utils Task Runner', function suite() {
 				            console.log('taskURL: ' + taskURL);
 				        }
 				    })
+				} else if (taskType == 'weather-notification' || taskType == 'evalWeatherRadarChecks') {
+					var taskURL = utilsURL + '?task=' + task + '&notificationType=' + taskType + '&taskRef=' + taskRef;
+					
+					if (debugOutput) {
+						console.log('taskURL: ' + taskURL);
+					}
+					
+				    casper.thenOpen(taskURL, {method: 'get'}).then(function (resp) {
+				        var status = this.status().currentHTTPStatus;
+
+				        if ( status == 200) {
+				        	console.log(resp.status);
+				            console.log('alert sent');
+				            console.log('taskURL: ' + taskURL);
+				        } else {
+				            console.log('not sent');
+				            console.log(resp.status);
+				            console.log('taskURL: ' + taskURL);
+				        }
+				    })
 				} else {
 					casper.thenOpen(utilsURL, {
 					    method: 'post',
