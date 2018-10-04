@@ -64,8 +64,8 @@ public class ProjectMethods extends SeMethods{
 		
 	}
 
-	@AfterTest(groups= {"Regression"})
-	public void afterTest(){	
+	@AfterTest(groups= {"Regression"})        
+	public void afterTest() {	
 		//shutDownDriver(result);
 		endTestcase();
 		closeAllBrowsers();

@@ -38,8 +38,8 @@ public class TC021_Personal_weather_station_tab_loads_with_pins extends ProjectM
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clickweather()
-				.clickpersonalweather()
-				.clickpersonalweatherDegree();
+				.clickpersonalweather();
+				//.clickpersonalweatherDegree();
 			}
 
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
