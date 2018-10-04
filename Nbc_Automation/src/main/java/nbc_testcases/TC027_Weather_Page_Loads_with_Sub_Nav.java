@@ -27,7 +27,7 @@ public class TC027_Weather_Page_Loads_with_Sub_Nav extends ProjectMethods{
 	}
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=2)
+	@Test(groups= {"Regression"}, priority=27)
 	public void NbcPage() {
 
 		Properties prop = new Properties();
@@ -37,20 +37,12 @@ public class TC027_Weather_Page_Loads_with_Sub_Nav extends ProjectMethods{
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true) { 
 				new NbcPage(driver, test)
 				.clicknbcweather();
-				/*.clickweatherforecast()
-				.clickweatheralerts()
-				.clickweatherschool()
-				.clickweathernews();*/
 			}
 			
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
 				.clicknbcweather();
-				/*.clickweatheralertforecast()
-				.clickweatheralerts()
-				.clickweatherstories()
-				.clickweathercalifornia();*/
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)

@@ -39,7 +39,6 @@ public class TC014_TV_listings_page_loads_and_functional extends ProjectMethods{
 				new NbcPage(driver, test)
 				.clicknbclist()
 				.clickTvlistings()
-				//.clicknbc4()
 				.clickcozitv()
 				.clickdaySelect()
 				.clicktvListingContainer();

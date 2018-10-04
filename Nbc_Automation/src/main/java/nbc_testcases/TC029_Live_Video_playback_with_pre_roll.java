@@ -28,7 +28,7 @@ public class TC029_Live_Video_playback_with_pre_roll extends ProjectMethods{
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=4)
+	@Test(groups= {"Regression"}, priority=29)
 	public void NbcPage(){
 
 		Properties prop = new Properties();

@@ -37,9 +37,10 @@ public class TC020_Civic_science_module_appears_when_in_articles extends Project
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbcnews()
-				.clicklocal()
-				.clicklocalarticle();
+				.clicknews()
+				.clicknbcLoacal()
+				.clicklocalarticle()
+				.clicklocalpool();
 			}
 
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){

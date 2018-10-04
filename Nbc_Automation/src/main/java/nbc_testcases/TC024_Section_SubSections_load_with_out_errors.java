@@ -28,7 +28,7 @@ public class TC024_Section_SubSections_load_with_out_errors extends ProjectMetho
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=13)
+	@Test(groups= {"Regression"}, priority=24)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
@@ -38,29 +38,7 @@ public class TC024_Section_SubSections_load_with_out_errors extends ProjectMetho
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbchome();
-				/*.clicknbcnews()
-				.clicklocal()
-				.clicktopvideo()
-				.clickusworld()
-				.clickhealth()
-				.clickweird()
-				.clickweather()
-				.clicktech()
-				.clicksports()
-				.clicknbcweather()
-				.clickinvestigations()
-				.clickentertainment()
-				.clicknbclist();*/
 			}
-			/*else if(
-				new NbcPage(driver, test)
-				.clicknbchome()
-				.clicknbcnews()
-				.clicki_team()
-				.clicknbcweather()
-				.clickentertainment()
-				.clicknbclist();*/
-
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();

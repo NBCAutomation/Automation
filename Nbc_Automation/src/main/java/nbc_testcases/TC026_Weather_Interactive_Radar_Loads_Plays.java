@@ -27,7 +27,7 @@ public class TC026_Weather_Interactive_Radar_Loads_Plays extends ProjectMethods{
 	}
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=2)
+	@Test(groups= {"Regression"}, priority=26)
 	public void NbcPage() {
 
 		Properties prop = new Properties();

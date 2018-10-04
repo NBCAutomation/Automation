@@ -28,7 +28,7 @@ public class TC025_Entertainment_Carousel_Playback_with_Pre_roll extends Project
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=22)
+	@Test(groups= {"Regression"}, priority=25)
 	public void NbcPage(){
 
 		Properties prop = new Properties();

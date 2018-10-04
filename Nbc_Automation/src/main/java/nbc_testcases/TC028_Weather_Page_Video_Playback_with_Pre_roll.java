@@ -27,7 +27,7 @@ public class TC028_Weather_Page_Video_Playback_with_Pre_roll extends ProjectMeth
 	}
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=2)
+	@Test(groups= {"Regression"}, priority=28)
 	public void NbcPage() {
 
 		Properties prop = new Properties();

@@ -347,7 +347,7 @@ public class NbcPage extends ProjectMethods{
 		return this;
 	}*/
 
-	@FindBy(how=How.XPATH,using="//div[@class='storyTitleNoGrid']//following::span[@class='Video headline_color'][1]")
+	@FindBy(how=How.XPATH,using="//div[@class='story lower']//following::div[@class='image small'][1]")
 	private WebElement eletopstoriesTM;	
 	public NbcPage clicktopstoriesTM() {
 		click(eletopstoriesTM);

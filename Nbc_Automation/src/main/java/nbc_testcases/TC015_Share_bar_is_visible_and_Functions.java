@@ -38,18 +38,6 @@ public class TC015_Share_bar_is_visible_and_Functions extends ProjectMethods{
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicktopstories();
-				/*.clickfacebook()
-				.clicktwitter()
-				.clickiconcomment()
-				.clickiconemail()
-				.clickiconprint()*/
-
-				/*.clickarticleTM()
-				.clickfacebook()
-				.clicktwitter()
-				.clickiconcomment()
-				.clickiconemail()
-				.clickiconprint();*/
 			}
 
 		} catch (FileNotFoundException e) {

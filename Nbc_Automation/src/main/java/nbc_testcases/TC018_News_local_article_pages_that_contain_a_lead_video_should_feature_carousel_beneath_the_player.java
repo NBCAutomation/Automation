@@ -38,7 +38,7 @@ public class TC018_News_local_article_pages_that_contain_a_lead_video_should_fea
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknews()
-				.clicklocal()
+				.clicknbcLoacal()
 				.clicklocalvideo();
 			}
 
