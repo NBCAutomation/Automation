@@ -14,13 +14,13 @@ public abstract class Reporter {
 	
 	public void reportStep(String desc, String status, boolean bSnap) {
 
-		//System.out.println("At First: \nDesc- "+desc+" /Status- "+status+" bSnap- "+bSnap);
+		System.out.println("At First: \nDesc- "+desc+" /Status- "+status+" bSnap- "+bSnap);
 		if(bSnap && !status.equalsIgnoreCase("INFO")){
 			long snapNumber = 100000l;
 			
 			try {
 				snapNumber= takeSnap();
-				System.out.println("take snap ran");
+				//System.out.println("take snap ran");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

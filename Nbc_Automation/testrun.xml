@@ -6,9 +6,8 @@
 		<parameter name="platform" value="win10"></parameter>
 		<parameter name="url" value="sUrl"></parameter>
     <classes>
-      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
-      <class name="nbc_testcases.TC021_Personal_weather_station_tab_loads_with_pins"/>
       <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+
     </classes>
   </test>
   <test thread-count="5" name="chrome mac LA">
@@ -16,9 +15,8 @@
 		<parameter name="platform" value="mac"></parameter>
 		<parameter name="url" value="LUrl"></parameter>
     <classes>
-      <class name="nbc_testcases.TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_listings"/>
-      <class name="nbc_testcases.TC021_Personal_weather_station_tab_loads_with_pins"/>
       <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->

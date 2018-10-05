@@ -98,13 +98,6 @@ public class NbcPage extends ProjectMethods{
 		return this;
 	}
 
-	@FindBy(how=How.XPATH,using="//iframe[@class='wx-standalone-map']")
-	private WebElement elewetheriframe;
-	public NbcPage clickelewetheriframe() {
-		switchToFrame(elewetheriframe);
-		return this;
-	}
-
 	@FindBy(how=How.XPATH,using="//div[@id='weather']//div[@class='weather_video']//div[@class='videoPlayButton']")
 	private WebElement elenavtiempoTM;
 	public NbcPage clicknavtiempoTM() {
@@ -112,7 +105,7 @@ public class NbcPage extends ProjectMethods{
 		return this;
 	}
 
-	@FindBy(how=How.XPATH,using="//div[@id='__wxmap_MapboxAttribution']")
+	@FindBy(how=How.XPATH,using="//div[@class='weather-module']//div[@class='weather-module-brand']")
 	private WebElement elewethermodule;
 	public NbcPage clickwethermodule() {
 		click(elewethermodule);

@@ -75,10 +75,11 @@ public class NewsPageLoads extends ProjectMethods{
 		return this;
 	}
 	
-	@FindBy(how=How.XPATH,using="//div[@class='module-civicScience']//iframe[@name='civsci-iframe-civsci-1801149203']")
+	@FindBy(how=How.XPATH,using="//div[@class='module-civicScience']//iframe")
 	private WebElement elelocalpool;	
 	public NewsPageLoads clicklocalpool() {
 		click(elelocalpool);
+		System.out.println(elelocalpool.getText());
 		return this;
 	}
 

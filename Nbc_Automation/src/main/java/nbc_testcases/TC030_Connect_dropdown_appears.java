@@ -28,7 +28,7 @@ public class TC030_Connect_dropdown_appears extends ProjectMethods{
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=6) 
+	@Test(groups= {"Regression"}, priority=30) 
 	public void NbcPage(){
 
 		Properties prop = new Properties();

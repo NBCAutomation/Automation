@@ -18,7 +18,7 @@
 		</packages>
 	</test>
 
-	<test thread-count="5" name="chrome win10 TP">
+	<!-- <test thread-count="5" name="chrome win10 TP">
 		<parameter name="browser" value="chrome"></parameter>
 		<parameter name="platform" value="win10"></parameter>
 		<parameter name="url" value="TPUrl"></parameter>
@@ -33,6 +33,6 @@
 		<packages>
 			<package name="nbc_testcases" />
 		</packages>
-	</test>
+	</test> -->
 	<!-- Test -->
 </suite> <!-- Suite -->
