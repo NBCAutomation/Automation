@@ -108,6 +108,7 @@ public class NbcPage extends ProjectMethods{
 	@FindBy(how=How.XPATH,using="//div[@class='weather-module']//div[@class='weather-module-brand']")
 	private WebElement elewethermodule;
 	public NbcPage clickwethermodule() {
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		click(elewethermodule);
 		System.out.println(elewethermodule.getText());
 		return this;

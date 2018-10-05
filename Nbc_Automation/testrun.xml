@@ -7,7 +7,7 @@
 		<parameter name="url" value="sUrl"></parameter>
     <classes>
       <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
-
+		<class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
     </classes>
   </test>
   <test thread-count="5" name="chrome mac LA">
@@ -16,7 +16,7 @@
 		<parameter name="url" value="LUrl"></parameter>
     <classes>
       <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
-      
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
