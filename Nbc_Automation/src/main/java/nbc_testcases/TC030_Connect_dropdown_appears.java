@@ -19,7 +19,7 @@ public class TC030_Connect_dropdown_appears extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Connect dropdown appears || Conocenos dropdown appears";
+		testCaseName = "Connect dropdown appears (or) Conocenos dropdown appears";
 		testDescription = "To Test Connect dropdown appears";
 		category= "Regression";
 		authors	="Vinoth";

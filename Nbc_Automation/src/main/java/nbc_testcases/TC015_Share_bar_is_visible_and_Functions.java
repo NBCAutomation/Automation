@@ -19,8 +19,8 @@ public class TC015_Share_bar_is_visible_and_Functions extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 		
-		testCaseName = "News Page Loads with Sub-Nav(Both NBC and Telemundo)";
-		testDescription = "To Test News Page Loads with Sub-Nav successfully";
+		testCaseName = " Share bar is visible and Functions(Both NBC and Telemundo)";
+		testDescription = "To Test  Share bar is visible and Functions (Article) successfully";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -35,11 +35,17 @@ public class TC015_Share_bar_is_visible_and_Functions extends ProjectMethods{
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) {
 				new NbcPage(driver, test)
 				.clicktopstories();
+				/*.clickSocial();*/
 			}
-
+			
+			else if (driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+				new NbcPage(driver, test)
+					.clickarticleTM()
+					.clickSocialTM();
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

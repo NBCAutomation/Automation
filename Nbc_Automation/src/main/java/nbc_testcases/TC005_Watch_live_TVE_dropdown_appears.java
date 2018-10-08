@@ -19,8 +19,8 @@ public class TC005_Watch_live_TVE_dropdown_appears extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Watch live TVE dropdown appears";
-		testDescription = "To Test TV dropdown appears";
+		testCaseName = "Watch live TVE dropdown appears (Both NBC and Telemundo)";
+		testDescription = "To Test Watch live TVE dropdown dropdown appears";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -42,9 +42,8 @@ public class TC005_Watch_live_TVE_dropdown_appears extends ProjectMethods{
 				.clickonnow()
 				.clickondemand()
 				.clickfullschedule();
-
 			}
-			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true){
 				new NbcPage(driver, test)
 				.clickwatchlivelogo()
 				.clickahoraTM()
@@ -53,8 +52,9 @@ public class TC005_Watch_live_TVE_dropdown_appears extends ProjectMethods{
 				.clickondemandTM()
 				.clickondemanddescTM()
 				.clickscheduleTM();
-				
-
+			}
+			else if (driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
+				new NbcPage(driver, test);
 			}
 
 		} catch (FileNotFoundException e) {

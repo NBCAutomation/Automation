@@ -42,7 +42,8 @@ public class TC019_Article_Lead_Video_playback_with_preroll extends ProjectMetho
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
+				.clicknbclogo()
+				.clicktopstoriesTM();
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

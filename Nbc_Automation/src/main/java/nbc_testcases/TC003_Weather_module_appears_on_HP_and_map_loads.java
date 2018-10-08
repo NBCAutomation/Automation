@@ -19,7 +19,7 @@ public class TC003_Weather_module_appears_on_HP_and_map_loads extends ProjectMet
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Weather Radar Interactive Loads/Plays";
+		testCaseName = "Weather Radar Interactive Loads/Plays (Both NBC and Telemundo)";
 		testDescription = "To Test Weather Radar Interactive Loads/Plays";
 		category= "Regression";
 		authors	="Vinoth";
@@ -36,8 +36,8 @@ public class TC003_Weather_module_appears_on_HP_and_map_loads extends ProjectMet
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
-				/*.clickwethermodule();*/
+				.clicknbclogo()
+				.clickwethermodule();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)

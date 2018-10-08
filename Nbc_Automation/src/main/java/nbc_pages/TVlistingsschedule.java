@@ -54,7 +54,7 @@ public class TVlistingsschedule extends ProjectMethods{
 		return this;
 	}
 
-	@FindBy(how=How.XPATH,using="//div[contains(text(),'NOW')]")
+	@FindBy(how=How.XPATH,using="//div[@class='listing slick-slide slick-current slick-active']//div[contains(text(),'NOW')]")
 	private WebElement eledaynbcnow;	
 	public TVlistingsschedule clickdaynbcnow() {
 		click(eledaynbcnow);
@@ -62,7 +62,7 @@ public class TVlistingsschedule extends ProjectMethods{
 		return this;
 	}
 
-	@FindBy(how=How.XPATH,using="//select[@id='daySelect']")
+	@FindBy(how=How.XPATH,using="//div[@class='daySelectWrapper']//select[@id='daySelect']")
 	private WebElement eledaySelect;	
 	public TVlistingsschedule clickdaySelect() {
 		click(eledaySelect);

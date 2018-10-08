@@ -105,12 +105,10 @@ public class NbcPage extends ProjectMethods{
 		return this;
 	}
 
-	@FindBy(how=How.XPATH,using="//div[@class='weather-module']//div[@class='weather-module-brand']")
+	@FindBy(how=How.XPATH,using="//div[@class='globalRightRail']//div[@class='weather-module']//a[@name='&lpos=weather module&lid=weather alerts']")
 	private WebElement elewethermodule;
 	public NbcPage clickwethermodule() {
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		click(elewethermodule);
-		System.out.println(elewethermodule.getText());
 		return this;
 	}
 
@@ -287,7 +285,7 @@ public class NbcPage extends ProjectMethods{
 		System.out.println(elescheduleTM.getText());
 		return this;
 	}
-	
+
 	@FindBy(how=How.XPATH,using="//div[@class='nav-section-subnav']//a[contains(text(),'TV Listings')]")
 	private WebElement eleTvlistings;	
 	public TVlistingsschedule clickTvlistings() {
@@ -312,7 +310,6 @@ public class NbcPage extends ProjectMethods{
 	}
 
 	@FindBy(how=How.XPATH,using="//p[@class='reltime']//a[1]")
-	//div[@id='sfcontentFill']//following-sibling::p[@class='reltime'][1]")
 	private WebElement eleminutesago;	
 	public NbcPage clickminutesago() {
 		click(eleminutesago);
@@ -327,19 +324,60 @@ public class NbcPage extends ProjectMethods{
 		click(eletopstories);
 		return this;
 	}
-	@FindBy(how=How.XPATH,using="//div[@id='carousel']//div[@class='slick-list draggable']//following::div[@class='slide slick-slide slick-cloned'][1]")
+
+	@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//span[@class='fa-stack']")
+	private WebElement eleSocial;
+	public NbcPage clickSocial() {
+		
+		List<WebElement> navLinks = driver.findElements(By.xpath("//div[@class='socialNetworks-top']//span[@class='fa-stack']"));
+
+		for (int i = 1; i <=navLinks.size(); i++) {
+
+			WebElement curLink = driver.findElement(By.xpath("(//div[@class='socialNetworks-top']//span[@class='fa-stack'])["+ i +"]"));
+
+			if (driver.findElements(By.xpath("(//div[@class='socialNetworks-top']//span[@class='fa-stack'])["+ i +"]")).size() > 0){
+
+			}
+
+			driver.findElement(By.xpath("(//div[@class='socialNetworks-top']//span[@class='fa-stack'])["+ i +"]")).click();
+			System.out.println(curLink.getText());
+			switchToWindow(1);
+			driver.close();
+			switchToWindow(0);
+		}
+		return this;
+	}
+
+
+	@FindBy(how=How.XPATH,using="//div[@class='section mid']//div[@id='scrollRegion']//following::div[@class='story slick-slide slick-active'][1]")
 	private WebElement elearticleTM;
-	public NbcPage elearticleTM() {
+	public NbcPage clickarticleTM() {
 		click(elearticleTM);
 		return this;
 	}
 
-	/*@FindBy(how=How.XPATH,using="//div[@id='carousel']//div[@class='slick-list draggable']//following::div[@class='slide slick-slide slick-cloned'][1]")
-	private WebElement elearticleTM;	
-	public NbcPage clickarticleTM() {
-		click(elearticleTM);
+
+	@FindBy(how=How.XPATH,using="//div[@class='socialNetworks-top']//span[@class='fa-stack']")
+	private WebElement eleSocialTM;
+	public NbcPage clickSocialTM() {
+
+		List<WebElement> navLinks = driver.findElements(By.xpath("//div[@class='socialNetworks-top']//span[@class='fa-stack']"));
+
+		for (int i = 1; i <=navLinks.size(); i++) {
+
+			WebElement curLink = driver.findElement(By.xpath("(//div[@class='socialNetworks-top']//span[@class='fa-stack'])["+ i +"]"));
+
+			if (driver.findElements(By.xpath("(//div[@class='socialNetworks-top']//span[@class='fa-stack'])["+ i +"]")).size() > 0){
+
+			}
+			driver.findElement(By.xpath("(//div[@class='socialNetworks-top']//span[@class='fa-stack'])["+ i +"]")).click();
+			System.out.println(curLink.getText());
+			switchToWindow(1);
+			driver.close();
+			switchToWindow(0);
+		}
 		return this;
-	}*/
+	}
 
 	@FindBy(how=How.XPATH,using="//div[@class='story lower']//following::div[@class='image small'][1]")
 	private WebElement eletopstoriesTM;	
@@ -514,7 +552,7 @@ public class NbcPage extends ProjectMethods{
 		click(eleinvestigations);
 		return new I_Team_newyork(driver, test);
 	}
-	
+
 	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//li[@class='nav-section News']")
 	private WebElement elenews;
 	public NewsPageLoads clicknews() {
@@ -527,7 +565,7 @@ public class NbcPage extends ProjectMethods{
 	public NewsPageLoads clicknbcnews() {
 		click(elenbcnews);
 		List<WebElement> navLinks = driver.findElements(By.xpath("//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation']"));
-		
+
 		for (int i = 1; i <=navLinks.size(); i++) {
 
 			WebElement curLink = driver.findElement(By.xpath("(//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation'])["+ i +"]"));
@@ -537,25 +575,25 @@ public class NbcPage extends ProjectMethods{
 			}
 
 			driver.findElement(By.xpath("(//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation'])["+ i +"]")).click();
-			
-				driver.navigate().back();
-			
+
+			driver.navigate().back();
+
 		}
 		return new NewsPageLoads(driver, test);
 	}
 
 
 	@FindBy(how=How.XPATH,using="//div[@class='navbar-container']//a[contains(text(),'Noticias')]")
-	private WebElement eleteleNoticias;
-	public NewsPageLoads clickteleNoticias() {
-		mouseMoveTo(eleteleNoticias);
+	private WebElement eleNoticias;
+	public NewsPageLoads clickNoticias() {
+		mouseMoveTo(eleNoticias);
 		try {
 			Thread.sleep(6000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(eleteleNoticias.getText());
+		System.out.println(eleNoticias.getText());
 		return new NewsPageLoads(driver, test);
 	}
 
@@ -573,7 +611,7 @@ public class NbcPage extends ProjectMethods{
 			}
 
 			driver.findElement(By.xpath("(//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation'])["+ i +"]")).click();
-			}
+		}
 		return new NewsPageLoads(driver, test);
 	}
 
@@ -583,11 +621,11 @@ public class NbcPage extends ProjectMethods{
 		click(elenbcweatherSubNav);
 		return new NewsPageLoads(driver, test);
 	}
-	
+
 	@FindBy(how=How.XPATH,using="//a[contains(@class,'nav-section-title')]")
 	private WebElement elenbchome;
 	public NewsPageLoads clicknbchome() {
-		
+
 		List<WebElement> navLinks = driver.findElements(By.xpath("//a[contains(@class,'nav-section-title')]"));
 		for (int i = 1; i <=navLinks.size(); i++) {
 
@@ -598,7 +636,7 @@ public class NbcPage extends ProjectMethods{
 			}
 
 			driver.findElement(By.xpath("(//a[contains(@class,'nav-section-title')])["+ i +"]")).click();
-			}
+		}
 		return new NewsPageLoads(driver, test);
 	}
 
@@ -614,7 +652,7 @@ public class NbcPage extends ProjectMethods{
 	@FindBy(how=How.XPATH,using="//div[@class='footer']//div[@class='footer-container']//following::li")
 	private WebElement elefooter;
 	public NbcPage clickfooter() {
-		
+
 		List<WebElement> navLinks = driver.findElements(By.xpath("//div[@class='footer']//div[@class='footer-container']//following::li"));
 
 		for (int i = 1; i <=navLinks.size(); i++) {
@@ -719,43 +757,43 @@ public class NbcPage extends ProjectMethods{
 			}
 
 			driver.findElement(By.xpath("(//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation'])["+ i +"]")).click();
-			
-				driver.navigate().back();	
+
+			driver.navigate().back();	
 		}
-		
+
 		List<WebElement> COZITV = driver.findElements(By.xpath("//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation']"));
 
-        for (WebElement CoziTv : COZITV) 
-    {            
-       WebElement available = (WebElement) driver.findElement(By.xpath("//div[@class='subnav-large-container']//a[contains(text(),'COZI TV')]"));
-        if (available.getText().equals("Available)"))
+		for (WebElement CoziTv : COZITV) 
+		{            
+			WebElement available = (WebElement) driver.findElement(By.xpath("//div[@class='subnav-large-container']//a[contains(text(),'COZI TV')]"));
+			if (available.getText().equals("Available)"))
 
-        {
-        	CoziTv.click();
-            System.out.println("COZITV is available");
-            break;
-        } else {
-            System.out.println("COZITV is available");
+			{
+				CoziTv.click();
+				System.out.println("COZITV is available");
+				break;
+			} else {
+				System.out.println("COZITV is available");
 
-        }
-    }
-        
-        List<WebElement> Breakfast = driver.findElements(By.xpath("//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation']"));
+			}
+		}
 
-        for (WebElement BreakFast : Breakfast) 
-    {            
-       WebElement available = (WebElement) driver.findElement(By.xpath("//div[@class='subnav-large-container']//a[contains(text(),'Breakfast With Open House')]"));
-        if (available.getText().equals("Available)"))
+		List<WebElement> Breakfast = driver.findElements(By.xpath("//div[@class='subnav-section-landing']//a[@data-lpos='subsection navigation']"));
 
-        {
-        	BreakFast.click();
-            System.out.println("Breakfast With Open House is the last element to click");
-            break;
-        } else {
-            System.out.println("Breakfast With Open House is the last element to click");
+		for (WebElement BreakFast : Breakfast) 
+		{            
+			WebElement available = (WebElement) driver.findElement(By.xpath("//div[@class='subnav-large-container']//a[contains(text(),'Breakfast With Open House')]"));
+			if (available.getText().equals("Available)"))
 
-        }
-    }
+			{
+				BreakFast.click();
+				System.out.println("Breakfast With Open House is the last element to click");
+				break;
+			} else {
+				System.out.println("Breakfast With Open House is the last element to click");
+
+			}
+		}
 		return new EntertainmentNews(driver, test);
 	}
 

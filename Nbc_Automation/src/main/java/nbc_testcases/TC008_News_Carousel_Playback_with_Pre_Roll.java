@@ -46,7 +46,7 @@ public class TC008_News_Carousel_Playback_with_Pre_Roll extends ProjectMethods{
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clickteleNoticias()
+				.clickNoticias()
 				.clickLoacalPR();
 			}
 

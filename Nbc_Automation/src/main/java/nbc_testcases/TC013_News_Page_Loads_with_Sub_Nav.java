@@ -42,7 +42,7 @@ public class TC013_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clickteleNoticias()
+				.clickNoticias()
 				.clickLoacalPR();
 			}
 

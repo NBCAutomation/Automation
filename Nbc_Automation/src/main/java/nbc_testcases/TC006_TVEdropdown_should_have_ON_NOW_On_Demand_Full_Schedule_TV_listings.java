@@ -39,7 +39,6 @@ public class TC006_TVEdropdown_should_have_ON_NOW_On_Demand_Full_Schedule_TV_lis
 				new NbcPage(driver, test)
 				.clickwatchlivelogo()
 				.clickfullschedule()
-				.clicknbc4()
 				.clickdaySelect()
 				.clickdaynbcnow()
 				.clickcozitv()

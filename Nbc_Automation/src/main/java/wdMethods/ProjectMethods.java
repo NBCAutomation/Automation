@@ -56,15 +56,14 @@ public class ProjectMethods extends SeMethods{
 		
 	}
 	
-	@AfterSuite (groups= {"Regression"})
-	public void afterSuite(){
-		
+	@AfterSuite ()
+	public void afterSuite(){	
 		endResult();
 		//sendmailAttachment();
 		
 	}
 
-	@AfterTest(groups= {"Regression"})        
+	@AfterTest()        
 	public void afterTest() {	
 		//shutDownDriver(result);
 		endTestcase();
