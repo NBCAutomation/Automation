@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+  <test thread-count="5" name="chrome win10 NY">
+		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="win10"></parameter>
+		<parameter name="url" value="sUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+		<class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+    </classes>
+  </test>
+  <test thread-count="5" name="chrome mac LA">
+		<parameter name="browser" value="chrome"></parameter>
+		<parameter name="platform" value="mac"></parameter>
+		<parameter name="url" value="LUrl"></parameter>
+    <classes>
+      <class name="nbc_testcases.TC003_Weather_module_appears_on_HP_and_map_loads"/>
+      <class name="nbc_testcases.TC005_Watch_live_TVE_dropdown_appears"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Suite -->

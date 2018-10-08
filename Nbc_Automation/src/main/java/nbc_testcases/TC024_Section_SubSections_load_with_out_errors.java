@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC013_Investigations_page_loads_along_with_sub_nav extends ProjectMethods{
+public class TC024_Section_SubSections_load_with_out_errors extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Investigations page loads along with sub nav";
-		testDescription = "To Test Investigations page loads along with sub nav successfully";
+		testCaseName = "Section & SubSections load with out errors";
+		testDescription = "To Test Section & SubSections load with out errors successfully";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -28,7 +28,7 @@ public class TC013_Investigations_page_loads_along_with_sub_nav extends ProjectM
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=12)
+	@Test(groups= {"Regression"}, priority=24)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
@@ -37,9 +37,7 @@ public class TC013_Investigations_page_loads_along_with_sub_nav extends ProjectM
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickinvestigations()
-				.clickinvestigationvaild()
-				.clickmoreinvestigation();
+				.clicknbchome();
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
@@ -51,7 +49,6 @@ public class TC013_Investigations_page_loads_along_with_sub_nav extends ProjectM
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 
 	}
 }

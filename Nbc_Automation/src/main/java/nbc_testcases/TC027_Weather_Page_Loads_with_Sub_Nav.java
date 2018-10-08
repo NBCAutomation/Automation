@@ -14,38 +14,39 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC021_Civic_science_module_appears_when_in_articles extends ProjectMethods{
+public class TC027_Weather_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
-		
-		testCaseName = "Civic science module appears when in articles";
-		testDescription = "To Test Civic science module appears when in articles";
+
+		testCaseName = "Weather Page Loads with Sub-Nav";
+		testDescription = "To Test Weather Page Loads with Sub-Nav";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-	
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=20)
-	public void NbcPage(){
+	@Test(groups= {"Regression"}, priority=27)
+	public void NbcPage() {
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true) { 
 				new NbcPage(driver, test)
-				.clicknbcnews()
-				.clicklocal()
-				.clicklocalarticle();
+				.clicknbcweather();
 			}
-
+			
+			else if(driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
+				new NbcPage(driver, test)
+				.clicknbclogo()
+				.clicknbcweather();
+			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
-
 			}
 
 		} catch (FileNotFoundException e) {
@@ -53,7 +54,5 @@ public class TC021_Civic_science_module_appears_when_in_articles extends Project
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
 	}
 }
-

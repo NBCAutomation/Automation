@@ -539,7 +539,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			driver.close();
 			reportStep("The browser is closed","PASS", false);
 		} catch (Exception e) {
-			reportStep("The browser could not be closed","FAIL", false);
+			reportStep("The browser could not be closed: \n Error: "+e.getMessage(),"FAIL", false);
 		}
 	}
 
@@ -548,7 +548,7 @@ public class SeMethods extends Reporter implements WdMethods {
 			driver.quit();
 			reportStep("The opened browsers are closed","PASS", false);
 		} catch (Exception e) {
-			reportStep("Unexpected error occured in Browser","FAIL", false);
+			reportStep("Unexpected error occured in Browser: \n Error: "+e.getMessage(),"FAIL", false);
 		}
 	}
 

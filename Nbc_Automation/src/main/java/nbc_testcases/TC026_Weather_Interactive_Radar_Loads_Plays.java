@@ -14,22 +14,21 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC025_Section_SubSections_load_with_out_errors extends ProjectMethods{
+public class TC026_Weather_Interactive_Radar_Loads_Plays extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Section & SubSections load with out errors";
-		testDescription = "To Test Section & SubSections load with out errors successfully";
+		testCaseName = "Weather Radar Interactive Loads/Plays";
+		testDescription = "To Test Weather Radar Interactive Loads/Plays";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=13)
-	public void NbcPage(){
+	@Test(groups= {"Regression"}, priority=26)
+	public void NbcPage() {
 
 		Properties prop = new Properties();
 		try {
@@ -37,30 +36,12 @@ public class TC025_Section_SubSections_load_with_out_errors extends ProjectMetho
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbchome();
-				/*.clicknbcnews()
-				.clicklocal()
-				.clicktopvideo()
-				.clickusworld()
-				.clickhealth()
-				.clickweird()
-				.clickweather()
-				.clicktech()
-				.clicksports()
-				.clicknbcweather()
-				.clickinvestigations()
-				.clickentertainment()
-				.clicknbclist();*/
+				.clicknbclogo()
+				.clicknbcweatherSubNav()
+				.clickMapRadar()
+				.clickintractiveRadar()
+				.clickmapplay();
 			}
-			/*else if(
-				new NbcPage(driver, test)
-				.clicknbchome()
-				.clicknbcnews()
-				.clicki_team()
-				.clicknbcweather()
-				.clickentertainment()
-				.clicknbclist();*/
-
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
@@ -71,7 +52,5 @@ public class TC025_Section_SubSections_load_with_out_errors extends ProjectMetho
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 }
-

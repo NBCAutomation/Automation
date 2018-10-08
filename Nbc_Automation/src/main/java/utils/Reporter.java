@@ -14,16 +14,19 @@ public abstract class Reporter {
 	
 	public void reportStep(String desc, String status, boolean bSnap) {
 
+		System.out.println("At First: \nDesc- "+desc+" /Status- "+status+" bSnap- "+bSnap);
 		if(bSnap && !status.equalsIgnoreCase("INFO")){
 			long snapNumber = 100000l;
 			
 			try {
 				snapNumber= takeSnap();
+				//System.out.println("take snap ran");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			desc = desc+test.
 					addScreenCapture("./../reports/images/"+snapNumber+".jpg");
+			//System.out.println("Desc Name : "+desc);
 		}
 		
 		// Write if it is successful or failure or information
@@ -55,6 +58,7 @@ public abstract class Reporter {
 	}
 
 	public ExtentTest startTestCase(String testCaseName, String testDescription){
+		
 		test = extent.startTest(testCaseName, testDescription);
 		return test;
 	}

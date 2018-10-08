@@ -19,7 +19,7 @@ public class TC004_Right_Rail_HomePage_Spreadfast_Module extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Right Rail HomePage Spreadfast Module";
+		testCaseName = "Right Rail HomePage Spreadfast Module (or) Global Right Rail Modules";
 		testDescription = "To Test Right Rail HomePage Spreadfast Module";
 		category= "Regression";
 		authors	="Vinoth";
@@ -43,7 +43,9 @@ public class TC004_Right_Rail_HomePage_Spreadfast_Module extends ProjectMethods{
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();	
+				.clicknbclogo()
+				.clickNoticias()
+				.clickLoacalPR();
 			}
 
 		} catch (FileNotFoundException e) {

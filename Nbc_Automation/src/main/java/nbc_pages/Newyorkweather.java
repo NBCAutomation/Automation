@@ -16,10 +16,7 @@ import wdMethods.ProjectMethods;
 			this.driver = driver;
 			this.test = test;
 
-			PageFactory.initElements(driver, this);		
-			/*if(!verifyTitle("Watch Live TV | NBC New York")) {
-				throw new RuntimeException();
-			}*/		
+			PageFactory.initElements(driver, this);
 		}
 		
 		@FindBy(how=How.XPATH,using="//div[@id='wunderPane']//li[@class='PWSV tab']")

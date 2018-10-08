@@ -14,36 +14,40 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC029_Weather_Page_Video_Playback_with_Pre_roll extends ProjectMethods{
+public class TC008_News_Carousel_Playback_with_Pre_Roll extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Weather Page Loads with Sub-Nav";
-		testDescription = "To Test Weather Page Loads with Sub-Nav";
+		testCaseName = "News Carousel Playback with Pre Roll (Or) Noticias/local article pages that contain a lead video should feature a carousel beneath the player";
+		testDescription = "To Test News Carousel Playback with Pre Roll";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=2)
-	public void NbcPage() {
+	public  Map<String, String> appData = new HashedMap<>();
+	
+	@Test(groups= {"Regression"}, priority=8) 
+	public void NbcPage(){
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) { 
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo()
-				.clickweather()
-				.clickweatherbanner();
+				.clicknbcnews()
+				.clicknewsheader()
+				.clicknbcnewstopstory();
 				
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo();
+				.clicknbclogo()
+				.clickNoticias()
+				.clickLoacalPR();
 			}
 
 		} catch (FileNotFoundException e) {

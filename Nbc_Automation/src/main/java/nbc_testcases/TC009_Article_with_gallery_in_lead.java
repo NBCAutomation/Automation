@@ -14,21 +14,21 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC022_Personal_weather_station_tab_loads_with_pins extends ProjectMethods{
+public class TC009_Article_with_gallery_in_lead extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
-		
-		testCaseName = "Personal weather station tab loads with pins";
-		testDescription = "To Test Personal weather station tab loads with pins";
+
+		testCaseName = "Article with gallery in lead";
+		testDescription = "To Test HTML Module Appears";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-	
-	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=21)
+	public  Map<String, String> appData = new HashedMap<>();	
+
+	@Test(groups= {"Regression"}, priority=9)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
@@ -37,15 +37,13 @@ public class TC022_Personal_weather_station_tab_loads_with_pins extends ProjectM
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clickweather()
-				.clickpersonalweather()
-				.clickpersonalweatherDegree();
+				.clickplaygallery()
+				.clickgallery();
+				
 			}
-
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
 				.clicknbclogo();
-
 			}
 
 		} catch (FileNotFoundException e) {
@@ -53,7 +51,5 @@ public class TC022_Personal_weather_station_tab_loads_with_pins extends ProjectM
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
 	}
 }
-

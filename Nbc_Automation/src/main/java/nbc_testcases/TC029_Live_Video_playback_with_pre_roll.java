@@ -14,13 +14,13 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
+public class TC029_Live_Video_playback_with_pre_roll extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "News Page Loads with Sub-Nav (0r) Noticias Page Loads with Sub-Nav on Hover";
-		testDescription = "To Test News Page Loads with Sub-Nav successfully";
+		testCaseName = "Live Video playback with pre roll";
+		testDescription = "To Test Live Video playback with pre roll";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
@@ -28,7 +28,7 @@ public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 	public  Map<String, String> appData = new HashedMap<>();
 
-	@Test(groups= {"Regression"}, priority=13)
+	@Test(groups= {"Regression"}, priority=29)
 	public void NbcPage(){
 
 		Properties prop = new Properties();
@@ -37,21 +37,14 @@ public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbcnews();
-				/*.clicklocal()
-				.clicktopvideo()
-				.clickusworld()
-				.clickhealth()
-				.clickweird()
-				.clickweather()
-				.clicktech()
-				.clicksports();*/
+				.clicktopstories();
+				
+
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clicknbclogo()
-				.clickteleNoticias()
-				.clickLoacalPR();
+				.clicknbclogo();
+
 			}
 
 		} catch (FileNotFoundException e) {
@@ -62,4 +55,3 @@ public class TC014_News_Page_Loads_with_Sub_Nav extends ProjectMethods{
 
 	}
 }
-

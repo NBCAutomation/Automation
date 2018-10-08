@@ -14,41 +14,42 @@ import org.testng.annotations.Test;
 import nbc_pages.NbcPage;
 import wdMethods.ProjectMethods;
 
-public class TC023_Vertical_Gallery_display extends ProjectMethods{
+public class TC028_Weather_Page_Video_Playback_with_Pre_roll extends ProjectMethods{
 
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Vertical Gallery display";
-		testDescription = "To Test Vertical Gallery display";
+		testCaseName = "Weather Page Loads with Sub-Nav";
+		testDescription = "To Test Weather Page Loads with Sub-Nav";
 		category= "Regression";
 		authors	="Vinoth";
 		browserName ="chrome";
 	}
-
 	public  Map<String, String> appData = new HashedMap<>();
-	
-	@Test(groups= {"Regression"}, priority=22)
-	public void NbcPage(){
+
+	@Test(groups= {"Regression"}, priority=28)
+	public void NbcPage() {
 
 		Properties prop = new Properties();
 		try {
 			prop.load(new FileInputStream(new File("./src/main/resources/config.properties")));
 
-			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) {
+			if(driver.getCurrentUrl().startsWith(prop.getProperty("NYURL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("LAURL"))==true) { 
 				new NbcPage(driver, test)
-				.clickslidecount();
+				.clicknbclogo()
+				.clickweather()
+				.clickweatherbanner();
+				
 			}
 			else if(driver.getCurrentUrl().startsWith(prop.getProperty("T51URL"))==true || driver.getCurrentUrl().startsWith(prop.getProperty("TPRURL"))==true){
 				new NbcPage(driver, test)
-				.clickslidecountTM();
+				.clicknbclogo();
 			}
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 }
-

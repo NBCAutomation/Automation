@@ -18,7 +18,7 @@ public class TC002_Top_stories_playback_with_pre_roll extends ProjectMethods{
 	@BeforeClass(groups= {"Regression"})
 	public void setData() {
 
-		testCaseName = "Top stories playback with pre roll(Both NBC and Telemundo)";
+		testCaseName = "Top stories playback with pre roll (Both NBC and Telemundo)";
 		testDescription = "To Test stories playback with-pre roll";
 		category= "Regression";
 		authors	="Vinoth";
