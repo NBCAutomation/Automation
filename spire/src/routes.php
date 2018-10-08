@@ -1559,19 +1559,22 @@ $app->group('/utils', function () {
             $radarAlerts = array();
             $radarSRAlerts = array();
             $radarStatus = array();
+            $randID = rand(0, 9999);
+            $immediateAlert = false;
+            $sendableWeatherAlertCheck = false;
+            $weatherNotification = $db->getRecentNotificationAlerts('weatherAlert');
+            $notificationData = $weatherNotification['data'];
 
             foreach ($radarStat as $key => $value) {
             	$weatherCheckData = $db->getAllWeatherRadarChecks($key);
+            	// $weatherCheckData = $db->getAllWeatherRadarChecks('0845');
             	$weatherDataArray = array_reverse($weatherCheckData['data']);
             	
+            	$radarSubStatus = array_column($weatherDataArray, 'radar_status');
+
             	$weatherRadarAlert = 0;
-            	// echo "<pre>";
-            	// print_r($weatherDataArray);
-            	// echo "</pre><br />";
-            	// exit();
 
             	foreach ($weatherDataArray as $radarKey => $radarValue) {
-
             		$radarStatus['check_1'] = $weatherDataArray[0]['radar_status'];
             		$radarStatus['check_2'] = $weatherDataArray[1]['radar_status'];
             		$radarStatus['check_3'] = $weatherDataArray[2]['radar_status'];
@@ -1579,20 +1582,56 @@ $app->group('/utils', function () {
             		if ( strpos($radarValue['pretty_ref'], 'StormRanger') !== false ) {
             			if ($radarStatus['check_2'] != $radarStatus['check_3']) {
             				$radarSRAlerts[$radarValue['layer_id'].' - '.$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            				$immediateAlert = true;
             			}
             		} else {
-            			if ( strpos($radarValue['pretty_ref'], 'Puerto Rico') == false && $radarValue['radar_status'] === 'offline') {
-            				if ($radarStatus['check_1'] == 'offline' && $radarStatus['check_2'] == 'offline' && $radarStatus['check_3'] == 'offline') {
+            			if ( strpos($radarValue['pretty_ref'], 'Puerto Rico') == false) {
+            				if (count(array_unique($radarSubStatus)) === 1 && end($radarSubStatus) === 'offline') {
             					$radarAlerts[$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            					$sendableWeatherAlertCheck = true;
+            				} else {
+            					if ($radarStatus['check_3'] != $radarStatus['check_2']) {
+            						$radarAlerts[$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            						$immediateAlert = true;
+            					}
             				}
             			}
             		}
             	}
             }
 
+
 	        if (!empty($radarAlerts) || !empty($radarSRAlerts)) {
-	        	$spireNotifications = true;
-				$notificationType = "weatherRadarAlert";
+	        	if ($immediateAlert) {
+	        		echo "Sendable!<br />";	
+	        		echo "Log alert and send<br />";
+		        	$spireNotifications = true;
+					$notificationType = "weatherRadarAlert";
+					
+					$logTask = $db->logNotificationAlert($randID, 0, 1, 0, 'weatherAlert', 'Radar status change. ');
+					
+	        	} elseif ($sendableWeatherAlertCheck) {
+	        		$curTime = strtotime(date("Y-m-d H:i:s"));
+
+	        		if ($notificationData['sendable'] > 0 && $notificationData['type'] == 'weatherAlert') {
+	        			$spireNotifications = true;
+						$notificationType = "weatherRadarAlert";
+	        			$logTask = $db->logNotificationAlert($randID, 0, 1, 0, 'weatherAlert', 'Continuously offline.');
+	        			$logTask = $db->logNotificationAlert($randID, 0, 0, $curTime, 'weatherAlert', '{"Note":"Weather radar offline in past 3 checks; Set next email time.", "Radars": '.serialize($radarAlerts).'}');
+	        		} elseif ($notificationData['sendable'] == 0 && $notificationData['type'] == 'weatherAlert') {
+	        			$sendableTime = strtotime('+ 20 minute', $notificationData['sendable_time']);
+	        			if ($curTime > $sendableTime) {
+				        	$spireNotifications = true;
+							$notificationType = "weatherRadarAlert";
+	        				$logTask = $db->logNotificationAlert($randID, 0, 1, 0, 'weatherAlert', 'Continuously offline, reminder sent.');
+	        				$logTask = $db->logNotificationAlert($randID, 0, 0, $curTime, 'weatherAlert', '{"Note":"Weather radar offline in past 3 checks; Set next email time.", "Radars": '.serialize($radarAlerts).'}');
+	        			} else {
+	        				// echo "waiting";
+	        			}
+	        		} else {
+
+	        		}
+	        	}
 	        }
 		}
 
@@ -1651,26 +1690,26 @@ $app->group('/utils', function () {
 				$notificationTotals = Spire::buildQueryCache(true);
 				$errorTotals = array($notificationTotals['todayManifestTotalFailureReports'], $notificationTotals['todayNavTotalFailureReports'], $notificationTotals['todayContentTotalFailureReports'], $notificationTotals['todayOTTTotalFailureReports']);
 				$notificationErrors = array_sum($errorTotals);
-				$recentNotifications = $db->getRecentNotificationAlerts();
+				$recentNotifications = $db->getRecentNotificationAlerts('apiAlert');
 
 				if ($recentNotifications['data']['error_count'] < 1 && $notificationErrors >= 1) {
 					$sendEmailNotification = true;
 					echo "sendable alert 0";
 					$randID = rand(0, 9999);
-					$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, '');	
+					$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, 0, 'apiAlert', '');
 				} else {
 					if ( $notificationErrors >= 1 ) {
 						if ($notificationErrors > $recentNotifications['data']['error_count']) {
 							$sendEmailNotification = true;
 							echo "sendable alert 1";
 							$randID = rand(0, 9999);
-							$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, '');
+							$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, 0, 'apiAlert', '');
 						} else {
 							if ($notificationErrors == $recentNotifications['data']['error_count'] && $recentNotifications['data']['sendable'] > 0) {
 								$sendEmailNotification = true;
 								echo "sendable alert 2";
 								$randID = rand(0, 9999);
-								$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, '');
+								$logTask = $db->logNotificationAlert($randID, $notificationErrors, 1, 0, 'apiAlert', '');
 							} else {
 								$sendEmailNotification = false;
 								$logTask = $db->logTask('sendEmailNotification', 'SpireBot', 'API Errors, notification not sent, current errors already reviewed, seen. Alert ref: ' . $recentNotifications['data']['id']);
@@ -1733,18 +1772,20 @@ $app->group('/utils', function () {
 				$emailSubject = '[SPIRE] WSI Weather radars alerts';
 				
 				if ($radarAlerts) {
-					$emailContent .= 'Local weather station radars returning as "offline" in multiple tests/checks, please investigate.<br /><br />Offline radars:<br />';
-					$radarFailures = $radarAlerts;
+					$emailContent .= 'Local weather station radars status has changed, and/or is in an "offline" state in multiple tests/checks, please investigate.<br /><br />Offline radars:<br />';
+
+					foreach ($radarAlerts as $failKey => $failVal) {
+		            	$emailContent .= "   - ".$failKey." - ".$failVal."<br />";
+		            }
 				}
 
 				if ($radarSRAlerts) {
-					$emailContent .= 'Storm Ranger radar status changed.<br />Radar(s):<br />';
-					$radarFailures = $radarAlerts;	
+					$emailContent .= '<br />Storm Ranger radar status changed.<br />Radar(s):<br />';
+					
+					foreach ($radarSRAlerts as $failKey => $failVal) {
+		            	$emailContent .= "   - ".$failKey." - ".$failVal."<br />";
+		            }
 				}
-
-				foreach ($radarFailures as $failKey => $failVal) {
-	            	$emailContent .= "   - ".$failKey." - ".$failVal."<br />";
-	            }
 			}
 
 	    	if ($notificationType == 'regression-notification') {
@@ -1782,6 +1823,130 @@ $app->group('/utils', function () {
 	    if ($utilReqParams['task'] == 'testingOutput'){
 	    	$db = new DbHandler();
 
+	    	$radarStat = array(
+		    	"0845" => "First Alert Live Doppler - Los Angeles",
+	            "0846" => "First Alert Live Doppler - Orange County",
+	            "0847" => "First Alert Live Doppler - San Diego",
+	            "0848" => "StormRanger - Los Angeles",
+	            "0849" => "NBC 5 S-Band Radar - DFW",
+	            "0850" => "StormRanger - DFW",
+	            "0851" => "StormRanger - Philadelphia",
+	            "0854" => "NBC Boston Fixed",
+	            "0855" => "StormTracker 4 - New York",
+	            "0856" => "Live Doppler 5 - Chicago",
+	            "0837" => "TeleDoppler - Puerto Rico",
+	            "0853" => "First Alert Doppler 6000",
+	            "0870" => "StormRanger 2 - New York/Boston",
+	            "0871" => "StormRanger 2 - Philadelphia",
+	            "0872" => "StormRanger 2 - DFW"
+            );
+
+            $radarAlerts = array();
+            $radarSRAlerts = array();
+            $radarStatus = array();
+            $randID = rand(0, 9999);
+            $immediateAlert = false;
+            $sendableWeatherAlertCheck = false;
+            $weatherNotification = $db->getRecentNotificationAlerts('weatherAlert');
+            $notificationData = $weatherNotification['data'];
+
+            // echo "<pre>";
+            // var_dump($weatherNotification['data']['sendable']);
+            // echo "<pre>";
+            // exit();
+
+            foreach ($radarStat as $key => $value) {
+            	$weatherCheckData = $db->getAllWeatherRadarChecks($key);
+            	// $weatherCheckData = $db->getAllWeatherRadarChecks('0845');
+            	$weatherDataArray = array_reverse($weatherCheckData['data']);
+            	
+            	$radarSubStatus = array_column($weatherDataArray, 'radar_status');
+
+            	$weatherRadarAlert = 0;
+            	// echo "<pre>";
+            	// print_r($radarSubStatus);
+            	// echo "</pre><br />";
+            	// exit();
+
+            	foreach ($weatherDataArray as $radarKey => $radarValue) {
+
+            		$radarStatus['check_1'] = $weatherDataArray[0]['radar_status'];
+            		$radarStatus['check_2'] = $weatherDataArray[1]['radar_status'];
+            		$radarStatus['check_3'] = $weatherDataArray[2]['radar_status'];
+            		
+            		if ( strpos($radarValue['pretty_ref'], 'StormRanger') !== false ) {
+            			if ($radarStatus['check_2'] != $radarStatus['check_3']) {
+            				$radarSRAlerts[$radarValue['layer_id'].' - '.$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            				// echo "SR RADAR Change<br />";
+            				$immediateAlert = true;
+            			}
+            		} else {
+            			// if ( strpos($radarValue['pretty_ref'], 'Puerto Rico') == false && $radarStatus['check_3'] === 'offline') {
+            			if ( strpos($radarValue['pretty_ref'], 'Puerto Rico') == false) {
+
+            				// if (count(array_unique($radarSubStatus)) === 1 && end($radarSubStatus) === 'offline') {
+            					
+            					// echo "Radar Change - ".$radarValue['pretty_ref']."<br />";
+            					
+            				// 	echo "3 offline<br />";
+            				// } else {
+            				// 	if ($radarStatus['check_3'] != $radarStatus['check_2']) {
+            						// $immediateAlert = true;
+	            			// 		$radarAlerts[$radarValue['pretty_ref']] = $radarValue['radar_status'];
+	            			// 		echo "single<br />";	
+            				// 	}
+            					
+            				// }
+            				if (count(array_unique($radarSubStatus)) === 1 && end($radarSubStatus) === 'offline') {
+            					echo "3 offline<br />";
+            					$radarAlerts[$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            					$sendableWeatherAlertCheck = true;
+            				} else {
+            					if ($radarStatus['check_3'] != $radarStatus['check_2']) {
+            						// echo "Radar Change - ".$radarValue['pretty_ref']." - ".$radarValue['radar_status']."<br />";
+            						echo "status change<br />";
+            						$radarAlerts[$radarValue['pretty_ref']] = $radarValue['radar_status'];
+            						$immediateAlert = true;
+            					}
+            				}
+            			}
+            		}
+            	}
+            }
+
+
+	        if (!empty($radarAlerts) || !empty($radarSRAlerts)) {
+	        	if ($immediateAlert) {
+	        		echo "Sendable!<br />";	
+	        		echo "Log alert and send<br />";
+		        	$spireNotifications = true;
+					$notificationType = "weatherRadarAlert";
+					
+					$logTask = $db->logNotificationAlert($randID, 0, 1, 0, 'weatherAlert', 'Radar status change. ');
+					
+	        	} elseif ($sendableWeatherAlertCheck) {
+	        		$curTime = strtotime(date("Y-m-d H:i:s"));
+
+	        		if ($notificationData['sendable'] > 0 && $notificationData['type'] == 'weatherAlert') {
+	        			$spireNotifications = true;
+						$notificationType = "weatherRadarAlert";
+	        			$logTask = $db->logNotificationAlert($randID, 0, 1, 0, 'weatherAlert', 'Continuously offline.');
+	        			$logTask = $db->logNotificationAlert($randID, 0, 0, $curTime, 'weatherAlert', 'Weather radar offline in past 3 checks; Set next email time. Radars: '.$radarAlerts.'<br />'.$radarSRAlerts);
+	        		} elseif ($notificationData['sendable'] == 0 && $notificationData['type'] == 'weatherAlert') {
+	        			$sendableTime = strtotime('+ 20 minute', $notificationData['sendable_time']);
+	        			if ($curTime > $sendableTime) {
+				        	$spireNotifications = true;
+							$notificationType = "weatherRadarAlert";
+	        				$logTask = $db->logNotificationAlert($randID, 0, 1, 0, 'weatherAlert', 'Continuously offline, reminder sent.');
+	        				$logTask = $db->logNotificationAlert($randID, 0, 0, $curTime, 'weatherAlert', 'Weather radar offline in past 3 checks; Set next email time. Radars: '.$radarAlerts.'<br />'.$radarSRAlerts);
+	        			} else {
+	        				// echo "waiting";
+	        			}
+	        		} else {
+
+	        		}
+	        	}
+	        }
 	    }
     });
 

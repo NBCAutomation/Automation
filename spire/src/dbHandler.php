@@ -1059,7 +1059,7 @@ class DbHandler {
     }
 
     public function getAllWeatherRadarChecks($radarStationID) {
-        $output = Spire::spireCache('getAllWeatherRadarChecks_'.$radarStationID, 3600, function() use ($radarStationID) {
+        $output = Spire::spireCache('getAllWeatherRadarChecks_'.$radarStationID, 0, function() use ($radarStationID) {
             $db_con = Spire::getConnection();
             $stmt = $db_con->prepare("SELECT * FROM weather_radar_status WHERE layer_id = '".$radarStationID."' ORDER BY id DESC LIMIT 3");
 
@@ -1074,7 +1074,7 @@ class DbHandler {
     }
 
     public function getWeatherRadarCheckAvg($range, $stationLayerID) {
-        $output = Spire::spireCache('getWeatherRadarCheckAvg_'.$stationLayerID.'_'.$range, 3600, function() use ($range, $stationLayerID) {
+        $output = Spire::spireCache('getWeatherRadarCheckAvg_'.$stationLayerID.'_'.$range, 0, function() use ($range, $stationLayerID) {
             $db_con = Spire::getConnection();
 
             switch ($range) {
@@ -1822,11 +1822,11 @@ class DbHandler {
         $stmt->close();
     }
 
-    public function logNotificationAlert($refID, $errorCount, $sendable, $info) {
+    public function logNotificationAlert($refID, $errorCount, $sendable, $sendable_time, $type, $info) {
         $db_con = Spire::getConnection();
 
-        $stmt = $db_con->prepare("INSERT INTO alerts(ref_id, error_count, sendable, info ) VALUES(?, ?, ?, ?)");
-        $stmtStatus = $stmt->execute(array($refID, $errorCount, $sendable, $info));
+        $stmt = $db_con->prepare("INSERT INTO alerts(ref_id, error_count, sendable, sendable_time, type, info ) VALUES(?, ?, ?, ?, ?, ?)");
+        $stmtStatus = $stmt->execute(array($refID, $errorCount, $sendable, $sendable_time, $type, $info));
 
         if ($stmtStatus) {
             // task row created
@@ -1848,13 +1848,13 @@ class DbHandler {
     }
 
 
-    public function getAllNotificationAlerts() {
+    public function getAllNotificationAlerts($type) {
         // $output = Spire::spireCache('getAllNotificationAlerts', 604800000, function() {
-        $output = Spire::spireCache('getAllNotificationAlerts', 10, function() {
+        $output = Spire::spireCache('getAllNotificationAlerts', 10, function() use ($type) {
             
             $db_con = Spire::getConnection();
 
-            $stmt = $db_con->prepare("SELECT * FROM alerts ORDER BY id DESC");
+            $stmt = $db_con->prepare("SELECT * FROM alerts WHERE type = '".$type."' ORDER BY id DESC");
 
             if ($stmt->execute()) {
                 $notification = $stmt->fetchAll();
@@ -1892,13 +1892,13 @@ class DbHandler {
         return $output;
     }
 
-    public function getRecentNotificationAlerts() {
+    public function getRecentNotificationAlerts($type) {
         // $output = Spire::spireCache('getAllNotificationAlerts', 604800000, function() {
-        $output = Spire::spireCache('getAllNotificationAlerts', 3600, function() {
+        $output = Spire::spireCache('getAllNotificationAlerts', 0, function() use ($type){
             
             $db_con = Spire::getConnection();
 
-            $stmt = $db_con->prepare("SELECT * FROM alerts WHERE created >= DATE_SUB(NOW(), INTERVAL 2 HOUR) ORDER BY id DESC LIMIT 1");
+            $stmt = $db_con->prepare("SELECT * FROM alerts WHERE type = '".$type."' AND created >= DATE_SUB(NOW(), INTERVAL 2 HOUR) ORDER BY id DESC LIMIT 1");
 
             if ($stmt->execute()) {
                 $notifications = $stmt->fetch();
